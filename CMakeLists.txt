@@ -1,0 +1,58 @@
+cmake_minimum_required(VERSION 2.6)
+
+# Project name
+project (glEngine)
+
+# Find OpenGL
+find_package (OpenGL)
+
+# Find SFML
+set(CMAKE_MODULE_PATH CMake/Modules ${CMAKE_MODULE_PATH})
+find_package (SFML 2.0 REQUIRED window graphics system)
+
+# Executable path
+set (EXECUTABLE_OUTPUT_PATH ${CMAKE_BUILD_TYPE})
+
+# Includes paths
+include_directories (
+    includes
+    includes/gle
+    src
+)
+
+# Sources files
+file (
+    GLOB_RECURSE
+    SOURCES
+    src/*
+)
+
+# Add build of glEngine library
+add_library(glEngine SHARED ${SOURCES})
+
+# Add examples
+add_executable (
+    examples/example00
+    examples/example00.cpp
+)
+
+add_executable (
+    examples/example01
+    examples/example01.cpp
+)
+
+# Librairies to link
+target_link_libraries (
+    examples/example00
+    ${SFML_LIBRARIES}
+    ${OPENGL_LIBRARIES}
+    glEngine
+)
+
+# Librairies to link
+target_link_libraries (
+    examples/example01
+    ${SFML_LIBRARIES}
+    ${OPENGL_LIBRARIES}
+    glEngine
+)
