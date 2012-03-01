@@ -82,30 +82,60 @@ Ainsi quand on applique une modification d'un parent, elle doit être appliqué 
 On doit pouvoir ajouter tous type de lumière à la scène.
 
 \subsection{Caméras}
-La scène doit posséder une caméra courante, 
+La scène doit posséder une caméra courante.
+On doit pouvoir ajouter plusieurs caméras et changer la caméra utilisée pour le rendu.
 
 \subsubsection*{Caméra perspective}
+Le moteur doit implémenter une caméra avec une projection en perspective, que l'on peut paramétrer avec un angle de vue,
+un ratio, une distance minimale et maximale.
+
 \subsubsection*{Caméra orthogonale}
+Le moteur doit implémenter une caméra avec une projection orthogonale.
+
 \subsubsection*{Cible caméra}
+Une caméra doit pouvoir être défini avec une cible de vue.
+Elle regardera alors dans sa direction.
 
 \subsection{Positionnement objets}
+Tous les objets doivent être positionnable dans l'espace, sur tous les axes.
 
 \subsubsection*{Position}
+On doit pouvoir leur donner une position absolue.
+
 \subsubsection*{Rotation}
+Leur rotation doit pouvoir se faire dans toutes les directions, via un axe de rotation et un angle.
+
 \subsubsection*{Échelle}
+Chaque objet peut être mis à l'échelle, indépendemment sur chaque axe.
 
 \subsection{Objets statiques et dynamiques}
+Chaque objet doit posséder une propriété statique ou dynamique.
+Elle permet d'éviter les recalculs pour les objets statiques et permettre le mouvement des objets dynamique.
 
 \section{Traitement des métadonnées}
+Pour optimiser les performances du moteur il devra posséder un prétraitement des métadonnées.
+Il devra être effectué en utilisant les technologies openGL et/ou openCL.
 
 \subsection{Culling}
+\subsubsection*{Elimination des faces cachées}
+Le moteur doit être capable d'éliminer de la scène à rendre les faces cachées de tous les objets.
+\subsubsection*{Frustrum culling}
+Le moteur doit être capable d'éliminer de la scène à rendre les faces en dehors de l'angle de vue.
+
 \subsection{Division spatiale}
+Afin d'optimiser la recherche de faces, le moteur devra implémenter une répartition des faces dans l'espaces optimisant la recherche.
+
 \subsection{Physique}
+Dans une future version le moteur pourra implémenter un ensemble de fonctionnalités permettant une gestion basique de la physique (gravité, collision, ...).
+
 \subsection{Modèles simplifiés}
+Une amélioration du moteur pourra permettre de charger des modèles simplifiés si les objets sont éloignés de la caméra.
 
 \section{API}
+L'API doit être simple d'utilisation et permettre la plus grande liberté.
+Elle doit allié puissance et simplicité en encapsulant toutes les fonctionnalités openGL 4.2 et openCL.
 
 \section{Démonstrations}
-
+Le logiciel devra être livré avec un ensemble de démonstrations visant à présenter l'ensemble des fonctionnalités du moteur.
 
 \end{document}

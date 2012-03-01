@@ -5,7 +5,7 @@
 // Login   <michar_l@epitech.net>
 // 
 // Started on  Sat Feb 18 12:53:42 2012 loick michard
-// Last update Wed Feb 22 18:37:52 2012 loick michard
+// Last update Thu Mar  1 14:41:42 2012 loick michard
 //
 
 #include <PerspectiveCamera.hpp>
