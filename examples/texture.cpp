@@ -1,21 +1,12 @@
 //
-// main.cpp for  in /home/jochau_g//dev/opengl/glEngine/src
+// texture.cpp for  in /home/jochau_g//dev/opengl/glEngine/examples
 // 
 // Made by gael jochaud-du-plessix
 // Login   <jochau_g@epitech.net>
 // 
-// Started on  Wed Feb 15 17:24:36 2012 gael jochaud-du-plessix
-// Last update Thu Mar  1 18:12:59 2012 gael jochaud-du-plessix
+// Started on  Wed Feb 29 19:44:13 2012 gael jochaud-du-plessix
+// Last update Thu Mar  1 18:04:35 2012 gael jochaud-du-plessix
 //
-
-/*! \mainpage glEngine Reference documentation
-  
-  \section intro_sec Introduction
-
-  glEngine is a 3D engine that use OpenGL 4.2 for rendering.<br>
-  bla, bla, bla...
-
- */
 
 #include <iostream>
 #include <SFML/Window.hpp>
@@ -27,6 +18,7 @@
 #include <ObjLoader.hpp>
 #include <DirectionalLight.hpp>
 #include <PointLight.hpp>
+#include <Texture.hpp>
 
 int glEngine(int, char**);
 
@@ -46,8 +38,8 @@ int main(int ac, char **av)
 
 int glEngine(int ac, char **av)
 {
-  if (ac < 3)
-    return (0);
+  (void)ac;
+  (void)av;
   sf::ContextSettings context;
   context.DepthBits = 24;
   context.StencilBits = 24;
@@ -73,54 +65,28 @@ int glEngine(int ac, char **av)
 
   material.setDiffuseLightEnabled(true);
   material.setSpecularLightEnabled(true);
-
   material.setShininess(32);
 
-  gle::ObjLoader loader;
-  gle::Mesh* model = loader.load(av[1]);
-
-  GLfloat dist = atol(av[2]);
-
-  gle::Mesh* helice = NULL;
+  GLfloat dist = 10;
 
   srand(time(NULL));
 
-  if (model)
-    {
-      scene << model;
-    }
+  gle::Mesh* cube = gle::Geometries::Cube(&material, 2);
+  cube->setRotation(gle::Vector3<GLfloat>(0, 1, 0), 45);
 
-  // float nbCubes = 10;
-  //  for (float i = 0; i < nbCubes; i++)
-  //   {
-  //     for (float j = 0; j < nbCubes; j++)
-  // 	{
-  // 	  for (float k = 0; k < nbCubes; k++)
-  // 	    {
-  // 	      gle::Mesh* cube = gle::Geometries::Cube(&material,
-  // 						      10.0 / nbCubes);
-  // 	      cube
-  // 		->translate(gle::Vector3<GLfloat>(((i / nbCubes) * 12) - 6.0,
-  // 						  ((k / nbCubes) * 12) - 6.0,
-  // 						  ((j / nbCubes) * 12) - 6.0)
-  // 			    );
-  // 	      gle::Color<GLfloat> color((double)random() / RAND_MAX,
-  // 					(double)random() / RAND_MAX,
-  // 					(double)random() / RAND_MAX, 1.0);
-  // 	      gle::VertexAttributeArray<GLfloat> colors(24 * 4);
-  // 	      for (int i = 0; i < 24; i++)
-  // 		colors.push(color);
-  // 	      cube->setColors((GLfloat*)colors, colors.getSize());
-  // 	      cube->setRotation(gle::Vector3<GLfloat>(0, 1, 0), 45);
-  // 	      scene << cube;
-  // 	    }
-  // 	}
-  //   }
+  gle::Texture cubeTexture("models/companion_cube.jpg");
+
+  material.setColorMapEnabled(true);
+  material.setColorMap(&cubeTexture);
+
+  scene << cube;
 
   gle::Material materialLight;
 
   materialLight.setDiffuseLightEnabled(false);
   materialLight.setSpecularLightEnabled(false);
+  materialLight.setColor(gle::Color<GLfloat>(1.0, 1.0, 1.0));
+
   gle::PointLight l(gle::Vector3<GLfloat>(0, 20, 0), gle::Color<GLfloat>(0.8, 0, 0));
   gle::Mesh* sp = gle::Geometries::Sphere(&materialLight, dist/100, gle::Color<GLfloat>(0.8, 0, 0));
   sp->setPosition(gle::Vector3<GLfloat>(0, 20, 0));
@@ -133,7 +99,7 @@ int glEngine(int ac, char **av)
 
   scene << &camera << &material << &materialLight << sp << sp2 << sp3;
   scene << &l << &l2 << &l3;
-  scene.setLightEnabled(true, gle::Color<GLfloat>(0, 0, 0));
+  scene.setLightEnabled(true);
 
   gle::Renderer renderer;
   renderer.createPrograms(&scene);
@@ -168,8 +134,6 @@ int glEngine(int ac, char **av)
 	  if (Event.Type == sf::Event::Resized)
 	    glViewport(0, 0, Event.Size.Width, Event.Size.Height);
 	}
-      if (helice)
-	helice->setRotation(gle::Vector3<GLfloat>(1, 0, 0), angle * -1000);
       camera.setPosition(gle::Vector3<GLfloat>(cos(angle/3) * -dist,
 					       0,//sin(angle/3) * dist/2,
 					       sin(angle/3) * -dist));
