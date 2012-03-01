@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Wed Feb 15 17:24:36 2012 gael jochaud-du-plessix
-// Last update Thu Mar  1 18:34:15 2012 gael jochaud-du-plessix
+// Last update Thu Mar  1 19:15:34 2012 gael jochaud-du-plessix
 //
 
 /*! 
@@ -69,17 +69,10 @@ int glEngine(int ac, char **av)
 
   if (model)
     {
-      std::vector<gle::Mesh*> childs = model->getChildren();
-      for (std::vector<gle::Mesh*>::iterator it = childs.begin();
-	   it != childs.end(); ++it)
-	{
-	  gle::Mesh* mesh = *it;
-	  if (mesh->getName() == "DisneyHead_hires" ||
-	      mesh->getName() == "Disney_hires")
-	    {
-	      scene << mesh;
-	    }
-	}
+      std::vector<gle::Mesh*> childs;
+      model->getChildrenByName("DisneyHead_hires", childs);
+      model->getChildrenByName("Disney_hires", childs);
+      scene << childs;
     }
   else
     exit(-1);
@@ -90,11 +83,16 @@ int glEngine(int ac, char **av)
   materialLight.setSpecularLightEnabled(false);
 
   gle::PointLight		l(gle::Vector3<GLfloat>(0, 20, 0), gle::Color<GLfloat>(0.8, 0, 0));
-  gle::Mesh*			sp = gle::Geometries::Sphere(&materialLight, 1, gle::Color<GLfloat>(0.8, 0, 0));
-  gle::PointLight		l2(gle::Vector3<GLfloat>(0, 0, -20), gle::Color<GLfloat>(0, 0, 0.8));
-  gle::Mesh*			sp2 = gle::Geometries::Sphere(&materialLight, 1, gle::Color<GLfloat>(0, 0, 0.8));
-  gle::PointLight		l3(gle::Vector3<GLfloat>(40, 0, 0), gle::Color<GLfloat>(0, 0.8, 0));
-  gle::Mesh*			sp3 = gle::Geometries::Sphere(&materialLight, 1, gle::Color<GLfloat>(0, 0.8, 0));
+  gle::Mesh*			sp = gle::Geometries::Sphere(&materialLight,
+							     1);
+  gle::PointLight		l2(gle::Vector3<GLfloat>(0, 0, -20),
+				   gle::Color<GLfloat>(0, 0, 0.8));
+  gle::Mesh*			sp2 = gle::Geometries::Sphere(&materialLight,
+							      1);
+  gle::PointLight		l3(gle::Vector3<GLfloat>(40, 0, 0),
+				   gle::Color<GLfloat>(0, 0.8, 0));
+  gle::Mesh*			sp3 = gle::Geometries::Sphere(&materialLight,
+							      1);
 
   sp->setPosition(gle::Vector3<GLfloat>(0, 20, 0));
   sp2->setPosition(gle::Vector3<GLfloat>(0, 0, -20));

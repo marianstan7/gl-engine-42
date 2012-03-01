@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Wed Feb 15 17:24:36 2012 gael jochaud-du-plessix
-// Last update Thu Mar  1 18:33:57 2012 gael jochaud-du-plessix
+// Last update Thu Mar  1 19:18:45 2012 gael jochaud-du-plessix
 //
 
 /*! \mainpage glEngine Reference documentation
@@ -122,13 +122,13 @@ int glEngine(int ac, char **av)
   materialLight.setDiffuseLightEnabled(false);
   materialLight.setSpecularLightEnabled(false);
   gle::PointLight l(gle::Vector3<GLfloat>(0, 20, 0), gle::Color<GLfloat>(0.8, 0, 0));
-  gle::Mesh* sp = gle::Geometries::Sphere(&materialLight, dist/100, gle::Color<GLfloat>(0.8, 0, 0));
+  gle::Mesh* sp = gle::Geometries::Sphere(&materialLight, dist/100);
   sp->setPosition(gle::Vector3<GLfloat>(0, 20, 0));
   gle::PointLight l2(gle::Vector3<GLfloat>(0, 0, -20), gle::Color<GLfloat>(0, 0, 0.8));
-  gle::Mesh* sp2 = gle::Geometries::Sphere(&materialLight, dist/100, gle::Color<GLfloat>(0, 0, 0.8));
+  gle::Mesh* sp2 = gle::Geometries::Sphere(&materialLight, dist/100);
   sp2->setPosition(gle::Vector3<GLfloat>(0, 0, -20));
   gle::PointLight l3(gle::Vector3<GLfloat>(40, 0, 0), gle::Color<GLfloat>(0, 0.8, 0));
-  gle::Mesh* sp3 = gle::Geometries::Sphere(&materialLight, dist/100, gle::Color<GLfloat>(0, 0.8, 0));
+  gle::Mesh* sp3 = gle::Geometries::Sphere(&materialLight, dist/100);
   sp3->setPosition(gle::Vector3<GLfloat>(40, 0, 0));
 
   scene << &camera << &material << &materialLight << sp << sp2 << sp3;
