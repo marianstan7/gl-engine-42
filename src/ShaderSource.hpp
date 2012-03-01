@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Tue Feb 21 15:47:17 2012 gael jochaud-du-plessix
-// Last update Thu Mar  1 18:02:12 2012 gael jochaud-du-plessix
+// Last update Thu Mar  1 19:41:07 2012 gael jochaud-du-plessix
 //
 
 #ifndef _GLE_SHADER_SOURCE_HPP_
@@ -49,6 +49,16 @@ namespace gle {
         extern const char *Body;
       }
 
+      //! Color map features
+
+      namespace ColorMap {
+	extern GLuint TextureCoordLocation;
+	extern const char * InputLocations;
+	extern const char * InputDeclarations;
+	extern const char * OutputDeclarations;
+	extern const char * Body;
+      }
+
     }
     
     //! Fragment shader sources
@@ -78,6 +88,16 @@ namespace gle {
 	extern const char *InputDeclarations;
 	extern const char *Body;
 
+      }
+
+      //! Color map features
+
+      namespace ColorMap {
+
+	extern const char * UniformDeclarations;
+	extern const char * InputDeclarations;
+	extern const char * Body;
+	
       }
 
     }

@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Wed Feb 29 19:44:13 2012 gael jochaud-du-plessix
-// Last update Thu Mar  1 19:16:22 2012 gael jochaud-du-plessix
+// Last update Thu Mar  1 22:17:24 2012 gael jochaud-du-plessix
 //
 
 #include <iostream>
@@ -71,15 +71,14 @@ int glEngine(int ac, char **av)
 
   srand(time(NULL));
 
-  gle::Mesh* cube = gle::Geometries::Cube(&material, 2);
-  cube->setRotation(gle::Vector3<GLfloat>(0, 1, 0), 45);
+  gle::ObjLoader loader;
+  gle::Mesh* marteau = loader.load("../models/marteau/hammer.obj", &material);
 
-  gle::Texture cubeTexture("models/companion_cube.jpg");
+  // material.setColorMapEnabled(true);
+  // material.setColorMap(&cubeTexture);
 
-  material.setColorMapEnabled(true);
-  material.setColorMap(&cubeTexture);
-
-  scene << cube;
+  if (marteau)
+    scene << marteau;
 
   gle::Material materialLight;
 

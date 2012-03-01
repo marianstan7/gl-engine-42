@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Mon Feb 20 22:50:35 2012 gael jochaud-du-plessix
-// Last update Thu Mar  1 18:23:37 2012 gael jochaud-du-plessix
+// Last update Thu Mar  1 22:15:29 2012 gael jochaud-du-plessix
 //
 
 #include <Material.hpp>
@@ -96,6 +96,11 @@ GLfloat gle::Material::getSpecularIntensity() const
   return (_specularLightEnabled ? _specularIntensity : 0);
 }
 
+bool gle::Material::isColorMapEnabled() const
+{
+  return (_colorMapEnabled);
+}
+
 void gle::Material::setColorMapEnabled(bool enabled)
 {
   _colorMapEnabled = enabled;
@@ -109,6 +114,8 @@ gle::Texture* gle::Material::getColorMap() const
 void gle::Material::setColorMap(gle::Texture* colorMap)
 {
   _colorMap = colorMap;
+  _color = gle::Color<GLfloat>(0, 0, 0);
+  _colorMapEnabled = true;
 }
 
 gle::Program* gle::Material::createProgram(Scene* scene)
@@ -132,26 +139,28 @@ gle::Program* gle::Material::createProgram(Scene* scene)
 
   // Get uniform locations
   program->getUniformLocation(gle::Program::MVMatrix);
-  program->getUniformLocation(gle::Program::PMatrix);
-  program->getUniformLocation(gle::Program::color);
+  program->getUniformLocation(gle::Program::PMatrix);  
+  program->getUniformLocation(gle::Program::Color);
+  if (isColorMapEnabled())
+    program->getUniformLocation(gle::Program::ColorMap);
   if (isLightEnabled() && scene->isLightEnabled() && scene->hasLights())
     program->getUniformLocation(gle::Program::NMatrix);
   if (isLightEnabled() && scene->isLightEnabled())
     {
-      program->getUniformLocation(gle::Program::ambientColor);
-      program->getUniformLocation(gle::Program::shininess);
-      program->getUniformLocation(gle::Program::specularIntensity);
-      program->getUniformLocation(gle::Program::diffuseIntensity);
+      program->getUniformLocation(gle::Program::AmbientColor);
+      program->getUniformLocation(gle::Program::Shininess);
+      program->getUniformLocation(gle::Program::SpecularIntensity);
+      program->getUniformLocation(gle::Program::DiffuseIntensity);
       if (scene->getDirectionalLightsSize())
 	{
-	  program->getUniformLocation(gle::Program::directionalLightDirection);
-	  program->getUniformLocation(gle::Program::directionalLightColor);
+	  program->getUniformLocation(gle::Program::DirectionalLightDirection);
+	  program->getUniformLocation(gle::Program::DirectionalLightColor);
 	}
       if (scene->getPointLightsSize())
 	{
-	  program->getUniformLocation(gle::Program::pointLightPosition);
-	  program->getUniformLocation(gle::Program::pointLightColor);	  
-	  program->getUniformLocation(gle::Program::pointLightSpecularColor);
+	  program->getUniformLocation(gle::Program::PointLightPosition);
+	  program->getUniformLocation(gle::Program::PointLightColor);	  
+	  program->getUniformLocation(gle::Program::PointLightSpecularColor);
 	}
     }
 
@@ -179,6 +188,8 @@ gle::Shader* gle::Material::_createVertexShader(Scene* scene)
   
   // Input locations
   shaderSource += gle::ShaderSource::Vertex::Default::InputLocations;
+  if (isColorMapEnabled())
+    shaderSource += gle::ShaderSource::Vertex::ColorMap::InputLocations;
 
   // Output locations
   shaderSource += gle::ShaderSource::Vertex::Default::OutputLocations;
@@ -190,14 +201,19 @@ gle::Shader* gle::Material::_createVertexShader(Scene* scene)
 
   // Input declarations
   shaderSource += gle::ShaderSource::Vertex::Default::InputDeclarations;
+  if (isColorMapEnabled())
+    shaderSource += gle::ShaderSource::Vertex::ColorMap::InputDeclarations;
   
   // Output declarations
   shaderSource += gle::ShaderSource::Vertex::Default::OutputDeclarations;
+  if (isColorMapEnabled())
+    shaderSource += gle::ShaderSource::Vertex::ColorMap::OutputDeclarations;
 
   // Shader body
-  shaderSource += gle::ShaderSource::Vertex::BodyBegin;
-  
+  shaderSource += gle::ShaderSource::Vertex::BodyBegin;  
   shaderSource += gle::ShaderSource::Vertex::Default::Body;
+  if (isColorMapEnabled())
+    shaderSource += gle::ShaderSource::Vertex::ColorMap::Body;
   if (isLightEnabled() && scene->isLightEnabled())
     shaderSource += gle::ShaderSource::Vertex::Light::Body;
 
@@ -218,6 +234,8 @@ gle::Shader* gle::Material::_createFragmentShader(Scene* scene)
 
   // Uniform declarations
   shaderSource += gle::ShaderSource::Fragment::Default::UniformDeclarations;
+  if (isColorMapEnabled())
+    shaderSource += gle::ShaderSource::Fragment::ColorMap::UniformDeclarations;
 
   // Input locations
   shaderSource += gle::ShaderSource::Fragment::Default::InputLocations;
@@ -227,6 +245,8 @@ gle::Shader* gle::Material::_createFragmentShader(Scene* scene)
 
   // Input declarations
   shaderSource += gle::ShaderSource::Fragment::Default::InputDeclarations;
+  if (isColorMapEnabled())
+    shaderSource += gle::ShaderSource::Fragment::ColorMap::InputDeclarations;
   if (isLightEnabled() && scene->isLightEnabled())
     shaderSource += gle::ShaderSource::Fragment::Light::InputDeclarations;
   
@@ -235,8 +255,9 @@ gle::Shader* gle::Material::_createFragmentShader(Scene* scene)
 
   // Shader body
   shaderSource += gle::ShaderSource::Fragment::BodyBegin;
-  
   shaderSource += gle::ShaderSource::Fragment::Default::Body;
+  if (isColorMapEnabled() && scene->isLightEnabled())
+    shaderSource += gle::ShaderSource::Fragment::ColorMap::Body;
   if (isLightEnabled() && scene->isLightEnabled())
     shaderSource += gle::ShaderSource::Fragment::Light::Body;
 

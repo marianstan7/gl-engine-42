@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Mon Feb 20 20:48:54 2012 gael jochaud-du-plessix
-// Last update Thu Mar  1 19:47:11 2012 loick michard
+// Last update Thu Mar  1 21:29:21 2012 gael jochaud-du-plessix
 //
 
 #include <Renderer.hpp>
@@ -104,9 +104,33 @@ void gle::Renderer::_renderMesh(gle::Scene* scene, gle::Mesh* mesh,
   glVertexAttribPointer(gle::ShaderSource::Vertex::Default::NormalLocation,
 			3, GL_FLOAT, GL_FALSE, 0, 0);
 
+  // Set up ColorMap
+  if (material->isColorMapEnabled())
+    {
+      // Set texture coords attribute
+      gle::Buffer<GLfloat> *textureCoordsBuffer =
+        mesh->getTextureCoordsBuffer();
+      glEnableVertexAttribArray(gle::ShaderSource::Vertex::
+                                ColorMap::TextureCoordLocation);
+      textureCoordsBuffer->bind();
+      glVertexAttribPointer(gle::ShaderSource::Vertex::
+                            ColorMap::TextureCoordLocation,
+                            2, GL_FLOAT, GL_FALSE, 0, 0);
+      // Set texture to the shader
+      gle::Texture* colorMap = material->getColorMap();
+      glActiveTexture(gle::Program::ColorMapTexture);
+      colorMap->bind();
+      _currentProgram->setUniform(gle::Program::ColorMap,
+      				  gle::Program::ColorMapTextureIndex);
+    }
+
   // Draw the mesh elements
   indexesBuffer->bind();
   glDrawElements(GL_TRIANGLES, mesh->getNbIndexes(), GL_UNSIGNED_INT, 0);
+
+  if (material->isColorMapEnabled())
+    glDisableVertexAttribArray(gle::ShaderSource::Vertex::
+			       ColorMap::TextureCoordLocation);
 }
 
 void gle::Renderer::_setCurrentProgram(gle::Material* material,
@@ -130,14 +154,14 @@ void gle::Renderer::_setCurrentProgram(gle::Material* material,
 void gle::Renderer::_setMaterialUniforms(gle::Material* material,
 					 gle::Scene* scene)
 {
-  _currentProgram->setUniform(gle::Program::color, material->getColor());
+  _currentProgram->setUniform(gle::Program::Color, material->getColor());
   if (material->isLightEnabled() && scene->isLightEnabled())
     {
-      _currentProgram->setUniform(gle::Program::shininess,
+      _currentProgram->setUniform(gle::Program::Shininess,
 				    material->getShininess());
-      _currentProgram->setUniform(gle::Program::diffuseIntensity,
+      _currentProgram->setUniform(gle::Program::DiffuseIntensity,
 				    material->getDiffuseIntensity());
-      _currentProgram->setUniform(gle::Program::specularIntensity,
+      _currentProgram->setUniform(gle::Program::SpecularIntensity,
 				    material->getSpecularIntensity());
     }
 }
@@ -151,28 +175,28 @@ void gle::Renderer::_setSceneUniforms(gle::Material* material,
   // Send light infos to the shader
   if (material->isLightEnabled() && scene->isLightEnabled())
     {
-      _currentProgram->setUniform3v(gle::Program::ambientColor,
+      _currentProgram->setUniform3v(gle::Program::AmbientColor,
 				    scene->getAmbientColor(),
 				    1);
       if (scene->getDirectionalLightsSize())
 	{
 	  _currentProgram->setUniform3v(gle::Program::
-					directionalLightDirection,
+					DirectionalLightDirection,
 					scene->getDirectionalLightsDirection(),
 					scene->getDirectionalLightsSize());
-	  _currentProgram->setUniform3v(gle::Program::directionalLightColor,
+	  _currentProgram->setUniform3v(gle::Program::DirectionalLightColor,
 					scene->getDirectionalLightsColor(),
 					scene->getDirectionalLightsSize());
 	}
       if (scene->getPointLightsSize())
 	{
-	  _currentProgram->setUniform3v(gle::Program::pointLightPosition,
+	  _currentProgram->setUniform3v(gle::Program::PointLightPosition,
 					scene->getPointLightsPosition(),
 					scene->getPointLightsSize());
-	  _currentProgram->setUniform3v(gle::Program::pointLightColor,
+	  _currentProgram->setUniform3v(gle::Program::PointLightColor,
 					scene->getPointLightsColor(),
 					scene->getPointLightsSize());
-	  _currentProgram->setUniform3v(gle::Program::pointLightSpecularColor,
+	  _currentProgram->setUniform3v(gle::Program::PointLightSpecularColor,
 					scene->getPointLightsSpecularColor(),
 					scene->getPointLightsSize());
 	}
