@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Mon Feb 20 20:48:54 2012 gael jochaud-du-plessix
-// Last update Thu Mar  1 18:30:40 2012 gael jochaud-du-plessix
+// Last update Thu Mar  1 19:26:50 2012 gael jochaud-du-plessix
 //
 
 #include <Renderer.hpp>
@@ -90,10 +90,8 @@ void gle::Renderer::_renderMesh(gle::Scene* scene, gle::Mesh* mesh,
       || material == NULL)
     return ;
 
-  _setCurrentProgram(scene, material);
+  _setCurrentProgram(material, scene, camera);
 
-  _setSceneUniforms(material, scene, camera);
-  _setMaterialUniforms(material, scene);
   _setMeshUniforms(material, scene, mesh);
   
   // Set Position buffer
@@ -111,8 +109,9 @@ void gle::Renderer::_renderMesh(gle::Scene* scene, gle::Mesh* mesh,
   glDrawElements(GL_TRIANGLES, mesh->getNbIndexes(), GL_UNSIGNED_INT, 0);
 }
 
-void gle::Renderer::_setCurrentProgram(gle::Scene* scene,
-				       gle::Material* material)
+void gle::Renderer::_setCurrentProgram(gle::Material* material,
+				       gle::Scene* scene,
+				       gle::Camera* camera)
 {
   if (material == _currentMaterial)
     return ;
@@ -123,6 +122,9 @@ void gle::Renderer::_setCurrentProgram(gle::Scene* scene,
     program->use();
   _currentProgram = program;
   _currentMaterial = material;
+
+  _setSceneUniforms(material, scene, camera);
+  _setMaterialUniforms(material, scene);
 }
 
 void gle::Renderer::_setMaterialUniforms(gle::Material* material,
