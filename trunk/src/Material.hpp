@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Mon Feb 20 22:30:11 2012 gael jochaud-du-plessix
-// Last update Thu Mar  1 18:17:18 2012 gael jochaud-du-plessix
+// Last update Thu Mar  1 20:12:56 2012 gael jochaud-du-plessix
 //
 
 #ifndef _GLE_MATERIAL_HPP_

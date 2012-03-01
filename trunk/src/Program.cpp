@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Fri Feb 17 16:21:14 2012 gael jochaud-du-plessix
-// Last update Thu Mar  1 18:29:24 2012 gael jochaud-du-plessix
+// Last update Thu Mar  1 21:26:49 2012 gael jochaud-du-plessix
 //
 
 #include <Program.hpp>
@@ -16,17 +16,21 @@ gle::Program::Program() :
 {
   _uniformNames[gle::Program::MVMatrix] = "gle_MVMatrix";
   _uniformNames[gle::Program::PMatrix] = "gle_PMatrix";
-  _uniformNames[gle::Program::color] = "gle_color";
+  _uniformNames[gle::Program::Color] = "gle_color";
+  _uniformNames[gle::Program::ColorMap] = "gle_colorMap";
   _uniformNames[gle::Program::NMatrix] = "gle_NMatrix";
-  _uniformNames[gle::Program::ambientColor] = "gle_ambientColor";
-  _uniformNames[gle::Program::directionalLightDirection] = "gle_directionalLightDirection";
-  _uniformNames[gle::Program::directionalLightColor] = "gle_directionalLightColor";
-  _uniformNames[gle::Program::pointLightPosition] = "gle_pointLightPosition";
-  _uniformNames[gle::Program::pointLightColor] = "gle_pointLightColor";
-  _uniformNames[gle::Program::pointLightSpecularColor] = "gle_pointLightSpecularColor";
-  _uniformNames[gle::Program::shininess] = "gle_shininess";
-  _uniformNames[gle::Program::diffuseIntensity] = "gle_diffuseIntensity";
-  _uniformNames[gle::Program::specularIntensity] = "gle_specularIntensity";
+  _uniformNames[gle::Program::AmbientColor] = "gle_ambientColor";
+  _uniformNames[gle::Program::DirectionalLightDirection] =
+    "gle_directionalLightDirection";
+  _uniformNames[gle::Program::DirectionalLightColor] =
+    "gle_directionalLightColor";
+  _uniformNames[gle::Program::PointLightPosition] = "gle_pointLightPosition";
+  _uniformNames[gle::Program::PointLightColor] = "gle_pointLightColor";
+  _uniformNames[gle::Program::PointLightSpecularColor] =
+    "gle_pointLightSpecularColor";
+  _uniformNames[gle::Program::Shininess] = "gle_shininess";
+  _uniformNames[gle::Program::DiffuseIntensity] = "gle_diffuseIntensity";
+  _uniformNames[gle::Program::SpecularIntensity] = "gle_specularIntensity";
 
   _id = glCreateProgram();
   if (_id == 0)
@@ -132,13 +136,18 @@ void gle::Program::setUniform3v(Uniform uniform, GLfloat* values,
   glUniform3fv(_uniformLocations[uniform], size, values);
 }
 
+void gle::Program::setUniform(Uniform uniform,
+			      gle::Color<GLfloat> const & color)
+{
+  glUniform3f(_uniformLocations[uniform], color.r, color.g, color.b);
+}
+
 void gle::Program::setUniform(Uniform uniform, GLfloat value)
 {
   glUniform1f(_uniformLocations[uniform], value);
 }
 
-void gle::Program::setUniform(Uniform uniform,
-			      gle::Color<GLfloat> const & color)
+void gle::Program::setUniform(Uniform uniform, TextureUnit texture)
 {
-  glUniform3f(_uniformLocations[uniform], color.r, color.g, color.b);
+  glUniform1i(_uniformLocations[uniform], texture);
 }

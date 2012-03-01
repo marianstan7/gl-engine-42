@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Fri Feb 17 16:21:24 2012 gael jochaud-du-plessix
-// Last update Thu Mar  1 17:53:55 2012 gael jochaud-du-plessix
+// Last update Thu Mar  1 21:26:14 2012 gael jochaud-du-plessix
 //
 
 #ifndef _GLE_PROGRAM_HPP_
@@ -33,17 +33,23 @@ namespace gle {
     enum Uniform {
       MVMatrix,
       PMatrix,
-      color,
+      Color,
+      ColorMap,
       NMatrix,
-      ambientColor,
-      directionalLightDirection,
-      directionalLightColor,
-      pointLightPosition,
-      pointLightColor,
-      pointLightSpecularColor,
-      shininess,
-      specularIntensity,
-      diffuseIntensity
+      AmbientColor,
+      DirectionalLightDirection,
+      DirectionalLightColor,
+      PointLightPosition,
+      PointLightColor,
+      PointLightSpecularColor,
+      Shininess,
+      SpecularIntensity,
+      DiffuseIntensity
+    };
+
+    enum TextureUnit {
+      ColorMapTexture = GL_TEXTURE0,
+      ColorMapTextureIndex = 0,
     };
     
     //! Create a new OpenGL Program
@@ -104,6 +110,9 @@ namespace gle {
 
     //! Set a value of an uniform GLfloat
     void setUniform(Uniform uniform, GLfloat value);
+
+    //! Set a value of an uniform texture
+    void setUniform(Uniform uniform, TextureUnit texture);
 
     //! Return the OpenGL Program identifier
     GLuint getId() const;
