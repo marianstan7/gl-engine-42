@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Wed Feb 15 17:24:36 2012 gael jochaud-du-plessix
-// Last update Thu Mar  1 21:33:28 2012 loick michard
+// Last update Thu Mar  1 22:52:38 2012 loick michard
 //
 
 /*! 
@@ -63,22 +63,36 @@ int glEngine()
   gle::Mesh solarSystem;
 
   gle::Material sunMaterial;
-  sunMaterial.setColor(gle::Color<GLfloat>(1, 1, 0));
-  gle::Mesh *sun = gle::Geometries::Sphere(&sunMaterial, 100);
+  sunMaterial.setColorMap(new gle::Texture("sun.jpg"));
+  //sunMaterial.setColor(gle::Color<GLfloat>(1, 1, 0));
+  gle::Mesh *sun = gle::Geometries::Sphere(&sunMaterial, 100, 300, 300);
   solarSystem.addChild(sun);
   gle::Mesh earthSystem;
   gle::Material earthMaterial;
-  //earthMaterial.setDiffuseLightEnabled(true);
+  earthMaterial.setDiffuseLightEnabled(true);
   earthMaterial.setSpecularLightEnabled(true);
   earthMaterial.setShininess(32);
+  earthMaterial.setColorMap(new gle::Texture("earth.jpg"));
   gle::Mesh *earth = gle::Geometries::Sphere(&earthMaterial, 40, 300, 300);
   earthSystem.addChild(earth);
   earth->setPosition(gle::Vector3<GLfloat>(500, 0, 0));
+  solarSystem.addChild(&earthSystem);
 
+  gle::Mesh moonSystem;
+  gle::Material moonMaterial;
+  moonMaterial.setDiffuseLightEnabled(true);
+  moonMaterial.setSpecularLightEnabled(true);
+  moonMaterial.setShininess(32);
+  moonMaterial.setColorMap(new gle::Texture("moon.jpg"));
+  gle::Mesh *moon = gle::Geometries::Sphere(&moonMaterial, 7, 300, 300);
+  moonSystem.addChild(moon);
+  earth->addChild(&moonSystem);
+  moon->setPosition(gle::Vector3<GLfloat>(100, 0, 0));
   gle::PointLight sunLight(gle::Vector3<GLfloat>(0, 0, 0),
 			   gle::Color<GLfloat>(1, 1, 0.8),
 			   gle::Color<GLfloat>(1, 1, 0.8));
   scene << sun << &sunMaterial << &camera << earth << &earthMaterial << &sunLight;
+  scene << &moonMaterial << moon;
   scene.setLightEnabled(true, gle::Color<GLfloat>(0.1, 0.1, 0.1));
 
   gle::Renderer		renderer;
@@ -111,7 +125,9 @@ int glEngine()
 	  if (Event.Type == sf::Event::Resized)
 	    glViewport(0, 0, Event.Size.Width, Event.Size.Height);
 	}
-      earthSystem.setRotation(gle::Vector3<GLfloat>(0, 1, 0), angle * 100);
+      earthSystem.setRotation(gle::Vector3<GLfloat>(0, 1, 0), angle * 10);
+      earth->setRotation(gle::Vector3<GLfloat>(0, 1, 0), angle * 100);
+      sun->setRotation(gle::Vector3<GLfloat>(0, 1, 0), angle * 10);
       renderer.render(&scene);
       App.Display();
     }
