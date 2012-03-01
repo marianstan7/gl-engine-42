@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Wed Feb 15 17:24:36 2012 gael jochaud-du-plessix
-// Last update Thu Mar  1 19:34:21 2012 loick michard
+// Last update Thu Mar  1 21:33:28 2012 loick michard
 //
 
 /*! 
@@ -26,14 +26,14 @@
 #define WIDTH 1200.0
 #define HEIGHT 800.0
 
-int glEngine(int, char**);
+int glEngine();
 
-int main(int ac, char **av)
+int main()
 {
   int ret;
 
   try {
-    ret = glEngine(ac, av);
+    ret = glEngine();
   }
   catch (std::exception *e)
     {
@@ -42,7 +42,7 @@ int main(int ac, char **av)
   return (ret);
 }
 
-int glEngine(int ac, char **av)
+int glEngine()
 {
   sf::ContextSettings context;
   context.DepthBits = 24;
@@ -86,7 +86,6 @@ int glEngine(int ac, char **av)
   sf::Clock		clock;
   sf::Clock		time;
   size_t		frameCounter = 0;
-  float			dist = 170;
   
   renderer.createPrograms(&scene);
   while (App.IsOpen())
