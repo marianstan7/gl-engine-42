@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Mon Feb 20 20:48:54 2012 gael jochaud-du-plessix
-// Last update Thu Mar  1 21:29:21 2012 gael jochaud-du-plessix
+// Last update Thu Mar  1 23:00:32 2012 gael jochaud-du-plessix
 //
 
 #include <Renderer.hpp>
@@ -105,11 +105,10 @@ void gle::Renderer::_renderMesh(gle::Scene* scene, gle::Mesh* mesh,
 			3, GL_FLOAT, GL_FALSE, 0, 0);
 
   // Set up ColorMap
-  if (material->isColorMapEnabled())
+  gle::Buffer<GLfloat> *textureCoordsBuffer = mesh->getTextureCoordsBuffer();
+  if (material->isColorMapEnabled() && textureCoordsBuffer)
     {
       // Set texture coords attribute
-      gle::Buffer<GLfloat> *textureCoordsBuffer =
-        mesh->getTextureCoordsBuffer();
       glEnableVertexAttribArray(gle::ShaderSource::Vertex::
                                 ColorMap::TextureCoordLocation);
       textureCoordsBuffer->bind();
