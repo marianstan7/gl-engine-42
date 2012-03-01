@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Tue Feb 21 15:47:17 2012 gael jochaud-du-plessix
-// Last update Thu Feb 23 18:49:30 2012 loick michard
+// Last update Thu Mar  1 18:02:12 2012 gael jochaud-du-plessix
 //
 
 #ifndef _GLE_SHADER_SOURCE_HPP_
@@ -36,21 +36,8 @@ namespace gle {
 	extern const char *Body;
 
       }
-
-      //! Color features
-
-      namespace Color {
-
-	extern const char *Head;
-	extern const char *UniformDeclarations;
-	extern GLuint ColorLocation;
-	extern const char *InputLocations;
-	extern const char *InputDeclarations;
-	extern const char *OutputLocations;
-	extern const char *OutputDeclarations;
-	extern const char *Body;
-
-      }
+      
+      //! Light features
 
       namespace Light {
 	extern const char *Head;
@@ -75,6 +62,7 @@ namespace gle {
       namespace Default {
 	
 	extern const char *Head;
+	extern const char * UniformDeclarations;
 	extern const char * InputLocations;
 	extern const char *InputDeclarations;
 	extern const char *OutputLocations;
@@ -83,15 +71,11 @@ namespace gle {
 
       }
 
-      //! Color features
+      //! Light features
 
-      namespace Color {
-
-	extern const char *Head;
-	extern const char *InputLocations;
+      namespace Light {
+	
 	extern const char *InputDeclarations;
-	extern const char *OutputLocations;
-	extern const char *OutputDeclarations;
 	extern const char *Body;
 
       }

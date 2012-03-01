@@ -5,7 +5,7 @@
 // Login   <michar_l@epitech.net>
 // 
 // Started on  Mon Feb 20 22:34:18 2012 loick michard
-// Last update Tue Feb 28 17:00:55 2012 gael jochaud-du-plessix
+// Last update Wed Feb 29 20:02:15 2012 gael jochaud-du-plessix
 //
 
 #include <cmath>
@@ -111,10 +111,52 @@ gle::Mesh* gle::Geometries::Cuboid(gle::Material* material,
     -1.0,  0.0,  0.0
   };
 
-  return (new gle::Mesh(material,
-			vertexes, sizeof(vertexes) / sizeof(GLfloat),
-			normals, sizeof(normals) / sizeof(GLfloat),
-			indexes, sizeof(indexes) / sizeof(GLuint)));
+  GLfloat textureCoords[] = {
+    // Front face
+    0.0, 0.0,
+    1.0, 0.0,
+    1.0, 1.0,
+    0.0, 1.0,
+
+    // Back face
+    1.0, 0.0,
+    1.0, 1.0,
+    0.0, 1.0,
+    0.0, 0.0,
+
+    // Top face
+    0.0, 1.0,
+    0.0, 0.0,
+    1.0, 0.0,
+    1.0, 1.0,
+
+    // Bottom face
+    1.0, 1.0,
+    0.0, 1.0,
+    0.0, 0.0,
+    1.0, 0.0,
+
+    // Right face
+    1.0, 0.0,
+    1.0, 1.0,
+    0.0, 1.0,
+    0.0, 0.0,
+
+    // Left face
+    0.0, 0.0,
+    1.0, 0.0,
+    1.0, 1.0,
+    0.0, 1.0
+  };
+
+  gle::Mesh *cuboid = new gle::Mesh(material,
+				    vertexes,
+				    sizeof(vertexes) / sizeof(GLfloat),
+				    normals, sizeof(normals) / sizeof(GLfloat),
+				    indexes, sizeof(indexes) / sizeof(GLuint));
+  cuboid->setTextureCoords(textureCoords,
+			   sizeof(textureCoords) / sizeof(GLfloat));
+  return (cuboid);
 }
 
 gle::Mesh* gle::Geometries::Sphere(gle::Material* material,

@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Mon Feb 20 19:12:49 2012 gael jochaud-du-plessix
-// Last update Wed Feb 29 16:15:59 2012 loick michard
+// Last update Thu Mar  1 16:18:54 2012 gael jochaud-du-plessix
 //
 
 #include <Scene.hpp>
@@ -235,4 +235,9 @@ GLfloat* gle::Scene::getPointLightsSpecularColor() const
 GLsizeiptr gle::Scene::getPointLightsSize() const
 {
   return (_pointLightsSize);
+}
+
+bool gle::Scene::hasLights() const
+{
+  return (getDirectionalLightsSize() || getPointLightsSize());
 }

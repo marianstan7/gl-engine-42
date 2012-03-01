@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Wed Feb 15 17:24:36 2012 gael jochaud-du-plessix
-// Last update Wed Feb 29 16:11:22 2012 loick michard
+// Last update Thu Mar  1 17:28:50 2012 gael jochaud-du-plessix
 //
 
 /*! 
@@ -58,11 +58,12 @@ int glEngine(int ac, char **av)
 				       45, 1, 1, 10000);
   gle::Material			material;
 
-  material.setColorEnabled(false);
+  material.setDiffuseLightEnabled(true);
+  material.setSpecularLightEnabled(true);
   material.setShininess(32);
 
-  gle::ObjLoader		loader;
-  gle::Mesh*			model = loader.load("../models/WaltDisneyHeads.obj");
+  gle::ObjLoader loader;
+  gle::Mesh* model = loader.load("../models/WaltDisneyHeads.obj");
 
   if (model)
     {
@@ -84,7 +85,8 @@ int glEngine(int ac, char **av)
 
   gle::Material			materialLight;
 
-  materialLight.isLight(true);
+  materialLight.setDiffuseLightEnabled(false);
+  materialLight.setSpecularLightEnabled(false);
 
   gle::PointLight		l(gle::Vector3<GLfloat>(0, 20, 0), gle::Color<GLfloat>(0.8, 0, 0));
   gle::Mesh*			sp = gle::Geometries::Sphere(&materialLight, 1, gle::Color<GLfloat>(0.8, 0, 0));

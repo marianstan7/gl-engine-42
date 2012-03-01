@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Mon Feb 20 20:48:54 2012 gael jochaud-du-plessix
-// Last update Tue Feb 28 17:05:28 2012 gael jochaud-du-plessix
+// Last update Thu Mar  1 17:51:36 2012 gael jochaud-du-plessix
 //
 
 #include <Renderer.hpp>
@@ -81,9 +81,6 @@ void gle::Renderer::createPrograms(gle::Scene* scene)
 void gle::Renderer::_renderMesh(gle::Scene* scene, gle::Mesh* mesh,
 				gle::Camera* camera)
 {
-  gle::Matrix4<GLfloat> & projectionMatrix = camera->getMatrix();
-  gle::Matrix4<GLfloat> & mvMatrix = mesh->getMatrix();
-  gle::Matrix3<GLfloat> & normalMatrix = mesh->getNormalMatrix();
   gle::Buffer<GLfloat> * vertexesBuffer = mesh->getVertexesBuffer();
   gle::Buffer<GLfloat> * normalsBuffer = mesh->getNormalsBuffer();
   gle::Buffer<GLuint> * indexesBuffer = mesh->getIndexesBuffer();
@@ -91,25 +88,70 @@ void gle::Renderer::_renderMesh(gle::Scene* scene, gle::Mesh* mesh,
 
   _setCurrentProgram(scene, material);
 
-  // Send projection and model view matrix to the shader
+  _setSceneUniforms(material, scene, camera);
+  _setMaterialUniforms(material, scene);
+  _setMeshUniforms(material, scene, mesh);
+  
+  // Set Position buffer
+  vertexesBuffer->bind();
+  glVertexAttribPointer(gle::ShaderSource::Vertex::Default::PositionLocation,
+			3, GL_FLOAT, GL_FALSE, 0, 0);
+
+  // Set Normal buffer
+  normalsBuffer->bind();
+  glVertexAttribPointer(gle::ShaderSource::Vertex::Default::NormalLocation,
+			3, GL_FLOAT, GL_FALSE, 0, 0);
+
+  // Draw the mesh elements
+  indexesBuffer->bind();
+  glDrawElements(GL_TRIANGLES, mesh->getNbIndexes(), GL_UNSIGNED_INT, 0);
+}
+
+void gle::Renderer::_setCurrentProgram(gle::Scene* scene,
+				       gle::Material* material)
+{
+  if (material == _currentMaterial)
+    return ;
+  std::map<gle::Material*, gle::Program*> & programs = scene->getPrograms();
+  gle::Program* program = programs[material];
+
+  if (program && program != _currentProgram)
+    program->use();
+  _currentProgram = program;
+  _currentMaterial = material;
+}
+
+void gle::Renderer::_setMaterialUniforms(gle::Material* material,
+					 gle::Scene* scene)
+{
+  _currentProgram->setUniform(gle::Program::color, material->getColor());
+  if (material->isLightEnabled() && scene->isLightEnabled())
+    {
+      _currentProgram->setUniform(gle::Program::shininess,
+				    material->getShininess());
+      _currentProgram->setUniform(gle::Program::diffuseIntensity,
+				    material->getDiffuseIntensity());
+      _currentProgram->setUniform(gle::Program::specularIntensity,
+				    material->getSpecularIntensity());
+    }
+}
+
+void gle::Renderer::_setSceneUniforms(gle::Material* material,
+				      gle::Scene* scene, gle::Camera* camera)
+{
+  gle::Matrix4<GLfloat> & projectionMatrix = camera->getMatrix();
   _currentProgram->setUniform(gle::Program::PMatrix, projectionMatrix);
-  _currentProgram->setUniform(gle::Program::MVMatrix, mvMatrix);
+
   // Send light infos to the shader
-  if (!material->isLight() && scene->isLightEnabled() &&
-      (scene->getDirectionalLightsSize() || scene->getPointLightsSize()))
-    _currentProgram->setUniform(gle::Program::NMatrix, normalMatrix);
-  if (!material->isLight() && scene->isLightEnabled())
+  if (material->isLightEnabled() && scene->isLightEnabled())
     {
       _currentProgram->setUniform3v(gle::Program::ambientColor,
 				    scene->getAmbientColor(),
 				    1);
-      _currentProgram->setUniform1f(gle::Program::shininess,
-				    material->getShininess());
-      _currentProgram->setUniform1f(gle::Program::specularIntensity,
-				    material->getSpecularIntensity());
       if (scene->getDirectionalLightsSize())
 	{
-	  _currentProgram->setUniform3v(gle::Program::directionalLightDirection,
+	  _currentProgram->setUniform3v(gle::Program::
+					directionalLightDirection,
 					scene->getDirectionalLightsDirection(),
 					scene->getDirectionalLightsSize());
 	  _currentProgram->setUniform3v(gle::Program::directionalLightColor,
@@ -129,46 +171,20 @@ void gle::Renderer::_renderMesh(gle::Scene* scene, gle::Mesh* mesh,
 					scene->getPointLightsSize());
 	}
     }
-  // Set Position buffer
-  vertexesBuffer->bind();
-  glVertexAttribPointer(gle::ShaderSource::Vertex::Default::PositionLocation,
-			3, GL_FLOAT, GL_FALSE, 0, 0);
-  // Set Normal buffer
-  normalsBuffer->bind();
-  glVertexAttribPointer(gle::ShaderSource::Vertex::Default::NormalLocation,
-			3, GL_FLOAT, GL_FALSE, 0, 0);
-  // Set Color buffer
-  if (material->isLight() || material->isColorEnabled())
-    {
-      gle::Buffer<GLfloat> * colorsBuffer = mesh->getColorsBuffer();
-      if (colorsBuffer)
-	{
-	  glEnableVertexAttribArray(gle::ShaderSource::Vertex::
-				    Color::ColorLocation);
-	  colorsBuffer->bind();
-	  glVertexAttribPointer(gle::ShaderSource::Vertex::
-				Color::ColorLocation,
-				4, GL_FLOAT, GL_FALSE, 0, 0);
-	}
-    }
-  // Draw the mesh elements
-  indexesBuffer->bind();
-  glDrawElements(GL_TRIANGLES, mesh->getNbIndexes(), GL_UNSIGNED_INT, 0);
-  // Disable potentialy unused attibs arrays
-  if (material->isLight() || material->isColorEnabled())
-    glDisableVertexAttribArray(gle::ShaderSource::Vertex::Color::ColorLocation);
+  
 }
 
-void gle::Renderer::_setCurrentProgram(gle::Scene* scene,
-				       gle::Material* material)
+void gle::Renderer::_setMeshUniforms(gle::Material* material,
+				     gle::Scene* scene, gle::Mesh* mesh)
 {
-  if (material == _currentMaterial)
-    return ;
-  std::map<gle::Material*, gle::Program*> & programs = scene->getPrograms();
-  gle::Program* program = programs[material];
+  gle::Matrix4<GLfloat> & mvMatrix = mesh->getMatrix();
+  gle::Matrix3<GLfloat> & normalMatrix = mesh->getNormalMatrix();
 
-  if (program && program != _currentProgram)
-    program->use();
-  _currentProgram = program;
-  _currentMaterial = material;
+  // Set modelview matrix
+  _currentProgram->setUniform(gle::Program::MVMatrix, mvMatrix);
+
+  // Set normals matrix
+  if (material->isLightEnabled() && scene->isLightEnabled() &&
+      scene->hasLights())
+    _currentProgram->setUniform(gle::Program::NMatrix, normalMatrix);
 }

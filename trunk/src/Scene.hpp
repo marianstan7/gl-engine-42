@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Mon Feb 20 18:18:01 2012 gael jochaud-du-plessix
-// Last update Wed Feb 29 16:54:45 2012 loick michard
+// Last update Thu Mar  1 16:15:14 2012 gael jochaud-du-plessix
 //
 
 #ifndef _GLE_SCENE_HPP_
@@ -196,6 +196,10 @@ namespace gle {
     //! Get number of point lights in the scene
 
     GLsizeiptr getPointLightsSize() const;
+
+    //! Return true if there are lights in the scene (point or directional)
+
+    bool hasLights() const;
 
     //! Update lights
     /*!

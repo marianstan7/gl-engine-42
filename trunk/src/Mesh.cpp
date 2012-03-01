@@ -5,7 +5,7 @@
 // Login   <michar_l@epitech.net>
 // 
 // Started on  Mon Feb 20 18:25:23 2012 loick michard
-// Last update Wed Feb 29 16:07:34 2012 loick michard
+// Last update Thu Mar  1 14:56:28 2012 gael jochaud-du-plessix
 //
 
 #include <algorithm>
@@ -20,6 +20,7 @@ gle::Mesh::Mesh(Material* material,
     _material(material),
     _vertexes(NULL),
     _normals(NULL),
+    _textureCoords(NULL),
     _indexes(NULL),
     _colors(NULL), _nbIndexes(nbIndexes),
     _position(0, 0, 0), _hasTarget(false), _parentMatrix(NULL)
@@ -51,6 +52,7 @@ gle::Mesh::Mesh(Material* material,
     _material(material),
     _vertexes(NULL),
     _normals(NULL),
+    _textureCoords(NULL),
     _indexes(NULL),
     _colors(NULL), _nbIndexes(0),
     _position(0, 0, 0), _hasTarget(false), _parentMatrix(NULL)
@@ -163,6 +165,17 @@ void gle::Mesh::setNormals(const GLfloat* normals, GLsizeiptr nbNormals)
     _normals = new gle::Buffer<GLfloat>(gle::Buffer<GLfloat>::VertexArray,
 					gle::Buffer<GLfloat>::StaticDraw,
 					nbNormals, normals);
+}
+
+void gle::Mesh::setTextureCoords(const GLfloat* textureCoords, GLsizeiptr size)
+{
+  if (_textureCoords)
+    _textureCoords->resize(size, textureCoords);
+  else
+    _textureCoords =
+      new gle::Buffer<GLfloat>(gle::Buffer<GLfloat>::VertexArray,
+                               gle::Buffer<GLfloat>::StaticDraw,
+                               size, textureCoords);
 }
 
 void gle::Mesh::setIndexes(const GLuint* indexes, GLsizeiptr nbIndexes)
@@ -297,6 +310,11 @@ gle::Buffer<GLfloat> * gle::Mesh::getVertexesBuffer()
 gle::Buffer<GLfloat> * gle::Mesh::getNormalsBuffer()
 {
   return (_normals);
+}
+
+gle::Buffer<GLfloat> * gle::Mesh::getTextureCoordsBuffer()
+{
+  return (_textureCoords);
 }
 
 gle::Buffer<GLuint> * gle::Mesh::getIndexesBuffer()

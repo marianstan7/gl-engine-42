@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Wed Feb 15 17:24:36 2012 gael jochaud-du-plessix
-// Last update Wed Feb 29 11:47:10 2012 loick michard
+// Last update Thu Mar  1 17:20:59 2012 gael jochaud-du-plessix
 //
 
 /*! \mainpage glEngine Reference documentation
@@ -71,7 +71,9 @@ int glEngine(int ac, char **av)
 				45, 1, 1, 10000);
   gle::Material material;
 
-  material.setColorEnabled(false);
+  material.setDiffuseLightEnabled(true);
+  material.setSpecularLightEnabled(true);
+
   material.setShininess(32);
 
   gle::ObjLoader loader;
@@ -133,7 +135,8 @@ int glEngine(int ac, char **av)
 
   gle::Material materialLight;
 
-  materialLight.isLight(true);
+  materialLight.setDiffuseLightEnabled(false);
+  materialLight.setSpecularLightEnabled(false);
   gle::PointLight l(gle::Vector3<GLfloat>(0, 20, 0), gle::Color<GLfloat>(0.8, 0, 0));
   gle::Mesh* sp = gle::Geometries::Sphere(&materialLight, dist/100, gle::Color<GLfloat>(0.8, 0, 0));
   sp->setPosition(gle::Vector3<GLfloat>(0, 20, 0));

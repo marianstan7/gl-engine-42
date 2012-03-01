@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Tue Feb 21 15:47:17 2012 gael jochaud-du-plessix
-// Last update Wed Feb 29 12:07:55 2012 loick michard
+// Last update Thu Mar  1 17:23:32 2012 gael jochaud-du-plessix
 //
 
 #include <gle/opengl.h>
@@ -18,17 +18,18 @@ const char *gle::ShaderSource::Vertex::Light::Head =
   ;
 
 const char *gle::ShaderSource::Vertex::Light::UniformDeclarations =
-  "uniform vec3 ambientColor;\n"
-  "uniform float shininess;\n"
-  "uniform float specularIntensity;\n"
+  "uniform vec3 gle_ambientColor;\n"
+  "uniform float gle_shininess;\n"
+  "uniform float gle_specularIntensity;\n"
+  "uniform float gle_diffuseIntensity;\n"
   "#if NB_DIRECTIONAL_LIGHTS > 0\n"
-  "uniform vec3 directionalLightDirection[NB_DIRECTIONAL_LIGHTS];\n"
-  "uniform vec3 directionalLightColor[NB_DIRECTIONAL_LIGHTS];\n"
+  "uniform vec3 gle_directionalLightDirection[NB_DIRECTIONAL_LIGHTS];\n"
+  "uniform vec3 gle_directionalLightColor[NB_DIRECTIONAL_LIGHTS];\n"
   "#endif\n"
   "#if NB_POINT_LIGHTS > 0\n"
-  "uniform vec3 pointLightPosition[NB_POINT_LIGHTS];\n"
-  "uniform vec3 pointLightColor[NB_POINT_LIGHTS];\n"
-  "uniform vec3 pointLightSpecularColor[NB_POINT_LIGHTS];\n"
+  "uniform vec3 gle_pointLightPosition[NB_POINT_LIGHTS];\n"
+  "uniform vec3 gle_pointLightColor[NB_POINT_LIGHTS];\n"
+  "uniform vec3 gle_pointLightSpecularColor[NB_POINT_LIGHTS];\n"
   "#endif\n"
   ;
 
@@ -52,21 +53,23 @@ const char *gle::ShaderSource::Vertex::Light::Body =
   "gle_varying_vLightWeighting = vec3(0.0, 0.0, 0.0);\n"
   "#if NB_DIRECTIONAL_LIGHTS > 0\n"
   "for (int i = 0; i < NB_DIRECTIONAL_LIGHTS; ++i) {\n"
-  "float directionalLightWeighting = max(dot(transformedNormal, directionalLightDirection[i]), 0.0);\n"
-  "gle_varying_vLightWeighting += directionalLightColor[i] * directionalLightWeighting;\n"
+  "float directionalLightWeighting = max(dot(transformedNormal, gle_directionalLightDirection[i]), 0.0);\n"
+  "gle_varying_vLightWeighting += gle_directionalLightColor[i] * directionalLightWeighting;\n"
   "}\n"
   "#endif\n"
   "#if NB_POINT_LIGHTS > 0\n"
   "for (int i = 0; i < NB_POINT_LIGHTS; ++i) {\n"
-  "vec3 pointLightDirection = normalize(pointLightPosition[i] - gle_mvPosition.xyz);\n"
+  "vec3 pointLightDirection = normalize(gle_pointLightPosition[i] - gle_mvPosition.xyz);\n"
+  "if (gle_diffuseIntensity > 0) {\n"
   "float pointLightWeighting = max(dot(transformedNormal, pointLightDirection), 0.0);\n"
-  "gle_varying_vLightWeighting += pointLightColor[i] * pointLightWeighting;\n"
-  "if (specularIntensity > 0) {\n"
+  "gle_varying_vLightWeighting += gle_pointLightColor[i] * pointLightWeighting * gle_diffuseIntensity;\n"
+  "} \n"
+  "if (gle_specularIntensity > 0) {\n"
   "vec3 eyeDirection = normalize(-gle_mvPosition.xyz);\n"
   "vec3 reflectionDirection = reflect(-pointLightDirection, transformedNormal);\n"
-  "float pointLightSpecularWeighting = pow(max(dot(-reflectionDirection, eyeDirection), 0.0), shininess);\n"
-  "gle_varying_vLightWeighting += pointLightSpecularColor[i] * pointLightSpecularWeighting * specularIntensity;\n"
+  "float pointLightSpecularWeighting = pow(max(dot(-reflectionDirection, eyeDirection), 0.0), gle_shininess);\n"
+  "gle_varying_vLightWeighting += gle_pointLightSpecularColor[i] * pointLightSpecularWeighting * gle_specularIntensity;\n"
   "} }\n"
   "#endif\n"
-  "gle_varying_vLightWeighting += ambientColor;\n"
+  "gle_varying_vLightWeighting += gle_ambientColor;\n"
   ;
