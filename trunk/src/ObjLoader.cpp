@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Wed Feb 22 23:17:47 2012 gael jochaud-du-plessix
-// Last update Thu Mar  1 18:36:20 2012 gael jochaud-du-plessix
+// Last update Thu Mar  1 23:18:45 2012 gael jochaud-du-plessix
 //
 
 #include <fstream>
@@ -79,6 +79,8 @@ void gle::ObjLoader::_parseLine(Mesh* parent, std::string const & line)
     _parseVertex(parts);
   else if (parts[0] == "vn")
     _parseNormal(parts);
+  else if (parts[0] == "vt")
+    _parseTextureCoords(parts);
   else if (parts[0] == "f")
     _parseFace(parts);
 }
@@ -116,6 +118,15 @@ void gle::ObjLoader::_parseNormal(std::vector<std::string> const & lineParts)
 			       _parseFloat(lineParts[2]),
 			       _parseFloat(lineParts[3]));
   _currentNormals.push_back(normal);
+}
+
+void gle::ObjLoader::_parseTextureCoords(std::vector<std::string> const &
+					 lineParts)
+{
+  if (lineParts.size() < 3)
+    return ;
+  _currentTextures.push_back(_parseFloat(lineParts[1]));
+  _currentTextures.push_back(_parseFloat(lineParts[2]));
 }
 
 GLfloat gle::ObjLoader::_parseFloat(std::string const & value)
@@ -164,7 +175,7 @@ void gle::ObjLoader::_addFaceIndexes(gle::Vector3<GLint> const & index1,
 {
   _currentVertexesIndexes.push(index1.x, index2.x, index3.x);
   if (index1.y != -1 && index2.y != -1 && index3.y != -1)
-  _currentTexturesIndexes.push(index1.y, index2.y, index3.y);
+    _currentTexturesIndexes.push(index1.y, index2.y, index3.y);
   if (index1.z != -1 && index2.z != -1 && index3.z != -1)
     _currentNormalsIndexes.push(index1.z, index2.z, index3.z);
 }
@@ -199,6 +210,7 @@ void gle::ObjLoader::_addCurrentMesh(Mesh* parent)
     {
       gle::Array<GLfloat> vertexes(_currentVertexesIndexes.size() * 3);
       gle::Array<GLfloat> normals(_currentVertexesIndexes.size() * 3);
+      gle::Array<GLfloat> textureCoords(_currentTextures.size());
       gle::Array<GLuint> indexes(_currentVertexesIndexes.size());
       for (size_t i = 0; i + 2 < _currentVertexesIndexes.size(); i += 3)
 	{
@@ -210,6 +222,9 @@ void gle::ObjLoader::_addCurrentMesh(Mesh* parent)
 		    .push(_currentVertexes[_currentVertexesIndexes[i + j]]);
 		  normals
 		    .push(_currentNormals[_currentNormalsIndexes[i + j]]);
+		  if (i + j < _currentTexturesIndexes.size())
+		    textureCoords
+		      .push(_currentTextures[_currentTexturesIndexes[i + j]]);
 		  indexes.push(i + j);
 		}
 	    }
@@ -231,13 +246,18 @@ void gle::ObjLoader::_addCurrentMesh(Mesh* parent)
 		  vertexes
 		    .push(_currentVertexes[_currentVertexesIndexes[i + j]]);
 		  normals.push(calculatedNormal);
+		  if (i + j < _currentTexturesIndexes.size())
+		    textureCoords
+		      .push(_currentTextures[_currentTexturesIndexes[i + j]]);
 		  indexes.push(i + j);
 		}	      
 	    }
-	}
+	}      
       _currentMesh->setVertexes(vertexes);
       _currentMesh->setNormals(normals);
       _currentMesh->setIndexes(indexes);
+      if (textureCoords.size() > 0)
+	_currentMesh->setTextureCoords(textureCoords);
       parent->addChild(_currentMesh);
     }
   _currentVertexesIndexes.resize(0);
@@ -256,7 +276,7 @@ std::vector<std::string> gle::ObjLoader::_explode(std::string const & line,
   while (stringStream.good())
     {
       std::getline(stringStream, part, delimiter);
-      if (!skipEmpty || part.length() > 0)
+      if ((!skipEmpty || part.length() > 0) && part != "\r")
 	parts.push_back(part);
     }
   return (parts);

@@ -5,7 +5,7 @@
 // Login   <michar_l@epitech.net>
 // 
 // Started on  Mon Feb 20 18:25:23 2012 loick michard
-// Last update Thu Mar  1 22:22:17 2012 loick michard
+// Last update Thu Mar  1 23:20:45 2012 gael jochaud-du-plessix
 //
 
 #include <algorithm>
@@ -98,7 +98,7 @@ std::vector<gle::Mesh*> & gle::Mesh::getChildren()
 void gle::Mesh::getChildrenByName(std::string const & name,
 				  std::vector<gle::Mesh*> & vector)
 {
-  std::vector<gle::Mesh*> childs = getChildren();
+  std::vector<gle::Mesh*> & childs = getChildren();
   for (std::vector<gle::Mesh*>::iterator it = childs.begin();
        it != childs.end(); ++it)
     {
@@ -106,6 +106,18 @@ void gle::Mesh::getChildrenByName(std::string const & name,
 	vector.push_back(*it);
       (*it)->getChildrenByName(name, vector);
     }
+}
+
+gle::Mesh* gle::Mesh::getChildByName(std::string const & name)
+{
+  std::vector<gle::Mesh*> & childs = getChildren();
+  for (std::vector<gle::Mesh*>::iterator it = childs.begin();
+       it != childs.end(); ++it)
+    {
+      if ((*it)->getName() == name)
+	return (*it);
+    }
+  return (NULL);
 }
 
 void gle::Mesh::setName(std::string const & name)

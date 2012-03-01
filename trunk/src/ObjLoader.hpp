@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Wed Feb 22 23:03:27 2012 gael jochaud-du-plessix
-// Last update Thu Mar  1 18:33:41 2012 gael jochaud-du-plessix
+// Last update Thu Mar  1 23:04:56 2012 gael jochaud-du-plessix
 //
 
 #ifndef _GLE_OBJ_LOADER_HPP_
@@ -49,6 +49,7 @@ namespace gle {
     void _parseGroup(Mesh* parent, std::vector<std::string> const & lineParts);
     void _parseVertex(std::vector<std::string> const & lineParts);
     void _parseNormal(std::vector<std::string> const & lineParts);
+    void _parseTextureCoords(std::vector<std::string> const & lineParts);
     GLfloat _parseFloat(std::string const & value);
     void _parseFace(std::vector<std::string> const & lineParts);
     void _addFaceIndexes(gle::Vector3<GLint> const & index1,
@@ -63,7 +64,7 @@ namespace gle {
     gle::Mesh* _currentMesh;
     std::vector< gle::Vector3<GLfloat> > _currentVertexes;
     std::vector< gle::Vector3<GLfloat> > _currentNormals;
-    std::vector< gle::Vector3<GLfloat> > _currentTextures;
+    std::vector< GLfloat > _currentTextures;
     gle::Array<GLuint> _currentVertexesIndexes;
     gle::Array<GLuint> _currentTexturesIndexes;
     gle::Array<GLuint> _currentNormalsIndexes;

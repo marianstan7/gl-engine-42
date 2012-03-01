@@ -5,7 +5,7 @@
 // Login   <michar_l@epitech.net>
 // 
 // Started on  Mon Feb 20 13:20:54 2012 loick michard
-// Last update Thu Mar  1 19:13:32 2012 gael jochaud-du-plessix
+// Last update Thu Mar  1 23:15:30 2012 gael jochaud-du-plessix
 //
 
 #ifndef _MESH_HPP_
@@ -69,6 +69,10 @@ namespace gle {
     
     void getChildrenByName(std::string const & name,
 			   std::vector<gle::Mesh*> & vector);
+
+    //! Search for a child matching a given name
+
+    gle::Mesh* getChildByName(std::string const & name);
 
     //! Set the name of the mesh
     /*!

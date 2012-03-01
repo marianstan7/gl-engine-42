@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Wed Feb 29 19:44:13 2012 gael jochaud-du-plessix
-// Last update Thu Mar  1 22:17:24 2012 gael jochaud-du-plessix
+// Last update Thu Mar  1 23:28:05 2012 gael jochaud-du-plessix
 //
 
 #include <iostream>
@@ -66,19 +66,30 @@ int glEngine(int ac, char **av)
   material.setDiffuseLightEnabled(true);
   material.setSpecularLightEnabled(true);
   material.setShininess(32);
+  material.setColor(gle::Color<GLfloat>(1, 1, 1));
 
-  GLfloat dist = 10;
+  GLfloat dist = 100;
 
   srand(time(NULL));
 
   gle::ObjLoader loader;
-  gle::Mesh* marteau = loader.load("../models/marteau/hammer.obj", &material);
-
-  // material.setColorMapEnabled(true);
-  // material.setColorMap(&cubeTexture);
+  gle::Mesh* marteau = loader.load("./models/pencil/pencil.obj", &material);
 
   if (marteau)
-    scene << marteau;
+    {
+      gle::Material* handleMaterial = new gle::Material();
+      handleMaterial->setDiffuseLightEnabled(true);
+      handleMaterial->setSpecularLightEnabled(true);
+      handleMaterial->setShininess(50);
+      handleMaterial->setColorMapEnabled(true);
+      handleMaterial
+	->setColorMap(new gle::Texture("./models/pencil/body.jpg"));
+      gle::Mesh* handle = marteau->getChildByName("corps\r");
+      if (handle)
+	handle->setMaterial(handleMaterial);
+      marteau->setPosition(gle::Vector3<GLfloat>(0, 0, 0));
+      scene << marteau << handleMaterial;
+    }
 
   gle::Material materialLight;
 
@@ -100,7 +111,7 @@ int glEngine(int ac, char **av)
 
   scene << &camera << &material << &materialLight << sp << sp2 << sp3;
   scene << &l << &l2 << &l3;
-  scene.setLightEnabled(true);
+  scene.setLightEnabled(true, gle::Color<GLfloat>(0.6, 0.6, 0.6));
 
   gle::Renderer renderer;
   renderer.createPrograms(&scene);
