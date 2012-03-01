@@ -5,7 +5,7 @@
 // Login   <michar_l@epitech.net>
 // 
 // Started on  Sat Feb 18 10:43:04 2012 loick michard
-// Last update Mon Feb 27 19:24:18 2012 gael jochaud-du-plessix
+// Last update Thu Mar  1 19:21:39 2012 loick michard
 //
 
 #ifndef _GLE_CAMERA_HPP_
@@ -79,7 +79,11 @@ namespace gle {
 
     //! Returns projection matrix
 
-    gle::Matrix4<GLfloat>&		getMatrix();
+    gle::Matrix4<GLfloat>&		getProjectionMatrix();
+
+    //! Returns model view matrix
+
+    gle::Matrix4<GLfloat>&		getModelViewMatrix();
 
     //! Update projection matrix
 
@@ -89,7 +93,11 @@ namespace gle {
     
     //! Projection matrix.
 
-    gle::Matrix4<GLfloat> _matrix;
+    gle::Matrix4<GLfloat> _projectionMatrix;
+
+    //! Projection matrix.
+
+    gle::Matrix4<GLfloat> _modelViewMatrix;
 
     //! Camera position.
 

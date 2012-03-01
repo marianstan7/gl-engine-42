@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Tue Feb 21 15:47:17 2012 gael jochaud-du-plessix
-// Last update Thu Mar  1 17:23:32 2012 gael jochaud-du-plessix
+// Last update Thu Mar  1 19:10:53 2012 loick michard
 //
 
 #include <gle/opengl.h>
@@ -67,7 +67,7 @@ const char *gle::ShaderSource::Vertex::Light::Body =
   "if (gle_specularIntensity > 0) {\n"
   "vec3 eyeDirection = normalize(-gle_mvPosition.xyz);\n"
   "vec3 reflectionDirection = reflect(-pointLightDirection, transformedNormal);\n"
-  "float pointLightSpecularWeighting = pow(max(dot(-reflectionDirection, eyeDirection), 0.0), gle_shininess);\n"
+  "float pointLightSpecularWeighting = pow(max(dot(reflectionDirection, eyeDirection), 0.0), gle_shininess);\n"
   "gle_varying_vLightWeighting += gle_pointLightSpecularColor[i] * pointLightSpecularWeighting * gle_specularIntensity;\n"
   "} }\n"
   "#endif\n"

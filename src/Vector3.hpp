@@ -5,7 +5,7 @@
 // Login   <michar_l@epitech.net>
 // 
 // Started on  Fri Feb 17 12:51:39 2012 loick michard
-// Last update Thu Feb 23 14:45:42 2012 gael jochaud-du-plessix
+// Last update Thu Mar  1 20:07:24 2012 loick michard
 //
 
 #ifndef _GLE_VECTOR3_HPP_
@@ -21,6 +21,9 @@ namespace gle {
     This class encapsulates all 3D vectors operations/
     \tparam T Type of 3D vctors values.
   */
+
+  template <typename T>
+  class Matrix4;
   
   template <typename T>
   class Vector3
@@ -80,6 +83,18 @@ namespace gle {
       x *= value;
       y *= value;
       z *= value;
+      return (*this);
+    }
+
+    Vector3& operator*=(gle::Matrix4<T> const& mat)
+    {
+      T tx = x;
+      T ty = y;
+      T tz = z;
+
+      x = mat[0] * tx + mat[4] * ty + mat[8] * tz + mat[12];
+      y = mat[1] * tx + mat[5] * ty + mat[9] * tz + mat[13];
+      z = mat[2] * tx + mat[6] * ty + mat[10] * tz + mat[14];
       return (*this);
     }
 

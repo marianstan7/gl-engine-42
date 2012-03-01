@@ -42,6 +42,11 @@ add_executable (
 )
 
 add_executable (
+    examples/example02
+    examples/example02.cpp
+)
+
+add_executable (
     examples/texture
     examples/texture.cpp
 )
@@ -56,6 +61,13 @@ target_link_libraries (
 
 target_link_libraries (
     examples/example01
+    ${SFML_LIBRARIES}
+    ${OPENGL_LIBRARIES}
+    glEngine
+)
+
+target_link_libraries (
+    examples/example02
     ${SFML_LIBRARIES}
     ${OPENGL_LIBRARIES}
     glEngine

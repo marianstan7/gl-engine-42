@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Mon Feb 20 20:48:54 2012 gael jochaud-du-plessix
-// Last update Thu Mar  1 19:26:50 2012 gael jochaud-du-plessix
+// Last update Thu Mar  1 19:47:11 2012 loick michard
 //
 
 #include <Renderer.hpp>
@@ -145,7 +145,7 @@ void gle::Renderer::_setMaterialUniforms(gle::Material* material,
 void gle::Renderer::_setSceneUniforms(gle::Material* material,
 				      gle::Scene* scene, gle::Camera* camera)
 {
-  gle::Matrix4<GLfloat> & projectionMatrix = camera->getMatrix();
+  gle::Matrix4<GLfloat> & projectionMatrix = camera->getProjectionMatrix();
   _currentProgram->setUniform(gle::Program::PMatrix, projectionMatrix);
 
   // Send light infos to the shader
@@ -183,8 +183,11 @@ void gle::Renderer::_setSceneUniforms(gle::Material* material,
 void gle::Renderer::_setMeshUniforms(gle::Material* material,
 				     gle::Scene* scene, gle::Mesh* mesh)
 {
-  gle::Matrix4<GLfloat> & mvMatrix = mesh->getMatrix();
-  gle::Matrix3<GLfloat> & normalMatrix = mesh->getNormalMatrix();
+  gle::Matrix4<GLfloat> mvMatrix = scene->getCurrentCamera()->getModelViewMatrix() * mesh->getMatrix();
+  Matrix4<GLfloat> inverse(mvMatrix);
+  inverse.inverse();
+  gle::Matrix3<GLfloat> normalMatrix = inverse;
+  normalMatrix.transpose();
 
   // Set modelview matrix
   _currentProgram->setUniform(gle::Program::MVMatrix, mvMatrix);

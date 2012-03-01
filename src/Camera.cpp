@@ -5,7 +5,7 @@
 // Login   <michar_l@epitech.net>
 // 
 // Started on  Sat Feb 18 11:16:08 2012 loick michard
-// Last update Wed Feb 22 18:17:39 2012 loick michard
+// Last update Thu Mar  1 19:24:34 2012 loick michard
 //
 
 #include <Camera.hpp>
@@ -57,7 +57,12 @@ gle::Vector3<GLfloat> const& gle::Camera::getTarget() const
   return (_target);
 }
 
-gle::Matrix4<GLfloat>& gle::Camera::getMatrix()
+gle::Matrix4<GLfloat>& gle::Camera::getProjectionMatrix()
 {
-  return (_matrix);
+  return (_projectionMatrix);
+}
+
+gle::Matrix4<GLfloat>& gle::Camera::getModelViewMatrix()
+{
+  return (_modelViewMatrix);
 }
