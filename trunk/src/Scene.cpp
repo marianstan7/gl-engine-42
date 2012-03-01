@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Mon Feb 20 19:12:49 2012 gael jochaud-du-plessix
-// Last update Thu Mar  1 18:49:11 2012 gael jochaud-du-plessix
+// Last update Thu Mar  1 19:54:10 2012 loick michard
 //
 
 #include <Scene.hpp>
@@ -196,6 +196,7 @@ void gle::Scene::updateLights()
 	{
 	  ++pSize;
 	  gle::Vector3<GLfloat> position = ((gle::PointLight*)(*it))->getPosition();
+	  position *= _currentCamera->getModelViewMatrix();
           GLfloat* color = ((gle::PointLight*)(*it))->getColor();
           GLfloat* specularColor = ((gle::PointLight*)(*it))->getSpecularColor();
           _pointLightsPosition.push_back(position.x);

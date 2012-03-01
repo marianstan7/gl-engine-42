@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Wed Feb 15 17:24:36 2012 gael jochaud-du-plessix
-// Last update Thu Mar  1 19:15:34 2012 gael jochaud-du-plessix
+// Last update Thu Mar  1 21:24:56 2012 loick michard
 //
 
 /*! 
@@ -81,26 +81,36 @@ int glEngine(int ac, char **av)
 
   materialLight.setDiffuseLightEnabled(false);
   materialLight.setSpecularLightEnabled(false);
+  materialLight.setColor(gle::Color<GLfloat>(0.8, 0, 0));
 
-  gle::PointLight		l(gle::Vector3<GLfloat>(0, 20, 0), gle::Color<GLfloat>(0.8, 0, 0));
+  gle::PointLight		l(gle::Vector3<GLfloat>(0, 100, 0), gle::Color<GLfloat>(0.8, 0, 0));
   gle::Mesh*			sp = gle::Geometries::Sphere(&materialLight,
 							     1);
   gle::PointLight		l2(gle::Vector3<GLfloat>(0, 0, -20),
 				   gle::Color<GLfloat>(0, 0, 0.8));
-  gle::Mesh*			sp2 = gle::Geometries::Sphere(&materialLight,
+  gle::Material			materialLight2;
+  materialLight2.setDiffuseLightEnabled(false);
+  materialLight2.setSpecularLightEnabled(false);
+  materialLight2.setColor(gle::Color<GLfloat>(0, 0, 0.8));
+  gle::Mesh*			sp2 = gle::Geometries::Sphere(&materialLight2,
 							      1);
+  gle::Material			materialLight3;
+  materialLight3.setDiffuseLightEnabled(false);
+  materialLight3.setSpecularLightEnabled(false);
+  materialLight3.setColor(gle::Color<GLfloat>(0, 0.8, 0));
   gle::PointLight		l3(gle::Vector3<GLfloat>(40, 0, 0),
 				   gle::Color<GLfloat>(0, 0.8, 0));
-  gle::Mesh*			sp3 = gle::Geometries::Sphere(&materialLight,
+  gle::Mesh*			sp3 = gle::Geometries::Sphere(&materialLight3,
 							      1);
-
-  sp->setPosition(gle::Vector3<GLfloat>(0, 20, 0));
+  gle::PointLight		l4(gle::Vector3<GLfloat>(40, 0, 0),
+				   gle::Color<GLfloat>(0.7, 0.7, 0.7));
+  sp->setPosition(gle::Vector3<GLfloat>(0, 100, 0));
   sp2->setPosition(gle::Vector3<GLfloat>(0, 0, -20));
   sp3->setPosition(gle::Vector3<GLfloat>(40, 0, 0));
 
-  gle::DirectionalLight		l4(gle::Vector3<GLfloat>(1, 1, 0), gle::Color<GLfloat>(0.1, 0.1, 0.1));
+  //gle::DirectionalLight		l4(gle::Vector3<GLfloat>(1, 1, 0), gle::Color<GLfloat>(0.5, 0.5, 0.5));
 
-  scene << &camera << &material << &materialLight << sp << sp2 << sp3;
+  scene << &camera << &material << &materialLight << &materialLight2 << &materialLight3 << sp << sp2 << sp3;
   scene << &l << &l2 << &l3 << &l4;
   scene.setLightEnabled(true, gle::Color<GLfloat>(0, 0, 0));
 
@@ -138,6 +148,9 @@ int glEngine(int ac, char **av)
       camera.setPosition(gle::Vector3<GLfloat>(cos(angle/3) * -dist,
 					       30,
 					       sin(angle/3) * -dist));
+      l4.setPosition(gle::Vector3<GLfloat>(cos(angle/3) * -dist,
+					   30,
+					   sin(angle/3) * -dist));
 
       float		dist2 = dist / 3;
 
