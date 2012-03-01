@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Mon Feb 20 19:12:49 2012 gael jochaud-du-plessix
-// Last update Thu Mar  1 18:14:02 2012 gael jochaud-du-plessix
+// Last update Thu Mar  1 18:14:32 2012 gael jochaud-du-plessix
 //
 
 #include <Scene.hpp>
@@ -48,10 +48,10 @@ gle::Scene & gle::Scene::add(Mesh* mesh)
 {
   if (find(_meshes.begin(), _meshes.end(), mesh) == _meshes.end())
     _meshes.push_back(mesh);
-  // std::vector<gle::Mesh*> & childs = mesh->getChildren();
-  // for (std::vector<gle::Mesh*>::iterator it = childs.begin();
-  //      it != childs.end(); ++it)
-  //   add(*it);
+  std::vector<gle::Mesh*> & childs = mesh->getChildren();
+  for (std::vector<gle::Mesh*>::iterator it = childs.begin();
+       it != childs.end(); ++it)
+    add(*it);
   return (*this);
 }
 
