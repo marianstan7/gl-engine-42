@@ -5,7 +5,7 @@
 // Login   <michar_l@epitech.net>
 // 
 // Started on  Mon Feb 20 13:20:54 2012 loick michard
-// Last update Thu Mar  1 14:55:50 2012 gael jochaud-du-plessix
+// Last update Thu Mar  1 19:13:32 2012 gael jochaud-du-plessix
 //
 
 #ifndef _MESH_HPP_
@@ -37,16 +37,14 @@ namespace gle {
     Mesh(Material* material=NULL,
 	 const GLfloat* vertexes=NULL, GLsizeiptr nbVertexes=0,
 	 const GLfloat* normals=NULL, GLsizeiptr nbNormals=0,
-	 const GLuint* indexes=NULL, GLsizeiptr nbIndexes=0,
-	 const GLfloat* colors=NULL, GLsizeiptr nbColors=0);
+	 const GLuint* indexes=NULL, GLsizeiptr nbIndexes=0);
 
     //! Constructor with attribute arrays
 
     Mesh(Material* material,
 	 gle::Array<GLfloat> const * vertexes=NULL,
 	 gle::Array<GLfloat> const * normals=NULL,
-	 gle::Array<GLuint> const * indexes=NULL,
-	 gle::Array<GLfloat> const * colors=NULL);
+	 gle::Array<GLuint> const * indexes=NULL);
     
     //! Default destructor
 
@@ -66,6 +64,11 @@ namespace gle {
      */
 
     std::vector<Mesh*> & getChildren();
+
+    //! Recursively search for children matching a given name
+    
+    void getChildrenByName(std::string const & name,
+			   std::vector<gle::Mesh*> & vector);
 
     //! Set the name of the mesh
     /*!
@@ -147,10 +150,6 @@ namespace gle {
 
     void setIndexes(const GLuint* indexes, GLsizeiptr nbIndexes);
 
-    //! Set the mesh colors
-
-    void setColors(const GLfloat* colors, GLsizeiptr nbColors);
-
     //! Set the mesh vertexes
 
     void setVertexes(gle::Array<GLfloat> const &vertexes);
@@ -166,10 +165,6 @@ namespace gle {
     //! Set the mesh indexes
 
     void setIndexes(gle::Array<GLuint> const &vertexes);
-
-    //! Set the mesh colors
-
-    void setColors(gle::Array<GLfloat> const &vertexes);
 
     //! Return movement matrix
 
@@ -208,10 +203,6 @@ namespace gle {
 
     Buffer<GLuint> * getIndexesBuffer();
     
-    //! Get the colors buffer
-
-    Buffer<GLfloat>* getColorsBuffer();
-
     //! Get the number of indexes in the mesh
 
     GLsizeiptr getNbIndexes();
@@ -224,7 +215,6 @@ namespace gle {
     Buffer<GLfloat>* _normals;
     Buffer<GLfloat>* _textureCoords;
     Buffer<GLuint>* _indexes;
-    Buffer<GLfloat>* _colors;
 
     GLsizeiptr _nbIndexes;
 

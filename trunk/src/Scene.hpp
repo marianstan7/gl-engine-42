@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Mon Feb 20 18:18:01 2012 gael jochaud-du-plessix
-// Last update Thu Mar  1 16:15:14 2012 gael jochaud-du-plessix
+// Last update Thu Mar  1 18:50:09 2012 gael jochaud-du-plessix
 //
 
 #ifndef _GLE_SCENE_HPP_
@@ -52,11 +52,22 @@ namespace gle {
     //! Add a mesh to the scene
     /*!
       If the mesh is already part of the scene, it's not added.
+      This function recursively add all the children of the mesh.
       \param mesh A pointer to the Mesh object to add to the scene
       \return A reference to the scene
      */
 
     Scene & add(Mesh *mesh);
+
+    //! Add a list of meshes to the scene
+    /*!
+      If the one of the mesh is already part of the scene, it's not added.
+      This function recursively add all the children of all the meshes.
+      \param meshes A std::vector of pointers to thes meshes to be added
+      \return A reference to the scene
+     */
+
+    Scene & add(std::vector<gle::Mesh*> const & meshes);
 
     //! Add a material to the scene
     /*!
@@ -123,7 +134,7 @@ namespace gle {
       \sa add(Camera *camera), add(Mesh *mesh)
     */
     template <typename T>
-    Scene & operator<<(T* element)
+    Scene & operator<<(T element)
     {
       return (add(element));
     }

@@ -5,7 +5,7 @@
 // Login   <michar_l@epitech.net>
 // 
 // Started on  Mon Feb 20 18:25:23 2012 loick michard
-// Last update Thu Mar  1 14:56:28 2012 gael jochaud-du-plessix
+// Last update Thu Mar  1 19:14:27 2012 gael jochaud-du-plessix
 //
 
 #include <algorithm>
@@ -14,15 +14,14 @@
 gle::Mesh::Mesh(Material* material,
 		const GLfloat* vertexes, GLsizeiptr nbVertexes,
 		const GLfloat* normals, GLsizeiptr nbNormals,
-		const GLuint* indexes, GLsizeiptr nbIndexes,
-		const GLfloat* colors, GLsizeiptr nbColors)
+		const GLuint* indexes, GLsizeiptr nbIndexes)
   : _name(""),
     _material(material),
     _vertexes(NULL),
     _normals(NULL),
     _textureCoords(NULL),
     _indexes(NULL),
-    _colors(NULL), _nbIndexes(nbIndexes),
+    _nbIndexes(nbIndexes),
     _position(0, 0, 0), _hasTarget(false), _parentMatrix(NULL)
 {
   if (vertexes)
@@ -37,24 +36,19 @@ gle::Mesh::Mesh(Material* material,
     _indexes = new gle::Buffer<GLuint>(gle::Buffer<GLuint>::ElementArray,
 				       gle::Buffer<GLuint>::StaticDraw,
 				       nbIndexes, indexes);
-  if (colors)
-    _colors = new gle::Buffer<GLfloat>(gle::Buffer<GLfloat>::VertexArray,
-				       gle::Buffer<GLfloat>::StaticDraw,
-				       nbColors, colors);
 }
 
 gle::Mesh::Mesh(Material* material,
 		gle::Array<GLfloat> const * vertexes,
 		gle::Array<GLfloat> const * normals,
-		gle::Array<GLuint> const * indexes,
-		gle::Array<GLfloat> const * colors)
+		gle::Array<GLuint> const * indexes)
   : _name(""),
     _material(material),
     _vertexes(NULL),
     _normals(NULL),
     _textureCoords(NULL),
     _indexes(NULL),
-    _colors(NULL), _nbIndexes(0),
+    _nbIndexes(0),
     _position(0, 0, 0), _hasTarget(false), _parentMatrix(NULL)
 {
   if (vertexes)
@@ -75,10 +69,6 @@ gle::Mesh::Mesh(Material* material,
 					 (GLuint const *)(*indexes));
       _nbIndexes = indexes->size();
     }
-  if (colors)
-    _colors = new gle::Buffer<GLfloat>(gle::Buffer<GLfloat>::VertexArray,
-				       gle::Buffer<GLfloat>::StaticDraw,
-				       colors->size(), (GLfloat const *)colors);
 }
 
 gle::Mesh::~Mesh()
@@ -89,8 +79,6 @@ gle::Mesh::~Mesh()
     delete _normals;
   if (_indexes)
     delete (_indexes);
-  if (_colors)
-    delete _colors;
 }
 
 void gle::Mesh::addChild(gle::Mesh* child)
@@ -105,6 +93,19 @@ void gle::Mesh::addChild(gle::Mesh* child)
 std::vector<gle::Mesh*> & gle::Mesh::getChildren()
 {
   return (_children);
+}
+
+void gle::Mesh::getChildrenByName(std::string const & name,
+				  std::vector<gle::Mesh*> & vector)
+{
+  std::vector<gle::Mesh*> childs = getChildren();
+  for (std::vector<gle::Mesh*>::iterator it = childs.begin();
+       it != childs.end(); ++it)
+    {
+      if ((*it)->getName() == name)
+	vector.push_back(*it);
+      (*it)->getChildrenByName(name, vector);
+    }
 }
 
 void gle::Mesh::setName(std::string const & name)
@@ -189,16 +190,6 @@ void gle::Mesh::setIndexes(const GLuint* indexes, GLsizeiptr nbIndexes)
 					nbIndexes, indexes);
 }
 
-void gle::Mesh::setColors(const GLfloat* colors, GLsizeiptr nbColors)
-{
-  if (_colors)
-    _colors->resize(nbColors, colors);
-  else
-    _colors = new gle::Buffer<GLfloat>(gle::Buffer<GLfloat>::VertexArray,
-				       gle::Buffer<GLfloat>::StaticDraw,
-				       nbColors, colors);
-}
-
 void gle::Mesh::setVertexes(gle::Array<GLfloat> const &vertexes)
 {
   if (_vertexes)
@@ -232,17 +223,6 @@ void gle::Mesh::setIndexes(gle::Array<GLuint> const &indexes)
 				       gle::Buffer<GLuint>::StaticDraw,
 				       indexes.size(),
 				       (GLuint const *)indexes);
-}
-
-void gle::Mesh::setColors(gle::Array<GLfloat> const &colors)
-{
-  if (_colors)
-    _colors->resize(colors.size(), (GLfloat const *)colors);
-  else
-    _colors = new gle::Buffer<GLfloat>(gle::Buffer<GLfloat>::VertexArray,
-					 gle::Buffer<GLfloat>::StaticDraw,
-					 colors.size(),
-					 (GLfloat const *)colors);
 }
 
 void gle::Mesh::updateMatrix()
@@ -320,11 +300,6 @@ gle::Buffer<GLfloat> * gle::Mesh::getTextureCoordsBuffer()
 gle::Buffer<GLuint> * gle::Mesh::getIndexesBuffer()
 {
   return (_indexes);
-}
-
-gle::Buffer<GLfloat>* gle::Mesh::getColorsBuffer()
-{
-  return (_colors);
 }
 
 GLsizeiptr gle::Mesh::getNbIndexes()

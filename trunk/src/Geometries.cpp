@@ -5,7 +5,7 @@
 // Login   <michar_l@epitech.net>
 // 
 // Started on  Mon Feb 20 22:34:18 2012 loick michard
-// Last update Wed Feb 29 20:02:15 2012 gael jochaud-du-plessix
+// Last update Thu Mar  1 18:56:29 2012 gael jochaud-du-plessix
 //
 
 #include <cmath>
@@ -161,13 +161,11 @@ gle::Mesh* gle::Geometries::Cuboid(gle::Material* material,
 
 gle::Mesh* gle::Geometries::Sphere(gle::Material* material,
 				   GLfloat radius,
-				   gle::Color<GLfloat> const& color,
 				   GLint slices, GLint stacks)
 {
   std::vector<GLfloat> vertexes;
   std::vector<GLfloat> normals;
   std::vector<GLuint> indexes;
-  std::vector<GLfloat> colors;
 
   for (GLfloat sl = 0; sl <= slices; ++sl)
     {
@@ -185,10 +183,6 @@ gle::Mesh* gle::Geometries::Sphere(gle::Material* material,
 	  normals.push_back(x);
 	  normals.push_back(y);
 	  normals.push_back(z);
-	  colors.push_back(color.r);
-	  colors.push_back(color.g);
-	  colors.push_back(color.b);
-	  colors.push_back(color.a);
 	  if (sl != slices && st != stacks)
 	    {
 	      GLfloat indice1 = sl * (stacks + 1) + st;
@@ -204,6 +198,5 @@ gle::Mesh* gle::Geometries::Sphere(gle::Material* material,
     }
   return (new gle::Mesh(material, &vertexes[0], vertexes.size(),
 			&normals[0], normals.size(),
-			&indexes[0], indexes.size(),
-			&colors[0], colors.size()));
+			&indexes[0], indexes.size()));
 }
