@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Mon Feb 20 22:30:11 2012 gael jochaud-du-plessix
-// Last update Thu Mar  1 17:50:11 2012 gael jochaud-du-plessix
+// Last update Thu Mar  1 18:17:18 2012 gael jochaud-du-plessix
 //
 
 #ifndef _GLE_MATERIAL_HPP_
@@ -57,11 +57,11 @@ namespace gle {
 
     //! Enable or disable diffuse lighting
 
-    bool setDiffuseLightEnabled(bool enabled);
+    void setDiffuseLightEnabled(bool enabled);
 
     //! Enable or disable specular lighting
 
-    bool setSpecularLightEnabled(bool enabled);
+    void setSpecularLightEnabled(bool enabled);
 
     //! Set shininess of material
     /*!

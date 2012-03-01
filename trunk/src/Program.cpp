@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Fri Feb 17 16:21:14 2012 gael jochaud-du-plessix
-// Last update Thu Mar  1 17:53:16 2012 gael jochaud-du-plessix
+// Last update Thu Mar  1 18:29:24 2012 gael jochaud-du-plessix
 //
 
 #include <Program.hpp>
@@ -116,12 +116,14 @@ GLuint gle::Program::getId() const
 
 void gle::Program::setUniform(Uniform uniform, Matrix4<GLfloat> & matrix)
 {
-  glUniformMatrix4fv(_uniformLocations[uniform], 1, GL_FALSE, (GLfloat*)matrix);
+  glUniformMatrix4fv(_uniformLocations[uniform], 1, GL_FALSE,
+		     (GLfloat*)matrix);
 }
 
 void gle::Program::setUniform(Uniform uniform, Matrix3<GLfloat> & matrix)
 {
-  glUniformMatrix3fv(_uniformLocations[uniform], 1, GL_FALSE, (GLfloat*)matrix);
+  glUniformMatrix3fv(_uniformLocations[uniform], 1, GL_FALSE,
+		     (GLfloat*)matrix);
 }
 
 void gle::Program::setUniform3v(Uniform uniform, GLfloat* values,

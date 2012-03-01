@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Mon Feb 20 19:12:49 2012 gael jochaud-du-plessix
-// Last update Thu Mar  1 18:14:32 2012 gael jochaud-du-plessix
+// Last update Thu Mar  1 18:35:45 2012 gael jochaud-du-plessix
 //
 
 #include <Scene.hpp>
@@ -28,7 +28,8 @@ gle::Scene::Scene() :
 gle::Scene::~Scene()
 {
   // Delete created programs
-  for (std::map<gle::Material*, gle::Program*>::iterator it = _programs.begin(), end = _programs.end();
+  for (std::map<gle::Material*, gle::Program*>::iterator
+	 it = _programs.begin(), end = _programs.end();
        it != end; ++it)
     delete it->second;
 }

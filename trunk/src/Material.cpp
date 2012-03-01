@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Mon Feb 20 22:50:35 2012 gael jochaud-du-plessix
-// Last update Thu Mar  1 18:02:57 2012 gael jochaud-du-plessix
+// Last update Thu Mar  1 18:23:37 2012 gael jochaud-du-plessix
 //
 
 #include <Material.hpp>
@@ -50,14 +50,14 @@ inline bool gle::Material::isLightEnabled() const
   return (_diffuseLightEnabled || _specularLightEnabled);
 }
 
-bool gle::Material::setDiffuseLightEnabled(bool enabled)
+void gle::Material::setDiffuseLightEnabled(bool enabled)
 {
   _diffuseLightEnabled = enabled;
   if (_diffuseIntensity == 0)
     _diffuseIntensity = 1;
 }
 
-bool gle::Material::setSpecularLightEnabled(bool enabled)
+void gle::Material::setSpecularLightEnabled(bool enabled)
 {
   _specularLightEnabled = enabled;
   if (_specularIntensity == 0)
@@ -202,7 +202,7 @@ gle::Shader* gle::Material::_createVertexShader(Scene* scene)
     shaderSource += gle::ShaderSource::Vertex::Light::Body;
 
   shaderSource += gle::ShaderSource::Vertex::BodyEnd;
-  std::cout << shaderSource << std::endl;
+
   gle::Shader *shader = new gle::Shader(gle::Shader::Vertex, shaderSource);
 
   return (shader);
@@ -241,7 +241,6 @@ gle::Shader* gle::Material::_createFragmentShader(Scene* scene)
     shaderSource += gle::ShaderSource::Fragment::Light::Body;
 
   shaderSource += gle::ShaderSource::Fragment::BodyEnd;
-  std::cout << shaderSource << std::endl;
   gle::Shader *shader = new gle::Shader(gle::Shader::Fragment, shaderSource);
 
   return (shader);

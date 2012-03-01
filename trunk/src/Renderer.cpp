@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Mon Feb 20 20:48:54 2012 gael jochaud-du-plessix
-// Last update Thu Mar  1 18:13:46 2012 gael jochaud-du-plessix
+// Last update Thu Mar  1 18:30:40 2012 gael jochaud-du-plessix
 //
 
 #include <Renderer.hpp>
@@ -84,11 +84,11 @@ void gle::Renderer::_renderMesh(gle::Scene* scene, gle::Mesh* mesh,
   gle::Buffer<GLfloat> * vertexesBuffer = mesh->getVertexesBuffer();
   gle::Buffer<GLfloat> * normalsBuffer = mesh->getNormalsBuffer();
   gle::Buffer<GLuint> * indexesBuffer = mesh->getIndexesBuffer();
-
-  if (vertexesBuffer == NULL || normalsBuffer == NULL || indexesBuffer == NULL)
-    return ;
-
   gle::Material* material = mesh->getMaterial();
+
+  if (vertexesBuffer == NULL || normalsBuffer == NULL || indexesBuffer == NULL
+      || material == NULL)
+    return ;
 
   _setCurrentProgram(scene, material);
 

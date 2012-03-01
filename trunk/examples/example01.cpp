@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Wed Feb 15 17:24:36 2012 gael jochaud-du-plessix
-// Last update Thu Mar  1 17:28:50 2012 gael jochaud-du-plessix
+// Last update Thu Mar  1 18:34:15 2012 gael jochaud-du-plessix
 //
 
 /*! 
@@ -41,6 +41,8 @@ int main(int ac, char **av)
 
 int glEngine(int ac, char **av)
 {
+  (void)ac;
+  (void)av;
   sf::ContextSettings context;
   context.DepthBits = 24;
   context.StencilBits = 24;
@@ -63,7 +65,7 @@ int glEngine(int ac, char **av)
   material.setShininess(32);
 
   gle::ObjLoader loader;
-  gle::Mesh* model = loader.load("../models/WaltDisneyHeads.obj");
+  gle::Mesh* model = loader.load("../models/WaltDisneyHeads.obj", &material);
 
   if (model)
     {
@@ -75,7 +77,6 @@ int glEngine(int ac, char **av)
 	  if (mesh->getName() == "DisneyHead_hires" ||
 	      mesh->getName() == "Disney_hires")
 	    {
-	      mesh->setMaterial(&material);
 	      scene << mesh;
 	    }
 	}

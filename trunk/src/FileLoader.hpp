@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Wed Feb 22 22:56:26 2012 gael jochaud-du-plessix
-// Last update Mon Feb 27 19:22:42 2012 gael jochaud-du-plessix
+// Last update Thu Mar  1 18:32:35 2012 gael jochaud-du-plessix
 //
 
 #ifndef _GLE_FILE_LOADER_HPP_
@@ -27,7 +27,8 @@ namespace gle {
     virtual ~FileLoader();
 
     //! Load a mesh from a file
-    virtual gle::Mesh* load(std::string const & file);
+    virtual gle::Mesh* load(std::string const & file,
+			    gle::Material* defaultMaterial);
   };
 
 }
