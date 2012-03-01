@@ -5,7 +5,7 @@
 // Login   <michar_l@epitech.net>
 // 
 // Started on  Mon Feb 20 22:34:18 2012 loick michard
-// Last update Thu Mar  1 18:56:29 2012 gael jochaud-du-plessix
+// Last update Thu Mar  1 22:31:25 2012 loick michard
 //
 
 #include <cmath>
@@ -166,6 +166,7 @@ gle::Mesh* gle::Geometries::Sphere(gle::Material* material,
   std::vector<GLfloat> vertexes;
   std::vector<GLfloat> normals;
   std::vector<GLuint> indexes;
+  gle::Array<GLfloat> uv;
 
   for (GLfloat sl = 0; sl <= slices; ++sl)
     {
@@ -183,6 +184,8 @@ gle::Mesh* gle::Geometries::Sphere(gle::Material* material,
 	  normals.push_back(x);
 	  normals.push_back(y);
 	  normals.push_back(z);
+	  uv.push_back(1.0 - (st / stacks));
+	  uv.push_back(sl / slices);
 	  if (sl != slices && st != stacks)
 	    {
 	      GLfloat indice1 = sl * (stacks + 1) + st;
@@ -196,7 +199,9 @@ gle::Mesh* gle::Geometries::Sphere(gle::Material* material,
 	    }
 	}
     }
-  return (new gle::Mesh(material, &vertexes[0], vertexes.size(),
-			&normals[0], normals.size(),
-			&indexes[0], indexes.size()));
+  gle::Mesh * ret = new gle::Mesh(material, &vertexes[0], vertexes.size(),
+				  &normals[0], normals.size(),
+				  &indexes[0], indexes.size());
+  ret->setTextureCoords(uv);
+  return (ret);
 }

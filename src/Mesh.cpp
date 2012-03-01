@@ -5,7 +5,7 @@
 // Login   <michar_l@epitech.net>
 // 
 // Started on  Mon Feb 20 18:25:23 2012 loick michard
-// Last update Thu Mar  1 19:14:27 2012 gael jochaud-du-plessix
+// Last update Thu Mar  1 22:22:17 2012 loick michard
 //
 
 #include <algorithm>
@@ -212,6 +212,16 @@ void gle::Mesh::setNormals(gle::Array<GLfloat> const &normals)
 					(GLfloat const *)normals);
 }
 
+void gle::Mesh::setTextureCoords(gle::Array<GLfloat> const &textureCoords)
+{
+  if (_textureCoords)
+    _textureCoords->resize(textureCoords.size(), (GLfloat const *)textureCoords);
+  else
+    _textureCoords = new gle::Buffer<GLfloat>(gle::Buffer<GLfloat>::VertexArray,
+					gle::Buffer<GLfloat>::StaticDraw,
+					textureCoords.size(),
+					(GLfloat const *)textureCoords);
+}
 
 void gle::Mesh::setIndexes(gle::Array<GLuint> const &indexes)
 {
