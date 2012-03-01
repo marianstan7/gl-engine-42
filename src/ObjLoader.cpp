@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Wed Feb 22 23:17:47 2012 gael jochaud-du-plessix
-// Last update Tue Feb 28 16:27:27 2012 gael jochaud-du-plessix
+// Last update Thu Mar  1 18:36:20 2012 gael jochaud-du-plessix
 //
 
 #include <fstream>
@@ -19,7 +19,7 @@ gle::ObjLoader::ObjLoader() :
   _currentVertexes(0), _currentNormals(0), _currentTextures(0),
   _currentVertexesIndexes(0), _currentTexturesIndexes(0),
   _currentNormalsIndexes(0),
-  _currentLine(0), _currentFilename()
+  _currentLine(0), _currentFilename(), _currentDefaultMaterial(0)
 {
 }
 
@@ -28,13 +28,15 @@ gle::ObjLoader::~ObjLoader()
   
 }
 
-gle::Mesh* gle::ObjLoader::load(std::string const & file)
+gle::Mesh* gle::ObjLoader::load(std::string const & file,
+				gle::Material* defaultMaterial)
 {
   std::fstream fileStream(file.c_str());
 
   if (!fileStream.is_open())
     return (NULL);
   _currentFilename = file;
+  _currentDefaultMaterial = defaultMaterial;
   _currentMesh = NULL;
   _currentVertexes.resize(0);
   _currentTextures.resize(0);
@@ -88,6 +90,7 @@ void gle::ObjLoader::_parseGroup(Mesh* parent,
     return ;
   std::string meshName = lineParts[1];
   gle::Mesh* mesh = new gle::Mesh();
+  mesh->setMaterial(_currentDefaultMaterial);
   mesh->setName(meshName);
   if (_currentMesh != NULL)
     _addCurrentMesh(parent);

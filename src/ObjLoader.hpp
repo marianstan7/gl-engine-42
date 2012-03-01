@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Wed Feb 22 23:03:27 2012 gael jochaud-du-plessix
-// Last update Tue Feb 28 15:26:01 2012 gael jochaud-du-plessix
+// Last update Thu Mar  1 18:33:41 2012 gael jochaud-du-plessix
 //
 
 #ifndef _GLE_OBJ_LOADER_HPP_
@@ -15,6 +15,7 @@
 # include <vector>
 # include <FileLoader.hpp>
 # include <Array.hpp>
+# include <Material.hpp>
 
 namespace gle {
 
@@ -40,7 +41,8 @@ namespace gle {
       If an error occur during the file parsing,
       a ParsingError exception can be thrown.
      */
-    gle::Mesh* load(std::string const & file);
+    gle::Mesh* load(std::string const & file,
+		    gle::Material* defaultMaterial);
     
   private:
     void _parseLine(Mesh *parent, std::string const & line);
@@ -67,6 +69,7 @@ namespace gle {
     gle::Array<GLuint> _currentNormalsIndexes;
     GLuint _currentLine;
     std::string _currentFilename;
+    gle::Material* _currentDefaultMaterial;
   };
 }
 

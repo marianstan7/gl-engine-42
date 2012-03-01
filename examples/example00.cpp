@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Wed Feb 15 17:24:36 2012 gael jochaud-du-plessix
-// Last update Thu Mar  1 18:12:59 2012 gael jochaud-du-plessix
+// Last update Thu Mar  1 18:33:57 2012 gael jochaud-du-plessix
 //
 
 /*! \mainpage glEngine Reference documentation
@@ -77,7 +77,7 @@ int glEngine(int ac, char **av)
   material.setShininess(32);
 
   gle::ObjLoader loader;
-  gle::Mesh* model = loader.load(av[1]);
+  gle::Mesh* model = loader.load(av[1], &material);
 
   GLfloat dist = atol(av[2]);
 
