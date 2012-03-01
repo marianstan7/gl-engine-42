@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Mon Feb 20 22:50:35 2012 gael jochaud-du-plessix
-// Last update Tue Feb 28 16:22:13 2012 loick michard
+// Last update Thu Mar  1 18:02:57 2012 gael jochaud-du-plessix
 //
 
 #include <Material.hpp>
@@ -14,8 +14,10 @@
 #include <sstream>
 
 gle::Material::Material() :
-  _colorEnabled(false), _isLight(false),
-  _shininess(0), _specularIntensity(0)
+  _color(1.0, 1.0, 1.0),
+  _diffuseLightEnabled(false), _specularLightEnabled(false),
+  _shininess(0), _diffuseIntensity(0), _specularIntensity(0),
+  _colorMapEnabled(false), _colorMap(NULL)
 {
 }
 
@@ -23,24 +25,43 @@ gle::Material::~Material()
 {
 }
 
-void gle::Material::setColorEnabled(bool colorEnabled)
+void gle::Material::setColor(gle::Color<GLfloat> const & color)
 {
-  _colorEnabled = colorEnabled;
+  _color = color;
 }
 
-bool gle::Material::isColorEnabled() const
+gle::Color<GLfloat> const & gle::Material::getColor() const
 {
-  return (_colorEnabled);
+  return (_color);
 }
 
-void gle::Material::isLight(bool isLight)
+bool gle::Material::isDiffuseLightEnabled() const
 {
-  _isLight = isLight;
+  return (_diffuseLightEnabled);
 }
 
-bool gle::Material::isLight() const
+bool gle::Material::isSpecularLightEnabled() const
 {
-  return (_isLight);
+  return (_specularLightEnabled);
+}
+
+inline bool gle::Material::isLightEnabled() const
+{
+  return (_diffuseLightEnabled || _specularLightEnabled);
+}
+
+bool gle::Material::setDiffuseLightEnabled(bool enabled)
+{
+  _diffuseLightEnabled = enabled;
+  if (_diffuseIntensity == 0)
+    _diffuseIntensity = 1;
+}
+
+bool gle::Material::setSpecularLightEnabled(bool enabled)
+{
+  _specularLightEnabled = enabled;
+  if (_specularIntensity == 0)
+    _specularIntensity = 1;
 }
 
 void gle::Material::setShininess(GLfloat shininess)
@@ -55,14 +76,39 @@ GLfloat gle::Material::getShininess() const
   return (_shininess);
 }
 
+void gle::Material::setDiffuseIntensity(GLfloat diffuseIntensity)
+{
+  _diffuseIntensity = diffuseIntensity;
+}
+
 void gle::Material::setSpecularIntensity(GLfloat specularIntensity)
 {
   _specularIntensity = specularIntensity;
 }
 
+GLfloat gle::Material::getDiffuseIntensity() const
+{
+  return (_diffuseLightEnabled ? _diffuseIntensity : 0);
+}
+
 GLfloat gle::Material::getSpecularIntensity() const
 {
-  return (_specularIntensity);
+  return (_specularLightEnabled ? _specularIntensity : 0);
+}
+
+void gle::Material::setColorMapEnabled(bool enabled)
+{
+  _colorMapEnabled = enabled;
+}
+
+gle::Texture* gle::Material::getColorMap() const
+{
+  return (_colorMap);
+}
+
+void gle::Material::setColorMap(gle::Texture* colorMap)
+{
+  _colorMap = colorMap;
 }
 
 gle::Program* gle::Material::createProgram(Scene* scene)
@@ -87,14 +133,15 @@ gle::Program* gle::Material::createProgram(Scene* scene)
   // Get uniform locations
   program->getUniformLocation(gle::Program::MVMatrix);
   program->getUniformLocation(gle::Program::PMatrix);
-  if (!_isLight && scene->isLightEnabled() &&
-      (scene->getDirectionalLightsSize() || scene->getPointLightsSize()))
+  program->getUniformLocation(gle::Program::color);
+  if (isLightEnabled() && scene->isLightEnabled() && scene->hasLights())
     program->getUniformLocation(gle::Program::NMatrix);
-  if (!_isLight && scene->isLightEnabled())
+  if (isLightEnabled() && scene->isLightEnabled())
     {
       program->getUniformLocation(gle::Program::ambientColor);
       program->getUniformLocation(gle::Program::shininess);
       program->getUniformLocation(gle::Program::specularIntensity);
+      program->getUniformLocation(gle::Program::diffuseIntensity);
       if (scene->getDirectionalLightsSize())
 	{
 	  program->getUniformLocation(gle::Program::directionalLightDirection);
@@ -121,47 +168,37 @@ gle::Shader* gle::Material::_createVertexShader(Scene* scene)
   
   // Headers
   shaderSource += gle::ShaderSource::Vertex::Default::Head;
-  if (_isLight || _colorEnabled)
-    shaderSource += gle::ShaderSource::Vertex::Color::Head;
-  if (!_isLight && scene->isLightEnabled())
-    shaderSource += _replace("%nb_point_lights", 
-			     scene->getPointLightsSize(),
-			     _replace("%nb_directional_lights",
-				      scene->getDirectionalLightsSize(),
-				      gle::ShaderSource::Vertex::Light::Head));
+  if (isLightEnabled() && scene->isLightEnabled())
+    {
+      std::string head = gle::ShaderSource::Vertex::Light::Head;
+      head = _replace("%nb_directional_lights",
+		      scene->getDirectionalLightsSize(), head);
+      head += _replace("%nb_point_lights", scene->getPointLightsSize(), head);
+      shaderSource += head;
+    }
   
   // Input locations
   shaderSource += gle::ShaderSource::Vertex::Default::InputLocations;
-  if (_isLight || _colorEnabled)
-    shaderSource += gle::ShaderSource::Vertex::Color::InputLocations;
+
   // Output locations
   shaderSource += gle::ShaderSource::Vertex::Default::OutputLocations;
-  if (_isLight || _colorEnabled)
-    shaderSource += gle::ShaderSource::Vertex::Color::OutputLocations;
 
   // Uniform declarations
   shaderSource += gle::ShaderSource::Vertex::Default::UniformDeclarations;
-  if (_isLight || _colorEnabled)
-    shaderSource += gle::ShaderSource::Vertex::Color::UniformDeclarations;
-  if (!_isLight && scene->isLightEnabled())
+  if (isLightEnabled() && scene->isLightEnabled())
     shaderSource += gle::ShaderSource::Vertex::Light::UniformDeclarations;
+
   // Input declarations
   shaderSource += gle::ShaderSource::Vertex::Default::InputDeclarations;
-  if (_isLight || _colorEnabled)
-    shaderSource += gle::ShaderSource::Vertex::Color::InputDeclarations;
   
   // Output declarations
   shaderSource += gle::ShaderSource::Vertex::Default::OutputDeclarations;
-  if (_isLight || _colorEnabled)
-    shaderSource += gle::ShaderSource::Vertex::Color::OutputDeclarations;
 
   // Shader body
   shaderSource += gle::ShaderSource::Vertex::BodyBegin;
   
   shaderSource += gle::ShaderSource::Vertex::Default::Body;
-  if (_isLight || _colorEnabled)
-    shaderSource += gle::ShaderSource::Vertex::Color::Body;
-  if (!_isLight && scene->isLightEnabled())
+  if (isLightEnabled() && scene->isLightEnabled())
     shaderSource += gle::ShaderSource::Vertex::Light::Body;
 
   shaderSource += gle::ShaderSource::Vertex::BodyEnd;
@@ -178,34 +215,30 @@ gle::Shader* gle::Material::_createFragmentShader(Scene* scene)
 
   // Headers
   shaderSource += gle::ShaderSource::Fragment::Default::Head;
-  if (_isLight || _colorEnabled)
-    shaderSource += gle::ShaderSource::Fragment::Color::Head;
+
+  // Uniform declarations
+  shaderSource += gle::ShaderSource::Fragment::Default::UniformDeclarations;
 
   // Input locations
   shaderSource += gle::ShaderSource::Fragment::Default::InputLocations;
-  if (_isLight || _colorEnabled)
-    shaderSource += gle::ShaderSource::Fragment::Color::InputLocations;
+
   // Output locations
   shaderSource += gle::ShaderSource::Fragment::Default::OutputLocations;
-  if (_isLight || _colorEnabled)
-    shaderSource += gle::ShaderSource::Fragment::Color::OutputLocations;
 
   // Input declarations
   shaderSource += gle::ShaderSource::Fragment::Default::InputDeclarations;
-  if (_isLight || _colorEnabled)
-    shaderSource += gle::ShaderSource::Fragment::Color::InputDeclarations;
+  if (isLightEnabled() && scene->isLightEnabled())
+    shaderSource += gle::ShaderSource::Fragment::Light::InputDeclarations;
   
   // Output declarations
   shaderSource += gle::ShaderSource::Fragment::Default::OutputDeclarations;
-  if (_isLight || _colorEnabled)
-    shaderSource += gle::ShaderSource::Fragment::Color::OutputDeclarations;
 
   // Shader body
   shaderSource += gle::ShaderSource::Fragment::BodyBegin;
   
   shaderSource += gle::ShaderSource::Fragment::Default::Body;
-  if (_isLight || _colorEnabled)
-    shaderSource += gle::ShaderSource::Fragment::Color::Body;
+  if (isLightEnabled() && scene->isLightEnabled())
+    shaderSource += gle::ShaderSource::Fragment::Light::Body;
 
   shaderSource += gle::ShaderSource::Fragment::BodyEnd;
   std::cout << shaderSource << std::endl;

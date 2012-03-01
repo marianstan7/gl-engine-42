@@ -5,14 +5,16 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Mon Feb 20 22:30:11 2012 gael jochaud-du-plessix
-// Last update Wed Feb 29 17:02:13 2012 loick michard
+// Last update Thu Mar  1 17:50:11 2012 gael jochaud-du-plessix
 //
 
 #ifndef _GLE_MATERIAL_HPP_
 # define _GLE_MATERIAL_HPP_
 
-# include <Program.hpp>
 # include <string>
+# include <Program.hpp>
+# include <Texture.hpp>
+# include <Color.hpp>
 
 namespace gle {
 
@@ -34,22 +36,32 @@ namespace gle {
     //! Destruct a material
     ~Material();
 
-    //! Enable or disable the material color
-    void setColorEnabled(bool colorEnabled);
+    //! Set the material base color
 
-    //! Return true if the color is enabled
-    bool isColorEnabled() const;
+    void setColor(gle::Color<GLfloat> const & color);
 
-    //! Set if the material is a light
-    /*!
-      \param isLight Give true to transform material into a light
-    */
+    //! Return the material base color
 
-    void isLight(bool isLight);
+    gle::Color<GLfloat> const & getColor() const;
 
-    //! Check if the material is a light
+    //! Return true if the diffuse lighting is enabled
 
-    bool isLight() const;
+    bool isDiffuseLightEnabled() const;
+
+    //! Return true if the specular lighting is enabled
+    bool isSpecularLightEnabled() const;
+
+    //! Return true if either diffuse or specular lighting is enabled
+
+    bool isLightEnabled() const;
+
+    //! Enable or disable diffuse lighting
+
+    bool setDiffuseLightEnabled(bool enabled);
+
+    //! Enable or disable specular lighting
+
+    bool setSpecularLightEnabled(bool enabled);
 
     //! Set shininess of material
     /*!
@@ -62,6 +74,13 @@ namespace gle {
 
     GLfloat getShininess() const;
 
+    //! Set diffuse intensity of material
+    /*!
+      \param diffuseIntensity Diffuse intensity value
+    */
+    
+    void setDiffuseIntensity(GLfloat diffuseIntensity);
+
     //! Set specular intensity of material
     /*!
       \param specularIntensity Specular intensity value
@@ -69,9 +88,29 @@ namespace gle {
     
     void setSpecularIntensity(GLfloat specularIntensity);
 
+    //! Get diffuse intensity of material
+
+    GLfloat getDiffuseIntensity() const;
+
     //! Get specular intensity of material
 
-    GLfloat getSpecularIntensity() const;    
+    GLfloat getSpecularIntensity() const;
+
+    //! Return true if the color map is enabled
+
+    bool isColorMapEnabled() const;
+
+    //! Enable or disable the color map
+
+    void setColorMapEnabled(bool enabled);
+
+    //! Get color map texture
+
+    gle::Texture* getColorMap() const;
+
+    //! Set color map texture
+
+    void setColorMap(gle::Texture* colorMap);
 
     //! Create the rendering that can be used to render this material
     /*
@@ -81,10 +120,17 @@ namespace gle {
     gle::Program* createProgram(Scene* scene);
 
   private:
-    bool _colorEnabled;
-    bool _isLight;
+    gle::Color<GLfloat> _color;
+
+    bool _diffuseLightEnabled;
+    bool _specularLightEnabled;
+
     GLfloat _shininess;
+    GLfloat _diffuseIntensity;
     GLfloat _specularIntensity;
+
+    bool _colorMapEnabled;
+    gle::Texture* _colorMap;
 
     gle::Shader* _createVertexShader(Scene* scene);
     gle::Shader* _createFragmentShader(Scene* scene);

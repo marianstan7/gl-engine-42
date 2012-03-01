@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Fri Feb 17 16:21:24 2012 gael jochaud-du-plessix
-// Last update Tue Feb 28 16:22:28 2012 loick michard
+// Last update Thu Mar  1 17:53:55 2012 gael jochaud-du-plessix
 //
 
 #ifndef _GLE_PROGRAM_HPP_
@@ -16,6 +16,7 @@
 # include <Shader.hpp>
 # include <Matrix4.hpp>
 # include <Matrix3.hpp>
+# include <Color.hpp>
 
 namespace gle {
 
@@ -32,6 +33,7 @@ namespace gle {
     enum Uniform {
       MVMatrix,
       PMatrix,
+      color,
       NMatrix,
       ambientColor,
       directionalLightDirection,
@@ -40,7 +42,8 @@ namespace gle {
       pointLightColor,
       pointLightSpecularColor,
       shininess,
-      specularIntensity
+      specularIntensity,
+      diffuseIntensity
     };
     
     //! Create a new OpenGL Program
@@ -93,11 +96,14 @@ namespace gle {
     //! Set the value of a uniform matrix3
     void setUniform(Uniform uniformLocation, Matrix3<GLfloat> & matrix);
 
-    //! Set the value of a uniform matrix3
-    void setUniform3v(Uniform uniformLocation, GLfloat* values, GLsizeiptr size);
+    //! Set the value of a uniform array of vec3
+    void setUniform3v(Uniform uniformLocation, GLfloat* values,
+		      GLsizeiptr size);
+
+    void setUniform(Uniform uniform, gle::Color<GLfloat> const & color);
 
     //! Set a value of an uniform GLfloat
-    void setUniform1f(Uniform uniform, GLfloat value);
+    void setUniform(Uniform uniform, GLfloat value);
 
     //! Return the OpenGL Program identifier
     GLuint getId() const;

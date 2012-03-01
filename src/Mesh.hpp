@@ -5,7 +5,7 @@
 // Login   <michar_l@epitech.net>
 // 
 // Started on  Mon Feb 20 13:20:54 2012 loick michard
-// Last update Wed Feb 29 16:54:06 2012 loick michard
+// Last update Thu Mar  1 14:55:50 2012 gael jochaud-du-plessix
 //
 
 #ifndef _MESH_HPP_
@@ -139,6 +139,10 @@ namespace gle {
 
     void setNormals(const GLfloat* normals, GLsizeiptr nbNormals);
 
+    //! Set the mesh texture coords
+
+    void setTextureCoords(const GLfloat* textureCoords, GLsizeiptr size);
+
     //! Set the mesh indexes
 
     void setIndexes(const GLuint* indexes, GLsizeiptr nbIndexes);
@@ -154,6 +158,10 @@ namespace gle {
     //! Set the mesh normals
 
     void setNormals(gle::Array<GLfloat> const &vertexes);
+
+    //! Set the mesh texture coords
+
+    void setTextureCoords(gle::Array<GLfloat> const &textureCoords);
 
     //! Set the mesh indexes
 
@@ -192,6 +200,10 @@ namespace gle {
 
     Buffer<GLfloat> * getNormalsBuffer();
 
+    //! Return the Texture coords buffer
+
+    Buffer<GLfloat> * getTextureCoordsBuffer();
+
     //! Get the indexes buffer
 
     Buffer<GLuint> * getIndexesBuffer();
@@ -210,6 +222,7 @@ namespace gle {
     Material* _material;
     Buffer<GLfloat>* _vertexes;
     Buffer<GLfloat>* _normals;
+    Buffer<GLfloat>* _textureCoords;
     Buffer<GLuint>* _indexes;
     Buffer<GLfloat>* _colors;
 
