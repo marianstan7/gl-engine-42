@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Mon Feb 20 20:48:54 2012 gael jochaud-du-plessix
-// Last update Thu Mar  1 23:00:32 2012 gael jochaud-du-plessix
+// Last update Fri Mar  2 16:46:24 2012 gael jochaud-du-plessix
 //
 
 #include <Renderer.hpp>
@@ -92,7 +92,7 @@ void gle::Renderer::_renderMesh(gle::Scene* scene, gle::Mesh* mesh,
 
   _setCurrentProgram(material, scene, camera);
 
-  _setMeshUniforms(material, scene, mesh);
+  _setMeshUniforms(scene, mesh);
   
   // Set Position buffer
   vertexesBuffer->bind();
@@ -146,65 +146,58 @@ void gle::Renderer::_setCurrentProgram(gle::Material* material,
   _currentProgram = program;
   _currentMaterial = material;
 
-  _setSceneUniforms(material, scene, camera);
-  _setMaterialUniforms(material, scene);
+  _setSceneUniforms(scene, camera);
+  _setMaterialUniforms(material);
 }
 
-void gle::Renderer::_setMaterialUniforms(gle::Material* material,
-					 gle::Scene* scene)
-{
-  _currentProgram->setUniform(gle::Program::Color, material->getColor());
-  if (material->isLightEnabled() && scene->isLightEnabled())
-    {
-      _currentProgram->setUniform(gle::Program::Shininess,
-				    material->getShininess());
-      _currentProgram->setUniform(gle::Program::DiffuseIntensity,
-				    material->getDiffuseIntensity());
-      _currentProgram->setUniform(gle::Program::SpecularIntensity,
-				    material->getSpecularIntensity());
-    }
+void gle::Renderer::_setMaterialUniforms(gle::Material* material)
+{  
+  _currentProgram->setUniform(gle::Program::AmbientColor,
+			      material->getAmbientColor());
+  _currentProgram->setUniform(gle::Program::DiffuseColor,
+			      material->getDiffuseColor());
+  _currentProgram->setUniform(gle::Program::SpecularColor,
+			      material->getSpecularColor());
+
+  _currentProgram->setUniform(gle::Program::Shininess,
+			      material->getShininess());
+  _currentProgram->setUniform(gle::Program::DiffuseIntensity,
+			      material->getDiffuseIntensity());
+  _currentProgram->setUniform(gle::Program::SpecularIntensity,
+			      material->getSpecularIntensity());
 }
 
-void gle::Renderer::_setSceneUniforms(gle::Material* material,
-				      gle::Scene* scene, gle::Camera* camera)
+void gle::Renderer::_setSceneUniforms(gle::Scene* scene, gle::Camera* camera)
 {
   gle::Matrix4<GLfloat> & projectionMatrix = camera->getProjectionMatrix();
   _currentProgram->setUniform(gle::Program::PMatrix, projectionMatrix);
 
   // Send light infos to the shader
-  if (material->isLightEnabled() && scene->isLightEnabled())
+  if (scene->getDirectionalLightsSize())
     {
-      _currentProgram->setUniform3v(gle::Program::AmbientColor,
-				    scene->getAmbientColor(),
-				    1);
-      if (scene->getDirectionalLightsSize())
-	{
-	  _currentProgram->setUniform3v(gle::Program::
-					DirectionalLightDirection,
-					scene->getDirectionalLightsDirection(),
-					scene->getDirectionalLightsSize());
-	  _currentProgram->setUniform3v(gle::Program::DirectionalLightColor,
-					scene->getDirectionalLightsColor(),
-					scene->getDirectionalLightsSize());
-	}
-      if (scene->getPointLightsSize())
-	{
-	  _currentProgram->setUniform3v(gle::Program::PointLightPosition,
-					scene->getPointLightsPosition(),
-					scene->getPointLightsSize());
-	  _currentProgram->setUniform3v(gle::Program::PointLightColor,
-					scene->getPointLightsColor(),
-					scene->getPointLightsSize());
-	  _currentProgram->setUniform3v(gle::Program::PointLightSpecularColor,
-					scene->getPointLightsSpecularColor(),
-					scene->getPointLightsSize());
-	}
+      _currentProgram->setUniform3v(gle::Program::
+				    DirectionalLightDirection,
+				    scene->getDirectionalLightsDirection(),
+				    scene->getDirectionalLightsSize());
+      _currentProgram->setUniform3v(gle::Program::DirectionalLightColor,
+				    scene->getDirectionalLightsColor(),
+				    scene->getDirectionalLightsSize());
     }
-  
+  if (scene->getPointLightsSize())
+    {
+      _currentProgram->setUniform3v(gle::Program::PointLightPosition,
+				    scene->getPointLightsPosition(),
+				    scene->getPointLightsSize());
+      _currentProgram->setUniform3v(gle::Program::PointLightColor,
+				    scene->getPointLightsColor(),
+				    scene->getPointLightsSize());
+      _currentProgram->setUniform3v(gle::Program::PointLightSpecularColor,
+				    scene->getPointLightsSpecularColor(),
+				    scene->getPointLightsSize());
+    }
 }
 
-void gle::Renderer::_setMeshUniforms(gle::Material* material,
-				     gle::Scene* scene, gle::Mesh* mesh)
+void gle::Renderer::_setMeshUniforms(gle::Scene* scene, gle::Mesh* mesh)
 {
   gle::Matrix4<GLfloat> mvMatrix = scene->getCurrentCamera()->getModelViewMatrix() * mesh->getMatrix();
   Matrix4<GLfloat> inverse(mvMatrix);
@@ -216,7 +209,5 @@ void gle::Renderer::_setMeshUniforms(gle::Material* material,
   _currentProgram->setUniform(gle::Program::MVMatrix, mvMatrix);
 
   // Set normals matrix
-  if (material->isLightEnabled() && scene->isLightEnabled() &&
-      scene->hasLights())
-    _currentProgram->setUniform(gle::Program::NMatrix, normalMatrix);
+  _currentProgram->setUniform(gle::Program::NMatrix, normalMatrix);
 }

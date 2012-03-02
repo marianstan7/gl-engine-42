@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Mon Feb 20 22:30:11 2012 gael jochaud-du-plessix
-// Last update Thu Mar  1 20:12:56 2012 gael jochaud-du-plessix
+// Last update Fri Mar  2 16:40:30 2012 gael jochaud-du-plessix
 //
 
 #ifndef _GLE_MATERIAL_HPP_
@@ -31,18 +31,42 @@ namespace gle {
   public:
 
     //! Create a material
-    Material();
+    Material(std::string const & name="");
 
     //! Destruct a material
     ~Material();
 
-    //! Set the material base color
+    //! Set the name of the material
 
-    void setColor(gle::Color<GLfloat> const & color);
+    void setName(std::string const & name);
 
-    //! Return the material base color
+    //! Return the name of the material
 
-    gle::Color<GLfloat> const & getColor() const;
+    std::string const & getName() const;
+
+    //! Set the material ambient color
+
+    void setAmbientColor(gle::Color<GLfloat> const & color);
+
+    //! Return the material ambient color
+
+    gle::Color<GLfloat> const & getAmbientColor() const;
+
+    //! Set the material diffuse color
+
+    void setDiffuseColor(gle::Color<GLfloat> const & color);
+
+    //! Return the material diffuse color
+
+    gle::Color<GLfloat> const & getDiffuseColor() const;
+
+    //! Set the material specular color
+
+    void setSpecularColor(gle::Color<GLfloat> const & color);
+
+    //! Return the material specular color
+
+    gle::Color<GLfloat> const & getSpecularColor() const;
 
     //! Return true if the diffuse lighting is enabled
 
@@ -50,10 +74,6 @@ namespace gle {
 
     //! Return true if the specular lighting is enabled
     bool isSpecularLightEnabled() const;
-
-    //! Return true if either diffuse or specular lighting is enabled
-
-    bool isLightEnabled() const;
 
     //! Enable or disable diffuse lighting
 
@@ -120,7 +140,11 @@ namespace gle {
     gle::Program* createProgram(Scene* scene);
 
   private:
-    gle::Color<GLfloat> _color;
+    std::string _name;
+    
+    gle::Color<GLfloat> _ambientColor;
+    gle::Color<GLfloat> _diffuseColor;
+    gle::Color<GLfloat> _specularColor;
 
     bool _diffuseLightEnabled;
     bool _specularLightEnabled;

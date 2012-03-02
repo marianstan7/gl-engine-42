@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Wed Feb 15 17:24:36 2012 gael jochaud-du-plessix
-// Last update Thu Mar  1 21:56:25 2012 loick michard
+// Last update Fri Mar  2 16:47:21 2012 gael jochaud-du-plessix
 //
 
 /*! 
@@ -81,7 +81,7 @@ int glEngine(int ac, char **av)
 
   materialLight.setDiffuseLightEnabled(false);
   materialLight.setSpecularLightEnabled(false);
-  materialLight.setColor(gle::Color<GLfloat>(1, 0, 0.25));
+  materialLight.setAmbientColor(gle::Color<GLfloat>(1, 0, 0.25));
 
   gle::PointLight		l(gle::Vector3<GLfloat>(0, 100, 0), gle::Color<GLfloat>(1, 0, 0.25));
   gle::Mesh*			sp = gle::Geometries::Sphere(&materialLight,
@@ -91,13 +91,13 @@ int glEngine(int ac, char **av)
   gle::Material			materialLight2;
   materialLight2.setDiffuseLightEnabled(false);
   materialLight2.setSpecularLightEnabled(false);
-  materialLight2.setColor(gle::Color<GLfloat>(0, 0.25, 1));
+  materialLight2.setAmbientColor(gle::Color<GLfloat>(0, 0.25, 1));
   gle::Mesh*			sp2 = gle::Geometries::Sphere(&materialLight2,
 							      1);
   gle::Material			materialLight3;
   materialLight3.setDiffuseLightEnabled(false);
   materialLight3.setSpecularLightEnabled(false);
-  materialLight3.setColor(gle::Color<GLfloat>(0.5, 1, 0.5));
+  materialLight3.setAmbientColor(gle::Color<GLfloat>(0.5, 1, 0.5));
   gle::PointLight		l3(gle::Vector3<GLfloat>(40, 0, 0),
 				   gle::Color<GLfloat>(0.5, 1, 0.5));
   gle::Mesh*			sp3 = gle::Geometries::Sphere(&materialLight3,
@@ -106,7 +106,7 @@ int glEngine(int ac, char **av)
   gle::Material			materialLight4;
   materialLight4.setDiffuseLightEnabled(false);
   materialLight4.setSpecularLightEnabled(false);
-  materialLight4.setColor(gle::Color<GLfloat>(1, 0.66, 0));
+  materialLight4.setAmbientColor(gle::Color<GLfloat>(1, 0.66, 0));
   gle::PointLight		l4(gle::Vector3<GLfloat>(40, 0, 0),
 				   gle::Color<GLfloat>(1, 0.66, 0));
   gle::Mesh*			sp4 = gle::Geometries::Sphere(&materialLight4,
@@ -121,7 +121,6 @@ int glEngine(int ac, char **av)
 
   scene << &camera << &material << &materialLight << &materialLight2 << &materialLight3 << &materialLight4 << sp << sp2 << sp3 << sp4;
   scene << &l << &l2 << &l3 << &l4 << &l5;
-  scene.setLightEnabled(true, gle::Color<GLfloat>(0, 0, 0));
 
   gle::Renderer		renderer;
   GLfloat		angle = 0;

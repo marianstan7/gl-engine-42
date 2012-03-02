@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Fri Feb 17 16:21:14 2012 gael jochaud-du-plessix
-// Last update Thu Mar  1 21:26:49 2012 gael jochaud-du-plessix
+// Last update Fri Mar  2 16:36:06 2012 gael jochaud-du-plessix
 //
 
 #include <Program.hpp>
@@ -16,7 +16,9 @@ gle::Program::Program() :
 {
   _uniformNames[gle::Program::MVMatrix] = "gle_MVMatrix";
   _uniformNames[gle::Program::PMatrix] = "gle_PMatrix";
-  _uniformNames[gle::Program::Color] = "gle_color";
+  _uniformNames[gle::Program::AmbientColor] = "gle_ambientColor";
+  _uniformNames[gle::Program::DiffuseColor] = "gle_diffuseColor";
+  _uniformNames[gle::Program::SpecularColor] = "gle_specularColor";
   _uniformNames[gle::Program::ColorMap] = "gle_colorMap";
   _uniformNames[gle::Program::NMatrix] = "gle_NMatrix";
   _uniformNames[gle::Program::AmbientColor] = "gle_ambientColor";

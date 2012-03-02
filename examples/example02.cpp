@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Wed Feb 15 17:24:36 2012 gael jochaud-du-plessix
-// Last update Thu Mar  1 22:52:38 2012 loick michard
+// Last update Fri Mar  2 16:47:42 2012 gael jochaud-du-plessix
 //
 
 /*! 
@@ -93,7 +93,6 @@ int glEngine()
 			   gle::Color<GLfloat>(1, 1, 0.8));
   scene << sun << &sunMaterial << &camera << earth << &earthMaterial << &sunLight;
   scene << &moonMaterial << moon;
-  scene.setLightEnabled(true, gle::Color<GLfloat>(0.1, 0.1, 0.1));
 
   gle::Renderer		renderer;
   GLfloat		angle = 0;

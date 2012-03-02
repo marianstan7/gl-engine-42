@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Mon Feb 20 18:18:01 2012 gael jochaud-du-plessix
-// Last update Thu Mar  1 18:50:09 2012 gael jochaud-du-plessix
+// Last update Fri Mar  2 16:44:20 2012 gael jochaud-du-plessix
 //
 
 #ifndef _GLE_SCENE_HPP_
@@ -163,23 +163,6 @@ namespace gle {
 
     std::map<Material*, Program*> & getPrograms();
 
-    //! Return true if light in this scene is enables, else return false
-
-    bool isLightEnabled() const;
-
-    //! Enable or disable light in the scene, and set ambient color
-    /*!
-      \param enabled if enabled is true light are enabled, else they are disabled
-      \param ambientColor Color to set to ambient lighting
-    */
-
-    void setLightEnabled(bool enabled,
-			 Color<GLfloat> const& ambientColor=Color<GLfloat>(0.1, 0.1, 0.1));
-
-    //! Get the scene ambient color
-
-    GLfloat* getAmbientColor();
-
     //! Get a GLfloat tab of all directional lights direction
 
     GLfloat* getDirectionalLightsDirection() const;
@@ -232,9 +215,6 @@ namespace gle {
     std::vector<GLfloat> _pointLightsColor;
     std::vector<GLfloat> _pointLightsSpecularColor;
     GLsizeiptr _pointLightsSize;    
-
-    bool _lightEnabled;
-    GLfloat _ambientColor[3];
 
     Camera* _currentCamera;
     std::map<Material*, Program*> _programs;

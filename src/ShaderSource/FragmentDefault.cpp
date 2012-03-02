@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Tue Feb 21 15:47:17 2012 gael jochaud-du-plessix
-// Last update Thu Mar  1 18:04:12 2012 gael jochaud-du-plessix
+// Last update Fri Mar  2 16:26:17 2012 gael jochaud-du-plessix
 //
 
 #include <gle/opengl.h>
@@ -27,7 +27,7 @@ const char *gle::ShaderSource::Fragment::Default::Head =
   ;
 
 const char *gle::ShaderSource::Fragment::Default::UniformDeclarations =
-  "uniform vec3 gle_color; \n"
+  ""
   ;
 
 const char * gle::ShaderSource::Fragment::Default::InputLocations =
@@ -47,5 +47,5 @@ const char *gle::ShaderSource::Fragment::Default::OutputDeclarations =
   ;
 
 const char *gle::ShaderSource::Fragment::Default::Body =
-  "gle_FragColor = vec4(gle_color, 1.0);\n"
+  "gle_FragColor = vec4(1.0);\n"
   ;
