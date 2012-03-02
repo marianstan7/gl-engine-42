@@ -51,6 +51,11 @@ add_executable (
     examples/texture.cpp
 )
 
+add_executable (
+    examples/flycam
+    examples/flycam.cpp
+)
+
 # Librairies to link
 target_link_libraries (
     examples/example00
@@ -75,6 +80,13 @@ target_link_libraries (
 
 target_link_libraries (
     examples/texture
+    ${SFML_LIBRARIES}
+    ${OPENGL_LIBRARIES}
+    glEngine
+)
+
+target_link_libraries (
+    examples/flycam
     ${SFML_LIBRARIES}
     ${OPENGL_LIBRARIES}
     glEngine
