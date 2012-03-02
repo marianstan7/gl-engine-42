@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Mon Feb 20 20:48:54 2012 gael jochaud-du-plessix
-// Last update Fri Mar  2 16:46:24 2012 gael jochaud-du-plessix
+// Last update Fri Mar  2 17:30:22 2012 gael jochaud-du-plessix
 //
 
 #include <Renderer.hpp>
@@ -91,6 +91,8 @@ void gle::Renderer::_renderMesh(gle::Scene* scene, gle::Mesh* mesh,
     return ;
 
   _setCurrentProgram(material, scene, camera);
+  if (!_currentProgram)
+    return ;
 
   _setMeshUniforms(scene, mesh);
   
@@ -141,6 +143,8 @@ void gle::Renderer::_setCurrentProgram(gle::Material* material,
   std::map<gle::Material*, gle::Program*> & programs = scene->getPrograms();
   gle::Program* program = programs[material];
 
+  if (!program)
+    return ;
   if (program && program != _currentProgram)
     program->use();
   _currentProgram = program;

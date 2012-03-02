@@ -5,7 +5,7 @@
 // Login   <michar_l@epitech.net>
 // 
 // Started on  Fri Feb 17 12:51:39 2012 loick michard
-// Last update Thu Mar  1 20:07:24 2012 loick michard
+// Last update Fri Mar  2 18:37:06 2012 gael jochaud-du-plessix
 //
 
 #ifndef _GLE_VECTOR3_HPP_
@@ -72,6 +72,19 @@ namespace gle {
       z += other.z;
       return (*this);
     }
+
+    //! Substract a vector
+    /*!
+      \param other 3D vector to substract
+    */
+    Vector3& operator-=(Vector3 const& other)
+    {
+      x -= other.x;
+      y -= other.y;
+      z -= other.z;
+      return (*this);
+    }
+
 
     //! Multiply a vector
     /*!
@@ -142,6 +155,20 @@ gle::Vector3<T> operator-(gle::Vector3<T> const & v1,
 			  gle::Vector3<T> const & v2)
 {
   return (gle::Vector3<T>(v1.x - v2.x, v1.y - v2.y, v1.z - v2.z));
+}
+
+template <typename T>
+gle::Vector3<T> operator+(gle::Vector3<T> const & v1,
+			  gle::Vector3<T> const & v2)
+{
+  return (gle::Vector3<T>(v1.x + v2.x, v1.y + v2.y, v1.z + v2.z));
+}
+
+template <typename T>
+std::ostream& operator<<(std::ostream &s, gle::Vector3<T> const & v)
+{
+  s << "x: " << v.x << ", y: " << v.y << ", z: " << v.z;
+  return (s);
 }
 
 #endif // _VECTOR3_HPP_
