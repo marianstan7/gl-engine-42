@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Mon Feb 20 22:50:35 2012 gael jochaud-du-plessix
-// Last update Fri Mar  2 16:55:28 2012 gael jochaud-du-plessix
+// Last update Fri Mar  2 17:09:05 2012 loick michard
 //
 
 #include <Material.hpp>
@@ -18,7 +18,7 @@ gle::Material::Material(std::string const & name) :
   _ambientColor(0.1, 0.1, 0.1), _diffuseColor(1.0, 1.0, 1.0),
   _specularColor(1.0, 1.0, 1.0),
   _diffuseLightEnabled(false), _specularLightEnabled(false),
-  _shininess(0), _diffuseIntensity(0), _specularIntensity(0),
+  _shininess(50), _diffuseIntensity(0), _specularIntensity(0),
   _colorMapEnabled(false), _colorMap(NULL)
 {
 }

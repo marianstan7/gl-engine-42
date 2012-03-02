@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Wed Feb 15 17:24:36 2012 gael jochaud-du-plessix
-// Last update Fri Mar  2 17:00:29 2012 gael jochaud-du-plessix
+// Last update Fri Mar  2 17:19:08 2012 loick michard
 //
 
 /*! \mainpage glEngine Reference documentation
@@ -27,6 +27,7 @@
 #include <ObjLoader.hpp>
 #include <DirectionalLight.hpp>
 #include <PointLight.hpp>
+#include <Exception.hpp>
 
 int glEngine(int, char**);
 
@@ -37,6 +38,10 @@ int main(int ac, char **av)
   try {
     ret = glEngine(ac, av);
   }
+  catch (gle::Exception::ParsingError* error)
+    {
+      std::cout << error->getFilename() << ":" << error->getLine() << " " << error->what() << std::endl;
+    }
   catch (std::exception *e)
     {
       std::cout << "Error: " << e->what() << std::endl;
@@ -68,7 +73,7 @@ int glEngine(int ac, char **av)
   gle::Scene scene;
   gle::PerspectiveCamera camera(gle::Vector3<GLfloat>(0, 0, 0),
 				gle::Vector3<GLfloat>(0, 0, 0),
-				45, 1, 1, 10000);
+				45, 1, 1, 1000000);
   gle::Material material;
 
   material.setDiffuseLightEnabled(true);
@@ -121,13 +126,13 @@ int glEngine(int ac, char **av)
 
   materialLight.setDiffuseLightEnabled(false);
   materialLight.setSpecularLightEnabled(false);
-  gle::PointLight l(gle::Vector3<GLfloat>(0, 20, 0), gle::Color<GLfloat>(0.8, 0, 0));
+  gle::PointLight l(gle::Vector3<GLfloat>(0, 20, 0), gle::Color<GLfloat>(0.8, 0.8, 0.8));
   gle::Mesh* sp = gle::Geometries::Sphere(&materialLight, dist/100);
   sp->setPosition(gle::Vector3<GLfloat>(0, 20, 0));
-  gle::PointLight l2(gle::Vector3<GLfloat>(0, 0, -20), gle::Color<GLfloat>(0, 0, 0.8));
+  gle::PointLight l2(gle::Vector3<GLfloat>(0, 0, -20), gle::Color<GLfloat>(0.8, 0.8, 0.8));
   gle::Mesh* sp2 = gle::Geometries::Sphere(&materialLight, dist/100);
   sp2->setPosition(gle::Vector3<GLfloat>(0, 0, -20));
-  gle::PointLight l3(gle::Vector3<GLfloat>(40, 0, 0), gle::Color<GLfloat>(0, 0.8, 0));
+  gle::PointLight l3(gle::Vector3<GLfloat>(40, 0, 0), gle::Color<GLfloat>(0.8, 0.8, 0.8));
   gle::Mesh* sp3 = gle::Geometries::Sphere(&materialLight, dist/100);
   sp3->setPosition(gle::Vector3<GLfloat>(40, 0, 0));
 

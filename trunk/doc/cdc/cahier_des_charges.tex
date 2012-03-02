@@ -8,7 +8,7 @@
 
 
 \title {Cahier des charges : glEngine}
-\author {Gaël jochaud du plessix\\
+\author {Gaël Jochaud du Plessix\\
 Loick Michard}
 \date {2012}
 
@@ -17,13 +17,13 @@ Loick Michard}
 
 \section{Rendu 3D}
 
-Le rendu 3D est une des parties importamtes d'un bon moteur 3D. 
-Celui-ci doit permettre la création de scène réaliste, avec un rendu graphique se rapprochant le plus possible de la réalité.
+Le rendu 3D est une des parties importantes d'un bon moteur 3D.
+Celui-ci doit permettre la création de scènes réalistes, avec un rendu graphique se rapprochant le plus possible de la réalité.
 Pour cela il doit implémenter un ensemble de caractéristiques permettant un rendu rapide et conforme à la réalité.
 De plus une des contraintes du moteur et de ne jamais descendre en dessous de 24 FPS.
 
 \subsection{Rasterization}
-La rasterization doit être éffectué en utilisant les fonctionalités de la dernières version d'openGL 4.2.
+La rasterization doit être éffectué en utilisant les fonctionalités de la dernières version d'OpenGL 4.2.
 
 \subsection{Fenêtre d'affichage}
 La librairie glEngine doit pouvoir ouvrir une fenêtre permettant d'afficher le rendu 3D du moteur.
@@ -41,14 +41,14 @@ Gestion de l'éclairage de la scène par une ou plusieurs lumières ponctuelles.
 \subsubsection*{Lumière spéculaire}
 Reflet de la lumière sur les objets donnant un effet de brillance. Cette couleur peut être différente de la couleur de la lumière pour plus de réalisme.
 \subsubsection*{Ombres}
-Tous les types de lumières doivent produire des ombres sur les objets. 
-Pour les objets statiques elle ne doit pas être recalculée à chaque itération, contrairement aux objets dynamiques afin d'optimiser les performances.
+Certains types de lumières doivent produire des ombres sur les objets. 
+Pour les objets statiques elle ne doivent pas être recalculée à chaque itération, contrairement aux objets dynamiques afin d'optimiser les performances.
 \subsubsection*{Cubemap}
 Il doit y voir la possibilité de définir un environnement via une texture. 
 Il sera implémenté sous forme de cube map entourant la scène.
-Elle devra se refléter et se réfracter dans chaque objet.
+Le moteur doit être capable de refléter ou réfracter cette cubemap dans nimporte quel objet.
 \subsubsection*{Occlusion ambiante}
-On doit pouvoir activer l'occlusion ambiante pour obtenir des ombres diffuse.
+On doit pouvoir activer l'occlusion ambiante pour obtenir un effet d'illumination globale.
 Elle doit être calculée une seule fois et non à chaque rendu.
 \subsubsection*{Bump mapping}
 Grâce à une texture spéciale définissant le relief d'un objet, le moteur doit pouvoir donner un effet de déformation et de relief sur l'objet.
@@ -57,29 +57,28 @@ Dans un premier temps les objets doivent pouvoir refléter l'environnement.
 Le moteur pourra plus tard implémenter la réflection de la scène complète dans l'objet.
 \subsubsection*{Réfraction}
 Dans un premier temps les objets doivent pouvoir réferacter l'environnement.
-Le moteur pourra plus tard implémenter la réfraction de la scène complète dans l'objet.
 \subsubsection*{Transparence}
 Grâce à une propriété de transparence propre à chaque objet, le moteur doit donner la possibilité de voir la totalité du reste de la scène à travers un objet par transparence.
 
 \section{Gestion de la scène}
-Grâce au moteur, on doit pouvoir créer une scène complète comportant tous un ensemble d'éléments.
+Grâce au moteur, on doit pouvoir créer une scène complète comportant tout un ensemble d'éléments.
 \subsection{Modèles}
 
 \subsubsection*{Création de mesh}
 L'utilisateur doit pouvoir définir un ensemble de point, accompagné d'un ensemble de normale qui formeront un mesh.
 \subsubsection*{Importation}
-Un modèle doit pouvoir être importé à partir d'un ou plusieurs formats standards (.obj, .3ds, .blend, ...).
+Un modèle doit pouvoir être importé à partir d'un format standard (.obj, .3ds, ...).
 Chaque format doit être géré au maximum afin de supporter toutes les fonctionnalités de celui-ci.
-On doit ensuite pouvoir récupérer chaque objet composant un modèle séparemment.
+On doit ensuite pouvoir récupérer chaque objet composant un modèle séparément.
 \subsubsection*{Texture}
 Chaque objet doit avoir la possibilité d'être texturé.
-Chaque face doit pouvoir définir ses propres coordonnés dans la texture.
+Chaque face doit pouvoir définir ses propres coordonnées dans la texture.
 \subsubsection*{Hiérarchie}
 Tous les objets doivent être organisé dans un arbre hiérarchique.
-Ainsi quand on applique une modification d'un parent, elle doit être appliqué à tous ses descendants.
+Ainsi quand on applique une modification sur un parent, elle doit être appliqué à tous ses descendants.
 
 \subsection{Lumières}
-On doit pouvoir ajouter tous type de lumière à la scène.
+On doit pouvoir ajouter différents types de lumières à la scène.
 
 \subsection{Caméras}
 La scène doit posséder une caméra courante.
@@ -93,14 +92,14 @@ un ratio, une distance minimale et maximale.
 Le moteur doit implémenter une caméra avec une projection orthogonale.
 
 \subsubsection*{Cible caméra}
-Une caméra doit pouvoir être défini avec une cible de vue.
+Une caméra doit pouvoir être définie avec une cible de vue.
 Elle regardera alors dans sa direction.
 
 \subsection{Positionnement objets}
-Tous les objets doivent être positionnable dans l'espace, sur tous les axes.
+Tous les objets doivent être positionnables dans l'espace, sur tous les axes.
 
 \subsubsection*{Position}
-On doit pouvoir leur donner une position absolue.
+On doit pouvoir leur donner une position relative à leur parent.
 
 \subsubsection*{Rotation}
 Leur rotation doit pouvoir se faire dans toutes les directions, via un axe de rotation et un angle.
@@ -110,11 +109,11 @@ Chaque objet peut être mis à l'échelle, indépendemment sur chaque axe.
 
 \subsection{Objets statiques et dynamiques}
 Chaque objet doit posséder une propriété statique ou dynamique.
-Elle permet d'éviter les recalculs pour les objets statiques et permettre le mouvement des objets dynamique.
+Elle permet d'éviter des recalculs sur les objets statiques et le mouvement des objets dynamique.
 
 \section{Traitement des métadonnées}
 Pour optimiser les performances du moteur il devra posséder un prétraitement des métadonnées.
-Il devra être effectué en utilisant les technologies openGL et/ou openCL.
+Il devra être effectué en utilisant les technologies OpenGL et/ou OpenCL.
 
 \subsection{Culling}
 \subsubsection*{Elimination des faces cachées}
@@ -133,7 +132,7 @@ Une amélioration du moteur pourra permettre de charger des modèles simplifiés
 
 \section{API}
 L'API doit être simple d'utilisation et permettre la plus grande liberté.
-Elle doit allié puissance et simplicité en encapsulant toutes les fonctionnalités openGL 4.2 et openCL.
+Elle doit allier puissance et simplicité en encapsulant les fonctionnalités nécéssaire d'OpenGL 4.2 et OpenCL.
 
 \section{Démonstrations}
 Le logiciel devra être livré avec un ensemble de démonstrations visant à présenter l'ensemble des fonctionnalités du moteur.
