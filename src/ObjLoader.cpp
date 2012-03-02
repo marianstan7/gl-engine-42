@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Wed Feb 22 23:17:47 2012 gael jochaud-du-plessix
-// Last update Fri Mar  2 16:33:52 2012 gael jochaud-du-plessix
+// Last update Fri Mar  2 18:02:10 2012 loick michard
 //
 
 #include <fstream>
@@ -293,9 +293,10 @@ void gle::ObjLoader::_parseUseMaterial(std::vector<std::string> const &
 				       lineParts)
 {
   if (lineParts.size() < 2)
-    throw new gle::Exception::ParsingError("Invalid use material",
+    return;
+    /*    throw new gle::Exception::ParsingError("Invalid use material",
 					   _currentLine,
-					   _currentFilename);
+					   _currentFilename);*/
   gle::Material* material = _registeredMaterials[lineParts[1]];
   if (material)
     _currentUsedMaterial = material;
@@ -414,8 +415,8 @@ void gle::ObjLoader::_setMaterialIllumination(int illum)
 {
   if (illum == 0)
     {      
-      _currentMaterial->setDiffuseLightEnabled(false);
-      _currentMaterial->setSpecularLightEnabled(false);
+      _currentMaterial->setDiffuseLightEnabled(true);
+      _currentMaterial->setSpecularLightEnabled(true);
     }
   else if (illum == 1)
     {
@@ -448,6 +449,8 @@ gle::Texture* gle::ObjLoader::_getTexture(std::string const & path)
   texture = new gle::Texture(path);
   if (texture)
     _loadedTextures[path] = texture;
+  else
+    std::cerr << "Texture '" << path << "' not found" << std::endl;
   return (texture);
 }
 
