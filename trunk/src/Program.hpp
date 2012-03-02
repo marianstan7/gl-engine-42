@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Fri Feb 17 16:21:24 2012 gael jochaud-du-plessix
-// Last update Thu Mar  1 21:26:14 2012 gael jochaud-du-plessix
+// Last update Fri Mar  2 16:21:56 2012 gael jochaud-du-plessix
 //
 
 #ifndef _GLE_PROGRAM_HPP_
@@ -33,10 +33,11 @@ namespace gle {
     enum Uniform {
       MVMatrix,
       PMatrix,
-      Color,
       ColorMap,
       NMatrix,
       AmbientColor,
+      DiffuseColor,
+      SpecularColor,
       DirectionalLightDirection,
       DirectionalLightColor,
       PointLightPosition,

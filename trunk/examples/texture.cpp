@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Wed Feb 29 19:44:13 2012 gael jochaud-du-plessix
-// Last update Thu Mar  1 23:28:05 2012 gael jochaud-du-plessix
+// Last update Fri Mar  2 16:54:02 2012 gael jochaud-du-plessix
 //
 
 #include <iostream>
@@ -66,36 +66,27 @@ int glEngine(int ac, char **av)
   material.setDiffuseLightEnabled(true);
   material.setSpecularLightEnabled(true);
   material.setShininess(32);
-  material.setColor(gle::Color<GLfloat>(1, 1, 1));
+  material.setAmbientColor(gle::Color<GLfloat>(1, 1, 1));
 
   GLfloat dist = 100;
 
   srand(time(NULL));
 
   gle::ObjLoader loader;
-  gle::Mesh* marteau = loader.load("./models/pencil/pencil.obj", &material);
+  gle::Mesh* model = loader.load("./models/dustbin/trashbin.obj", &material);
 
-  if (marteau)
+  if (model)
     {
-      gle::Material* handleMaterial = new gle::Material();
-      handleMaterial->setDiffuseLightEnabled(true);
-      handleMaterial->setSpecularLightEnabled(true);
-      handleMaterial->setShininess(50);
-      handleMaterial->setColorMapEnabled(true);
-      handleMaterial
-	->setColorMap(new gle::Texture("./models/pencil/body.jpg"));
-      gle::Mesh* handle = marteau->getChildByName("corps\r");
-      if (handle)
-	handle->setMaterial(handleMaterial);
-      marteau->setPosition(gle::Vector3<GLfloat>(0, 0, 0));
-      scene << marteau << handleMaterial;
+      model->setPosition(gle::Vector3<GLfloat>(0, -40, 0));
+      model->setScale(0.7);
+      scene << model;
     }
 
   gle::Material materialLight;
 
   materialLight.setDiffuseLightEnabled(false);
   materialLight.setSpecularLightEnabled(false);
-  materialLight.setColor(gle::Color<GLfloat>(1.0, 1.0, 1.0));
+  materialLight.setAmbientColor(gle::Color<GLfloat>(1.0, 1.0, 1.0));
 
   gle::PointLight l(gle::Vector3<GLfloat>(0, 20, 0), gle::Color<GLfloat>(0.8, 0, 0));
   gle::Mesh* sp = gle::Geometries::Sphere(&materialLight, dist/100);
@@ -111,7 +102,6 @@ int glEngine(int ac, char **av)
 
   scene << &camera << &material << &materialLight << sp << sp2 << sp3;
   scene << &l << &l2 << &l3;
-  scene.setLightEnabled(true, gle::Color<GLfloat>(0.6, 0.6, 0.6));
 
   gle::Renderer renderer;
   renderer.createPrograms(&scene);
@@ -132,7 +122,6 @@ int glEngine(int ac, char **av)
 	  time.Restart();
 	}
       frameCounter++;
-      angle = (float)clock.GetElapsedTime().AsMilliseconds() / 1000;
       sf::Event Event;
       while (App.PollEvent(Event))
 	{
@@ -142,14 +131,18 @@ int glEngine(int ac, char **av)
 	  else if (Event.Type == sf::Event::KeyPressed
 		   && Event.Key.Code == sf::Keyboard::Escape)
 	    App.Close();
+	  // else if (Event.Type == sf::Event::MouseMoved)
+	  //   {
+	  //     angle = ((GLfloat)Event.MouseMove.X / 500) * 20;
+	  //   }
 	  // Adjust the viewport when the window is resized
 	  if (Event.Type == sf::Event::Resized)
 	    glViewport(0, 0, Event.Size.Width, Event.Size.Height);
 	}
+      angle = (float)clock.GetElapsedTime().AsMilliseconds() / 1000;
       camera.setPosition(gle::Vector3<GLfloat>(cos(angle/3) * -dist,
 					       0,//sin(angle/3) * dist/2,
 					       sin(angle/3) * -dist));
-
       float dist2 = dist / 3;
       sp->setPosition(gle::Vector3<GLfloat>(sin(angle/2) * dist2, cos(angle/2) * dist2, 0));
       l.setPosition(gle::Vector3<GLfloat>(sin(angle/2) * dist2, cos(angle/2) * dist2, 0));

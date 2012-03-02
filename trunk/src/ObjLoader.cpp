@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Wed Feb 22 23:17:47 2012 gael jochaud-du-plessix
-// Last update Thu Mar  1 23:18:45 2012 gael jochaud-du-plessix
+// Last update Fri Mar  2 16:33:52 2012 gael jochaud-du-plessix
 //
 
 #include <fstream>
@@ -19,7 +19,10 @@ gle::ObjLoader::ObjLoader() :
   _currentVertexes(0), _currentNormals(0), _currentTextures(0),
   _currentVertexesIndexes(0), _currentTexturesIndexes(0),
   _currentNormalsIndexes(0),
-  _currentLine(0), _currentFilename(), _currentDefaultMaterial(0)
+  _currentLine(0), _currentFilename(), _currentDefaultMaterial(0),  
+  _currentMaterial(0), _currentMaterialFilename(), _currentMaterialLine(0),
+  _currentUsedMaterial(NULL),
+  _loadedTextures(), _registeredMaterials()
 {
 }
 
@@ -34,7 +37,8 @@ gle::Mesh* gle::ObjLoader::load(std::string const & file,
   std::fstream fileStream(file.c_str());
 
   if (!fileStream.is_open())
-    return (NULL);
+    throw new gle::Exception::InvalidValue("Model '"
+					   + file + "' not found");
   _currentFilename = file;
   _currentDefaultMaterial = defaultMaterial;
   _currentMesh = NULL;
@@ -44,6 +48,9 @@ gle::Mesh* gle::ObjLoader::load(std::string const & file,
   _currentVertexesIndexes.resize(0);
   _currentTexturesIndexes.resize(0);
   _currentNormalsIndexes.resize(0);
+  _currentMaterial = NULL;
+  _currentUsedMaterial = NULL;
+  _registeredMaterials.clear();
   gle::Mesh* parentMesh = new gle::Mesh();
   std::string line;
   _currentLine = 0;
@@ -51,6 +58,9 @@ gle::Mesh* gle::ObjLoader::load(std::string const & file,
     {
       _currentLine++;
       std::getline(fileStream, line);
+      size_t dashPos = line.find('#');
+      if (dashPos != std::string::npos)
+	line = line.substr(0, dashPos);
       _parseLine(parentMesh, line);
     }
   if (_currentMesh != NULL)
@@ -66,11 +76,12 @@ gle::Mesh* gle::ObjLoader::load(std::string const & file,
 
 void gle::ObjLoader::_parseLine(Mesh* parent, std::string const & line)
 {
-  if (line.length() < 1)
+  std::string epured = _epurStr(line);
+  if (epured.length() < 1)
     return ;
-  if (line[0] == '#')
+  if (epured[0] == '#')
     return ;
-  std::vector<std::string> parts = _explode(line, ' ');
+  std::vector<std::string> parts = _explode(epured, ' ');
   if (parts.size() < 1)
     return ;
   if (parts[0] == "g")
@@ -83,6 +94,10 @@ void gle::ObjLoader::_parseLine(Mesh* parent, std::string const & line)
     _parseTextureCoords(parts);
   else if (parts[0] == "f")
     _parseFace(parts);
+  else if (parts[0] == "mtllib")
+    _parseMaterial(parts);
+  else if (parts[0] == "usemtl")
+    _parseUseMaterial(parts);
 }
 
 void gle::ObjLoader::_parseGroup(Mesh* parent,
@@ -92,7 +107,6 @@ void gle::ObjLoader::_parseGroup(Mesh* parent,
     return ;
   std::string meshName = lineParts[1];
   gle::Mesh* mesh = new gle::Mesh();
-  mesh->setMaterial(_currentDefaultMaterial);
   mesh->setName(meshName);
   if (_currentMesh != NULL)
     _addCurrentMesh(parent);
@@ -210,26 +224,13 @@ void gle::ObjLoader::_addCurrentMesh(Mesh* parent)
     {
       gle::Array<GLfloat> vertexes(_currentVertexesIndexes.size() * 3);
       gle::Array<GLfloat> normals(_currentVertexesIndexes.size() * 3);
-      gle::Array<GLfloat> textureCoords(_currentTextures.size());
+      gle::Array<GLfloat> textureCoords(_currentVertexesIndexes.size());
       gle::Array<GLuint> indexes(_currentVertexesIndexes.size());
       for (size_t i = 0; i + 2 < _currentVertexesIndexes.size(); i += 3)
 	{
-	  if (i + 2 < _currentNormalsIndexes.size())
-	    {
-	      for (size_t j = 0; j < 3; ++j)
-		{
-		  vertexes
-		    .push(_currentVertexes[_currentVertexesIndexes[i + j]]);
-		  normals
-		    .push(_currentNormals[_currentNormalsIndexes[i + j]]);
-		  if (i + j < _currentTexturesIndexes.size())
-		    textureCoords
-		      .push(_currentTextures[_currentTexturesIndexes[i + j]]);
-		  indexes.push(i + j);
-		}
-	    }
 	  // Compute the normals if we don't have it
-	  else
+	  gle::Vector3<GLfloat> calculatedNormal;
+	  if (i + 2 >= _currentNormalsIndexes.size())
 	    {
 	      gle::Vector3<GLfloat> p1 =
 		_currentVertexes[_currentVertexesIndexes[i]];
@@ -239,18 +240,33 @@ void gle::ObjLoader::_addCurrentMesh(Mesh* parent)
 		_currentVertexes[_currentVertexesIndexes[i + 2]];
 	      gle::Vector3<GLfloat> v1 = p2 - p1;
 	      gle::Vector3<GLfloat> v2 = p3 - p1;
-	      gle::Vector3<GLfloat> calculatedNormal = v1 ^ v2;
+	      calculatedNormal = v1 ^ v2;
 	      calculatedNormal.normalize();
-	      for (size_t j = 0; j < 3; ++j)
-		{
-		  vertexes
-		    .push(_currentVertexes[_currentVertexesIndexes[i + j]]);
-		  normals.push(calculatedNormal);
-		  if (i + j < _currentTexturesIndexes.size())
-		    textureCoords
-		      .push(_currentTextures[_currentTexturesIndexes[i + j]]);
-		  indexes.push(i + j);
-		}	      
+	    }
+	  
+	  for (size_t j = 0; j < 3; ++j)
+	    {
+	      if (_currentVertexesIndexes[i + j] >= _currentVertexes.size())
+	      	continue ;
+	      vertexes
+		.push(_currentVertexes[_currentVertexesIndexes[i + j]]);
+	      if (i + j < _currentNormalsIndexes.size()
+		  && _currentNormalsIndexes[i + j] < _currentNormals.size())
+		normals
+		  .push(_currentNormals[_currentNormalsIndexes[i + j]]);
+	      else
+		normals.push(calculatedNormal);
+	      if (i + j < _currentTexturesIndexes.size()
+		  && ((_currentTexturesIndexes[i + j] * 2)
+		      < _currentTextures.size())
+		  && ((_currentTexturesIndexes[i + j] * 2 + 1)
+		      < _currentTextures.size()))
+		textureCoords
+		  .push(_currentTextures[_currentTexturesIndexes[i + j]
+					 * 2])
+		  .push(_currentTextures[_currentTexturesIndexes[i + j]
+					 * 2 + 1]);
+	      indexes.push(i + j);
 	    }
 	}      
       _currentMesh->setVertexes(vertexes);
@@ -258,12 +274,181 @@ void gle::ObjLoader::_addCurrentMesh(Mesh* parent)
       _currentMesh->setIndexes(indexes);
       if (textureCoords.size() > 0)
 	_currentMesh->setTextureCoords(textureCoords);
+      if (_currentUsedMaterial)
+	_currentMesh->setMaterial(_currentUsedMaterial);
+      else if (_registeredMaterials["default"])
+	_currentMesh->setMaterial(_registeredMaterials["default"]);
+      else
+	_currentMesh->setMaterial(_currentDefaultMaterial);
       parent->addChild(_currentMesh);
     }
+
   _currentVertexesIndexes.resize(0);
   _currentTexturesIndexes.resize(0);
   _currentNormalsIndexes.resize(0);
   _currentMesh = NULL;
+}
+
+void gle::ObjLoader::_parseUseMaterial(std::vector<std::string> const &
+				       lineParts)
+{
+  if (lineParts.size() < 2)
+    throw new gle::Exception::ParsingError("Invalid use material",
+					   _currentLine,
+					   _currentFilename);
+  gle::Material* material = _registeredMaterials[lineParts[1]];
+  if (material)
+    _currentUsedMaterial = material;
+  else
+    throw new gle::Exception::ParsingError("Unkwnown material " + lineParts[1],
+					   _currentLine,
+					   _currentFilename);
+}
+
+void gle::ObjLoader::_parseMaterial(std::vector<std::string> const & lineParts)
+{
+  if (lineParts.size() < 2)
+    return ;
+  std::string materialPath = _parseFilename(lineParts[1]);
+
+  std::fstream fileStream(materialPath.c_str());
+
+  if (!fileStream.is_open())
+    throw new gle::Exception::ParsingError("Cannot open " + materialPath,
+					   _currentLine,
+					   _currentFilename);
+  _currentMaterialFilename = materialPath;
+  std::string line;
+  _currentMaterialLine = 0;
+  while (fileStream.good())
+    {
+      _currentMaterialLine++;
+      std::getline(fileStream, line);
+      size_t dashPos = line.find('#');
+      if (dashPos != std::string::npos)
+	line = line.substr(0, dashPos);
+      _parseMaterialLine(line);
+    }
+}
+
+std::string gle::ObjLoader::_parseFilename(std::string const & filename)
+{
+  if (filename[0] != '/')
+    {
+      size_t slashPos = _currentFilename.find_last_of('/');
+      if (slashPos != std::string::npos)
+	return(_currentFilename.substr(0, slashPos + 1) + filename);
+    }
+  return (filename);
+}
+
+void gle::ObjLoader::_parseMaterialLine(std::string const & line)
+{
+  std::string epured = _epurStr(line);
+  if (epured.length() < 1)
+    return ;
+  if (epured[0] == '#')
+    return ;
+  std::vector<std::string> parts = _explode(epured, ' ');
+  if (parts.size() < 1)
+    return ;
+  if (parts[0] == "newmtl")
+    _parseNewMaterial(parts);
+  else if (parts[0].compare(0, 4, "map_") == 0 || parts[0] == "bump")
+    _parseMap(parts);
+  else
+    _parseMaterialProperty(parts);
+}
+
+void gle::ObjLoader::_parseNewMaterial(std::vector<std::string> const &
+				       lineParts)
+{
+  if (lineParts.size() < 2)
+    throw new gle::Exception::ParsingError("Invalid material declaration",
+					   _currentMaterialLine,
+					   _currentMaterialFilename);
+  _currentMaterial = new gle::Material();
+  _currentMaterial->setName(lineParts[1]);
+  _registeredMaterials[lineParts[1]] = _currentMaterial;
+}
+
+void gle::ObjLoader::_parseMaterialProperty(std::vector<std::string> const &
+					    lineParts)
+{
+  if (lineParts[0] == "Ka" || lineParts[0] == "Kd" || lineParts[0] == "Ks")
+    {
+      if (lineParts.size() < 4)
+	throw new gle::Exception::
+	  ParsingError("Invalid material color declaration",
+		       _currentMaterialLine,
+		       _currentMaterialFilename);
+      gle::Color<GLfloat> color(_parseFloat(lineParts[1]),
+				_parseFloat(lineParts[2]),
+				_parseFloat(lineParts[3]));
+      if (lineParts[0] == "Ka")
+	_currentMaterial->setAmbientColor(color);
+      else if (lineParts[0] == "Kd")
+	_currentMaterial->setDiffuseColor(color);
+      else if (lineParts[0] == "Ks")
+	_currentMaterial->setSpecularColor(color);      
+    }
+  if ((lineParts[0] == "Ns" || lineParts[0] == "d" || lineParts[0] == "Tr"
+       || lineParts[0] == "illum")
+      && lineParts.size() < 2)
+    throw new gle::Exception::
+      ParsingError("Invalid material property declaration",
+		   _currentMaterialLine,
+		   _currentMaterialFilename);
+  if (lineParts[0] == "Ns")
+    {
+      _currentMaterial->setShininess(_parseFloat(lineParts[1]));
+      return ;
+    }
+  else if (lineParts[0] == "d" || lineParts[0] == "Tr")
+    return ;
+  else if (lineParts[0] == "illum")
+    _setMaterialIllumination(atoi(lineParts[1].c_str()));
+}
+
+void gle::ObjLoader::_setMaterialIllumination(int illum)
+{
+  if (illum == 0)
+    {      
+      _currentMaterial->setDiffuseLightEnabled(false);
+      _currentMaterial->setSpecularLightEnabled(false);
+    }
+  else if (illum == 1)
+    {
+      _currentMaterial->setDiffuseLightEnabled(true);
+      _currentMaterial->setSpecularLightEnabled(false);
+    }
+  else if (illum >= 2)
+    {
+      _currentMaterial->setDiffuseLightEnabled(true);
+      _currentMaterial->setSpecularLightEnabled(true);
+    }
+}
+
+void gle::ObjLoader::_parseMap(std::vector<std::string> const & lineParts)
+{
+  if (lineParts.size() < 2)
+    throw new gle::Exception::ParsingError("Invalid material map declaration",
+					   _currentMaterialLine,
+					   _currentMaterialFilename);
+  std::string path = _parseFilename(lineParts[1]);
+  if (lineParts[0] == "map_Ka" || lineParts[0] == "map_Kd")
+    _currentMaterial->setColorMap(_getTexture(path));
+}
+
+gle::Texture* gle::ObjLoader::_getTexture(std::string const & path)
+{
+  gle::Texture* texture = _loadedTextures[path];
+  if (texture)
+    return (texture);
+  texture = new gle::Texture(path);
+  if (texture)
+    _loadedTextures[path] = texture;
+  return (texture);
 }
 
 std::vector<std::string> gle::ObjLoader::_explode(std::string const & line,
@@ -276,8 +461,37 @@ std::vector<std::string> gle::ObjLoader::_explode(std::string const & line,
   while (stringStream.good())
     {
       std::getline(stringStream, part, delimiter);
-      if ((!skipEmpty || part.length() > 0) && part != "\r")
+      if (!skipEmpty || part.length() > 0)
 	parts.push_back(part);
     }
   return (parts);
+}
+
+static inline bool isWhitespace(char c)
+{
+  return (c == ' ' || c == '\t' || c == '\n' || c == '\r');
+}
+
+std::string gle::ObjLoader::_epurStr(std::string const str)
+{
+  std::string result;
+  result.reserve(str.size());
+  std::string::const_iterator end = str.end();
+  std::string::const_iterator it = str.begin();
+
+  for (; it != end && isWhitespace(*it); ++it);
+  for (; it != end; ++it)
+    {
+      if (isWhitespace(*it))
+	{
+	  for (;isWhitespace(*it) && it != end; ++it);
+	  if (it == end)
+	    return (result);
+	  result += ' ';
+	  result += *it;    
+	}
+      else
+	result += *it;
+    }
+  return (result);
 }

@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Wed Feb 15 17:24:36 2012 gael jochaud-du-plessix
-// Last update Thu Mar  1 19:18:45 2012 gael jochaud-du-plessix
+// Last update Fri Mar  2 17:00:29 2012 gael jochaud-du-plessix
 //
 
 /*! \mainpage glEngine Reference documentation
@@ -133,7 +133,6 @@ int glEngine(int ac, char **av)
 
   scene << &camera << &material << &materialLight << sp << sp2 << sp3;
   scene << &l << &l2 << &l3;
-  scene.setLightEnabled(true, gle::Color<GLfloat>(0, 0, 0));
 
   gle::Renderer renderer;
   renderer.createPrograms(&scene);

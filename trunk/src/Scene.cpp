@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Mon Feb 20 19:12:49 2012 gael jochaud-du-plessix
-// Last update Thu Mar  1 19:54:10 2012 loick michard
+// Last update Fri Mar  2 16:46:42 2012 gael jochaud-du-plessix
 //
 
 #include <Scene.hpp>
@@ -19,7 +19,6 @@ gle::Scene::Scene() :
   _directionalLightsColor(), _directionalLightsSize(0),
   _pointLightsPosition(),
   _pointLightsColor(), _pointLightsSize(0),
-  _lightEnabled(false),
   _currentCamera(NULL), _programs()
 {
 
@@ -47,6 +46,9 @@ gle::Scene & gle::Scene::add(Camera* camera)
 
 gle::Scene & gle::Scene::add(Mesh* mesh)
 {
+  if (!mesh)
+    return (*this);
+  add(mesh->getMaterial());
   if (find(_meshes.begin(), _meshes.end(), mesh) == _meshes.end())
     _meshes.push_back(mesh);
   std::vector<gle::Mesh*> & childs = mesh->getChildren();
@@ -64,6 +66,8 @@ gle::Scene & gle::Scene::add(std::vector<gle::Mesh*> const & meshes)
 
 gle::Scene & gle::Scene::add(Material* material)
 {
+  if (!material)
+    return (*this);
   if (find(_materials.begin(), _materials.end(), material) == _materials.end())
     _materials.push_back(material);
   return (*this);
@@ -71,6 +75,8 @@ gle::Scene & gle::Scene::add(Material* material)
 
 gle::Scene & gle::Scene::add(Light* light)
 {
+  if (!light)
+    return (*this);
   if (find(_lights.begin(), _lights.end(), light) == _lights.end())
     {
       _lights.push_back(light);
@@ -146,25 +152,6 @@ gle::Camera* gle::Scene::getCurrentCamera()
 std::map<gle::Material*, gle::Program*> & gle::Scene::getPrograms()
 {
   return (_programs);
-}
-
-bool gle::Scene::isLightEnabled() const
-{
-  return (_lightEnabled);
-}
-
-void gle::Scene::setLightEnabled(bool enabled,
-				 gle::Color<GLfloat> const& ambientColor)
-{
-  _lightEnabled = enabled;
-  _ambientColor[0] = ambientColor.r;
-  _ambientColor[1] = ambientColor.g;
-  _ambientColor[2] = ambientColor.b;
-}
-
-GLfloat* gle::Scene::getAmbientColor()
-{
-  return (_ambientColor);
 }
 
 void gle::Scene::updateLights()

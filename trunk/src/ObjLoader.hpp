@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Wed Feb 22 23:03:27 2012 gael jochaud-du-plessix
-// Last update Thu Mar  1 23:04:56 2012 gael jochaud-du-plessix
+// Last update Fri Mar  2 15:43:26 2012 gael jochaud-du-plessix
 //
 
 #ifndef _GLE_OBJ_LOADER_HPP_
@@ -13,9 +13,11 @@
 
 # include <string>
 # include <vector>
+# include <map>
 # include <FileLoader.hpp>
 # include <Array.hpp>
 # include <Material.hpp>
+# include <Texture.hpp>
 
 namespace gle {
 
@@ -58,8 +60,20 @@ namespace gle {
     std::vector< gle::Vector3<GLint> >
     _parseIndexes(std::vector<std::string> const & lineParts);
     void _addCurrentMesh(Mesh* parent);
+
+    void _parseUseMaterial(std::vector<std::string> const & lineParts);
+    void _parseMaterial(std::vector<std::string> const & lineParts);
+    std::string _parseFilename(std::string const & filename);
+    void _parseMaterialLine(std::string const & line);
+    void _parseNewMaterial(std::vector<std::string> const & lineParts);
+    void _parseMaterialProperty(std::vector<std::string> const & lineParts);
+    void _setMaterialIllumination(int illum);
+    void _parseMap(std::vector<std::string> const & lineParts);
+    gle::Texture* _getTexture(std::string const & path);
+
     std::vector<std::string> _explode(std::string const & line,
 				      char delimiter, bool skipEmpty=true);
+    std::string _epurStr(std::string const str);
 
     gle::Mesh* _currentMesh;
     std::vector< gle::Vector3<GLfloat> > _currentVertexes;
@@ -71,6 +85,14 @@ namespace gle {
     GLuint _currentLine;
     std::string _currentFilename;
     gle::Material* _currentDefaultMaterial;
+
+    gle::Material* _currentMaterial;
+    std::string _currentMaterialFilename;
+    GLuint _currentMaterialLine;
+
+    gle::Material* _currentUsedMaterial;
+    std::map<std::string, gle::Texture*> _loadedTextures;
+    std::map<std::string, gle::Material*> _registeredMaterials;
   };
 }
 
