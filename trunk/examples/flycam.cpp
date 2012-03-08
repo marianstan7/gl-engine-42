@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Fri Mar  2 17:27:21 2012 gael jochaud-du-plessix
-// Last update Fri Mar  2 19:01:38 2012 gael jochaud-du-plessix
+// Last update Thu Mar  8 12:48:51 2012 gael jochaud-du-plessix
 //
 
 #include <iostream>
@@ -20,11 +20,18 @@
 #include <DirectionalLight.hpp>
 #include <PointLight.hpp>
 
+#define W_WIDTH 1280
+#define W_HEIGHT 720
+
 int glEngine(int, char**);
 
 GLfloat teta = M_PI / 2;
 GLfloat phi = 0;
 std::map<sf::Keyboard::Key, bool> keyState;
+GLfloat mouseX = 0.0;
+GLfloat mouseY = 0.0;
+GLfloat mouseSensibility = 1;
+GLfloat camSpeed = 0.2;
 
 void flycam(gle::Camera* camera)
 {
@@ -34,36 +41,37 @@ void flycam(gle::Camera* camera)
   viewVector.y = cos(teta);
   viewVector.z = sin(teta) * sin(phi);
 
-  if (keyState[sf::Keyboard::Up])
-    pos += viewVector;
-  if (keyState[sf::Keyboard::Down])
-    pos -= viewVector;
-  if (keyState[sf::Keyboard::Left])
-    {
-      phi -= M_PI / 2;
-      viewVector.x = sin(teta) * cos(phi);
-      viewVector.y = cos(teta);
-      viewVector.z = sin(teta) * sin(phi);
-      pos += viewVector;
-      phi += M_PI / 2;
-    }
-  if (keyState[sf::Keyboard::Right])
-    {
-      phi -= M_PI / 2;
-      viewVector.x = sin(teta) * cos(phi);
-      viewVector.y = cos(teta);
-      viewVector.z = sin(teta) * sin(phi);
-      pos -= viewVector;
-      phi += M_PI / 2;
-    }
+  viewVector.normalize();
+
+  viewVector *= camSpeed;
+
   if (keyState[sf::Keyboard::W])
-    teta -= M_PI / 5000;
+    pos += viewVector;
   if (keyState[sf::Keyboard::S])
-    teta += M_PI / 5000;
+    pos -= viewVector;
+
   if (keyState[sf::Keyboard::A])
-    phi -= M_PI / 5000;
+    {
+      gle::Vector3<GLfloat> viewVectorSide =
+	viewVector ^ gle::Vector3<GLfloat>(0, 1, 0);
+      viewVectorSide.normalize();
+      viewVectorSide *= camSpeed;
+      pos -= viewVectorSide;
+    }
   if (keyState[sf::Keyboard::D])
-    phi += M_PI / 5000;
+    {
+      gle::Vector3<GLfloat> viewVectorSide =
+	viewVector ^ gle::Vector3<GLfloat>(0, 1, 0);
+      viewVectorSide.normalize();
+      viewVectorSide *= camSpeed;
+      pos += viewVectorSide;
+    }
+
+  if (mouseY != 0)
+    teta += (M_PI / 5) * mouseY * mouseSensibility;
+  if (mouseX != 0)
+    phi += (M_PI / 5) * mouseX * mouseSensibility;;
+
   viewVector.x = sin(teta) * cos(phi);
   viewVector.y = cos(teta);
   viewVector.z = sin(teta) * sin(phi);
@@ -97,7 +105,7 @@ int glEngine(int ac, char **av)
   context.MajorVersion = 3;
   context.MinorVersion = 3;
 
-  sf::Window App(sf::VideoMode(800, 600, 32), "glEngine",
+  sf::Window App(sf::VideoMode(W_WIDTH, W_HEIGHT, 32), "glEngine",
 		 sf::Style::Default, context);
   
   //! Print OpenGL supported version
@@ -110,10 +118,13 @@ int glEngine(int ac, char **av)
   gle::Scene scene;
   gle::PerspectiveCamera camera(gle::Vector3<GLfloat>(-100, 0, 0),
 				gle::Vector3<GLfloat>(0, 0, 0),
-				45, (GLfloat)800/600, 1, 10000);
+				45, (GLfloat)W_WIDTH/W_HEIGHT, 1, 10000);
 
   gle::ObjLoader loader;
-  gle::Mesh* model = loader.load("./models/dustbin/trashbin.obj", NULL);
+  gle::Material material;
+  material.setDiffuseLightEnabled(true);
+  material.setSpecularLightEnabled(true);
+  gle::Mesh* model = loader.load("./models/Camaro.obj", &material);
 
   if (model)
     scene << model;
@@ -124,7 +135,7 @@ int glEngine(int ac, char **av)
 
   materialLight.setDiffuseLightEnabled(true);
   materialLight.setSpecularLightEnabled(true);
-  gle::PointLight l(gle::Vector3<GLfloat>(0, 200, 0),
+  gle::PointLight l(gle::Vector3<GLfloat>(0, 2000, 0),
 		    gle::Color<GLfloat>(0.8, 0.8, 0.8));
   gle::Mesh* sp = gle::Geometries::Sphere(&materialLight, 10);
   sp->setPosition(gle::Vector3<GLfloat>(0, 200, 0));
@@ -137,10 +148,14 @@ int glEngine(int ac, char **av)
 
   sf::Clock clock;
   sf::Clock time;
+
+  App.ShowMouseCursor(false);
   
   while (App.IsOpen())
     {      
       sf::Event Event;
+      mouseX = 0;
+      mouseY = 0;
       while (App.PollEvent(Event))
 	{
 	  // Close window : exit
@@ -156,7 +171,16 @@ int glEngine(int ac, char **av)
 	    keyState[Event.Key.Code] = true;
 	  else if (Event.Type == sf::Event::KeyReleased)
 	    keyState[Event.Key.Code] = false;
+	  else if (Event.Type == sf::Event::MouseMoved)
+	    {
+	      sf::Vector2i mouse = sf::Mouse::GetPosition(App);
+	      mouseX = (GLfloat)(mouse.x - (GLfloat)W_WIDTH / 2)
+		/ ((GLfloat)W_WIDTH / 2);
+	      mouseY = (GLfloat)(mouse.y - (GLfloat)W_HEIGHT / 2)
+		/ ((GLfloat)W_HEIGHT / 2);
+	    }
 	}
+      sf::Mouse::SetPosition(sf::Vector2i(W_WIDTH/2, W_HEIGHT/2), App);
       flycam(&camera);
       scene.updateLights();
       renderer.render(&scene);
