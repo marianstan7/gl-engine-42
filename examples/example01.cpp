@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Wed Feb 15 17:24:36 2012 gael jochaud-du-plessix
-// Last update Fri Mar  2 16:47:21 2012 gael jochaud-du-plessix
+// Last update Thu Mar  8 12:51:18 2012 gael jochaud-du-plessix
 //
 
 /*! 
@@ -65,7 +65,7 @@ int glEngine(int ac, char **av)
   material.setShininess(32);
 
   gle::ObjLoader loader;
-  gle::Mesh* model = loader.load("../models/WaltDisneyHeads.obj", &material);
+  gle::Mesh* model = loader.load("./models/WaltDisneyHeads.obj", &material);
 
   if (model)
     {
