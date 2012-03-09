@@ -5,7 +5,7 @@
 // Login   <michar_l@epitech.net>
 // 
 // Started on  Mon Feb 20 13:20:54 2012 loick michard
-// Last update Thu Mar  1 23:15:30 2012 gael jochaud-du-plessix
+// Last update Fri Mar  9 22:46:15 2012 gael jochaud-du-plessix
 //
 
 #ifndef _MESH_HPP_
@@ -31,6 +31,12 @@ namespace gle {
 
   class Mesh {
   public:
+
+    enum Type {
+      Triangles = GL_TRIANGLES,
+      Lines = GL_LINES,
+      Points = GL_POINTS
+    };
     
     //! Default constructor
     
@@ -84,6 +90,14 @@ namespace gle {
     //! Return the name of the mesh
 
     std::string const & getName();
+
+    void setType(Type type);
+
+    gle::Mesh::Type getType();
+
+    void setPointSize(GLfloat pointSize);
+
+    GLfloat getPointSize();
 
     //! Set the movement matrix of parent
     /*!
@@ -213,6 +227,8 @@ namespace gle {
 
   private:
     std::string _name;
+    Type	_type;
+    GLfloat	_pointSize;
 
     Material* _material;
     Buffer<GLfloat>* _vertexes;

@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Mon Feb 20 20:48:54 2012 gael jochaud-du-plessix
-// Last update Fri Mar  2 17:30:22 2012 gael jochaud-du-plessix
+// Last update Fri Mar  9 22:44:25 2012 gael jochaud-du-plessix
 //
 
 #include <Renderer.hpp>
@@ -127,7 +127,9 @@ void gle::Renderer::_renderMesh(gle::Scene* scene, gle::Mesh* mesh,
 
   // Draw the mesh elements
   indexesBuffer->bind();
-  glDrawElements(GL_TRIANGLES, mesh->getNbIndexes(), GL_UNSIGNED_INT, 0);
+  if (mesh->getType() == gle::Mesh::Points)
+    glPointSize(mesh->getPointSize());
+  glDrawElements(mesh->getType(), mesh->getNbIndexes(), GL_UNSIGNED_INT, 0);
 
   if (material->isColorMapEnabled())
     glDisableVertexAttribArray(gle::ShaderSource::Vertex::

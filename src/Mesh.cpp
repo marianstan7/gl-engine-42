@@ -5,7 +5,7 @@
 // Login   <michar_l@epitech.net>
 // 
 // Started on  Mon Feb 20 18:25:23 2012 loick michard
-// Last update Thu Mar  1 23:20:45 2012 gael jochaud-du-plessix
+// Last update Fri Mar  9 22:45:53 2012 gael jochaud-du-plessix
 //
 
 #include <algorithm>
@@ -16,6 +16,8 @@ gle::Mesh::Mesh(Material* material,
 		const GLfloat* normals, GLsizeiptr nbNormals,
 		const GLuint* indexes, GLsizeiptr nbIndexes)
   : _name(""),
+    _type(Triangles),
+    _pointSize(1.0),
     _material(material),
     _vertexes(NULL),
     _normals(NULL),
@@ -43,6 +45,8 @@ gle::Mesh::Mesh(Material* material,
 		gle::Array<GLfloat> const * normals,
 		gle::Array<GLuint> const * indexes)
   : _name(""),
+    _type(Triangles),
+    _pointSize(1.0),
     _material(material),
     _vertexes(NULL),
     _normals(NULL),
@@ -130,6 +134,26 @@ std::string const & gle::Mesh::getName()
   return (_name);
 }
 
+void gle::Mesh::setType(Type type)
+{
+  _type = type;
+}
+
+gle::Mesh::Type gle::Mesh::getType()
+{
+  return (_type);
+}
+
+void gle::Mesh::setPointSize(GLfloat v)
+{
+  _pointSize = v;
+}
+
+GLfloat gle::Mesh::getPointSize()
+{
+  return (_pointSize);
+}
+
 void gle::Mesh::setParentMatrix(gle::Matrix4<GLfloat>* parentMatrix)
 {
   _parentMatrix = parentMatrix;
@@ -183,7 +207,15 @@ void gle::Mesh::setNormals(const GLfloat* normals, GLsizeiptr nbNormals)
 void gle::Mesh::setTextureCoords(const GLfloat* textureCoords, GLsizeiptr size)
 {
   if (_textureCoords)
-    _textureCoords->resize(size, textureCoords);
+    {
+      if (textureCoords == NULL)
+	{
+	  delete _textureCoords;
+	  _textureCoords = NULL;
+	}
+      else
+	_textureCoords->resize(size, textureCoords);
+    }
   else
     _textureCoords =
       new gle::Buffer<GLfloat>(gle::Buffer<GLfloat>::VertexArray,
@@ -227,12 +259,14 @@ void gle::Mesh::setNormals(gle::Array<GLfloat> const &normals)
 void gle::Mesh::setTextureCoords(gle::Array<GLfloat> const &textureCoords)
 {
   if (_textureCoords)
-    _textureCoords->resize(textureCoords.size(), (GLfloat const *)textureCoords);
+    _textureCoords->resize(textureCoords.size(),
+			   (GLfloat const *)textureCoords);
   else
-    _textureCoords = new gle::Buffer<GLfloat>(gle::Buffer<GLfloat>::VertexArray,
-					gle::Buffer<GLfloat>::StaticDraw,
-					textureCoords.size(),
-					(GLfloat const *)textureCoords);
+    _textureCoords =
+      new gle::Buffer<GLfloat>(gle::Buffer<GLfloat>::VertexArray,
+			       gle::Buffer<GLfloat>::StaticDraw,
+			       textureCoords.size(),
+			       (GLfloat const *)textureCoords);
 }
 
 void gle::Mesh::setIndexes(gle::Array<GLuint> const &indexes)

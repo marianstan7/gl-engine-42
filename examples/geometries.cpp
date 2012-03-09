@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Fri Mar  2 17:27:21 2012 gael jochaud-du-plessix
-// Last update Fri Mar  9 20:37:20 2012 gael jochaud-du-plessix
+// Last update Fri Mar  9 22:52:10 2012 gael jochaud-du-plessix
 //
 
 #include <iostream>
@@ -32,7 +32,7 @@ GLfloat mouseX = 0.0;
 GLfloat mouseY = 0.0;
 GLfloat moveUp = 0.0;
 GLfloat mouseSensibility = 1;
-GLfloat camSpeed = 0.2;
+GLfloat camSpeed = 0.05;
 
 void flycam(gle::Camera* camera)
 {
@@ -129,10 +129,46 @@ int glEngine(int ac, char **av)
   gle::Material material;
   material.setDiffuseLightEnabled(true);
   material.setSpecularLightEnabled(true);
-  gle::Mesh* model = loader.load("./models/Camaro.obj", &material);
+  material.setColorMap(new gle::Texture("./examples/earth.jpg"));
 
-  if (model)
-    scene << model;
+  gle::Material material2;
+  material2.setDiffuseLightEnabled(true);
+  material2.setSpecularLightEnabled(true);
+
+  gle::Mesh* cube = gle::Geometries::Cube(&material, 10);
+  cube->setPosition(gle::Vector3<GLfloat>(8, 0, -8));
+  gle::Mesh* pointCube = gle::Geometries::Cube(&material2, 10);
+  pointCube->setPosition(gle::Vector3<GLfloat>(-24, 0, -8));
+  pointCube->setType(gle::Mesh::Points);
+  pointCube->setPointSize(5);
+  gle::Mesh* sphere = gle::Geometries::Sphere(&material, 5);
+  sphere->setPosition(gle::Vector3<GLfloat>(8, 0, 8));
+  gle::Mesh* pointSphere = gle::Geometries::Sphere(&material2, 5, 100, 100);
+  pointSphere->setPosition(gle::Vector3<GLfloat>(-24, 0, 8));
+  pointSphere->setType(gle::Mesh::Points);
+  gle::Mesh* plane = gle::Geometries::Plane(&material, 80, 80, 20, 20);
+  plane->setPosition(gle::Vector3<GLfloat>(0, -5, 0));
+  gle::Mesh* pointPlane =
+    gle::Geometries::Plane(&material2, 80, 80, 100, 100);
+  pointPlane->setPosition(gle::Vector3<GLfloat>(0, -5, 80));
+  pointPlane->setType(gle::Mesh::Points);
+  pointPlane->setPointSize(2);
+
+  gle::Mesh* wiredSphere = gle::Geometries::WiredMesh(sphere);
+  wiredSphere->setMaterial(&material2);
+  wiredSphere->setPosition(gle::Vector3<GLfloat>(-8, 0, 8));
+
+  gle::Mesh* wiredCube = gle::Geometries::WiredMesh(cube);
+  wiredCube->setMaterial(&material2);
+  wiredCube->setPosition(gle::Vector3<GLfloat>(-8, 0, -8));
+
+  gle::Mesh* wiredPlane = gle::Geometries::WiredMesh(plane);
+  wiredPlane->setMaterial(&material2);
+  wiredPlane->setPosition(gle::Vector3<GLfloat>(0, -5, -80));
+
+  scene << cube << wiredCube << pointCube;
+  scene << sphere << wiredSphere << pointSphere;
+  scene << plane << wiredPlane << pointPlane;
 
   srand(time(NULL));
 
