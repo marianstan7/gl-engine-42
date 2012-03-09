@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Wed Feb 15 17:24:36 2012 gael jochaud-du-plessix
-// Last update Fri Mar  9 10:33:34 2012 loick michard
+// Last update Fri Mar  9 10:54:17 2012 gael jochaud-du-plessix
 //
 
 /*! 
@@ -66,8 +66,9 @@ int glEngine()
   sunMaterial.setDiffuseLightEnabled(true);
   sunMaterial.setSpecularLightEnabled(true);
   sunMaterial.setShininess(32);
-  sunMaterial.setColorMap(new gle::Texture("sun.jpg"));
-  //sunMaterial.setColor(gle::Color<GLfloat>(1, 1, 0));
+  sunMaterial.setAmbientColor(gle::Color<GLfloat>(1, 1, 1));
+  sunMaterial.setColorMap(new gle::Texture("./examples/sun.jpg"));
+
   gle::Mesh *sun = gle::Geometries::Sphere(&sunMaterial, 100, 300, 300);
   solarSystem.addChild(sun);
   gle::Mesh earthSystem;
@@ -75,7 +76,7 @@ int glEngine()
   earthMaterial.setDiffuseLightEnabled(true);
   earthMaterial.setSpecularLightEnabled(true);
   earthMaterial.setShininess(32);
-  earthMaterial.setColorMap(new gle::Texture("earth.jpg"));
+  earthMaterial.setColorMap(new gle::Texture("./examples/earth.jpg"));
   gle::Mesh *earth = gle::Geometries::Sphere(&earthMaterial, 40, 300, 300);
   earthSystem.addChild(earth);
   earth->setPosition(gle::Vector3<GLfloat>(500, 0, 0));
@@ -86,7 +87,7 @@ int glEngine()
   moonMaterial.setDiffuseLightEnabled(true);
   moonMaterial.setSpecularLightEnabled(true);
   moonMaterial.setShininess(32);
-  moonMaterial.setColorMap(new gle::Texture("moon.jpg"));
+  moonMaterial.setColorMap(new gle::Texture("./examples/moon.jpg"));
   gle::Mesh *moon = gle::Geometries::Sphere(&moonMaterial, 7, 300, 300);
   moonSystem.addChild(moon);
   earth->addChild(&moonSystem);

@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Fri Mar  2 17:27:21 2012 gael jochaud-du-plessix
-// Last update Thu Mar  8 12:48:51 2012 gael jochaud-du-plessix
+// Last update Thu Mar  8 16:43:20 2012 gael jochaud-du-plessix
 //
 
 #include <iostream>
@@ -182,6 +182,7 @@ int glEngine(int ac, char **av)
 	}
       sf::Mouse::SetPosition(sf::Vector2i(W_WIDTH/2, W_HEIGHT/2), App);
       flycam(&camera);
+      l.setPosition(camera.getPosition());
       scene.updateLights();
       renderer.render(&scene);
       App.Display();
