@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Wed Feb 15 17:24:36 2012 gael jochaud-du-plessix
-// Last update Fri Mar  2 16:47:42 2012 gael jochaud-du-plessix
+// Last update Fri Mar  9 10:33:34 2012 loick michard
 //
 
 /*! 
@@ -63,6 +63,9 @@ int glEngine()
   gle::Mesh solarSystem;
 
   gle::Material sunMaterial;
+  sunMaterial.setDiffuseLightEnabled(true);
+  sunMaterial.setSpecularLightEnabled(true);
+  sunMaterial.setShininess(32);
   sunMaterial.setColorMap(new gle::Texture("sun.jpg"));
   //sunMaterial.setColor(gle::Color<GLfloat>(1, 1, 0));
   gle::Mesh *sun = gle::Geometries::Sphere(&sunMaterial, 100, 300, 300);
