@@ -5,7 +5,7 @@
 // Login   <michar_l@epitech.net>
 // 
 // Started on  Mon Feb 20 22:34:18 2012 loick michard
-// Last update Thu Mar  1 22:31:25 2012 loick michard
+// Last update Fri Mar  9 22:32:10 2012 gael jochaud-du-plessix
 //
 
 #include <cmath>
@@ -87,16 +87,16 @@ gle::Mesh* gle::Geometries::Cuboid(gle::Material* material,
     0.0, -1.0,  0.0,
 
     //! Front face
-    0.0,  0.0,  1.0,
-    0.0,  0.0,  1.0,
-    0.0,  0.0,  1.0,
-    0.0,  0.0,  1.0,
+    0.0,  0.0,  -1.0,
+    0.0,  0.0,  -1.0,
+    0.0,  0.0,  -1.0,
+    0.0,  0.0,  -1.0,
 
     //! Back face
-    0.0,  0.0, -1.0,
-    0.0,  0.0, -1.0,
-    0.0,  0.0, -1.0,
-    0.0,  0.0, -1.0,
+    0.0,  0.0, 1.0,
+    0.0,  0.0, 1.0,
+    0.0,  0.0, 1.0,
+    0.0,  0.0, 1.0,
 
     //! Right face
     1.0,  0.0,  0.0,
@@ -204,4 +204,140 @@ gle::Mesh* gle::Geometries::Sphere(gle::Material* material,
 				  &indexes[0], indexes.size());
   ret->setTextureCoords(uv);
   return (ret);
+}
+
+
+gle::Mesh* gle::Geometries::Plane(gle::Material* material,
+				  GLfloat width, GLfloat height,
+				  GLint divisionsX, GLint divisionsY)
+{
+  gle::Array<GLfloat> vertexes;
+  gle::Array<GLfloat> normals;
+  gle::Array<GLuint> indexes;
+  gle::Array<GLfloat> uv;
+  
+  for (GLfloat y = 0; y <= divisionsY; ++y)
+    {
+      for (GLfloat x = 0; x <= divisionsX; ++x)
+	{	  
+	  vertexes.push((-width / 2) + width * (x / divisionsX), 0,
+			(-height / 2) + height * (y / divisionsY));
+	  normals.push(0, 1, 0);
+	  uv.push(x / divisionsX);
+	  uv.push(y / divisionsY);
+	  if (x != divisionsX && y != divisionsY)
+	    {
+
+	      indexes.push(y * (divisionsX + 1) + x,
+			   y * (divisionsX + 1) + x + 1,
+			   (y + 1) * (divisionsX + 1) + x);
+	      indexes.push(y * (divisionsX + 1) + x + 1,
+			   (y + 1) * (divisionsX + 1) + x + 1,
+			   (y + 1) * (divisionsX + 1) + x);
+	    }
+	}
+    }
+
+  gle::Mesh * ret = new gle::Mesh(material, &vertexes[0], vertexes.size(),
+				  &normals[0], normals.size(),
+				  &indexes[0], indexes.size());
+  ret->setTextureCoords(uv);
+  return (ret);
+}
+
+gle::Mesh* gle::Geometries::WiredMesh(gle::Mesh * mesh)
+{
+  gle::Mesh* newMesh = new gle::Mesh(mesh->getMaterial(),
+				     NULL, 0, NULL, 0, NULL, 0);
+  gle::Buffer<GLfloat> *vertexesBuffer = mesh->getVertexesBuffer();
+  gle::Buffer<GLfloat> *normalsBuffer = mesh->getNormalsBuffer();
+  gle::Buffer<GLuint> *indexesBuffer = mesh->getIndexesBuffer();
+  gle::Buffer<GLfloat> *uvBuffer = mesh->getTextureCoordsBuffer();
+  gle::Array<GLfloat> newVertexes;
+  gle::Array<GLfloat> newNormals;
+  gle::Array<GLuint> newIndexes;
+  gle::Array<GLfloat> newUv;
+  std::vector<Mesh*> & children = mesh->getChildren();
+
+  for (std::vector<Mesh*>::iterator it = children.begin(),
+	 end = children.end(); it != end; ++it)
+    newMesh->addChild(WiredMesh(*it));
+
+  GLfloat* vertexes = vertexesBuffer->map();
+  GLfloat* normals = normalsBuffer->map();
+  GLuint* indexes = indexesBuffer->map();
+  GLfloat* uv = uvBuffer ? uvBuffer->map() : NULL;
+  GLsizeiptr index = 0;
+  for (GLsizeiptr i = 0, l = mesh->getNbIndexes(); i < l; i += 3)
+    {
+      newVertexes.push(vertexes[indexes[i] * 3], vertexes[indexes[i] * 3 + 1],
+		       vertexes[indexes[i] * 3 + 2]);
+      newNormals.push(normals[indexes[i] * 3], normals[indexes[i] * 3 + 1],
+		      normals[indexes[i] * 3 + 2]);
+      if (uv)
+	newUv.push(uv[indexes[i] * 2], uv[indexes[i] * 2 + 1]);
+      newIndexes.push(index++);
+
+      newVertexes.push(vertexes[indexes[i + 1] * 3],
+		       vertexes[indexes[i + 1] * 3 + 1],
+		       vertexes[indexes[i + 1] * 3 + 2]);
+      newNormals.push(normals[indexes[i + 1] * 3],
+		      normals[indexes[i + 1] * 3 + 1],
+		      normals[indexes[i + 1] * 3 + 2]);
+      if (uv)
+	newUv.push(uv[indexes[i + 1] * 2], uv[indexes[i + 1] * 2 + 1]);
+      newIndexes.push(index++);
+
+      newVertexes.push(vertexes[indexes[i + 1] * 3],
+		       vertexes[indexes[i + 1] * 3 + 1],
+		       vertexes[indexes[i + 1] * 3 + 2]);
+      newNormals.push(normals[indexes[i + 1] * 3],
+		      normals[indexes[i + 1] * 3 + 1],
+		      normals[indexes[i + 1] * 3 + 2]);
+      if (uv)
+	newUv.push(uv[indexes[i + 1] * 2], uv[indexes[i + 1] * 2 + 1]);
+      newIndexes.push(index++);
+
+      newVertexes.push(vertexes[indexes[i + 2] * 3],
+		       vertexes[indexes[i + 2] * 3 + 1],
+		       vertexes[indexes[i + 2] * 3 + 2]);
+      newNormals.push(normals[indexes[i + 2] * 3],
+		      normals[indexes[i + 2] * 3 + 1],
+		      normals[indexes[i + 2] * 3 + 2]);
+      if (uv)
+	newUv.push(uv[indexes[i + 2] * 2], uv[indexes[i + 2] * 2 + 1]);
+      newIndexes.push(index++);
+
+      newVertexes.push(vertexes[indexes[i + 2] * 3],
+		       vertexes[indexes[i + 2] * 3 + 1],
+		       vertexes[indexes[i + 2] * 3 + 2]);
+      newNormals.push(normals[indexes[i + 2] * 3],
+		      normals[indexes[i + 2] * 3 + 1],
+		      normals[indexes[i + 2] * 3 + 2]);
+      if (uv)
+	newUv.push(uv[indexes[i + 2] * 2], uv[indexes[i + 2] * 2 + 1]);
+      newIndexes.push(index++);
+
+      newVertexes.push(vertexes[indexes[i] * 3], vertexes[indexes[i] * 3 + 1],
+		       vertexes[indexes[i] * 3 + 2]);
+      newNormals.push(normals[indexes[i] * 3], normals[indexes[i] * 3 + 1],
+		      normals[indexes[i] * 3 + 2]);
+      if (uv)
+	newUv.push(uv[indexes[i] * 2], uv[indexes[i] * 2 + 1]);
+      newIndexes.push(index++);
+    }
+  vertexesBuffer->unmap();
+  normalsBuffer->unmap();
+  indexesBuffer->unmap();
+  if (uv)
+    {
+      newMesh->setTextureCoords(newUv);
+      uvBuffer->unmap();
+    }
+  newMesh->setVertexes(newVertexes);
+  newMesh->setNormals(newNormals);
+  newMesh->setIndexes(newIndexes);
+
+  newMesh->setType(gle::Mesh::Lines);
+  return (newMesh);
 }
