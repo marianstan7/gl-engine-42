@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Fri Mar  2 17:27:21 2012 gael jochaud-du-plessix
-// Last update Fri Mar  9 20:37:20 2012 gael jochaud-du-plessix
+// Last update Sat Mar 10 01:00:59 2012 gael jochaud-du-plessix
 //
 
 #include <iostream>
@@ -46,6 +46,7 @@ void flycam(gle::Camera* camera)
 
   viewVector *= camSpeed;
 
+  // Keyboard moves
   if (keyState[sf::Keyboard::W])
     pos += viewVector;
   if (keyState[sf::Keyboard::S])
@@ -68,14 +69,56 @@ void flycam(gle::Camera* camera)
       pos += viewVectorSide;
     }
 
+  // Mouse moves
   if (mouseY != 0)
     teta += (M_PI / 5) * mouseY * mouseSensibility;
   if (mouseX != 0)
     phi += (M_PI / 5) * mouseX * mouseSensibility;;
+  // Mouve up or down with clicks
   if (sf::Mouse::IsButtonPressed(sf::Mouse::Left))
     pos += gle::Vector3<GLfloat>(0, 1 * (mouseSensibility / 10), 0);
   if (sf::Mouse::IsButtonPressed(sf::Mouse::Right))
     pos -= gle::Vector3<GLfloat>(0, 1 * (mouseSensibility / 10), 0);
+
+  // Joystick moves
+  GLfloat rightY =
+    (GLfloat)sf::Joystick::GetAxisPosition(1, sf::Joystick::V) / 100;
+  GLfloat rightX =
+    (GLfloat)sf::Joystick::GetAxisPosition(1, sf::Joystick::U) / 100;
+  GLfloat leftX =
+    (GLfloat)sf::Joystick::GetAxisPosition(1, sf::Joystick::X) / 100;
+  GLfloat leftY =
+    (GLfloat)sf::Joystick::GetAxisPosition(1, sf::Joystick::Y) / 100;
+  GLfloat trigLeft =
+    (((GLfloat)sf::Joystick::GetAxisPosition(1, sf::Joystick::Z) / 100)
+     + 1) / 2;
+  GLfloat trigRight =
+    (((GLfloat)sf::Joystick::GetAxisPosition(1, sf::Joystick::R) / 100)
+     + 1) / 2;
+
+  if (std::abs(rightY) > 0.1)
+    teta += (M_PI / 5) * rightY * 0.01;
+  if (std::abs(rightX) > 0.1)
+    phi += (M_PI / 5) * rightX * 0.01;
+
+  if (std::abs(leftY) > 0.1)
+    pos += viewVector * -leftY;
+
+  if (std::abs(leftX) > 0.1)
+    {
+      gle::Vector3<GLfloat> viewVectorSide =
+	viewVector ^ gle::Vector3<GLfloat>(0, 1, 0);
+      viewVectorSide.normalize();
+      pos += viewVectorSide * (camSpeed * leftX);
+    }
+
+  if (trigRight > 0.1)
+    pos += gle::Vector3<GLfloat>(0, trigRight * camSpeed, 0);
+  if (trigLeft > 0.1)
+    pos -= gle::Vector3<GLfloat>(0, trigLeft * camSpeed, 0);
+
+  teta = teta > (M_PI - 0.001) ? (M_PI - 0.001) : teta;
+  teta = teta < 0.001 ? 0.001 : teta;
 
   viewVector.x = sin(teta) * cos(phi);
   viewVector.y = cos(teta);
@@ -112,7 +155,7 @@ int glEngine(int ac, char **av)
 
   sf::Window App(sf::VideoMode(W_WIDTH, W_HEIGHT, 32), "glEngine",
 		 sf::Style::Default, context);
-  
+
   //! Print OpenGL supported version
   context = App.GetSettings();
   std::cout << context.MajorVersion << '.'
@@ -129,7 +172,8 @@ int glEngine(int ac, char **av)
   gle::Material material;
   material.setDiffuseLightEnabled(true);
   material.setSpecularLightEnabled(true);
-  gle::Mesh* model = loader.load("./models/Camaro.obj", &material);
+  gle::Mesh* model = loader.load(ac > 1 ? av[1] : "./models/Camaro.obj",
+				 &material);
 
   if (model)
     scene << model;
