@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Mon Feb 20 20:48:54 2012 gael jochaud-du-plessix
-// Last update Fri Mar  9 22:44:25 2012 gael jochaud-du-plessix
+// Last update Sat Mar 10 01:03:25 2012 gael jochaud-du-plessix
 //
 
 #include <Renderer.hpp>
@@ -22,6 +22,10 @@ gle::Renderer::Renderer() :
   // Enable Z-buffer read and write 
   glEnable(GL_DEPTH_TEST);
   glDepthMask(GL_TRUE);
+
+  // Backface culling
+  //glEnable(GL_CULL_FACE);
+  //glCullFace(GL_BACK);
 
   // Enable antialiasing
   // glEnable(GL_LINE_SMOOTH);

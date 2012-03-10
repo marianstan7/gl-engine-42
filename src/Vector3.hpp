@@ -5,7 +5,7 @@
 // Login   <michar_l@epitech.net>
 // 
 // Started on  Fri Feb 17 12:51:39 2012 loick michard
-// Last update Fri Mar  2 18:37:06 2012 gael jochaud-du-plessix
+// Last update Sat Mar 10 00:46:43 2012 gael jochaud-du-plessix
 //
 
 #ifndef _GLE_VECTOR3_HPP_
@@ -162,6 +162,13 @@ gle::Vector3<T> operator+(gle::Vector3<T> const & v1,
 			  gle::Vector3<T> const & v2)
 {
   return (gle::Vector3<T>(v1.x + v2.x, v1.y + v2.y, v1.z + v2.z));
+}
+
+template <typename T>
+gle::Vector3<T> operator*(gle::Vector3<T> const & v1,
+			  T const & value)
+{
+  return (gle::Vector3<T>(v1.x * value, v1.y * value, v1.z * value));
 }
 
 template <typename T>
