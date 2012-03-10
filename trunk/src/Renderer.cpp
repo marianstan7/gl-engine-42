@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Mon Feb 20 20:48:54 2012 gael jochaud-du-plessix
-// Last update Sat Mar 10 01:03:25 2012 gael jochaud-du-plessix
+// Last update Sat Mar 10 22:11:44 2012 gael jochaud-du-plessix
 //
 
 #include <Renderer.hpp>
@@ -131,8 +131,10 @@ void gle::Renderer::_renderMesh(gle::Scene* scene, gle::Mesh* mesh,
 
   // Draw the mesh elements
   indexesBuffer->bind();
-  if (mesh->getType() == gle::Mesh::Points)
+  if (mesh->getType() == gle::Mesh::Points
+      || mesh->getRasterizationMode() == gle::Mesh::Point)
     glPointSize(mesh->getPointSize());
+  glPolygonMode(GL_FRONT_AND_BACK, mesh->getRasterizationMode());
   glDrawElements(mesh->getType(), mesh->getNbIndexes(), GL_UNSIGNED_INT, 0);
 
   if (material->isColorMapEnabled())

@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Fri Mar  2 17:27:21 2012 gael jochaud-du-plessix
-// Last update Sat Mar 10 01:00:59 2012 gael jochaud-du-plessix
+// Last update Sat Mar 10 02:02:16 2012 gael jochaud-du-plessix
 //
 
 #include <iostream>
@@ -172,8 +172,15 @@ int glEngine(int ac, char **av)
   gle::Material material;
   material.setDiffuseLightEnabled(true);
   material.setSpecularLightEnabled(true);
+
+  sf::Clock modelTime;
+
   gle::Mesh* model = loader.load(ac > 1 ? av[1] : "./models/Camaro.obj",
 				 &material);
+
+  std::cout << "Model loading: "
+	    << ((float)modelTime.GetElapsedTime().AsMilliseconds() / 1000)
+	    << "s\n";
 
   if (model)
     scene << model;

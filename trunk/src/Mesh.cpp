@@ -5,7 +5,7 @@
 // Login   <michar_l@epitech.net>
 // 
 // Started on  Mon Feb 20 18:25:23 2012 loick michard
-// Last update Fri Mar  9 22:45:53 2012 gael jochaud-du-plessix
+// Last update Sat Mar 10 22:08:22 2012 gael jochaud-du-plessix
 //
 
 #include <algorithm>
@@ -17,6 +17,7 @@ gle::Mesh::Mesh(Material* material,
 		const GLuint* indexes, GLsizeiptr nbIndexes)
   : _name(""),
     _type(Triangles),
+    _rasterizationMode(Fill),
     _pointSize(1.0),
     _material(material),
     _vertexes(NULL),
@@ -46,6 +47,7 @@ gle::Mesh::Mesh(Material* material,
 		gle::Array<GLuint> const * indexes)
   : _name(""),
     _type(Triangles),
+    _rasterizationMode(Fill),
     _pointSize(1.0),
     _material(material),
     _vertexes(NULL),
@@ -73,6 +75,30 @@ gle::Mesh::Mesh(Material* material,
 					 (GLuint const *)(*indexes));
       _nbIndexes = indexes->size();
     }
+}
+
+gle::Mesh::Mesh(gle::Mesh const & other)
+  : _name(other._name),
+    _type(other._type),
+    _rasterizationMode(other._rasterizationMode),
+    _pointSize(other._pointSize),
+    _material(other._material),
+    _vertexes(NULL),
+    _normals(NULL),
+    _textureCoords(NULL),
+    _indexes(NULL),
+    _nbIndexes(other._nbIndexes),
+    _position(other._position), _hasTarget(other._hasTarget),
+    _parentMatrix(other._parentMatrix)
+{
+  if (other._vertexes)
+    _vertexes = new gle::Buffer<GLfloat>(*other._vertexes);
+  if (other._normals)
+    _normals =  new gle::Buffer<GLfloat>(*other._normals);
+  if (other._textureCoords)
+    _textureCoords =  new gle::Buffer<GLfloat>(*other._textureCoords);
+  if (other._indexes)
+    _indexes =  new gle::Buffer<GLuint>(*other._indexes);
 }
 
 gle::Mesh::~Mesh()
@@ -134,14 +160,24 @@ std::string const & gle::Mesh::getName()
   return (_name);
 }
 
-void gle::Mesh::setType(Type type)
+void gle::Mesh::setType(PrimitiveType type)
 {
   _type = type;
 }
 
-gle::Mesh::Type gle::Mesh::getType()
+gle::Mesh::PrimitiveType gle::Mesh::getType() const
 {
   return (_type);
+}
+
+void gle::Mesh::setRasterizationMode(RasterizationMode rasterizationMode)
+{
+  _rasterizationMode = rasterizationMode;
+}
+
+gle::Mesh::RasterizationMode gle::Mesh::getRasterizationMode() const
+{
+  return (_rasterizationMode);
 }
 
 void gle::Mesh::setPointSize(GLfloat v)

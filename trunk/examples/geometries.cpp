@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Fri Mar  2 17:27:21 2012 gael jochaud-du-plessix
-// Last update Sat Mar 10 01:05:42 2012 gael jochaud-du-plessix
+// Last update Sat Mar 10 22:12:21 2012 gael jochaud-du-plessix
 //
 
 #include <iostream>
@@ -33,6 +33,8 @@ GLfloat mouseY = 0.0;
 GLfloat moveUp = 0.0;
 GLfloat mouseSensibility = 1;
 GLfloat camSpeed = 0.1;
+int gamepadId = 0;
+int accelerometerId = 1;
 
 void flycam(gle::Camera* camera)
 {
@@ -82,18 +84,18 @@ void flycam(gle::Camera* camera)
 
   // Joystick moves
   GLfloat rightY =
-    (GLfloat)sf::Joystick::GetAxisPosition(1, sf::Joystick::V) / 100;
+    (GLfloat)sf::Joystick::GetAxisPosition(gamepadId, sf::Joystick::V) / 100;
   GLfloat rightX =
-    (GLfloat)sf::Joystick::GetAxisPosition(1, sf::Joystick::U) / 100;
+    (GLfloat)sf::Joystick::GetAxisPosition(gamepadId, sf::Joystick::U) / 100;
   GLfloat leftX =
-    (GLfloat)sf::Joystick::GetAxisPosition(1, sf::Joystick::X) / 100;
+    (GLfloat)sf::Joystick::GetAxisPosition(gamepadId, sf::Joystick::X) / 100;
   GLfloat leftY =
-    (GLfloat)sf::Joystick::GetAxisPosition(1, sf::Joystick::Y) / 100;
+    (GLfloat)sf::Joystick::GetAxisPosition(gamepadId, sf::Joystick::Y) / 100;
   GLfloat trigLeft =
-    (((GLfloat)sf::Joystick::GetAxisPosition(1, sf::Joystick::Z) / 100)
+    (((GLfloat)sf::Joystick::GetAxisPosition(gamepadId, sf::Joystick::Z) / 100)
      + 1) / 2;
   GLfloat trigRight =
-    (((GLfloat)sf::Joystick::GetAxisPosition(1, sf::Joystick::R) / 100)
+    (((GLfloat)sf::Joystick::GetAxisPosition(gamepadId, sf::Joystick::R) / 100)
      + 1) / 2;
 
   if (std::abs(rightY) > 0.1)
@@ -198,17 +200,20 @@ int glEngine(int ac, char **av)
   pointPlane->setType(gle::Mesh::Points);
   pointPlane->setPointSize(2);
 
-  gle::Mesh* wiredSphere = gle::Geometries::WiredMesh(sphere);
-  wiredSphere->setMaterial(&material2);
+  gle::Mesh* wiredSphere = new gle::Mesh(*sphere);
   wiredSphere->setPosition(gle::Vector3<GLfloat>(-8, 0, 8));
+  wiredSphere->setRasterizationMode(gle::Mesh::Line);
+  wiredSphere->setMaterial(&material2);
 
-  gle::Mesh* wiredCube = gle::Geometries::WiredMesh(cube);
-  wiredCube->setMaterial(&material2);
+  gle::Mesh* wiredCube = new gle::Mesh(*cube);
   wiredCube->setPosition(gle::Vector3<GLfloat>(-8, 0, -8));
+  wiredCube->setRasterizationMode(gle::Mesh::Line);
+  wiredCube->setMaterial(&material2);
 
-  gle::Mesh* wiredPlane = gle::Geometries::WiredMesh(plane);
-  wiredPlane->setMaterial(&material2);
+  gle::Mesh* wiredPlane = new gle::Mesh(*plane);
   wiredPlane->setPosition(gle::Vector3<GLfloat>(0, -5, -80));
+  wiredPlane->setRasterizationMode(gle::Mesh::Line);
+  wiredPlane->setMaterial(&material2);
 
   scene << cube << wiredCube << pointCube;
   scene << sphere << wiredSphere << pointSphere;
@@ -272,7 +277,8 @@ int glEngine(int ac, char **av)
       renderer.render(&scene);
       App.Display();
       plane->setRotation(gle::Vector3<GLfloat>(1, 0, 0),
-			 -sf::Joystick::GetAxisPosition(0, sf::Joystick::X));
+			 -sf::Joystick::GetAxisPosition(accelerometerId,
+							sf::Joystick::X));
       GLfloat elapsed = time.GetElapsedTime().AsMicroseconds();
       if (16666 - elapsed > 0)
 	sf::Sleep(sf::Microseconds(16666));
