@@ -5,7 +5,7 @@
 // Login   <michar_l@epitech.net>
 // 
 // Started on  Mon Feb 20 13:20:54 2012 loick michard
-// Last update Fri Mar  9 22:46:15 2012 gael jochaud-du-plessix
+// Last update Sat Mar 10 21:12:37 2012 gael jochaud-du-plessix
 //
 
 #ifndef _MESH_HPP_
@@ -32,10 +32,16 @@ namespace gle {
   class Mesh {
   public:
 
-    enum Type {
+    enum PrimitiveType {
       Triangles = GL_TRIANGLES,
       Lines = GL_LINES,
       Points = GL_POINTS
+    };
+
+    enum RasterizationMode {
+      Fill = GL_FILL,
+      Line = GL_LINE,
+      Point = GL_POINT
     };
     
     //! Default constructor
@@ -51,6 +57,9 @@ namespace gle {
 	 gle::Array<GLfloat> const * vertexes=NULL,
 	 gle::Array<GLfloat> const * normals=NULL,
 	 gle::Array<GLuint> const * indexes=NULL);
+
+    //! Copy constructor
+    Mesh(Mesh const & other);
     
     //! Default destructor
 
@@ -91,9 +100,13 @@ namespace gle {
 
     std::string const & getName();
 
-    void setType(Type type);
+    void setType(PrimitiveType type);
 
-    gle::Mesh::Type getType();
+    gle::Mesh::PrimitiveType getType() const;
+
+    void setRasterizationMode(RasterizationMode rasterizationMode);
+
+    gle::Mesh::RasterizationMode getRasterizationMode() const;
 
     void setPointSize(GLfloat pointSize);
 
@@ -226,8 +239,9 @@ namespace gle {
     GLsizeiptr getNbIndexes();
 
   private:
-    std::string _name;
-    Type	_type;
+    std::string		_name;
+    PrimitiveType	_type;
+    RasterizationMode	_rasterizationMode;
     GLfloat	_pointSize;
 
     Material* _material;

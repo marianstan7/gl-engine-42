@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Wed Feb 15 16:10:11 2012 gael jochaud-du-plessix
-// Last update Wed Feb 22 22:33:30 2012 gael jochaud-du-plessix
+// Last update Sat Mar 10 22:06:35 2012 gael jochaud-du-plessix
 //
 
 #ifndef _GLE_BUFFER_HPP_
@@ -13,6 +13,8 @@
 
 # include <gle/opengl.h>
 # include <Exception.hpp>
+
+#include <iostream>
 
 namespace gle {
   
@@ -91,6 +93,32 @@ namespace gle {
 	  GLenum error = glGetError();
 	  if (error == GL_OUT_OF_MEMORY)
 	    throw new gle::Exception::OutOfMemory("Cannot create buffer");
+	  else if (error != GL_NO_ERROR)
+	    throw new gle::Exception::OpenGLError();
+	}
+    }
+
+    Buffer(Buffer const & other) :
+      _type(other._type), _usage(other._usage), _size(0), _id(0)
+    {
+      glGenBuffers(1, &_id);
+      if (other._size > 0)
+	{
+	  _size = other._size;
+	  glBindBuffer(GL_COPY_WRITE_BUFFER, _id);
+	  glBufferData(GL_COPY_WRITE_BUFFER, other._size * sizeof(T),
+		       NULL, _usage);
+	  glBindBuffer(GL_COPY_READ_BUFFER, other._id);
+	  bind();
+	  glCopyBufferSubData(GL_COPY_READ_BUFFER, GL_COPY_WRITE_BUFFER,
+			      0, 0, other._size * sizeof(T));
+	  GLenum error = glGetError();
+	  if (error == GL_OUT_OF_MEMORY)
+	    throw new gle::Exception::OutOfMemory("Cannot copy buffer");
+	  else if (error == GL_INVALID_VALUE)
+	    throw new gle::Exception::InvalidValue();
+	  else if (error == GL_INVALID_OPERATION)
+	    throw new gle::Exception::InvalidOperation();
 	  else if (error != GL_NO_ERROR)
 	    throw new gle::Exception::OpenGLError();
 	}
