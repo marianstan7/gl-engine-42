@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Fri Mar  2 17:27:21 2012 gael jochaud-du-plessix
-// Last update Sat Mar 10 22:12:21 2012 gael jochaud-du-plessix
+// Last update Wed Mar 14 12:49:13 2012 gael jochaud-du-plessix
 //
 
 #include <iostream>
@@ -33,8 +33,8 @@ GLfloat mouseY = 0.0;
 GLfloat moveUp = 0.0;
 GLfloat mouseSensibility = 1;
 GLfloat camSpeed = 0.1;
-int gamepadId = 0;
-int accelerometerId = 1;
+int gamepadId = 1;
+int accelerometerId = 0;
 
 void flycam(gle::Camera* camera)
 {
@@ -77,25 +77,25 @@ void flycam(gle::Camera* camera)
   if (mouseX != 0)
     phi += (M_PI / 5) * mouseX * mouseSensibility;;
   // Mouve up or down with clicks
-  if (sf::Mouse::IsButtonPressed(sf::Mouse::Left))
+  if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
     pos += gle::Vector3<GLfloat>(0, 1 * (mouseSensibility / 10), 0);
-  if (sf::Mouse::IsButtonPressed(sf::Mouse::Right))
+  if (sf::Mouse::isButtonPressed(sf::Mouse::Right))
     pos -= gle::Vector3<GLfloat>(0, 1 * (mouseSensibility / 10), 0);
 
   // Joystick moves
   GLfloat rightY =
-    (GLfloat)sf::Joystick::GetAxisPosition(gamepadId, sf::Joystick::V) / 100;
+    (GLfloat)sf::Joystick::getAxisPosition(gamepadId, sf::Joystick::V) / 100;
   GLfloat rightX =
-    (GLfloat)sf::Joystick::GetAxisPosition(gamepadId, sf::Joystick::U) / 100;
+    (GLfloat)sf::Joystick::getAxisPosition(gamepadId, sf::Joystick::U) / 100;
   GLfloat leftX =
-    (GLfloat)sf::Joystick::GetAxisPosition(gamepadId, sf::Joystick::X) / 100;
+    (GLfloat)sf::Joystick::getAxisPosition(gamepadId, sf::Joystick::X) / 100;
   GLfloat leftY =
-    (GLfloat)sf::Joystick::GetAxisPosition(gamepadId, sf::Joystick::Y) / 100;
+    (GLfloat)sf::Joystick::getAxisPosition(gamepadId, sf::Joystick::Y) / 100;
   GLfloat trigLeft =
-    (((GLfloat)sf::Joystick::GetAxisPosition(gamepadId, sf::Joystick::Z) / 100)
+    (((GLfloat)sf::Joystick::getAxisPosition(gamepadId, sf::Joystick::Z) / 100)
      + 1) / 2;
   GLfloat trigRight =
-    (((GLfloat)sf::Joystick::GetAxisPosition(gamepadId, sf::Joystick::R) / 100)
+    (((GLfloat)sf::Joystick::getAxisPosition(gamepadId, sf::Joystick::R) / 100)
      + 1) / 2;
 
   if (std::abs(rightY) > 0.1)
@@ -150,21 +150,21 @@ int glEngine(int ac, char **av)
   (void)ac;
   (void)av;
   sf::ContextSettings context;
-  context.DepthBits = 24;
-  context.StencilBits = 24;
-  context.AntialiasingLevel = 2;
-  context.MajorVersion = 3;
-  context.MinorVersion = 3;
+  context.depthBits = 24;
+  context.stencilBits = 24;
+  context.antialiasingLevel = 2;
+  context.majorVersion = 3;
+  context.minorVersion = 3;
 
   sf::Window App(sf::VideoMode(W_WIDTH, W_HEIGHT, 32), "glEngine",
 		 sf::Style::Default, context);
   
   //! Print OpenGL supported version
-  context = App.GetSettings();
-  std::cout << context.MajorVersion << '.'
-	    << context.MinorVersion << std::endl;
+  context = App.getSettings();
+  std::cout << context.majorVersion << '.'
+	    << context.minorVersion << std::endl;
 
-  App.SetActive();
+  App.setActive();
 
   gle::Scene scene;
   gle::PerspectiveCamera camera(gle::Vector3<GLfloat>(-20, 10, 0),
@@ -192,7 +192,7 @@ int glEngine(int ac, char **av)
   gle::Mesh* pointSphere = gle::Geometries::Sphere(&material2, 5, 100, 100);
   pointSphere->setPosition(gle::Vector3<GLfloat>(-24, 0, 8));
   pointSphere->setType(gle::Mesh::Points);
-  gle::Mesh* plane = gle::Geometries::Plane(&material, 80, 80, 20, 20);
+  gle::Mesh* plane = gle::Geometries::Plane(&material, 80, 80, 2, 2);
   plane->setPosition(gle::Vector3<GLfloat>(0, -5, 0));
   gle::Mesh* pointPlane =
     gle::Geometries::Plane(&material2, 80, 80, 100, 100);
@@ -239,49 +239,49 @@ int glEngine(int ac, char **av)
   sf::Clock clock;
   sf::Clock time;
 
-  App.ShowMouseCursor(false);
+  App.setMouseCursorVisible(false);
   
-  while (App.IsOpen())
+  while (App.isOpen())
     {      
       sf::Event Event;
       mouseX = 0;
       mouseY = 0;
-      while (App.PollEvent(Event))
+      while (App.pollEvent(Event))
 	{
 	  // Close window : exit
-	  if (Event.Type == sf::Event::Closed)
-	    App.Close();
-	  else if (Event.Type == sf::Event::KeyPressed
-		   && Event.Key.Code == sf::Keyboard::Escape)
-	    App.Close();
+	  if (Event.type == sf::Event::Closed)
+	    App.close();
+	  else if (Event.type == sf::Event::KeyPressed
+		   && Event.key.code == sf::Keyboard::Escape)
+	    App.close();
 	  // Adjust the viewport when the window is resized
-	  if (Event.Type == sf::Event::Resized)
-	    glViewport(0, 0, Event.Size.Width, Event.Size.Height);
-	  if (Event.Type == sf::Event::KeyPressed)
-	    keyState[Event.Key.Code] = true;
-	  else if (Event.Type == sf::Event::KeyReleased)
-	    keyState[Event.Key.Code] = false;
-	  else if (Event.Type == sf::Event::MouseMoved)
+	  if (Event.type == sf::Event::Resized)
+	    glViewport(0, 0, Event.size.width, Event.size.height);
+	  if (Event.type == sf::Event::KeyPressed)
+	    keyState[Event.key.code] = true;
+	  else if (Event.type == sf::Event::KeyReleased)
+	    keyState[Event.key.code] = false;
+	  else if (Event.type == sf::Event::MouseMoved)
 	    {
-	      sf::Vector2i mouse = sf::Mouse::GetPosition(App);
+	      sf::Vector2i mouse = sf::Mouse::getPosition(App);
 	      mouseX = (GLfloat)(mouse.x - (GLfloat)W_WIDTH / 2)
 		/ ((GLfloat)W_WIDTH / 2);
 	      mouseY = (GLfloat)(mouse.y - (GLfloat)W_HEIGHT / 2)
 		/ ((GLfloat)W_HEIGHT / 2);
 	    }
 	}
-      sf::Mouse::SetPosition(sf::Vector2i(W_WIDTH/2, W_HEIGHT/2), App);
+      sf::Mouse::setPosition(sf::Vector2i(W_WIDTH/2, W_HEIGHT/2), App);
       flycam(&camera);
       l.setPosition(camera.getPosition());
       scene.updateLights();
       renderer.render(&scene);
-      App.Display();
+      App.display();
       plane->setRotation(gle::Vector3<GLfloat>(1, 0, 0),
-			 -sf::Joystick::GetAxisPosition(accelerometerId,
+			 -sf::Joystick::getAxisPosition(accelerometerId,
 							sf::Joystick::X));
-      GLfloat elapsed = time.GetElapsedTime().AsMicroseconds();
+      GLfloat elapsed = time.getElapsedTime().asMicroseconds();
       if (16666 - elapsed > 0)
-	sf::Sleep(sf::Microseconds(16666));
+	sf::sleep(sf::microseconds(16666));
     }
   
   return (0);
