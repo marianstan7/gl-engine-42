@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Wed Feb 29 19:37:40 2012 gael jochaud-du-plessix
-// Last update Thu Mar  1 13:57:25 2012 gael jochaud-du-plessix
+// Last update Wed Mar 14 12:18:16 2012 gael jochaud-du-plessix
 //
 
 #include <Texture.hpp>
@@ -31,13 +31,13 @@ void gle::Texture::bind()
 void gle::Texture::setData(std::string filename)
 {
   sf::Image image;
-  image.LoadFromFile(filename);
+  image.loadFromFile(filename);
   setData(image);
 }
 
 void gle::Texture::setData(sf::Image const &image)
 {
-  const sf::Uint8* pixelsPtr = image.GetPixelsPtr();
+  const sf::Uint8* pixelsPtr = image.getPixelsPtr();
   if (pixelsPtr == NULL)
     throw new gle::Exception::InvalidValue("Invalid texture image");
   bind();
@@ -46,8 +46,8 @@ void gle::Texture::setData(sf::Image const &image)
   glTexImage2D(GL_TEXTURE_2D, // Texture type
 	       0, // Level of detail (0 = max)
 	       GL_RGBA, // Internal format
-	       image.GetWidth(), // Width
-	       image.GetHeight(), // Height
+	       image.getWidth(), // Width
+	       image.getHeight(), // Height
 	       0, // This value must be 0
 	       GL_RGBA, // Format of the pixel datas
 	       GL_UNSIGNED_BYTE, // Data type of the pixel datas

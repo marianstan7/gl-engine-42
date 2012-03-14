@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Wed Feb 15 17:24:36 2012 gael jochaud-du-plessix
-// Last update Thu Mar  8 12:51:18 2012 gael jochaud-du-plessix
+// Last update Wed Mar 14 12:38:05 2012 gael jochaud-du-plessix
 //
 
 /*! 
@@ -44,15 +44,15 @@ int glEngine(int ac, char **av)
   (void)ac;
   (void)av;
   sf::ContextSettings context;
-  context.DepthBits = 24;
-  context.StencilBits = 24;
-  context.AntialiasingLevel = 2;
-  context.MajorVersion = 3;
-  context.MinorVersion = 3;
+  context.depthBits = 24;
+  context.stencilBits = 24;
+  context.antialiasingLevel = 2;
+  context.majorVersion = 3;
+  context.minorVersion = 3;
 
   sf::Window App(sf::VideoMode(800, 800, 32), "Example 01",
 		 sf::Style::Default, context);
-  App.SetActive();
+  App.setActive();
 
   gle::Scene			scene;
   gle::PerspectiveCamera	camera(gle::Vector3<GLfloat>(0, 0, 0),
@@ -130,28 +130,28 @@ int glEngine(int ac, char **av)
   float			dist = 170;
   
   renderer.createPrograms(&scene);
-  while (App.IsOpen())
+  while (App.isOpen())
     {
-      if (time.GetElapsedTime().AsMilliseconds() >= 100)
+      if (time.getElapsedTime().asMilliseconds() >= 100)
 	{
 	  std::cout << "fps:" << (frameCounter * 10) << std::endl;
 	  frameCounter = 0;
-	  time.Restart();
+	  time.restart();
 	}
       frameCounter++;
-      angle = (float)clock.GetElapsedTime().AsMilliseconds() / 1000;
+      angle = (float)clock.getElapsedTime().asMilliseconds() / 1000;
       sf::Event Event;
-      while (App.PollEvent(Event))
+      while (App.pollEvent(Event))
 	{
 	  // Close window : exit
-	  if (Event.Type == sf::Event::Closed)
-	    App.Close();
-	  else if (Event.Type == sf::Event::KeyPressed
-		   && Event.Key.Code == sf::Keyboard::Escape)
-	    App.Close();
+	  if (Event.type == sf::Event::Closed)
+	    App.close();
+	  else if (Event.type == sf::Event::KeyPressed
+		   && Event.key.code == sf::Keyboard::Escape)
+	    App.close();
 	  // Adjust the viewport when the window is resized
-	  if (Event.Type == sf::Event::Resized)
-	    glViewport(0, 0, Event.Size.Width, Event.Size.Height);
+	  if (Event.type == sf::Event::Resized)
+	    glViewport(0, 0, Event.size.width, Event.size.height);
 	}
       camera.setPosition(gle::Vector3<GLfloat>(cos(angle/3) * -dist,
 					       30,
@@ -177,7 +177,7 @@ int glEngine(int ac, char **av)
       scene.updateLights();
 
       renderer.render(&scene);
-      App.Display();
+      App.display();
     }
   
   return (0);
