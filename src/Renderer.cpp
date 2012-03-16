@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Mon Feb 20 20:48:54 2012 gael jochaud-du-plessix
-// Last update Fri Mar 16 12:31:37 2012 gael jochaud-du-plessix
+// Last update Fri Mar 16 18:38:30 2012 gael jochaud-du-plessix
 //
 
 #include <Renderer.hpp>
@@ -16,8 +16,8 @@ gle::Renderer::Renderer() :
   _currentProgram(NULL), _currentMaterial(NULL)
 {
   // Set color and depth clear value
-  glClearDepth(1.f);
   glClearColor(0.f, 0.f, 0.f, 1.f);
+  glClearDepth(1.f);
 
   // Enable Z-buffer read and write 
   glEnable(GL_DEPTH_TEST);
@@ -46,6 +46,9 @@ void gle::Renderer::clear()
 
 void gle::Renderer::render(Scene* scene)
 {
+  gle::Color<GLfloat> const & backgroundColor = scene->getBackgroundColor();
+  glClearColor(backgroundColor.r, backgroundColor.b, backgroundColor.a,
+	       1.f);
   clear();
   _currentProgram = NULL;
   _currentMaterial = NULL;

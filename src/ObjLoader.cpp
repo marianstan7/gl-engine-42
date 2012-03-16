@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Wed Feb 22 23:17:47 2012 gael jochaud-du-plessix
-// Last update Fri Mar  2 18:02:10 2012 loick michard
+// Last update Fri Mar 16 17:18:44 2012 gael jochaud-du-plessix
 //
 
 #include <fstream>
@@ -366,8 +366,8 @@ void gle::ObjLoader::_parseNewMaterial(std::vector<std::string> const &
 {
   if (lineParts.size() < 2)
     throw new gle::Exception::ParsingError("Invalid material declaration",
-					   _currentMaterialLine,
-					   _currentMaterialFilename);
+    					   _currentMaterialLine,
+    					   _currentMaterialFilename);
   _currentMaterial = new gle::Material();
   _currentMaterial->setName(lineParts[1]);
   _registeredMaterials[lineParts[1]] = _currentMaterial;
@@ -433,9 +433,10 @@ void gle::ObjLoader::_setMaterialIllumination(int illum)
 void gle::ObjLoader::_parseMap(std::vector<std::string> const & lineParts)
 {
   if (lineParts.size() < 2)
-    throw new gle::Exception::ParsingError("Invalid material map declaration",
-					   _currentMaterialLine,
-					   _currentMaterialFilename);
+    return ;
+    // throw new gle::Exception::ParsingError("Invalid material map declaration",
+    // 					   _currentMaterialLine,
+    // 					   _currentMaterialFilename);
   std::string path = _parseFilename(lineParts[1]);
   if (lineParts[0] == "map_Ka" || lineParts[0] == "map_Kd")
     _currentMaterial->setColorMap(_getTexture(path));

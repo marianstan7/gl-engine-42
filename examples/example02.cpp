@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Wed Feb 15 17:24:36 2012 gael jochaud-du-plessix
-// Last update Fri Mar 16 13:55:59 2012 gael jochaud-du-plessix
+// Last update Fri Mar 16 18:16:20 2012 gael jochaud-du-plessix
 //
 
 /*! 
@@ -33,6 +33,7 @@ int glEngine(char **av);
 
 int main(int ac, char **av)
 {
+  (void)ac;
   int ret;
 
   try {
@@ -47,6 +48,7 @@ int main(int ac, char **av)
 
 int glEngine(char **av)
 {
+  (void)av;
   sf::ContextSettings context;
   context.depthBits = 24;
   context.stencilBits = 24;

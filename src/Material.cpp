@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Mon Feb 20 22:50:35 2012 gael jochaud-du-plessix
-// Last update Fri Mar  9 20:35:03 2012 gael jochaud-du-plessix
+// Last update Fri Mar 16 16:23:35 2012 gael jochaud-du-plessix
 //
 
 #include <Material.hpp>
@@ -44,6 +44,7 @@ void gle::Material::setAmbientColor(gle::Color<GLfloat> const & color)
 
 gle::Color<GLfloat> const & gle::Material::getAmbientColor() const
 {
+  //return(_colorMapEnabled ? gle::Color<GLfloat>(0, 0, 0) : _ambientColor);
   return (_ambientColor);
 }
 

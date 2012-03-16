@@ -68,6 +68,13 @@ add_executable (
     examples/video.cpp
 )
 
+add_executable (
+    examples/city
+    examples/city.cpp
+    examples/flycam.cpp
+    examples/video.cpp
+)
+
 # Librairies to link
 target_link_libraries (
     examples/example00
@@ -106,6 +113,13 @@ target_link_libraries (
 
 target_link_libraries (
     examples/geometries
+    ${SFML_LIBRARIES}
+    ${OPENGL_LIBRARIES}
+    glEngine
+)
+
+target_link_libraries (
+    examples/city
     ${SFML_LIBRARIES}
     ${OPENGL_LIBRARIES}
     glEngine

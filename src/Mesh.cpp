@@ -5,7 +5,7 @@
 // Login   <michar_l@epitech.net>
 // 
 // Started on  Mon Feb 20 18:25:23 2012 loick michard
-// Last update Sat Mar 10 22:08:22 2012 gael jochaud-du-plessix
+// Last update Fri Mar 16 18:15:24 2012 gael jochaud-du-plessix
 //
 
 #include <algorithm>
@@ -88,7 +88,13 @@ gle::Mesh::Mesh(gle::Mesh const & other)
     _textureCoords(NULL),
     _indexes(NULL),
     _nbIndexes(other._nbIndexes),
-    _position(other._position), _hasTarget(other._hasTarget),
+    _position(other._position),
+    _target(other._target),
+    _hasTarget(other._hasTarget),
+    _rotation(other._rotation),
+    _scaleMatrix(other._scaleMatrix),
+    _mvMatrix(other._mvMatrix),
+    _normalMatrix(other._mvMatrix),
     _parentMatrix(other._parentMatrix)
 {
   if (other._vertexes)
@@ -99,6 +105,10 @@ gle::Mesh::Mesh(gle::Mesh const & other)
     _textureCoords =  new gle::Buffer<GLfloat>(*other._textureCoords);
   if (other._indexes)
     _indexes =  new gle::Buffer<GLuint>(*other._indexes);
+  std::vector<gle::Mesh*> children = other._children;
+  for (std::vector<gle::Mesh*>::iterator it = children.begin(),
+	 end = children.end(); it != end; ++it)
+    addChild(new gle::Mesh(*(*it)));
 }
 
 gle::Mesh::~Mesh()
