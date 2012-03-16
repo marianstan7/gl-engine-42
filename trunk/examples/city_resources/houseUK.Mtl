@@ -1,0 +1,1600 @@
+# Created By Carrara 5.0
+
+newmtl Shader_6
+ Ns 162
+ d 1
+ Ni 0.001
+ illum 2
+ Ka 0.2 0.2 0.2
+ Kd 0.866667 0.607843 0.560784
+ Ks 0.25 0.25 0.25
+ map_Kd Shader_6.jpg
+
+newmtl Shader_7
+ Ns 162
+ d 1
+ Ni 0.001
+ illum 2
+ Ka 0.2 0.2 0.2
+ Kd 0.796079 0.521569 0.47451
+ Ks 0.25 0.25 0.25
+ map_Kd Shader_7.jpg
+
+newmtl Shader_15
+ Ns 162
+ d 1
+ Ni 0.001
+ illum 2
+ Ka 0.2 0.2 0.2
+ Kd 0.866667 0.607843 0.560784
+ Ks 0.25 0.25 0.25
+ map_Kd Shader_6.jpg
+
+newmtl Default
+ Ns 162
+ d 1
+ Ni 0.001
+ illum 2
+ Ka 0.2 0.2 0.2
+ Kd 0.35523 0.171267 0.11841
+ Ks 0.25 0.25 0.25
+
+newmtl Texture_0
+ Ns 162
+ d 1
+ Ni 0.001
+ illum 2
+ Ka 0.2 0.2 0.2
+ Kd 0.560784 0.482353 0.439216
+ Ks 0.25 0.25 0.25
+ map_Kd Texture_0.jpg
+
+newmtl Texture_0_1
+ Ns 162
+ d 1
+ Ni 0.001
+ illum 2
+ Ka 0.2 0.2 0.2
+ Kd 0.560784 0.482353 0.439216
+ Ks 0.25 0.25 0.25
+ map_Kd Texture_0.jpg
+
+newmtl Default_4
+ Ns 162
+ d 1
+ Ni 0.001
+ illum 2
+ Ka 0.2 0.2 0.2
+ Kd 0.322332 0.105348 0.046082
+ Ks 0.25 0.25 0.25
+
+newmtl Shader_17
+ Ns 162
+ d 1
+ Ni 0.001
+ illum 2
+ Ka 0.2 0.2 0.2
+ Kd 0.223453 0.105287 0.947341
+ Ks 0.25 0.25 0.25
+
+newmtl Default_5
+ Ns 162
+ d 1
+ Ni 0.001
+ illum 2
+ Ka 0.2 0.2 0.2
+ Kd 0.223453 0.105287 0.947341
+ Ks 0.25 0.25 0.25
+
+newmtl Shader_8
+ Ns 162
+ d 1
+ Ni 0.001
+ illum 2
+ Ka 0.2 0.2 0.2
+ Kd 0.960525 0.960525 0.960525
+ Ks 0.953933 0.940871 0.940871
+
+newmtl Shader
+ Ns 162
+ d 1
+ Ni 0.001
+ illum 2
+ Ka 0.2 0.2 0.2
+ Kd 0.155764 0.052674 0.920851
+ Ks 0.25 0.25 0.25
+
+newmtl Default_6
+ Ns 162
+ d 1
+ Ni 0.001
+ illum 2
+ Ka 0.2 0.2 0.2
+ Kd 0.155764 0.052674 0.920851
+ Ks 0.25 0.25 0.25
+
+newmtl Shader_2
+ Ns 162
+ d 1
+ Ni 0.001
+ illum 2
+ Ka 0.2 0.2 0.2
+ Kd 0.026368 0 0
+ Ks 0.25 0.25 0.25
+
+newmtl Shader_13
+ Ns 162
+ d 1
+ Ni 0.001
+ illum 2
+ Ka 0.2 0.2 0.2
+ Kd 0.866667 0.607843 0.560784
+ Ks 0.25 0.25 0.25
+ map_Kd Shader_6.jpg
+
+newmtl Default_9
+ Ns 162
+ d 1
+ Ni 0.001
+ illum 2
+ Ka 0.2 0.2 0.2
+ Kd 0.866667 0.607843 0.560784
+ Ks 0.25 0.25 0.25
+ map_Kd Shader_6.jpg
+
+newmtl Shader_3
+ Ns 162
+ d 1
+ Ni 0.001
+ illum 2
+ Ka 0.2 0.2 0.2
+ Kd 0.026368 0 0
+ Ks 0.25 0.25 0.25
+
+newmtl Shader_14
+ Ns 162
+ d 1
+ Ni 0.001
+ illum 2
+ Ka 0.2 0.2 0.2
+ Kd 0.866667 0.607843 0.560784
+ Ks 0.25 0.25 0.25
+ map_Kd Shader_6.jpg
+
+newmtl Default_10
+ Ns 162
+ d 1
+ Ni 0.001
+ illum 2
+ Ka 0.2 0.2 0.2
+ Kd 0.866667 0.607843 0.560784
+ Ks 0.25 0.25 0.25
+ map_Kd Shader_6.jpg
+
+newmtl Default_11
+ Ns 162
+ d 1
+ Ni 0.001
+ illum 2
+ Ka 0.2 0.2 0.2
+ Kd 0.866667 0.607843 0.560784
+ Ks 0.25 0.25 0.25
+ map_Kd Shader_6.jpg
+
+newmtl Default_12
+ Ns 162
+ d 1
+ Ni 0.001
+ illum 2
+ Ka 0.2 0.2 0.2
+ Kd 0.062745 0 0.458824
+ Ks 0.25 0.25 0.25
+ map_Kd Default_12.jpg
+
+newmtl Lining
+ Ns 499
+ d 1
+ Ni 0.001
+ illum 2
+ Ka 0.2 0.2 0.2
+ Kd 0.967056 0.953994 0.953994
+ Ks 0.25 0.25 0.25
+
+newmtl Concrete
+ Ns 4096
+ d 0
+ Ni 0.001
+ illum 2
+ Ka 0.2 0.2 0.2
+ Kd 0 0 0
+ Ks 0 0 0
+
+newmtl Floor
+ Ns 4096
+ d 0
+ Ni 0.001
+ illum 2
+ Ka 0.2 0.2 0.2
+ Kd 0 0 0
+ Ks 0 0 0
+
+newmtl Wall
+ Ns 4096
+ d 0
+ Ni 0.001
+ illum 2
+ Ka 0.2 0.2 0.2
+ Kd 0 0 0
+ Ks 0 0 0
+
+newmtl Outside_Wall
+ Ns 4096
+ d 0
+ Ni 0.001
+ illum 2
+ Ka 0.2 0.2 0.2
+ Kd 0 0 0
+ Ks 0 0 0
+
+newmtl Ceiling
+ Ns 4096
+ d 0
+ Ni 0.001
+ illum 2
+ Ka 0.2 0.2 0.2
+ Kd 0 0 0
+ Ks 0 0 0
+
+newmtl Ledge
+ Ns 499
+ d 1
+ Ni 0.001
+ illum 2
+ Ka 0.2 0.2 0.2
+ Kd 0.967056 0.953994 0.953994
+ Ks 0.25 0.25 0.25
+
+newmtl Tiles
+ Ns 4096
+ d 0
+ Ni 0.001
+ illum 2
+ Ka 0.2 0.2 0.2
+ Kd 0 0 0
+ Ks 0 0 0
+
+newmtl Grouts
+ Ns 499
+ d 1
+ Ni 0.001
+ illum 2
+ Ka 0.2 0.2 0.2
+ Kd 0.967056 0.953994 0.953994
+ Ks 0.25 0.25 0.25
+
+newmtl Skirting
+ Ns 4096
+ d 0
+ Ni 0.001
+ illum 2
+ Ka 0.2 0.2 0.2
+ Kd 0 0 0
+ Ks 0 0 0
+
+newmtl Glass
+ Ns 3461
+ d 0.247525
+ Ni 3.226477
+ illum 2
+ Ka 0.2 0.2 0.2
+ Kd 0.376471 0.529412 0.92549
+ Ks 0.77419 0.77419 0.77419
+ map_Kd Glass.jpg
+
+newmtl Window
+ Ns 499
+ d 1
+ Ni 0.001
+ illum 2
+ Ka 0.2 0.2 0.2
+ Kd 0.967056 0.953994 0.953994
+ Ks 0.25 0.25 0.25
+
+newmtl Outside_Win
+ Ns 499
+ d 1
+ Ni 0.001
+ illum 2
+ Ka 0.2 0.2 0.2
+ Kd 0.967056 0.953994 0.953994
+ Ks 0.25 0.25 0.25
+
+newmtl Lock
+ Ns 499
+ d 1
+ Ni 0.001
+ illum 2
+ Ka 0.2 0.2 0.2
+ Kd 0.5 0.5 0.5
+ Ks 0.25 0.25 0.25
+
+newmtl Glass_Door
+ Ns 3461
+ d 0.247525
+ Ni 3.226477
+ illum 2
+ Ka 0.2 0.2 0.2
+ Kd 0.376471 0.529412 0.92549
+ Ks 0.77419 0.77419 0.77419
+ map_Kd Glass.jpg
+
+newmtl Window_Door
+ Ns 499
+ d 1
+ Ni 0.001
+ illum 2
+ Ka 0.2 0.2 0.2
+ Kd 0.967056 0.953994 0.953994
+ Ks 0.25 0.25 0.25
+
+newmtl Outside_WinD
+ Ns 499
+ d 1
+ Ni 0.001
+ illum 2
+ Ka 0.2 0.2 0.2
+ Kd 0.967056 0.953994 0.953994
+ Ks 0.25 0.25 0.25
+
+newmtl Default_17
+ Ns 162
+ d 1
+ Ni 0.001
+ illum 2
+ Ka 0.2 0.2 0.2
+ Kd 0.155764 0.052674 0.920851
+ Ks 0.25 0.25 0.25
+
+newmtl Default_18
+ Ns 162
+ d 1
+ Ni 0.001
+ illum 2
+ Ka 0.2 0.2 0.2
+ Kd 0.155764 0.052674 0.920851
+ Ks 0.25 0.25 0.25
+
+newmtl Shader_9
+ Ns 162
+ d 1
+ Ni 0.001
+ illum 2
+ Ka 0.2 0.2 0.2
+ Kd 0.155764 0.052674 0.920851
+ Ks 0.25 0.25 0.25
+
+newmtl Shader_37
+ Ns 162
+ d 1
+ Ni 0.001
+ illum 2
+ Ka 0.2 0.2 0.2
+ Kd 0.788235 0.45098 0.392157
+ Ks 0.25 0.25 0.25
+ map_Kd Shader_37.jpg
+
+newmtl Shader_36
+ Ns 162
+ d 1
+ Ni 0.001
+ illum 2
+ Ka 0.2 0.2 0.2
+ Kd 0.807843 0.521569 0.486275
+ Ks 0.25 0.25 0.25
+ map_Kd Shader_36.jpg
+
+newmtl Default_43
+ Ns 162
+ d 1
+ Ni 0.001
+ illum 2
+ Ka 0.2 0.2 0.2
+ Kd 0.807843 0.521569 0.486275
+ Ks 0.25 0.25 0.25
+ map_Kd Shader_36.jpg
+
+newmtl Shader_38
+ Ns 162
+ d 1
+ Ni 0.001
+ illum 2
+ Ka 0.2 0.2 0.2
+ Kd 0.788235 0.45098 0.392157
+ Ks 0.25 0.25 0.25
+ map_Kd Shader_37.jpg
+
+newmtl Shader_40
+ Ns 162
+ d 1
+ Ni 0.001
+ illum 2
+ Ka 0.2 0.2 0.2
+ Kd 0.478431 0.486275 0.47451
+ Ks 0.25 0.25 0.25
+ map_Kd Shader_40.jpg
+
+newmtl Default_45
+ Ns 162
+ d 1
+ Ni 0.001
+ illum 2
+ Ka 0.2 0.2 0.2
+ Kd 0.52549 0.709804 0.309804
+ Ks 0.25 0.25 0.25
+ map_Kd Default_45.jpg
+
+newmtl Default_47
+ Ns 162
+ d 1
+ Ni 0.001
+ illum 2
+ Ka 0.2 0.2 0.2
+ Kd 0.576471 0.556863 0.533333
+ Ks 0.25 0.25 0.25
+ map_Kd Default_47.jpg
+
+newmtl Default_48
+ Ns 162
+ d 1
+ Ni 0.001
+ illum 2
+ Ka 0.2 0.2 0.2
+ Kd 0.27451 0.27451 0.27451
+ Ks 0.25 0.25 0.25
+ map_Kd Default_48.jpg
+
+newmtl Default_49
+ Ns 162
+ d 1
+ Ni 0.001
+ illum 2
+ Ka 0.2 0.2 0.2
+ Kd 0.556863 0.572549 0.443137
+ Ks 0.25 0.25 0.25
+ map_Kd Default_49.jpg
+
+newmtl Default_61
+ Ns 162
+ d 1
+ Ni 0.001
+ illum 2
+ Ka 0.2 0.2 0.2
+ Kd 0.627451 0.627451 0.635294
+ Ks 0.25 0.25 0.25
+ map_Kd Default_61.jpg
+
+newmtl Default_62
+ Ns 162
+ d 1
+ Ni 0.001
+ illum 2
+ Ka 0.2 0.2 0.2
+ Kd 0.556863 0.572549 0.443137
+ Ks 0.25 0.25 0.25
+ map_Kd Default_49.jpg
+
+newmtl Default_63
+ Ns 162
+ d 1
+ Ni 0.001
+ illum 2
+ Ka 0.2 0.2 0.2
+ Kd 0.627451 0.627451 0.635294
+ Ks 0.25 0.25 0.25
+ map_Kd Default_61.jpg
+
+newmtl Default_64
+ Ns 162
+ d 1
+ Ni 0.001
+ illum 2
+ Ka 0.2 0.2 0.2
+ Kd 0.556863 0.572549 0.443137
+ Ks 0.25 0.25 0.25
+ map_Kd Default_49.jpg
+
+newmtl Default_65
+ Ns 162
+ d 1
+ Ni 0.001
+ illum 2
+ Ka 0.2 0.2 0.2
+ Kd 0.627451 0.627451 0.635294
+ Ks 0.25 0.25 0.25
+ map_Kd Default_61.jpg
+
+newmtl Default_66
+ Ns 162
+ d 1
+ Ni 0.001
+ illum 2
+ Ka 0.2 0.2 0.2
+ Kd 0.556863 0.572549 0.443137
+ Ks 0.25 0.25 0.25
+ map_Kd Default_49.jpg
+
+newmtl Default_67
+ Ns 162
+ d 1
+ Ni 0.001
+ illum 2
+ Ka 0.2 0.2 0.2
+ Kd 0.627451 0.627451 0.635294
+ Ks 0.25 0.25 0.25
+ map_Kd Default_61.jpg
+
+newmtl Default_68
+ Ns 162
+ d 1
+ Ni 0.001
+ illum 2
+ Ka 0.2 0.2 0.2
+ Kd 0.556863 0.572549 0.443137
+ Ks 0.25 0.25 0.25
+ map_Kd Default_49.jpg
+
+newmtl Default_69
+ Ns 162
+ d 1
+ Ni 0.001
+ illum 2
+ Ka 0.2 0.2 0.2
+ Kd 0.627451 0.627451 0.635294
+ Ks 0.25 0.25 0.25
+ map_Kd Default_61.jpg
+
+newmtl Default_70
+ Ns 162
+ d 1
+ Ni 0.001
+ illum 2
+ Ka 0.2 0.2 0.2
+ Kd 0.556863 0.572549 0.443137
+ Ks 0.25 0.25 0.25
+ map_Kd Default_49.jpg
+
+newmtl Default_71
+ Ns 162
+ d 1
+ Ni 0.001
+ illum 2
+ Ka 0.2 0.2 0.2
+ Kd 0.627451 0.627451 0.635294
+ Ks 0.25 0.25 0.25
+ map_Kd Default_61.jpg
+
+newmtl Default_72
+ Ns 162
+ d 1
+ Ni 0.001
+ illum 2
+ Ka 0.2 0.2 0.2
+ Kd 0.556863 0.572549 0.443137
+ Ks 0.25 0.25 0.25
+ map_Kd Default_49.jpg
+
+newmtl Default_73
+ Ns 162
+ d 1
+ Ni 0.001
+ illum 2
+ Ka 0.2 0.2 0.2
+ Kd 0.627451 0.627451 0.635294
+ Ks 0.25 0.25 0.25
+ map_Kd Default_61.jpg
+
+newmtl Default_74
+ Ns 162
+ d 1
+ Ni 0.001
+ illum 2
+ Ka 0.2 0.2 0.2
+ Kd 0.556863 0.572549 0.443137
+ Ks 0.25 0.25 0.25
+ map_Kd Default_49.jpg
+
+newmtl Default_75
+ Ns 162
+ d 1
+ Ni 0.001
+ illum 2
+ Ka 0.2 0.2 0.2
+ Kd 0.627451 0.627451 0.635294
+ Ks 0.25 0.25 0.25
+ map_Kd Default_61.jpg
+
+newmtl Default_76
+ Ns 162
+ d 1
+ Ni 0.001
+ illum 2
+ Ka 0.2 0.2 0.2
+ Kd 0.556863 0.572549 0.443137
+ Ks 0.25 0.25 0.25
+ map_Kd Default_49.jpg
+
+newmtl Default_77
+ Ns 162
+ d 1
+ Ni 0.001
+ illum 2
+ Ka 0.2 0.2 0.2
+ Kd 0.627451 0.627451 0.635294
+ Ks 0.25 0.25 0.25
+ map_Kd Default_61.jpg
+
+newmtl Default_78
+ Ns 162
+ d 1
+ Ni 0.001
+ illum 2
+ Ka 0.2 0.2 0.2
+ Kd 0.556863 0.572549 0.443137
+ Ks 0.25 0.25 0.25
+ map_Kd Default_49.jpg
+
+newmtl Default_83
+ Ns 162
+ d 1
+ Ni 0.001
+ illum 2
+ Ka 0.2 0.2 0.2
+ Kd 0.627451 0.627451 0.635294
+ Ks 0.25 0.25 0.25
+ map_Kd Default_61.jpg
+
+newmtl Default_84
+ Ns 162
+ d 1
+ Ni 0.001
+ illum 2
+ Ka 0.2 0.2 0.2
+ Kd 0.556863 0.572549 0.443137
+ Ks 0.25 0.25 0.25
+ map_Kd Default_49.jpg
+
+newmtl Default_85
+ Ns 162
+ d 1
+ Ni 0.001
+ illum 2
+ Ka 0.2 0.2 0.2
+ Kd 0.627451 0.627451 0.635294
+ Ks 0.25 0.25 0.25
+ map_Kd Default_61.jpg
+
+newmtl Default_86
+ Ns 162
+ d 1
+ Ni 0.001
+ illum 2
+ Ka 0.2 0.2 0.2
+ Kd 0.556863 0.572549 0.443137
+ Ks 0.25 0.25 0.25
+ map_Kd Default_49.jpg
+
+newmtl Default_87
+ Ns 162
+ d 1
+ Ni 0.001
+ illum 2
+ Ka 0.2 0.2 0.2
+ Kd 0.627451 0.627451 0.635294
+ Ks 0.25 0.25 0.25
+ map_Kd Default_61.jpg
+
+newmtl Default_88
+ Ns 162
+ d 1
+ Ni 0.001
+ illum 2
+ Ka 0.2 0.2 0.2
+ Kd 0.556863 0.572549 0.443137
+ Ks 0.25 0.25 0.25
+ map_Kd Default_49.jpg
+
+newmtl Default_89
+ Ns 162
+ d 1
+ Ni 0.001
+ illum 2
+ Ka 0.2 0.2 0.2
+ Kd 0.627451 0.627451 0.635294
+ Ks 0.25 0.25 0.25
+ map_Kd Default_61.jpg
+
+newmtl Default_90
+ Ns 162
+ d 1
+ Ni 0.001
+ illum 2
+ Ka 0.2 0.2 0.2
+ Kd 0.556863 0.572549 0.443137
+ Ks 0.25 0.25 0.25
+ map_Kd Default_49.jpg
+
+newmtl Default_91
+ Ns 162
+ d 1
+ Ni 0.001
+ illum 2
+ Ka 0.2 0.2 0.2
+ Kd 0.627451 0.627451 0.635294
+ Ks 0.25 0.25 0.25
+ map_Kd Default_61.jpg
+
+newmtl Default_92
+ Ns 162
+ d 1
+ Ni 0.001
+ illum 2
+ Ka 0.2 0.2 0.2
+ Kd 0.556863 0.572549 0.443137
+ Ks 0.25 0.25 0.25
+ map_Kd Default_49.jpg
+
+newmtl Default_93
+ Ns 162
+ d 1
+ Ni 0.001
+ illum 2
+ Ka 0.2 0.2 0.2
+ Kd 0.627451 0.627451 0.635294
+ Ks 0.25 0.25 0.25
+ map_Kd Default_61.jpg
+
+newmtl Default_94
+ Ns 162
+ d 1
+ Ni 0.001
+ illum 2
+ Ka 0.2 0.2 0.2
+ Kd 0.556863 0.572549 0.443137
+ Ks 0.25 0.25 0.25
+ map_Kd Default_49.jpg
+
+newmtl Shader_50
+ Ns 162
+ d 1
+ Ni 0.001
+ illum 2
+ Ka 0.2 0.2 0.2
+ Kd 0.866667 0.607843 0.560784
+ Ks 0.25 0.25 0.25
+ map_Kd Shader_6.jpg
+
+newmtl Shader_42
+ Ns 162
+ d 1
+ Ni 0.001
+ illum 2
+ Ka 0.2 0.2 0.2
+ Kd 0.155764 0.052674 0.920851
+ Ks 0.25 0.25 0.25
+
+newmtl Shader_43
+ Ns 162
+ d 1
+ Ni 0.001
+ illum 2
+ Ka 0.2 0.2 0.2
+ Kd 0.155764 0.052674 0.920851
+ Ks 0.25 0.25 0.25
+
+newmtl Shader_45
+ Ns 162
+ d 1
+ Ni 0.001
+ illum 2
+ Ka 0.2 0.2 0.2
+ Kd 0.155764 0.052674 0.920851
+ Ks 0.25 0.25 0.25
+
+newmtl Shader_46
+ Ns 162
+ d 1
+ Ni 0.001
+ illum 2
+ Ka 0.2 0.2 0.2
+ Kd 0.155764 0.052674 0.920851
+ Ks 0.25 0.25 0.25
+
+newmtl Default_57
+ Ns 162
+ d 1
+ Ni 0.001
+ illum 2
+ Ka 0.2 0.2 0.2
+ Kd 0.627451 0.627451 0.635294
+ Ks 0.25 0.25 0.25
+ map_Kd Default_61.jpg
+
+newmtl Floor_1
+ Ns 4096
+ d 0
+ Ni 0.001
+ illum 2
+ Ka 0.2 0.2 0.2
+ Kd 0 0 0
+ Ks 0 0 0
+
+newmtl Wall_1
+ Ns 4096
+ d 0
+ Ni 0.001
+ illum 2
+ Ka 0.2 0.2 0.2
+ Kd 0 0 0
+ Ks 0 0 0
+
+newmtl Outside_Wall_1
+ Ns 4096
+ d 0
+ Ni 0.001
+ illum 2
+ Ka 0.2 0.2 0.2
+ Kd 0 0 0
+ Ks 0 0 0
+
+newmtl Ceiling_1
+ Ns 4096
+ d 0
+ Ni 0.001
+ illum 2
+ Ka 0.2 0.2 0.2
+ Kd 0 0 0
+ Ks 0 0 0
+
+newmtl Doorpost
+ Ns 1024
+ d 1
+ Ni 0.001
+ illum 2
+ Ka 0.2 0.2 0.2
+ Kd 0.6 0.513726 0.368627
+ Ks 0 0 0
+ map_Kd Doorpost.jpg
+ map_Bump Doorpost1.jpg
+
+newmtl Doorstep
+ Ns 499
+ d 1
+ Ni 0.001
+ illum 2
+ Ka 0.2 0.2 0.2
+ Kd 0.065736 0.03949 0.03949
+ Ks 0.25 0.25 0.25
+
+newmtl Concrete_1
+ Ns 4096
+ d 0
+ Ni 0.001
+ illum 2
+ Ka 0.2 0.2 0.2
+ Kd 0 0 0
+ Ks 0 0 0
+
+newmtl Glass_1
+ Ns 3461
+ d 0.247525
+ Ni 3.226477
+ illum 2
+ Ka 0.2 0.2 0.2
+ Kd 0.376471 0.529412 0.92549
+ Ks 0.77419 0.77419 0.77419
+ map_Kd Glass.jpg
+
+newmtl Door
+ Ns 127
+ d 1
+ Ni 0.001
+ illum 2
+ Ka 0.2 0.2 0.2
+ Kd 0.23433 0.15622 0.98826
+ Ks 0.85483 0.85483 0.85483
+
+newmtl Lock_Door
+ Ns 66
+ d 1
+ Ni 0.001
+ illum 2
+ Ka 0.2 0.2 0.2
+ Kd 0.572335 0.493965 0.164492
+ Ks 0.284314 0.284314 0.284314
+
+newmtl Hinges
+ Ns 66
+ d 1
+ Ni 0.001
+ illum 2
+ Ka 0.2 0.2 0.2
+ Kd 0.572335 0.493965 0.164492
+ Ks 0.284314 0.284314 0.284314
+
+newmtl Grip
+ Ns 66
+ d 1
+ Ni 0.001
+ illum 2
+ Ka 0.2 0.2 0.2
+ Kd 0.572335 0.493965 0.164492
+ Ks 0.284314 0.284314 0.284314
+
+newmtl Handle
+ Ns 66
+ d 1
+ Ni 0.001
+ illum 2
+ Ka 0.2 0.2 0.2
+ Kd 0.572335 0.493965 0.164492
+ Ks 0.284314 0.284314 0.284314
+
+newmtl Default_60
+ Ns 162
+ d 1
+ Ni 0.001
+ illum 2
+ Ka 0.2 0.2 0.2
+ Kd 0.155764 0.052674 0.920851
+ Ks 0.25 0.25 0.25
+
+newmtl Floor_2
+ Ns 4096
+ d 0
+ Ni 0.001
+ illum 2
+ Ka 0.2 0.2 0.2
+ Kd 0 0 0
+ Ks 0 0 0
+
+newmtl Wall_2
+ Ns 4096
+ d 0
+ Ni 0.001
+ illum 2
+ Ka 0.2 0.2 0.2
+ Kd 0 0 0
+ Ks 0 0 0
+
+newmtl Outside_Wall_2
+ Ns 4096
+ d 0
+ Ni 0.001
+ illum 2
+ Ka 0.2 0.2 0.2
+ Kd 0 0 0
+ Ks 0 0 0
+
+newmtl Ceiling_2
+ Ns 4096
+ d 0
+ Ni 0.001
+ illum 2
+ Ka 0.2 0.2 0.2
+ Kd 0 0 0
+ Ks 0 0 0
+
+newmtl Doorpost_1
+ Ns 1024
+ d 1
+ Ni 0.001
+ illum 2
+ Ka 0.2 0.2 0.2
+ Kd 0.6 0.513726 0.368627
+ Ks 0 0 0
+ map_Kd Doorpost_1.jpg
+ map_Bump Doorpost_11.jpg
+
+newmtl Concrete_2
+ Ns 4096
+ d 0
+ Ni 0.001
+ illum 2
+ Ka 0.2 0.2 0.2
+ Kd 0 0 0
+ Ks 0 0 0
+
+newmtl Glass_2
+ Ns 3461
+ d 0.247525
+ Ni 3.226477
+ illum 2
+ Ka 0.2 0.2 0.2
+ Kd 0.376471 0.529412 0.92549
+ Ks 0.77419 0.77419 0.77419
+ map_Kd Glass.jpg
+
+newmtl Default_50
+ Ns 162
+ d 1
+ Ni 0.001
+ illum 2
+ Ka 0.2 0.2 0.2
+ Kd 0.52549 0.709804 0.309804
+ Ks 0.25 0.25 0.25
+ map_Kd Default_45.jpg
+
+newmtl Floor_3
+ Ns 4096
+ d 0
+ Ni 0.001
+ illum 2
+ Ka 0.2 0.2 0.2
+ Kd 0 0 0
+ Ks 0 0 0
+
+newmtl Wall_3
+ Ns 4096
+ d 0
+ Ni 0.001
+ illum 2
+ Ka 0.2 0.2 0.2
+ Kd 0 0 0
+ Ks 0 0 0
+
+newmtl Outside_Wall_3
+ Ns 4096
+ d 0
+ Ni 0.001
+ illum 2
+ Ka 0.2 0.2 0.2
+ Kd 0 0 0
+ Ks 0 0 0
+
+newmtl Ceiling_3
+ Ns 4096
+ d 0
+ Ni 0.001
+ illum 2
+ Ka 0.2 0.2 0.2
+ Kd 0 0 0
+ Ks 0 0 0
+
+newmtl Doorpost_2
+ Ns 1024
+ d 1
+ Ni 0.001
+ illum 2
+ Ka 0.2 0.2 0.2
+ Kd 0.6 0.513726 0.368627
+ Ks 0 0 0
+ map_Kd Doorpost_2.jpg
+ map_Bump Doorpost_21.jpg
+
+newmtl Concrete_3
+ Ns 4096
+ d 0
+ Ni 0.001
+ illum 2
+ Ka 0.2 0.2 0.2
+ Kd 0 0 0
+ Ks 0 0 0
+
+newmtl Glass_3
+ Ns 3461
+ d 0.247525
+ Ni 3.226477
+ illum 2
+ Ka 0.2 0.2 0.2
+ Kd 0.376471 0.529412 0.92549
+ Ks 0.77419 0.77419 0.77419
+ map_Kd Glass.jpg
+
+newmtl Shader_47
+ Ns 162
+ d 1
+ Ni 0.001
+ illum 2
+ Ka 0.2 0.2 0.2
+ Kd 0.155764 0.052674 0.920851
+ Ks 0.25 0.25 0.25
+
+newmtl Lining_1
+ Ns 499
+ d 1
+ Ni 0.001
+ illum 2
+ Ka 0.2 0.2 0.2
+ Kd 0.967056 0.953994 0.953994
+ Ks 0.25 0.25 0.25
+
+newmtl Concrete_4
+ Ns 4096
+ d 0
+ Ni 0.001
+ illum 2
+ Ka 0.2 0.2 0.2
+ Kd 0 0 0
+ Ks 0 0 0
+
+newmtl Floor_4
+ Ns 4096
+ d 0
+ Ni 0.001
+ illum 2
+ Ka 0.2 0.2 0.2
+ Kd 0 0 0
+ Ks 0 0 0
+
+newmtl Wall_4
+ Ns 4096
+ d 0
+ Ni 0.001
+ illum 2
+ Ka 0.2 0.2 0.2
+ Kd 0 0 0
+ Ks 0 0 0
+
+newmtl Outside_Wall_4
+ Ns 4096
+ d 0
+ Ni 0.001
+ illum 2
+ Ka 0.2 0.2 0.2
+ Kd 0 0 0
+ Ks 0 0 0
+
+newmtl Lining_2
+ Ns 499
+ d 1
+ Ni 0.001
+ illum 2
+ Ka 0.2 0.2 0.2
+ Kd 0.967056 0.953994 0.953994
+ Ks 0.25 0.25 0.25
+
+newmtl Skirting_1
+ Ns 4096
+ d 0
+ Ni 0.001
+ illum 2
+ Ka 0.2 0.2 0.2
+ Kd 0 0 0
+ Ks 0 0 0
+
+newmtl Wall_5
+ Ns 4096
+ d 0
+ Ni 0.001
+ illum 2
+ Ka 0.2 0.2 0.2
+ Kd 0 0 0
+ Ks 0 0 0
+
+newmtl Floor_5
+ Ns 4096
+ d 0
+ Ni 0.001
+ illum 2
+ Ka 0.2 0.2 0.2
+ Kd 0 0 0
+ Ks 0 0 0
+
+newmtl Outside_Wall_5
+ Ns 4096
+ d 0
+ Ni 0.001
+ illum 2
+ Ka 0.2 0.2 0.2
+ Kd 0 0 0
+ Ks 0 0 0
+
+newmtl Ceiling_4
+ Ns 4096
+ d 0
+ Ni 0.001
+ illum 2
+ Ka 0.2 0.2 0.2
+ Kd 0 0 0
+ Ks 0 0 0
+
+newmtl Ledge_1
+ Ns 499
+ d 1
+ Ni 0.001
+ illum 2
+ Ka 0.2 0.2 0.2
+ Kd 0.967056 0.953994 0.953994
+ Ks 0.25 0.25 0.25
+
+newmtl Tiles_1
+ Ns 4096
+ d 0
+ Ni 0.001
+ illum 2
+ Ka 0.2 0.2 0.2
+ Kd 0 0 0
+ Ks 0 0 0
+
+newmtl Concrete_5
+ Ns 4096
+ d 0
+ Ni 0.001
+ illum 2
+ Ka 0.2 0.2 0.2
+ Kd 0 0 0
+ Ks 0 0 0
+
+newmtl Lining_3
+ Ns 499
+ d 1
+ Ni 0.001
+ illum 2
+ Ka 0.2 0.2 0.2
+ Kd 0.967056 0.953994 0.953994
+ Ks 0.25 0.25 0.25
+
+newmtl Skirting_2
+ Ns 4096
+ d 0
+ Ni 0.001
+ illum 2
+ Ka 0.2 0.2 0.2
+ Kd 0 0 0
+ Ks 0 0 0
+
+newmtl Floor_6
+ Ns 4096
+ d 0
+ Ni 0.001
+ illum 2
+ Ka 0.2 0.2 0.2
+ Kd 0 0 0
+ Ks 0 0 0
+
+newmtl Outside_Wall_6
+ Ns 4096
+ d 0
+ Ni 0.001
+ illum 2
+ Ka 0.2 0.2 0.2
+ Kd 0 0 0
+ Ks 0 0 0
+
+newmtl Ceiling_5
+ Ns 4096
+ d 0
+ Ni 0.001
+ illum 2
+ Ka 0.2 0.2 0.2
+ Kd 0 0 0
+ Ks 0 0 0
+
+newmtl Tiles_2
+ Ns 4096
+ d 0
+ Ni 0.001
+ illum 2
+ Ka 0.2 0.2 0.2
+ Kd 0 0 0
+ Ks 0 0 0
+
+newmtl Concrete_6
+ Ns 4096
+ d 0
+ Ni 0.001
+ illum 2
+ Ka 0.2 0.2 0.2
+ Kd 0 0 0
+ Ks 0 0 0
+
+newmtl Wall_6
+ Ns 4096
+ d 0
+ Ni 0.001
+ illum 2
+ Ka 0.2 0.2 0.2
+ Kd 0 0 0
+ Ks 0 0 0
+
+newmtl Floor_7
+ Ns 4096
+ d 0
+ Ni 0.001
+ illum 2
+ Ka 0.2 0.2 0.2
+ Kd 0 0 0
+ Ks 0 0 0
+
+newmtl Wall_7
+ Ns 4096
+ d 0
+ Ni 0.001
+ illum 2
+ Ka 0.2 0.2 0.2
+ Kd 0 0 0
+ Ks 0 0 0
+
+newmtl Outside_Wall_7
+ Ns 4096
+ d 0
+ Ni 0.001
+ illum 2
+ Ka 0.2 0.2 0.2
+ Kd 0 0 0
+ Ks 0 0 0
+
+newmtl Ceiling_6
+ Ns 4096
+ d 0
+ Ni 0.001
+ illum 2
+ Ka 0.2 0.2 0.2
+ Kd 0 0 0
+ Ks 0 0 0
+
+newmtl Doorpost_3
+ Ns 1024
+ d 1
+ Ni 0.001
+ illum 2
+ Ka 0.2 0.2 0.2
+ Kd 0.6 0.513726 0.368627
+ Ks 0 0 0
+ map_Kd Doorpost_3.jpg
+ map_Bump Doorpost_31.jpg
+
+newmtl Concrete_7
+ Ns 4096
+ d 0
+ Ni 0.001
+ illum 2
+ Ka 0.2 0.2 0.2
+ Kd 0 0 0
+ Ks 0 0 0
+
+newmtl Glass_4
+ Ns 3461
+ d 0.247525
+ Ni 3.226477
+ illum 2
+ Ka 0.2 0.2 0.2
+ Kd 0.376471 0.529412 0.92549
+ Ks 0.77419 0.77419 0.77419
+ map_Kd Glass.jpg
+
+newmtl Default_44
+ Ns 162
+ d 1
+ Ni 0.001
+ illum 2
+ Ka 0.2 0.2 0.2
+ Kd 0.498039 0.462745 0.403922
+ Ks 0.25 0.25 0.25
+ map_Kd Default_44.jpg
+
+newmtl Shader_44
+ Ns 162
+ d 1
+ Ni 0.001
+ illum 2
+ Ka 0.2 0.2 0.2
+ Kd 0.155764 0.052674 0.920851
+ Ks 0.25 0.25 0.25
+
+newmtl Lining_4
+ Ns 499
+ d 1
+ Ni 0.001
+ illum 2
+ Ka 0.2 0.2 0.2
+ Kd 0.967056 0.953994 0.953994
+ Ks 0.25 0.25 0.25
+
+newmtl Concrete_8
+ Ns 4096
+ d 0
+ Ni 0.001
+ illum 2
+ Ka 0.2 0.2 0.2
+ Kd 0 0 0
+ Ks 0 0 0
+
+newmtl Floor_8
+ Ns 4096
+ d 0
+ Ni 0.001
+ illum 2
+ Ka 0.2 0.2 0.2
+ Kd 0 0 0
+ Ks 0 0 0
+
+newmtl Wall_8
+ Ns 4096
+ d 0
+ Ni 0.001
+ illum 2
+ Ka 0.2 0.2 0.2
+ Kd 0 0 0
+ Ks 0 0 0
+
+newmtl Outside_Wall_8
+ Ns 4096
+ d 0
+ Ni 0.001
+ illum 2
+ Ka 0.2 0.2 0.2
+ Kd 0 0 0
+ Ks 0 0 0
+
+newmtl Ceiling_7
+ Ns 4096
+ d 0
+ Ni 0.001
+ illum 2
+ Ka 0.2 0.2 0.2
+ Kd 0 0 0
+ Ks 0 0 0
+
+newmtl Lining_5
+ Ns 499
+ d 1
+ Ni 0.001
+ illum 2
+ Ka 0.2 0.2 0.2
+ Kd 0.967056 0.953994 0.953994
+ Ks 0.25 0.25 0.25
+
+newmtl Skirting_3
+ Ns 4096
+ d 0
+ Ni 0.001
+ illum 2
+ Ka 0.2 0.2 0.2
+ Kd 0 0 0
+ Ks 0 0 0
+
+newmtl Wall_9
+ Ns 4096
+ d 0
+ Ni 0.001
+ illum 2
+ Ka 0.2 0.2 0.2
+ Kd 0 0 0
+ Ks 0 0 0
+
+newmtl Floor_9
+ Ns 4096
+ d 0
+ Ni 0.001
+ illum 2
+ Ka 0.2 0.2 0.2
+ Kd 0 0 0
+ Ks 0 0 0
+
+newmtl Outside_Wall_9
+ Ns 4096
+ d 0
+ Ni 0.001
+ illum 2
+ Ka 0.2 0.2 0.2
+ Kd 0 0 0
+ Ks 0 0 0
+
+newmtl Ceiling_8
+ Ns 4096
+ d 0
+ Ni 0.001
+ illum 2
+ Ka 0.2 0.2 0.2
+ Kd 0 0 0
+ Ks 0 0 0
+
+newmtl Ledge_2
+ Ns 499
+ d 1
+ Ni 0.001
+ illum 2
+ Ka 0.2 0.2 0.2
+ Kd 0.967056 0.953994 0.953994
+ Ks 0.25 0.25 0.25
+
+newmtl Tiles_3
+ Ns 4096
+ d 0
+ Ni 0.001
+ illum 2
+ Ka 0.2 0.2 0.2
+ Kd 0 0 0
+ Ks 0 0 0
+
+newmtl Concrete_9
+ Ns 4096
+ d 0
+ Ni 0.001
+ illum 2
+ Ka 0.2 0.2 0.2
+ Kd 0 0 0
+ Ks 0 0 0
+
+newmtl Lining_6
+ Ns 499
+ d 1
+ Ni 0.001
+ illum 2
+ Ka 0.2 0.2 0.2
+ Kd 0.967056 0.953994 0.953994
+ Ks 0.25 0.25 0.25
+
+newmtl Skirting_4
+ Ns 4096
+ d 0
+ Ni 0.001
+ illum 2
+ Ka 0.2 0.2 0.2
+ Kd 0 0 0
+ Ks 0 0 0
+
+newmtl Floor_10
+ Ns 4096
+ d 0
+ Ni 0.001
+ illum 2
+ Ka 0.2 0.2 0.2
+ Kd 0 0 0
+ Ks 0 0 0
+
+newmtl Outside_Wall_10
+ Ns 4096
+ d 0
+ Ni 0.001
+ illum 2
+ Ka 0.2 0.2 0.2
+ Kd 0 0 0
+ Ks 0 0 0
+
+newmtl Ceiling_9
+ Ns 4096
+ d 0
+ Ni 0.001
+ illum 2
+ Ka 0.2 0.2 0.2
+ Kd 0 0 0
+ Ks 0 0 0
+
+newmtl Tiles_4
+ Ns 4096
+ d 0
+ Ni 0.001
+ illum 2
+ Ka 0.2 0.2 0.2
+ Kd 0 0 0
+ Ks 0 0 0
+
+newmtl Concrete_10
+ Ns 4096
+ d 0
+ Ni 0.001
+ illum 2
+ Ka 0.2 0.2 0.2
+ Kd 0 0 0
+ Ks 0 0 0
+
+newmtl Wall_10
+ Ns 4096
+ d 0
+ Ni 0.001
+ illum 2
+ Ka 0.2 0.2 0.2
+ Kd 0 0 0
+ Ks 0 0 0
+
+newmtl Ledge_3
+ Ns 499
+ d 1
+ Ni 0.001
+ illum 2
+ Ka 0.2 0.2 0.2
+ Kd 0.967056 0.953994 0.953994
+ Ks 0.25 0.25 0.25
+

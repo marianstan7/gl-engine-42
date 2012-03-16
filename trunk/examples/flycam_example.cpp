@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Fri Mar  2 17:27:21 2012 gael jochaud-du-plessix
-// Last update Fri Mar 16 13:51:27 2012 gael jochaud-du-plessix
+// Last update Fri Mar 16 17:40:19 2012 gael jochaud-du-plessix
 //
 
 #include <iostream>
@@ -36,6 +36,10 @@ int main(int ac, char **av)
   try {
     ret = glEngine(ac, av);
   }
+  catch (gle::Exception::ParsingError* e)
+    {
+      std::cout << e->getLine() << ":" << e->what() << std::endl;
+    }
   catch (std::exception *e)
     {
       std::cout << "Error: " << e->what() << std::endl;
@@ -107,9 +111,20 @@ int glEngine(int ac, char **av)
   sf::Clock time;
 
   App.setMouseCursorVisible(false);
+
+  sf::Clock frameTimer;
+  int frameCounter = 0;
   
   while (App.isOpen())
-    {      
+    {
+      if (frameTimer.getElapsedTime().asMilliseconds() >= 1000)
+        {
+	  std::cout << "fps:" << (frameCounter * 1) << std::endl;
+          frameCounter = 0;
+          frameTimer.restart();
+        }
+      frameCounter++;
+
       sf::Event Event;
       while (App.pollEvent(Event))
 	{
@@ -130,15 +145,13 @@ int glEngine(int ac, char **av)
       scene.updateLights();
       renderer.render(&scene);
       App.display();
+      //video::saveImage(App, W_FRAMERATE);
       GLfloat elapsed = time.getElapsedTime().asMicroseconds();
-      if (1000000/W_FRAMERATE - elapsed > 0)
-        {
-	  sf::sleep(sf::microseconds(1000000/W_FRAMERATE - elapsed));
-          time.restart();
-        }
-      video::saveImage(App, W_FRAMERATE);
+      if ((1000000.0/W_FRAMERATE) - elapsed > 0)
+	sf::sleep(sf::microseconds(1000000.0/W_FRAMERATE - elapsed));
+      time.restart();
     }
   
-  video::save(av[0], W_FRAMERATE);
+  //video::save(av[0], W_FRAMERATE);
   return (0);
 }

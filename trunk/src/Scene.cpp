@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Mon Feb 20 19:12:49 2012 gael jochaud-du-plessix
-// Last update Fri Mar  2 16:46:42 2012 gael jochaud-du-plessix
+// Last update Fri Mar 16 18:39:16 2012 gael jochaud-du-plessix
 //
 
 #include <Scene.hpp>
@@ -14,6 +14,7 @@
 #include <PointLight.hpp>
 
 gle::Scene::Scene() :
+  _backgroundColor(0.0, 0.0, 0.0, 0.0),
   _cameras(), _meshes(), _materials(),
   _lights(), _directionalLightsDirection(),
   _directionalLightsColor(), _directionalLightsSize(0),
@@ -31,6 +32,16 @@ gle::Scene::~Scene()
 	 it = _programs.begin(), end = _programs.end();
        it != end; ++it)
     delete it->second;
+}
+
+void gle::Scene::setBackgroundColor(gle::Color<GLfloat> const &color)
+{
+  _backgroundColor = color;
+}
+
+gle::Color<GLfloat> const & gle::Scene::getBackgroundColor() const
+{
+  return (_backgroundColor);
 }
 
 gle::Scene & gle::Scene::add(Camera* camera)

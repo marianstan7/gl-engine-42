@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Mon Feb 20 18:18:01 2012 gael jochaud-du-plessix
-// Last update Fri Mar  2 16:44:20 2012 gael jochaud-du-plessix
+// Last update Fri Mar 16 18:36:31 2012 gael jochaud-du-plessix
 //
 
 #ifndef _GLE_SCENE_HPP_
@@ -18,6 +18,7 @@
 # include <Program.hpp>
 # include <Material.hpp>
 # include <Light.hpp>
+# include <Color.hpp>
 
 namespace gle {
 
@@ -38,6 +39,10 @@ namespace gle {
 
     //! Destruct a scene
     ~Scene();
+
+    void setBackgroundColor(gle::Color<GLfloat> const &color);
+
+    gle::Color<GLfloat> const & getBackgroundColor() const;
 
     //! Add a camera to the scene
     /*!
@@ -202,6 +207,7 @@ namespace gle {
     void updateLights();
 
   private:
+    gle::Color<GLfloat>	_backgroundColor;
     std::vector<Camera*> _cameras;
     std::vector<Mesh*> _meshes;
     std::vector<Material*> _materials;
