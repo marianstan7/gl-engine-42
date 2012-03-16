@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Thu Mar  1 19:53:57 2012 gael jochaud-du-plessix
-// Last update Fri Mar  2 18:41:22 2012 loick michard
+// Last update Fri Mar 16 11:33:41 2012 gael jochaud-du-plessix
 //
 
 #include <gle/opengl.h>

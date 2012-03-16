@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Mon Feb 20 20:48:54 2012 gael jochaud-du-plessix
-// Last update Sat Mar 10 22:11:44 2012 gael jochaud-du-plessix
+// Last update Fri Mar 16 12:31:37 2012 gael jochaud-du-plessix
 //
 
 #include <Renderer.hpp>
@@ -28,10 +28,10 @@ gle::Renderer::Renderer() :
   //glCullFace(GL_BACK);
 
   // Enable antialiasing
-  // glEnable(GL_LINE_SMOOTH);
-  // glEnable(GL_POLYGON_SMOOTH);
-  //glEnable(GL_BLEND);
-  //glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+  glEnable(GL_LINE_SMOOTH);
+  glEnable(GL_POLYGON_SMOOTH);
+  glEnable(GL_BLEND);
+  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 }
 
 gle::Renderer::~Renderer()
