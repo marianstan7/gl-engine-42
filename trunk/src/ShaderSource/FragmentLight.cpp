@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Thu Mar  1 18:00:40 2012 gael jochaud-du-plessix
-// Last update Thu Mar  1 18:01:57 2012 gael jochaud-du-plessix
+// Last update Fri Mar 16 11:32:38 2012 gael jochaud-du-plessix
 //
 
 #include <gle/opengl.h>
@@ -16,5 +16,6 @@ const char *gle::ShaderSource::Fragment::Light::InputDeclarations =
   ;
 
 const char *gle::ShaderSource::Fragment::Light::Body =
-  "gle_FragColor *= vec4(gle_varying_vLightWeighting, 1.0);\n"
+  "gle_FragColor *= vec4(gle_varying_vLightWeighting, 1);\n"
+  //"gle_FragColor.a = gle_FragColor.b;"
   ;

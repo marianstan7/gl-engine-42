@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Wed Feb 15 17:24:36 2012 gael jochaud-du-plessix
-// Last update Wed Mar 14 12:39:28 2012 gael jochaud-du-plessix
+// Last update Fri Mar 16 13:55:59 2012 gael jochaud-du-plessix
 //
 
 /*! 
@@ -26,14 +26,17 @@
 #define WIDTH 1200.0
 #define HEIGHT 800.0
 
-int glEngine();
+#include "video.hpp"
+#define W_FRAMERATE 30
 
-int main()
+int glEngine(char **av);
+
+int main(int ac, char **av)
 {
   int ret;
 
   try {
-    ret = glEngine();
+    ret = glEngine(av);
   }
   catch (std::exception *e)
     {
@@ -42,7 +45,7 @@ int main()
   return (ret);
 }
 
-int glEngine()
+int glEngine(char **av)
 {
   sf::ContextSettings context;
   context.depthBits = 24;
@@ -133,7 +136,16 @@ int glEngine()
       sun->setRotation(gle::Vector3<GLfloat>(0, 1, 0), angle * 10);
       renderer.render(&scene);
       App.display();
+      GLfloat elapsed = time.getElapsedTime().asMicroseconds();
+      if (1000000/W_FRAMERATE - elapsed > 0)
+        {
+	  sf::sleep(sf::microseconds(1000000/W_FRAMERATE - elapsed));
+          time.restart();
+        }
+      video::saveImage(App, W_FRAMERATE);
+
     }
+  video::save(av[0], W_FRAMERATE);
   
   return (0);
 }

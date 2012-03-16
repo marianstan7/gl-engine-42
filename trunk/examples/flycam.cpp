@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Fri Mar  2 17:27:21 2012 gael jochaud-du-plessix
-// Last update Wed Mar 14 12:45:52 2012 gael jochaud-du-plessix
+// Last update Fri Mar 16 14:18:43 2012 gael jochaud-du-plessix
 //
 
 #include <iostream>
@@ -20,21 +20,20 @@
 #include <DirectionalLight.hpp>
 #include <PointLight.hpp>
 
-#define W_WIDTH 1280
-#define W_HEIGHT 720
+#include "flycam.hpp"
 
-int glEngine(int, char**);
+using namespace flycam;
 
-GLfloat teta = M_PI / 2;
-GLfloat phi = 0;
-std::map<sf::Keyboard::Key, bool> keyState;
-GLfloat mouseX = 0.0;
-GLfloat mouseY = 0.0;
-GLfloat moveUp = 0.0;
-GLfloat mouseSensibility = 1;
-GLfloat camSpeed = 0.2;
+GLfloat flycam::teta = M_PI / 2;
+GLfloat flycam::phi = 0;
+std::map<sf::Keyboard::Key, bool> flycam::keyState;
+GLfloat flycam::mouseX = 0.0;
+GLfloat flycam::mouseY = 0.0;
+GLfloat flycam::moveUp = 0.0;
+GLfloat flycam::mouseSensibility = 1;
+GLfloat flycam::camSpeed = 1;
 
-void flycam(gle::Camera* camera)
+void flycam::flycam(gle::Camera* camera)
 {
   gle::Vector3<GLfloat> pos = camera->getPosition();
   gle::Vector3<GLfloat> viewVector;
@@ -76,9 +75,9 @@ void flycam(gle::Camera* camera)
     phi += (M_PI / 5) * mouseX * mouseSensibility;;
   // Mouve up or down with clicks
   if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
-    pos += gle::Vector3<GLfloat>(0, 1 * (mouseSensibility / 10), 0);
+    pos += gle::Vector3<GLfloat>(0, 1 * (camSpeed), 0);
   if (sf::Mouse::isButtonPressed(sf::Mouse::Right))
-    pos -= gle::Vector3<GLfloat>(0, 1 * (mouseSensibility / 10), 0);
+    pos -= gle::Vector3<GLfloat>(0, 1 * (camSpeed), 0);
 
   // Joystick moves
   GLfloat rightY =
@@ -97,9 +96,9 @@ void flycam(gle::Camera* camera)
      + 1) / 2;
 
   if (std::abs(rightY) > 0.1)
-    teta += (M_PI / 5) * rightY * 0.01;
+    teta += (M_PI / 5) * rightY * camSpeed / 30;
   if (std::abs(rightX) > 0.1)
-    phi += (M_PI / 5) * rightX * 0.01;
+    phi += (M_PI / 5) * rightX * camSpeed / 30;
 
   if (std::abs(leftY) > 0.1)
     pos += viewVector * -leftY;
@@ -128,124 +127,19 @@ void flycam(gle::Camera* camera)
   camera->setPosition(pos);
 }
 
-int main(int ac, char **av)
+void flycam::event(sf::Event &event, sf::Window & app)
 {
-  int ret;
-
-  try {
-    ret = glEngine(ac, av);
-  }
-  catch (std::exception *e)
+  sf::Vector2u size = app.getSize();
+  if (event.type == sf::Event::KeyPressed)
+    keyState[event.key.code] = true;
+  else if (event.type == sf::Event::KeyReleased)
+    keyState[event.key.code] = false;
+  if (event.type == sf::Event::MouseMoved)
     {
-      std::cout << "Error: " << e->what() << std::endl;
+      sf::Vector2i mouse = sf::Mouse::getPosition(app);
+      mouseX = (GLfloat)(mouse.x - (GLfloat)size.x / 2)
+	/ ((GLfloat)size.x / 2);
+      mouseY = (GLfloat)(mouse.y - (GLfloat)size.y / 2)
+	/ ((GLfloat)size.y / 2);
     }
-  return (ret);
-}
-
-int glEngine(int ac, char **av)
-{
-  (void)ac;
-  (void)av;
-  sf::ContextSettings context;
-  context.depthBits = 24;
-  context.stencilBits = 24;
-  context.antialiasingLevel = 2;
-  context.majorVersion = 3;
-  context.minorVersion = 3;
-
-  sf::Window App(sf::VideoMode(W_WIDTH, W_HEIGHT, 32), "glEngine",
-		 sf::Style::Default, context);
-
-  //! Print OpenGL supported version
-  context = App.getSettings();
-  std::cout << context.majorVersion << '.'
-	    << context.minorVersion << std::endl;
-
-  App.setActive();
-
-  gle::Scene scene;
-  gle::PerspectiveCamera camera(gle::Vector3<GLfloat>(-20, 10, 0),
-				gle::Vector3<GLfloat>(0, 0, 0),
-				45, (GLfloat)W_WIDTH/W_HEIGHT, 1, 10000);
-
-  gle::ObjLoader loader;
-  gle::Material material;
-  material.setDiffuseLightEnabled(true);
-  material.setSpecularLightEnabled(true);
-
-  sf::Clock modelTime;
-
-  gle::Mesh* model = loader.load(ac > 1 ? av[1] : "./models/Camaro.obj",
-				 &material);
-
-  std::cout << "Model loading: "
-	    << ((float)modelTime.getElapsedTime().asMilliseconds() / 1000)
-	    << "s\n";
-
-  if (model)
-    scene << model;
-
-  srand(time(NULL));
-
-  gle::Material materialLight;
-
-  materialLight.setDiffuseLightEnabled(true);
-  materialLight.setSpecularLightEnabled(true);
-  gle::PointLight l(gle::Vector3<GLfloat>(0, 2000, 0),
-		    gle::Color<GLfloat>(0.8, 0.8, 0.8));
-  gle::Mesh* sp = gle::Geometries::Sphere(&materialLight, 10);
-  sp->setPosition(gle::Vector3<GLfloat>(0, 200, 0));
-
-  scene << &camera << &materialLight << sp;
-  scene << &l;
-
-  gle::Renderer renderer;
-  renderer.createPrograms(&scene);
-
-  sf::Clock clock;
-  sf::Clock time;
-
-  App.setMouseCursorVisible(false);
-  
-  while (App.isOpen())
-    {      
-      sf::Event Event;
-      mouseX = 0;
-      mouseY = 0;
-      while (App.pollEvent(Event))
-	{
-	  // Close window : exit
-	  if (Event.type == sf::Event::Closed)
-	    App.close();
-	  else if (Event.type == sf::Event::KeyPressed
-		   && Event.key.code == sf::Keyboard::Escape)
-	    App.close();
-	  // Adjust the viewport when the window is resized
-	  if (Event.type == sf::Event::Resized)
-	    glViewport(0, 0, Event.size.width, Event.size.height);
-	  if (Event.type == sf::Event::KeyPressed)
-	    keyState[Event.key.code] = true;
-	  else if (Event.type == sf::Event::KeyReleased)
-	    keyState[Event.key.code] = false;
-	  else if (Event.type == sf::Event::MouseMoved)
-	    {
-	      sf::Vector2i mouse = sf::Mouse::getPosition(App);
-	      mouseX = (GLfloat)(mouse.x - (GLfloat)W_WIDTH / 2)
-		/ ((GLfloat)W_WIDTH / 2);
-	      mouseY = (GLfloat)(mouse.y - (GLfloat)W_HEIGHT / 2)
-		/ ((GLfloat)W_HEIGHT / 2);
-	    }
-	}
-      sf::Mouse::setPosition(sf::Vector2i(W_WIDTH/2, W_HEIGHT/2), App);
-      flycam(&camera);
-      l.setPosition(camera.getPosition());
-      scene.updateLights();
-      renderer.render(&scene);
-      App.display();
-      GLfloat elapsed = time.getElapsedTime().asMicroseconds();
-      if (16666 - elapsed > 0)
-	sf::sleep(sf::microseconds(16666));
-    }
-  
-  return (0);
 }

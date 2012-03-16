@@ -37,13 +37,16 @@ add_executable (
 )
 
 add_executable (
-    examples/example01
-    examples/example01.cpp
+    examples/disneyHead
+    examples/disneyHead.cpp
+    examples/flycam.cpp
+    examples/video.cpp
 )
 
 add_executable (
     examples/example02
     examples/example02.cpp
+    examples/video.cpp
 )
 
 add_executable (
@@ -52,13 +55,17 @@ add_executable (
 )
 
 add_executable (
-    examples/flycam
+    examples/flycam_example
     examples/flycam.cpp
+    examples/flycam_example.cpp
+    examples/video.cpp
 )
 
 add_executable (
     examples/geometries
     examples/geometries.cpp
+    examples/flycam.cpp
+    examples/video.cpp
 )
 
 # Librairies to link
@@ -70,7 +77,7 @@ target_link_libraries (
 )
 
 target_link_libraries (
-    examples/example01
+    examples/disneyHead
     ${SFML_LIBRARIES}
     ${OPENGL_LIBRARIES}
     glEngine
@@ -91,7 +98,7 @@ target_link_libraries (
 )
 
 target_link_libraries (
-    examples/flycam
+    examples/flycam_example
     ${SFML_LIBRARIES}
     ${OPENGL_LIBRARIES}
     glEngine
