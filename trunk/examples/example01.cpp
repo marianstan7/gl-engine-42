@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Wed Feb 15 17:24:36 2012 gael jochaud-du-plessix
-// Last update Wed Mar 14 12:38:05 2012 gael jochaud-du-plessix
+// Last update Fri Mar 16 10:20:24 2012 loick michard
 //
 
 /*! 
@@ -112,7 +112,7 @@ int glEngine(int ac, char **av)
   gle::Mesh*			sp4 = gle::Geometries::Sphere(&materialLight4,
 							      1);
   gle::PointLight		l5(gle::Vector3<GLfloat>(40, 0, 0),
-				   gle::Color<GLfloat>(0.1, 0.1, 0.1));
+				   gle::Color<GLfloat>(0.2, 0.2, 0.2));
   sp->setPosition(gle::Vector3<GLfloat>(0, 100, 0));
   sp2->setPosition(gle::Vector3<GLfloat>(0, 0, -20));
   sp3->setPosition(gle::Vector3<GLfloat>(40, 0, 0));

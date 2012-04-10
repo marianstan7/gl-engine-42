@@ -1,4 +1,5 @@
 cmake_minimum_required(VERSION 2.6)
+cmake_policy(SET CMP0015 NEW)
 
 # Project name
 project (glEngine)
@@ -17,7 +18,13 @@ set (EXECUTABLE_OUTPUT_PATH ${CMAKE_BUILD_TYPE})
 include_directories (
     includes
     includes/gle
+    examples/bullet
     src
+)
+
+link_directories (
+    examples/bullet
+    examples
 )
 
 # Sources files
@@ -36,12 +43,6 @@ add_executable (
     examples/example00.cpp
 )
 
-add_executable (
-    examples/disneyHead
-    examples/disneyHead.cpp
-    examples/flycam.cpp
-    examples/video.cpp
-)
 
 add_executable (
     examples/example02
@@ -89,12 +90,6 @@ target_link_libraries (
     glEngine
 )
 
-target_link_libraries (
-    examples/disneyHead
-    ${SFML_LIBRARIES}
-    ${OPENGL_LIBRARIES}
-    glEngine
-)
 
 target_link_libraries (
     examples/example02
@@ -136,7 +131,7 @@ target_link_libraries (
     ${SFML_LIBRARIES}
     ${OPENGL_LIBRARIES}
     glEngine
-    BulletDynamics.a
-    BulletCollision.a
-    LinearMath.a
+    BulletDynamics
+    BulletCollision
+    LinearMath
 )

@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Thu Mar  1 19:53:57 2012 gael jochaud-du-plessix
-// Last update Fri Mar 16 11:33:41 2012 gael jochaud-du-plessix
+// Last update Tue Apr 10 15:33:18 2012 loick michard
 //
 
 #include <gle/opengl.h>
@@ -20,5 +20,6 @@ const char *gle::ShaderSource::Fragment::ColorMap::InputDeclarations =
   ;
 
 const char *gle::ShaderSource::Fragment::ColorMap::Body =
-  "gle_FragColor = texture2D(gle_colorMap, gle_varying_vTextureCoord); \n"
+  "vec2 tmp = vec2(gle_varying_vTextureCoord.x, -gle_varying_vTextureCoord.y);\n"
+  "gle_FragColor = texture2D(gle_colorMap, tmp); \n"
   ;
