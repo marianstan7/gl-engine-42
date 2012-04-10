@@ -75,6 +75,12 @@ add_executable (
     examples/video.cpp
 )
 
+add_executable (
+    examples/bullet_physics
+    examples/bullet_physics.cpp
+    examples/flycam.cpp
+)
+
 # Librairies to link
 target_link_libraries (
     examples/example00
@@ -123,4 +129,14 @@ target_link_libraries (
     ${SFML_LIBRARIES}
     ${OPENGL_LIBRARIES}
     glEngine
+)
+
+target_link_libraries (
+    examples/bullet_physics
+    ${SFML_LIBRARIES}
+    ${OPENGL_LIBRARIES}
+    glEngine
+    BulletDynamics.a
+    BulletCollision.a
+    LinearMath.a
 )
