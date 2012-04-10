@@ -5,7 +5,7 @@
 // Login   <michar_l@epitech.net>
 // 
 // Started on  Mon Feb 20 22:34:18 2012 loick michard
-// Last update Sat Mar 10 22:12:55 2012 gael jochaud-du-plessix
+// Last update Tue Apr 10 15:42:47 2012 loick michard
 //
 
 #include <cmath>
@@ -185,7 +185,7 @@ gle::Mesh* gle::Geometries::Sphere(gle::Material* material,
 	  normals.push_back(y);
 	  normals.push_back(z);
 	  uv.push_back(1.0 - (st / stacks));
-	  uv.push_back(sl / slices);
+	  uv.push_back(1.0 - sl / slices);
 	  if (sl != slices && st != stacks)
 	    {
 	      GLfloat indice1 = sl * (stacks + 1) + st;
