@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Fri Feb 17 16:21:24 2012 gael jochaud-du-plessix
-// Last update Fri Mar  2 16:21:56 2012 gael jochaud-du-plessix
+// Last update Thu Apr 12 00:11:06 2012 loick michard
 //
 
 #ifndef _GLE_PROGRAM_HPP_
@@ -34,6 +34,7 @@ namespace gle {
       MVMatrix,
       PMatrix,
       ColorMap,
+      HasColorMap,
       NMatrix,
       AmbientColor,
       DiffuseColor,
@@ -114,6 +115,9 @@ namespace gle {
 
     //! Set a value of an uniform texture
     void setUniform(Uniform uniform, TextureUnit texture);
+
+    //! Set a value of an uniform bool
+    void setUniform(Uniform uniform, bool value);
 
     //! Return the OpenGL Program identifier
     GLuint getId() const;

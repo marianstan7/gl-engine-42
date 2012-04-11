@@ -5,13 +5,15 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Mon Feb 20 19:12:49 2012 gael jochaud-du-plessix
-// Last update Fri Mar 16 18:39:16 2012 gael jochaud-du-plessix
+// Last update Thu Apr 12 00:11:39 2012 loick michard
 //
 
 #include <Scene.hpp>
 #include <algorithm>
 #include <DirectionalLight.hpp>
 #include <PointLight.hpp>
+#include <ShaderSource.hpp>
+#include <sstream>
 
 gle::Scene::Scene() :
   _backgroundColor(0.0, 0.0, 0.0, 0.0),
@@ -20,18 +22,14 @@ gle::Scene::Scene() :
   _directionalLightsColor(), _directionalLightsSize(0),
   _pointLightsPosition(),
   _pointLightsColor(), _pointLightsSize(0),
-  _currentCamera(NULL), _programs()
+  _currentCamera(NULL), _program(NULL), _needProgramCompilation(true)
 {
 
 }
 
 gle::Scene::~Scene()
 {
-  // Delete created programs
-  for (std::map<gle::Material*, gle::Program*>::iterator
-	 it = _programs.begin(), end = _programs.end();
-       it != end; ++it)
-    delete it->second;
+
 }
 
 void gle::Scene::setBackgroundColor(gle::Color<GLfloat> const &color)
@@ -160,11 +158,6 @@ gle::Camera* gle::Scene::getCurrentCamera()
   return (_currentCamera);
 }
 
-std::map<gle::Material*, gle::Program*> & gle::Scene::getPrograms()
-{
-  return (_programs);
-}
-
 void gle::Scene::updateLights()
 {
   _directionalLightsDirection.resize(0);
@@ -210,6 +203,7 @@ void gle::Scene::updateLights()
     }
   _directionalLightsSize = dSize;
   _pointLightsSize = pSize;
+  _needProgramCompilation = true;
 }
 
 GLfloat* gle::Scene::getDirectionalLightsDirection() const
@@ -250,4 +244,93 @@ GLsizeiptr gle::Scene::getPointLightsSize() const
 bool gle::Scene::hasLights() const
 {
   return (getDirectionalLightsSize() || getPointLightsSize());
+}
+
+void		gle::Scene::buildProgram()
+{
+  _needProgramCompilation = false;
+  if (_program)
+    delete(_program);
+  _program = new gle::Program();
+
+  gle::Shader* vertexShader = _createVertexShader();
+  gle::Shader* fragmentShader = _createFragmentShader();
+
+  _program->attach(*vertexShader);
+  _program->attach(*fragmentShader);
+
+  try {
+    _program->link();
+  }
+  catch (std::exception *e)
+    {
+      delete vertexShader;
+      delete fragmentShader;
+      throw e;
+    }
+
+  _program->getUniformLocation(gle::Program::MVMatrix);
+  _program->getUniformLocation(gle::Program::PMatrix);
+  _program->getUniformLocation(gle::Program::AmbientColor);
+  _program->getUniformLocation(gle::Program::DiffuseColor);
+  _program->getUniformLocation(gle::Program::SpecularColor);
+  _program->getUniformLocation(gle::Program::HasColorMap);
+  _program->getUniformLocation(gle::Program::ColorMap);
+  _program->getUniformLocation(gle::Program::NMatrix);
+  _program->getUniformLocation(gle::Program::Shininess);
+  _program->getUniformLocation(gle::Program::SpecularIntensity);
+  _program->getUniformLocation(gle::Program::DiffuseIntensity);
+  if (getDirectionalLightsSize())
+    {
+      _program->getUniformLocation(gle::Program::DirectionalLightDirection);
+      _program->getUniformLocation(gle::Program::DirectionalLightColor);
+    }
+  if (getPointLightsSize())
+    {
+      _program->getUniformLocation(gle::Program::PointLightPosition);
+      _program->getUniformLocation(gle::Program::PointLightColor);
+      _program->getUniformLocation(gle::Program::PointLightSpecularColor);
+    }
+  delete vertexShader;
+  delete fragmentShader;
+}
+
+gle::Shader* gle::Scene::_createVertexShader()
+{
+  std::string shaderSource;
+
+  shaderSource += gle::ShaderSource::VertexShader;
+  shaderSource = _replace("%nb_directional_lights", getDirectionalLightsSize(), shaderSource);
+  shaderSource =_replace("%nb_point_lights", getPointLightsSize(), shaderSource);
+  gle::Shader *shader = new gle::Shader(gle::Shader::Vertex, shaderSource);
+
+  return (shader);
+}
+
+gle::Shader* gle::Scene::_createFragmentShader()
+{
+  std::string shaderSource;
+
+  shaderSource += gle::ShaderSource::FragmentShader;
+  gle::Shader *shader = new gle::Shader(gle::Shader::Fragment, shaderSource);
+
+  return (shader);
+}
+
+std::string gle::Scene::_replace(std::string const& search,
+				int to,
+				std::string const& str)
+{
+  std::stringstream ss;
+
+  ss << to;
+  std::string ret = str;
+  return (ret.replace(str.find(search), search.size(), ss.str()));
+}
+
+gle::Program*	gle::Scene::getProgram()
+{
+  if (_needProgramCompilation)
+    this->buildProgram();
+  return (_program);
 }

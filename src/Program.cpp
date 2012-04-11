@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Fri Feb 17 16:21:14 2012 gael jochaud-du-plessix
-// Last update Fri Mar  2 16:36:06 2012 gael jochaud-du-plessix
+// Last update Thu Apr 12 00:10:00 2012 loick michard
 //
 
 #include <Program.hpp>
@@ -20,6 +20,7 @@ gle::Program::Program() :
   _uniformNames[gle::Program::DiffuseColor] = "gle_diffuseColor";
   _uniformNames[gle::Program::SpecularColor] = "gle_specularColor";
   _uniformNames[gle::Program::ColorMap] = "gle_colorMap";
+  _uniformNames[gle::Program::HasColorMap] = "gle_hasColorMap";
   _uniformNames[gle::Program::NMatrix] = "gle_NMatrix";
   _uniformNames[gle::Program::AmbientColor] = "gle_ambientColor";
   _uniformNames[gle::Program::DirectionalLightDirection] =
@@ -152,4 +153,9 @@ void gle::Program::setUniform(Uniform uniform, GLfloat value)
 void gle::Program::setUniform(Uniform uniform, TextureUnit texture)
 {
   glUniform1i(_uniformLocations[uniform], texture);
+}
+
+void gle::Program::setUniform(Uniform uniform, bool value)
+{
+  glUniform1i(_uniformLocations[uniform], (value) ? 1 : 0);
 }

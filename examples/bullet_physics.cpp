@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Fri Mar  2 17:27:21 2012 gael jochaud-du-plessix
-// Last update Wed Apr 11 13:48:51 2012 gael jochaud-du-plessix
+// Last update Wed Apr 11 22:52:00 2012 loick michard
 //
 
 #include <iostream>
@@ -161,7 +161,6 @@ int glEngine(int ac, char **av)
   scene << &l;
 
   gle::Renderer renderer;
-  renderer.createPrograms(&scene);
 
   sf::Clock clock;
   sf::Clock time;
@@ -186,7 +185,7 @@ int glEngine(int ac, char **av)
   dynamicsWorld->setGravity(btVector3(0,-10,0));
 
   double angle = 0;
-  for (double z = 0.0; z < 60.0; z+= 22.7)
+  for (double z = 0.0; z < 90.0; z+= 22.7)
     {
   for (double x = -15.0; x < 16.0; x += 30.0)
     {

@@ -43,6 +43,12 @@ add_executable (
     examples/example00.cpp
 )
 
+add_executable (
+    examples/disneyHead
+    examples/disneyHead.cpp
+    examples/flycam.cpp
+    examples/video.cpp
+)
 
 add_executable (
     examples/example02
@@ -91,6 +97,12 @@ target_link_libraries (
     glEngine
 )
 
+target_link_libraries (
+    examples/disneyHead
+    ${SFML_LIBRARIES}
+    ${OPENGL_LIBRARIES}
+    glEngine
+)
 
 target_link_libraries (
     examples/example02
