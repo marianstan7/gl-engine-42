@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Fri Mar  2 17:27:21 2012 gael jochaud-du-plessix
-// Last update Wed Apr 11 16:47:46 2012 gael jochaud-du-plessix
+// Last update Wed Apr 11 23:26:56 2012 gael jochaud-du-plessix
 //
 
 #include <iostream>
@@ -163,7 +163,7 @@ int glEngine(int ac, char **av)
 	    glViewport(0, 0, Event.size.width, Event.size.height);
 	  //flycam::event(Event, App);
 	}
-      sf::Mouse::setPosition(sf::Vector2i(W_WIDTH/2, W_HEIGHT/2), App);
+      //sf::Mouse::setPosition(sf::Vector2i(W_WIDTH/2, W_HEIGHT/2), App);
       //flycam::flycam(&camera);
       camera.setTarget(gle::Vector3<GLfloat>(305, 15, 75));
       camera.setPosition(gle::Vector3<GLfloat>(cos(cameraCircleAngle) * 100

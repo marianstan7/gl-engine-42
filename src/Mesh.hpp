@@ -5,7 +5,7 @@
 // Login   <michar_l@epitech.net>
 // 
 // Started on  Mon Feb 20 13:20:54 2012 loick michard
-// Last update Fri Apr  6 23:27:18 2012 gael jochaud-du-plessix
+// Last update Wed Apr 11 22:42:01 2012 gael jochaud-du-plessix
 //
 
 #ifndef _MESH_HPP_
@@ -43,20 +43,21 @@ namespace gle {
       Line = GL_LINE,
       Point = GL_POINT
     };
-    
+
+    static const int VertexAttributeSizeCoords = 3;
+    static const int VertexAttributeSizeNormal = 3;
+    static const int VertexAttributeSizeTextureCoords = 2;
+
+    //! Size of a vertex packed attributes
+
+    static const int VertexAttributesSize =
+      (VertexAttributeSizeCoords
+       + VertexAttributeSizeNormal
+       + VertexAttributeSizeTextureCoords);
+
     //! Default constructor
-    
-    Mesh(Material* material=NULL,
-	 const GLfloat* vertexes=NULL, GLsizeiptr nbVertexes=0,
-	 const GLfloat* normals=NULL, GLsizeiptr nbNormals=0,
-	 const GLuint* indexes=NULL, GLsizeiptr nbIndexes=0);
 
-    //! Constructor with attribute arrays
-
-    Mesh(Material* material,
-	 gle::Array<GLfloat> const * vertexes=NULL,
-	 gle::Array<GLfloat> const * normals=NULL,
-	 gle::Array<GLuint> const * indexes=NULL);
+    Mesh(Material* material=NULL);
 
     //! Copy constructor
     Mesh(Mesh const & other);
@@ -100,15 +101,27 @@ namespace gle {
 
     std::string const & getName();
 
+    //! Set the primitive type of the mesh
+
     void setType(PrimitiveType type);
 
-    gle::Mesh::PrimitiveType getType() const;
+    //! Get the primitive type of the mesh
+
+    PrimitiveType getType() const;
+
+    //! Set the rasterization mode of the mesh
 
     void setRasterizationMode(RasterizationMode rasterizationMode);
 
-    gle::Mesh::RasterizationMode getRasterizationMode() const;
+    //! Get the rasterization mode of the mesh
+
+    RasterizationMode getRasterizationMode() const;
+
+    //! Set the point size for mesh with point rasterization mode
 
     void setPointSize(GLfloat pointSize);
+
+    //! Get the point size for mesh with point rasterization mode
 
     GLfloat getPointSize();
 
@@ -167,11 +180,11 @@ namespace gle {
 
     //! Set the mesh vertexes
 
-    void setVertexes(const GLfloat* vertexes, GLsizeiptr nbVertexes);
+    void setVertexes(const GLfloat* vertexes, GLsizeiptr size);
 
     //! Set the mesh normals
 
-    void setNormals(const GLfloat* normals, GLsizeiptr nbNormals);
+    void setNormals(const GLfloat* normals, GLsizeiptr size);
 
     //! Set the mesh texture coords
 
@@ -179,7 +192,7 @@ namespace gle {
 
     //! Set the mesh indexes
 
-    void setIndexes(const GLuint* indexes, GLsizeiptr nbIndexes);
+    void setIndexes(const GLuint* indexes, GLsizeiptr size);
 
     //! Set the mesh vertexes
 
@@ -236,7 +249,15 @@ namespace gle {
     
     //! Get the number of indexes in the mesh
 
-    GLsizeiptr getNbIndexes();
+    GLsizeiptr getNbIndexes() const;
+
+    //! Get the number of vertexes in the mesh
+
+    GLsizeiptr getNbVertexes() const;
+
+    //! Get the attributes buffer, rebuild it if necessary
+
+    Buffer<GLfloat>* getAttributesBuffer();
 
   private:
     std::string		_name;
@@ -245,11 +266,10 @@ namespace gle {
     GLfloat	_pointSize;
 
     Material* _material;
-    Buffer<GLfloat>* _vertexes;
-    Buffer<GLfloat>* _normals;
-    Buffer<GLfloat>* _textureCoords;
     Buffer<GLuint>* _indexes;
+    Buffer<GLfloat>* _attributes;
 
+    GLsizeiptr _nbVertexes;
     GLsizeiptr _nbIndexes;
 
     Vector3<GLfloat> _position;

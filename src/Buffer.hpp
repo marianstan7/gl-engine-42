@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Wed Feb 15 16:10:11 2012 gael jochaud-du-plessix
-// Last update Sat Mar 10 22:06:35 2012 gael jochaud-du-plessix
+// Last update Wed Apr 11 16:11:35 2012 gael jochaud-du-plessix
 //
 
 #ifndef _GLE_BUFFER_HPP_
@@ -152,6 +152,8 @@ namespace gle {
 
     void resize(GLsizeiptr size, const T* data=NULL)
     {
+      if (size == _size && !data)
+	return ;
       _size = size;
       setData(data);
     }
