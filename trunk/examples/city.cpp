@@ -5,10 +5,11 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Fri Mar  2 17:27:21 2012 gael jochaud-du-plessix
-// Last update Fri Apr  6 16:01:20 2012 gael jochaud-du-plessix
+// Last update Wed Apr 11 16:47:46 2012 gael jochaud-du-plessix
 //
 
 #include <iostream>
+#include <cstdio>
 #include <map>
 #include <SFML/Window.hpp>
 #include <Scene.hpp>
@@ -27,7 +28,7 @@
 #define W_HEIGHT 720
 #define W_FRAMERATE 30
 
-#define NB_HOUSES 10
+#define NB_HOUSES 20
 
 int glEngine(int, char**);
 
@@ -136,6 +137,7 @@ int glEngine(int ac, char **av)
 
   sf::Clock frameTimer;
   int frameCounter = 0;
+  double cameraCircleAngle = 0;
   
   while (App.isOpen())
     {
@@ -159,16 +161,23 @@ int glEngine(int ac, char **av)
 	  // Adjust the viewport when the window is resized
 	  if (Event.type == sf::Event::Resized)
 	    glViewport(0, 0, Event.size.width, Event.size.height);
-	  flycam::event(Event, App);
+	  //flycam::event(Event, App);
 	}
       sf::Mouse::setPosition(sf::Vector2i(W_WIDTH/2, W_HEIGHT/2), App);
-      flycam::flycam(&camera);
+      //flycam::flycam(&camera);
+      camera.setTarget(gle::Vector3<GLfloat>(305, 15, 75));
+      camera.setPosition(gle::Vector3<GLfloat>(cos(cameraCircleAngle) * 100
+					       + 305,
+					       50,
+					       sin(cameraCircleAngle) * 100
+					       + 75));
       l.setPosition(camera.getPosition());
       scene.updateLights();
       renderer.render(&scene);
       App.display();
       //video::saveImage(App, W_FRAMERATE);
       GLfloat elapsed = time.getElapsedTime().asMicroseconds();
+      cameraCircleAngle += (elapsed / 10000000);
       if ((1000000.0/W_FRAMERATE) - elapsed > 0)
 	sf::sleep(sf::microseconds(1000000.0/W_FRAMERATE - elapsed));
       time.restart();
