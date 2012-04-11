@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Fri Mar  2 17:27:21 2012 gael jochaud-du-plessix
-// Last update Wed Apr 11 23:26:56 2012 gael jochaud-du-plessix
+// Last update Thu Apr 12 00:33:03 2012 loick michard
 //
 
 #include <iostream>
@@ -128,7 +128,6 @@ int glEngine(int ac, char **av)
   scene << &l;
 
   gle::Renderer renderer;
-  renderer.createPrograms(&scene);
 
   sf::Clock clock;
   sf::Clock time;
@@ -163,14 +162,14 @@ int glEngine(int ac, char **av)
 	    glViewport(0, 0, Event.size.width, Event.size.height);
 	  //flycam::event(Event, App);
 	}
-      //sf::Mouse::setPosition(sf::Vector2i(W_WIDTH/2, W_HEIGHT/2), App);
-      //flycam::flycam(&camera);
-      camera.setTarget(gle::Vector3<GLfloat>(305, 15, 75));
+      // sf::Mouse::setPosition(sf::Vector2i(W_WIDTH/2, W_HEIGHT/2), App);
+      // flycam::flycam(&camera);
       camera.setPosition(gle::Vector3<GLfloat>(cos(cameraCircleAngle) * 100
-					       + 305,
-					       50,
-					       sin(cameraCircleAngle) * 100
-					       + 75));
+	+ 305,
+	50,
+	sin(cameraCircleAngle) * 100
+	+ 75));
+	camera.setTarget(gle::Vector3<GLfloat>(305, 15, 75));
       l.setPosition(camera.getPosition());
       scene.updateLights();
       renderer.render(&scene);

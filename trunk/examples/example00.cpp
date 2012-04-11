@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Wed Feb 15 17:24:36 2012 gael jochaud-du-plessix
-// Last update Thu Mar 15 17:24:51 2012 gael jochaud-du-plessix
+// Last update Wed Apr 11 22:52:36 2012 loick michard
 //
 
 /*! \mainpage glEngine Reference documentation
@@ -140,7 +140,6 @@ int glEngine(int ac, char **av)
   scene << &l << &l2 << &l3;
 
   gle::Renderer renderer;
-  renderer.createPrograms(&scene);
 
   GLfloat angle = 0;
 

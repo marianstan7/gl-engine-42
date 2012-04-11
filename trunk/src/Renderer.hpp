@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Tue Feb 14 17:12:21 2012 gael jochaud-du-plessix
-// Last update Fri Mar  2 16:46:09 2012 gael jochaud-du-plessix
+// Last update Wed Apr 11 22:38:57 2012 loick michard
 //
 
 #ifndef _GLE_RENDERER_HPP_
@@ -39,12 +39,9 @@ namespace gle {
     //! Render a scene
     void render(Scene* scene);
 
-    //! Create the rendering programs for a specified scene
-    void createPrograms(gle::Scene* scene);
-
   private:
-    void _renderMesh(gle::Scene* scene, gle::Mesh* mesh, gle::Camera* camera);
-    void _setCurrentProgram(gle::Material* material, gle::Scene* scene,
+    void _renderMesh(gle::Scene* scene, gle::Mesh* mesh);
+    void _setCurrentProgram(gle::Scene* scene,
 			    gle::Camera* camera);
     void _setMaterialUniforms(gle::Material* material);
     void _setSceneUniforms(gle::Scene* scene, gle::Camera* camera);

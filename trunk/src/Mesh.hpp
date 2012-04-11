@@ -5,7 +5,7 @@
 // Login   <michar_l@epitech.net>
 // 
 // Started on  Mon Feb 20 13:20:54 2012 loick michard
-// Last update Wed Apr 11 22:42:01 2012 gael jochaud-du-plessix
+// Last update Thu Apr 12 00:22:48 2012 loick michard
 //
 
 #ifndef _MESH_HPP_
@@ -269,8 +269,8 @@ namespace gle {
     Buffer<GLuint>* _indexes;
     Buffer<GLfloat>* _attributes;
 
-    GLsizeiptr _nbVertexes;
     GLsizeiptr _nbIndexes;
+    GLsizeiptr _nbVertexes;
 
     Vector3<GLfloat> _position;
     Vector3<GLfloat> _target;

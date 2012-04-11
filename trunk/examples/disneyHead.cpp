@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Wed Feb 15 17:24:36 2012 gael jochaud-du-plessix
-// Last update Fri Mar 16 13:45:20 2012 gael jochaud-du-plessix
+// Last update Wed Apr 11 23:58:18 2012 loick michard
 //
 
 /*! 
@@ -138,7 +138,6 @@ int glEngine(int ac, char **av)
   size_t		frameCounter = 0;
   float			dist = 170;
   
-  renderer.createPrograms(&scene);
   while (App.isOpen())
     {
       sf::Event event;
@@ -189,10 +188,10 @@ int glEngine(int ac, char **av)
 
       renderer.render(&scene);
       App.display();
-      video::saveImage(App, W_FRAMERATE);
+      //video::saveImage(App, W_FRAMERATE);
     }
 
-  video::save(av[0], W_FRAMERATE);
+  //video::save(av[0], W_FRAMERATE);
   
   return (0);
 }

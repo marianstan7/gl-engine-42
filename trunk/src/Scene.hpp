@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Mon Feb 20 18:18:01 2012 gael jochaud-du-plessix
-// Last update Fri Mar 16 18:36:31 2012 gael jochaud-du-plessix
+// Last update Wed Apr 11 23:50:50 2012 loick michard
 //
 
 #ifndef _GLE_SCENE_HPP_
@@ -206,7 +206,17 @@ namespace gle {
     */
     void updateLights();
 
+    void buildProgram();
+
+    gle::Program* getProgram();
+
   private:
+    gle::Shader* _createVertexShader();
+    gle::Shader* _createFragmentShader();
+    std::string _replace(std::string const& search,
+                         int number,
+                         std::string const& str);
+
     gle::Color<GLfloat>	_backgroundColor;
     std::vector<Camera*> _cameras;
     std::vector<Mesh*> _meshes;
@@ -223,7 +233,8 @@ namespace gle {
     GLsizeiptr _pointLightsSize;    
 
     Camera* _currentCamera;
-    std::map<Material*, Program*> _programs;
+    gle::Program* _program;
+    bool _needProgramCompilation;
   };
 }
 

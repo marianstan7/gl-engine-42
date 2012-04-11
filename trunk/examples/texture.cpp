@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Wed Feb 29 19:44:13 2012 gael jochaud-du-plessix
-// Last update Wed Mar 14 12:52:08 2012 gael jochaud-du-plessix
+// Last update Wed Apr 11 22:54:20 2012 loick michard
 //
 
 #include <iostream>
@@ -104,7 +104,6 @@ int glEngine(int ac, char **av)
   scene << &l << &l2 << &l3;
 
   gle::Renderer renderer;
-  renderer.createPrograms(&scene);
 
   GLfloat angle = 0;
 

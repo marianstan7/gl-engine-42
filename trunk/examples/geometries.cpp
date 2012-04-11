@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Fri Mar  2 17:27:21 2012 gael jochaud-du-plessix
-// Last update Fri Mar 16 14:19:27 2012 gael jochaud-du-plessix
+// Last update Wed Apr 11 22:54:06 2012 loick michard
 //
 
 #include <iomanip>
@@ -146,7 +146,6 @@ int glEngine(int ac, char **av)
   scene << &l;
 
   gle::Renderer renderer;
-  renderer.createPrograms(&scene);
 
   sf::Clock clock;
   sf::Clock time;

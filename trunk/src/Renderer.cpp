@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Mon Feb 20 20:48:54 2012 gael jochaud-du-plessix
-// Last update Wed Apr 11 23:55:59 2012 gael jochaud-du-plessix
+// Last update Thu Apr 12 00:34:32 2012 loick michard
 //
 
 #include <Renderer.hpp>
@@ -53,6 +53,7 @@ void gle::Renderer::render(Scene* scene)
   _currentProgram = NULL;
   _currentMaterial = NULL;
   Camera* camera = scene->getCurrentCamera();
+  _setCurrentProgram(scene, camera);
   std::vector<gle::Mesh*> & meshes = scene->getMeshes();
   std::vector<gle::Mesh*>::iterator meshesEnd = meshes.end();
 
@@ -64,29 +65,10 @@ void gle::Renderer::render(Scene* scene)
 
   for (std::vector<gle::Mesh*>::iterator it = meshes.begin();
        it != meshesEnd; ++it)
-    _renderMesh(scene, *it, camera);
+    _renderMesh(scene, *it);
 }
 
-void gle::Renderer::createPrograms(gle::Scene* scene)
-{
-  std::vector<gle::Material*> & materials = scene->getMaterials();
-  std::map<gle::Material*, gle::Program*> & programs = scene->getPrograms();
-
-  // First, clear the old programs list
-  for (std::map<gle::Material*, gle::Program*>::iterator it = programs.begin(),
-	 end = programs.end();
-       it != end; ++it)
-    delete it->second;
-  programs.clear();
-  // Then create the OpenGL Programs for each material of the scene
-  for (std::vector<gle::Material*>::iterator it = materials.begin(),
-	 end = materials.end();
-       it != end; ++it)
-    programs[*it] = (*it)->createProgram(scene);
-}
-
-void gle::Renderer::_renderMesh(gle::Scene* scene, gle::Mesh* mesh,
-				gle::Camera* camera)
+void gle::Renderer::_renderMesh(gle::Scene* scene, gle::Mesh* mesh)
 {
   GLsizeiptr nbIndexes = mesh->getNbIndexes();
   GLsizeiptr nbVertexes = mesh->getNbVertexes();
@@ -99,10 +81,10 @@ void gle::Renderer::_renderMesh(gle::Scene* scene, gle::Mesh* mesh,
   if (indexesBuffer == NULL || material == NULL)
     return ;
 
-  _setCurrentProgram(material, scene, camera);
   if (!_currentProgram)
     return ;
 
+  _setMaterialUniforms(material);
   _setMeshUniforms(scene, mesh);
   
   attributesBuffer->bind();
@@ -119,6 +101,7 @@ void gle::Renderer::_renderMesh(gle::Scene* scene, gle::Mesh* mesh,
 				  * sizeof(GLfloat)));
 
   // Set up ColorMap
+  _currentProgram->setUniform(gle::Program::HasColorMap, material->isColorMapEnabled());
   if (material->isColorMapEnabled())
     {
       // Set texture coords attribute
@@ -154,24 +137,17 @@ void gle::Renderer::_renderMesh(gle::Scene* scene, gle::Mesh* mesh,
 			       ColorMap::TextureCoordLocation);
 }
 
-void gle::Renderer::_setCurrentProgram(gle::Material* material,
-				       gle::Scene* scene,
+void gle::Renderer::_setCurrentProgram(gle::Scene* scene,
 				       gle::Camera* camera)
 {
-  if (material == _currentMaterial)
-    return ;
-  std::map<gle::Material*, gle::Program*> & programs = scene->getPrograms();
-  gle::Program* program = programs[material];
+  gle::Program* program = scene->getProgram();
 
   if (!program)
     return ;
   if (program && program != _currentProgram)
     program->use();
   _currentProgram = program;
-  _currentMaterial = material;
-
   _setSceneUniforms(scene, camera);
-  _setMaterialUniforms(material);
 }
 
 void gle::Renderer::_setMaterialUniforms(gle::Material* material)
