@@ -80,6 +80,7 @@ add_executable (
     examples/bullet_physics
     examples/bullet_physics.cpp
     examples/flycam.cpp
+    examples/video.cpp
 )
 
 # Librairies to link
@@ -134,4 +135,6 @@ target_link_libraries (
     BulletDynamics
     BulletCollision
     LinearMath
+    BulletMultiThreaded
+    pthread
 )

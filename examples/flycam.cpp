@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Fri Mar  2 17:27:21 2012 gael jochaud-du-plessix
-// Last update Fri Apr  6 16:16:18 2012 gael jochaud-du-plessix
+// Last update Tue Apr 10 21:58:24 2012 loick michard
 //
 
 #include <iostream>
@@ -30,7 +30,7 @@ std::map<sf::Keyboard::Key, bool> flycam::keyState;
 GLfloat flycam::mouseX = 0.0;
 GLfloat flycam::mouseY = 0.0;
 GLfloat flycam::moveUp = 0.0;
-GLfloat flycam::mouseSensibility = 1;
+GLfloat flycam::mouseSensibility = 3;
 GLfloat flycam::camSpeed = 2;
 
 void flycam::flycam(gle::Camera* camera)

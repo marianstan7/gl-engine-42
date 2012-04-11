@@ -5,7 +5,7 @@
 // Login   <michar_l@epitech.net>
 // 
 // Started on  Wed Feb 15 18:22:27 2012 loick michard
-// Last update Wed Feb 22 21:46:37 2012 gael jochaud-du-plessix
+// Last update Tue Apr 10 22:20:23 2012 loick michard
 //
 
 #ifndef _GLE_QUATERNION_HPP
@@ -107,7 +107,7 @@ namespace gle {
     {
       return (Matrix4<T>(1 - 2 * y * y - 2 * z * z,
 			 2 * x * y  - 2 * z * w,
-			 2 * x * y  + 2 * y * w, 0.0,
+			 2 * x * z  + 2 * y * w, 0.0,
 			 2 * x * y + 2 * z * w,
 			 1 - 2 * x * x - 2 * z * z,
 			 2 * y * z  - 2 * x * w, 0.0,
