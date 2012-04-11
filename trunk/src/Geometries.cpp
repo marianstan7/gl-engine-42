@@ -5,7 +5,7 @@
 // Login   <michar_l@epitech.net>
 // 
 // Started on  Mon Feb 20 22:34:18 2012 loick michard
-// Last update Tue Apr 10 15:42:47 2012 loick michard
+// Last update Wed Apr 11 22:58:01 2012 gael jochaud-du-plessix
 //
 
 #include <cmath>
@@ -149,13 +149,12 @@ gle::Mesh* gle::Geometries::Cuboid(gle::Material* material,
     0.0, 1.0
   };
 
-  gle::Mesh *cuboid = new gle::Mesh(material,
-				    vertexes,
-				    sizeof(vertexes) / sizeof(GLfloat),
-				    normals, sizeof(normals) / sizeof(GLfloat),
-				    indexes, sizeof(indexes) / sizeof(GLuint));
+  gle::Mesh *cuboid = new gle::Mesh(material);
+  cuboid->setVertexes(vertexes, sizeof(vertexes) / sizeof(GLfloat));
+  cuboid->setNormals(normals, sizeof(normals) / sizeof(GLfloat));
   cuboid->setTextureCoords(textureCoords,
 			   sizeof(textureCoords) / sizeof(GLfloat));
+  cuboid->setIndexes(indexes, sizeof(indexes) / sizeof(GLuint));
   return (cuboid);
 }
 
@@ -163,9 +162,9 @@ gle::Mesh* gle::Geometries::Sphere(gle::Material* material,
 				   GLfloat radius,
 				   GLint slices, GLint stacks)
 {
-  std::vector<GLfloat> vertexes;
-  std::vector<GLfloat> normals;
-  std::vector<GLuint> indexes;
+  gle::Array<GLfloat> vertexes;
+  gle::Array<GLfloat> normals;
+  gle::Array<GLuint> indexes;
   gle::Array<GLfloat> uv;
 
   for (GLfloat sl = 0; sl <= slices; ++sl)
@@ -199,11 +198,12 @@ gle::Mesh* gle::Geometries::Sphere(gle::Material* material,
 	    }
 	}
     }
-  gle::Mesh * ret = new gle::Mesh(material, &vertexes[0], vertexes.size(),
-				  &normals[0], normals.size(),
-				  &indexes[0], indexes.size());
-  ret->setTextureCoords(uv);
-  return (ret);
+  gle::Mesh * mesh = new gle::Mesh(material);
+  mesh->setVertexes(vertexes);
+  mesh->setNormals(normals);
+  mesh->setTextureCoords(uv);
+  mesh->setIndexes(indexes);
+  return (mesh);
 }
 
 
@@ -238,9 +238,10 @@ gle::Mesh* gle::Geometries::Plane(gle::Material* material,
 	}
     }
 
-  gle::Mesh * ret = new gle::Mesh(material, &vertexes[0], vertexes.size(),
-				  &normals[0], normals.size(),
-				  &indexes[0], indexes.size());
-  ret->setTextureCoords(uv);
-  return (ret);
+  gle::Mesh * mesh = new gle::Mesh(material);
+  mesh->setVertexes(vertexes);
+  mesh->setNormals(normals);
+  mesh->setTextureCoords(uv);
+  mesh->setIndexes(indexes);
+  return (mesh);
 }

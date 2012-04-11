@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Mon Feb 20 20:48:54 2012 gael jochaud-du-plessix
-// Last update Fri Mar 16 18:38:30 2012 gael jochaud-du-plessix
+// Last update Wed Apr 11 23:55:59 2012 gael jochaud-du-plessix
 //
 
 #include <Renderer.hpp>
@@ -88,13 +88,15 @@ void gle::Renderer::createPrograms(gle::Scene* scene)
 void gle::Renderer::_renderMesh(gle::Scene* scene, gle::Mesh* mesh,
 				gle::Camera* camera)
 {
-  gle::Buffer<GLfloat> * vertexesBuffer = mesh->getVertexesBuffer();
-  gle::Buffer<GLfloat> * normalsBuffer = mesh->getNormalsBuffer();
+  GLsizeiptr nbIndexes = mesh->getNbIndexes();
+  GLsizeiptr nbVertexes = mesh->getNbVertexes();
+  if (nbIndexes < 1 || nbVertexes < 1)
+    return ;
+  gle::Buffer<GLfloat> * attributesBuffer = mesh->getAttributesBuffer();
   gle::Buffer<GLuint> * indexesBuffer = mesh->getIndexesBuffer();
   gle::Material* material = mesh->getMaterial();
 
-  if (vertexesBuffer == NULL || normalsBuffer == NULL || indexesBuffer == NULL
-      || material == NULL)
+  if (indexesBuffer == NULL || material == NULL)
     return ;
 
   _setCurrentProgram(material, scene, camera);
@@ -103,27 +105,34 @@ void gle::Renderer::_renderMesh(gle::Scene* scene, gle::Mesh* mesh,
 
   _setMeshUniforms(scene, mesh);
   
+  attributesBuffer->bind();
+  
   // Set Position buffer
-  vertexesBuffer->bind();
   glVertexAttribPointer(gle::ShaderSource::Vertex::Default::PositionLocation,
 			3, GL_FLOAT, GL_FALSE, 0, 0);
 
   // Set Normal buffer
-  normalsBuffer->bind();
   glVertexAttribPointer(gle::ShaderSource::Vertex::Default::NormalLocation,
-			3, GL_FLOAT, GL_FALSE, 0, 0);
+			3, GL_FLOAT, GL_FALSE, 0,
+			(GLvoid*)(nbVertexes
+				  * gle::Mesh::VertexAttributeSizeCoords
+				  * sizeof(GLfloat)));
 
   // Set up ColorMap
-  gle::Buffer<GLfloat> *textureCoordsBuffer = mesh->getTextureCoordsBuffer();
-  if (material->isColorMapEnabled() && textureCoordsBuffer)
+  if (material->isColorMapEnabled())
     {
       // Set texture coords attribute
       glEnableVertexAttribArray(gle::ShaderSource::Vertex::
                                 ColorMap::TextureCoordLocation);
-      textureCoordsBuffer->bind();
+      //textureCoordsBuffer->bind();
       glVertexAttribPointer(gle::ShaderSource::Vertex::
                             ColorMap::TextureCoordLocation,
-                            2, GL_FLOAT, GL_FALSE, 0, 0);
+                            2, GL_FLOAT, GL_FALSE, 0,
+			    (GLvoid*)(nbVertexes
+				      * (gle::Mesh::VertexAttributeSizeCoords
+					 + gle::Mesh::VertexAttributeSizeNormal)
+				      * sizeof(GLfloat)));
+
       // Set texture to the shader
       gle::Texture* colorMap = material->getColorMap();
       glActiveTexture(gle::Program::ColorMapTexture);
@@ -138,7 +147,7 @@ void gle::Renderer::_renderMesh(gle::Scene* scene, gle::Mesh* mesh,
       || mesh->getRasterizationMode() == gle::Mesh::Point)
     glPointSize(mesh->getPointSize());
   glPolygonMode(GL_FRONT_AND_BACK, mesh->getRasterizationMode());
-  glDrawElements(mesh->getType(), mesh->getNbIndexes(), GL_UNSIGNED_INT, 0);
+  glDrawElements(mesh->getType(), nbIndexes, GL_UNSIGNED_INT, 0);
 
   if (material->isColorMapEnabled())
     glDisableVertexAttribArray(gle::ShaderSource::Vertex::

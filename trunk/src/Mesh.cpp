@@ -5,76 +5,34 @@
 // Login   <michar_l@epitech.net>
 // 
 // Started on  Mon Feb 20 18:25:23 2012 loick michard
-// Last update Fri Apr  6 23:27:21 2012 gael jochaud-du-plessix
+// Last update Wed Apr 11 23:24:45 2012 gael jochaud-du-plessix
 //
 
 #include <algorithm>
 #include <Mesh.hpp>
 
-gle::Mesh::Mesh(Material* material,
-		const GLfloat* vertexes, GLsizeiptr nbVertexes,
-		const GLfloat* normals, GLsizeiptr nbNormals,
-		const GLuint* indexes, GLsizeiptr nbIndexes)
+gle::Mesh::Mesh(Material* material)
   : _name(""),
     _type(Triangles),
     _rasterizationMode(Fill),
     _pointSize(1.0),
     _material(material),
-    _vertexes(NULL),
-    _normals(NULL),
-    _textureCoords(NULL),
     _indexes(NULL),
-    _nbIndexes(nbIndexes),
-    _position(0, 0, 0), _hasTarget(false), _parentMatrix(NULL)
-{
-  if (vertexes)
-    _vertexes = new gle::Buffer<GLfloat>(gle::Buffer<GLfloat>::VertexArray,
-					 gle::Buffer<GLfloat>::StaticDraw,
-					 nbVertexes, vertexes);
-  if (normals)
-    _normals = new gle::Buffer<GLfloat>(gle::Buffer<GLfloat>::VertexArray,
-					gle::Buffer<GLfloat>::StaticDraw,
-					nbNormals, normals);
-  if (indexes)
-    _indexes = new gle::Buffer<GLuint>(gle::Buffer<GLuint>::ElementArray,
-				       gle::Buffer<GLuint>::StaticDraw,
-				       nbIndexes, indexes);
-}
-
-gle::Mesh::Mesh(Material* material,
-		gle::Array<GLfloat> const * vertexes,
-		gle::Array<GLfloat> const * normals,
-		gle::Array<GLuint> const * indexes)
-  : _name(""),
-    _type(Triangles),
-    _rasterizationMode(Fill),
-    _pointSize(1.0),
-    _material(material),
-    _vertexes(NULL),
-    _normals(NULL),
-    _textureCoords(NULL),
-    _indexes(NULL),
+    _attributes(NULL),
     _nbIndexes(0),
-    _position(0, 0, 0), _hasTarget(false), _parentMatrix(NULL)
+    _nbVertexes(0),
+    _position(0, 0, 0),
+    _hasTarget(false),
+    _rotation(),
+    _scaleMatrix(),
+    _mvMatrix(),
+    _normalMatrix(),
+    _parentMatrix(NULL)
 {
-  if (vertexes)
-    _vertexes = new gle::Buffer<GLfloat>(gle::Buffer<GLfloat>::VertexArray,
-					 gle::Buffer<GLfloat>::StaticDraw,
-					 vertexes->size(),
-					 (GLfloat const *)(*vertexes));
-  if (normals)
-    _normals = new gle::Buffer<GLfloat>(gle::Buffer<GLfloat>::VertexArray,
-					gle::Buffer<GLfloat>::StaticDraw,
-					normals->size(),
-					(GLfloat const *)(*normals));
-  if (indexes)
-    {
-      _indexes = new gle::Buffer<GLuint>(gle::Buffer<GLuint>::ElementArray,
-					 gle::Buffer<GLuint>::StaticDraw,
-					 indexes->size(),
-					 (GLuint const *)(*indexes));
-      _nbIndexes = indexes->size();
-    }
+  _attributes = new gle::Buffer<GLfloat>(gle::Buffer<GLfloat>::VertexArray,
+					 gle::Buffer<GLfloat>::StaticDraw);
+  _indexes = new gle::Buffer<GLuint>(gle::Buffer<GLuint>::ElementArray,
+				     gle::Buffer<GLuint>::StaticDraw);
 }
 
 gle::Mesh::Mesh(gle::Mesh const & other)
@@ -83,11 +41,10 @@ gle::Mesh::Mesh(gle::Mesh const & other)
     _rasterizationMode(other._rasterizationMode),
     _pointSize(other._pointSize),
     _material(other._material),
-    _vertexes(NULL),
-    _normals(NULL),
-    _textureCoords(NULL),
     _indexes(NULL),
+    _attributes(NULL),
     _nbIndexes(other._nbIndexes),
+    _nbVertexes(other._nbVertexes),
     _position(other._position),
     _target(other._target),
     _hasTarget(other._hasTarget),
@@ -97,14 +54,8 @@ gle::Mesh::Mesh(gle::Mesh const & other)
     _normalMatrix(other._mvMatrix),
     _parentMatrix(other._parentMatrix)
 {
-  if (other._vertexes)
-    _vertexes = new gle::Buffer<GLfloat>(*other._vertexes);
-  if (other._normals)
-    _normals =  new gle::Buffer<GLfloat>(*other._normals);
-  if (other._textureCoords)
-    _textureCoords =  new gle::Buffer<GLfloat>(*other._textureCoords);
-  if (other._indexes)
-    _indexes =  new gle::Buffer<GLuint>(*other._indexes);
+  _indexes =  new gle::Buffer<GLuint>(*other._indexes);
+  _attributes = new gle::Buffer<GLfloat>(*other._attributes);
   std::vector<gle::Mesh*> children = other._children;
   for (std::vector<gle::Mesh*>::iterator it = children.begin(),
 	 end = children.end(); it != end; ++it)
@@ -113,12 +64,10 @@ gle::Mesh::Mesh(gle::Mesh const & other)
 
 gle::Mesh::~Mesh()
 {
-  if (_vertexes)
-    delete _vertexes;
-  if (_normals)
-    delete _normals;
   if (_indexes)
-    delete (_indexes);
+    delete _indexes;
+  if (_attributes)
+    delete _attributes;
 }
 
 void gle::Mesh::addChild(gle::Mesh* child)
@@ -230,101 +179,95 @@ void gle::Mesh::setScale(GLfloat scale)
   this->setScale(scale, scale, scale);
 }
 
-void gle::Mesh::setVertexes(const GLfloat* vertexes, GLsizeiptr nbVertexes)
+void gle::Mesh::setVertexes(const GLfloat* vertexes, GLsizeiptr size)
 {
-  if (_vertexes)
-    _vertexes->resize(nbVertexes, vertexes);
-  else
-    _vertexes = new gle::Buffer<GLfloat>(gle::Buffer<GLfloat>::VertexArray,
-					 gle::Buffer<GLfloat>::StaticDraw,
-					 nbVertexes, vertexes);
+  GLsizeiptr nbVertexes = size / VertexAttributeSizeCoords;
+  if (nbVertexes != _nbVertexes)
+    {
+      _nbVertexes = nbVertexes;
+      _attributes->resize(VertexAttributesSize * nbVertexes);
+    }
+  _attributes->setData(vertexes, 0, size);
 }
 
-void gle::Mesh::setNormals(const GLfloat* normals, GLsizeiptr nbNormals)
+void gle::Mesh::setNormals(const GLfloat* normals, GLsizeiptr size)
 {
-  if (_normals)
-    _normals->resize(nbNormals, normals);
-  else
-    _normals = new gle::Buffer<GLfloat>(gle::Buffer<GLfloat>::VertexArray,
-					gle::Buffer<GLfloat>::StaticDraw,
-					nbNormals, normals);
+  GLsizeiptr nbVertexes = size / VertexAttributeSizeNormal;
+  if (nbVertexes != _nbVertexes)
+    {
+      _nbVertexes = nbVertexes;
+      _attributes->resize(VertexAttributesSize * nbVertexes);
+    }
+  _attributes->setData(normals,
+		       nbVertexes * VertexAttributeSizeCoords,
+		       size);
 }
 
 void gle::Mesh::setTextureCoords(const GLfloat* textureCoords, GLsizeiptr size)
 {
-  if (_textureCoords)
+  GLsizeiptr nbVertexes = size
+    / VertexAttributeSizeTextureCoords;
+  if (nbVertexes != _nbVertexes)
     {
-      if (textureCoords == NULL)
-	{
-	  delete _textureCoords;
-	  _textureCoords = NULL;
-	}
-      else
-	_textureCoords->resize(size, textureCoords);
+      _nbVertexes = nbVertexes;
+      _attributes->resize(VertexAttributesSize * nbVertexes);
     }
-  else
-    _textureCoords =
-      new gle::Buffer<GLfloat>(gle::Buffer<GLfloat>::VertexArray,
-                               gle::Buffer<GLfloat>::StaticDraw,
-                               size, textureCoords);
+  _attributes->setData(textureCoords,
+		       nbVertexes * (VertexAttributeSizeCoords
+				     + VertexAttributeSizeNormal),
+		       size);
 }
 
-void gle::Mesh::setIndexes(const GLuint* indexes, GLsizeiptr nbIndexes)
+void gle::Mesh::setIndexes(const GLuint* indexes, GLsizeiptr size)
 {
-  _nbIndexes = nbIndexes;
-  if (_indexes)
-    _indexes->resize(nbIndexes, indexes);
-  else
-    _indexes = new gle::Buffer<GLuint>(gle::Buffer<GLuint>::ElementArray,
-					gle::Buffer<GLuint>::StaticDraw,
-					nbIndexes, indexes);
+  _nbIndexes = size;
+  _indexes->resize(size, indexes);
 }
 
 void gle::Mesh::setVertexes(gle::Array<GLfloat> const &vertexes)
 {
-  if (_vertexes)
-    _vertexes->resize(vertexes.size(), (GLfloat const *)vertexes);
-  else
-    _vertexes = new gle::Buffer<GLfloat>(gle::Buffer<GLfloat>::VertexArray,
-					 gle::Buffer<GLfloat>::StaticDraw,
-					 vertexes.size(),
-					 (GLfloat const *)vertexes);
+  GLsizeiptr nbVertexes = vertexes.size() / VertexAttributeSizeCoords;
+  if (nbVertexes != _nbVertexes)
+    {
+      _nbVertexes = nbVertexes;
+      _attributes->resize(VertexAttributesSize * nbVertexes);
+    }
+  _attributes->setData((const GLfloat*)vertexes, 0,
+		       nbVertexes * VertexAttributeSizeCoords);
 }
 
 void gle::Mesh::setNormals(gle::Array<GLfloat> const &normals)
 {
-  if (_normals)
-    _normals->resize(normals.size(), (GLfloat const *)normals);
-  else
-    _normals = new gle::Buffer<GLfloat>(gle::Buffer<GLfloat>::VertexArray,
-					gle::Buffer<GLfloat>::StaticDraw,
-					normals.size(),
-					(GLfloat const *)normals);
+  GLsizeiptr nbVertexes = normals.size() / VertexAttributeSizeNormal;
+  if (nbVertexes != _nbVertexes)
+    {
+      _nbVertexes = nbVertexes;
+      _attributes->resize(VertexAttributesSize * nbVertexes);
+    }
+  _attributes->setData((const GLfloat*)normals,
+		       nbVertexes * VertexAttributeSizeCoords,
+		       nbVertexes * VertexAttributeSizeNormal);
 }
 
 void gle::Mesh::setTextureCoords(gle::Array<GLfloat> const &textureCoords)
 {
-  if (_textureCoords)
-    _textureCoords->resize(textureCoords.size(),
-			   (GLfloat const *)textureCoords);
-  else
-    _textureCoords =
-      new gle::Buffer<GLfloat>(gle::Buffer<GLfloat>::VertexArray,
-			       gle::Buffer<GLfloat>::StaticDraw,
-			       textureCoords.size(),
-			       (GLfloat const *)textureCoords);
+  GLsizeiptr nbVertexes = textureCoords.size()
+    / VertexAttributeSizeTextureCoords;
+  if (nbVertexes != _nbVertexes)
+    {
+      _nbVertexes = nbVertexes;
+      _attributes->resize(VertexAttributesSize * nbVertexes);
+    }
+  _attributes->setData((const GLfloat*)textureCoords,
+		       nbVertexes * (VertexAttributeSizeCoords
+				     + VertexAttributeSizeNormal),
+		       nbVertexes * VertexAttributeSizeTextureCoords);
 }
 
 void gle::Mesh::setIndexes(gle::Array<GLuint> const &indexes)
 {
   _nbIndexes = indexes.size();
-  if (_indexes)
-    _indexes->resize(indexes.size(), (GLuint const *)indexes);
-  else
-    _indexes = new gle::Buffer<GLuint>(gle::Buffer<GLuint>::ElementArray,
-				       gle::Buffer<GLuint>::StaticDraw,
-				       indexes.size(),
-				       (GLuint const *)indexes);
+  _indexes->resize(indexes.size(), (GLuint const *)indexes);
 }
 
 void gle::Mesh::updateMatrix()
@@ -384,27 +327,22 @@ gle::Material* gle::Mesh::getMaterial()
   return (_material);
 }
 
-gle::Buffer<GLfloat> * gle::Mesh::getVertexesBuffer()
-{
-  return (_vertexes);
-}
-
-gle::Buffer<GLfloat> * gle::Mesh::getNormalsBuffer()
-{
-  return (_normals);
-}
-
-gle::Buffer<GLfloat> * gle::Mesh::getTextureCoordsBuffer()
-{
-  return (_textureCoords);
-}
-
 gle::Buffer<GLuint> * gle::Mesh::getIndexesBuffer()
 {
   return (_indexes);
 }
 
-GLsizeiptr gle::Mesh::getNbIndexes()
+gle::Buffer<GLfloat>* gle::Mesh::getAttributesBuffer()
+{
+  return (_attributes);
+}
+
+GLsizeiptr gle::Mesh::getNbIndexes() const
 {
   return (_nbIndexes);
+}
+
+GLsizeiptr gle::Mesh::getNbVertexes() const
+{
+  return (_nbVertexes);
 }
