@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Wed Feb 15 16:10:11 2012 gael jochaud-du-plessix
-// Last update Wed Apr 11 16:11:35 2012 gael jochaud-du-plessix
+// Last update Thu Apr 12 16:12:33 2012 loick michard
 //
 
 #ifndef _GLE_BUFFER_HPP_
@@ -37,8 +37,9 @@ namespace gle {
     enum Type {
       VertexArray = GL_ARRAY_BUFFER,
       /*!< Vertex array buffer, to store an array of vertex attributes */
-      ElementArray = GL_ELEMENT_ARRAY_BUFFER
+      ElementArray = GL_ELEMENT_ARRAY_BUFFER,
       /*!< Element array buffer, to store an array of vertex indices */
+      UniformArray = GL_UNIFORM_BUFFER
     };
 
     //! Buffer usages

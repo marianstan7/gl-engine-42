@@ -5,7 +5,7 @@
 // Login   <michar_l@epitech.net>
 // 
 // Started on  Wed Apr 11 18:41:59 2012 loick michard
-// Last update Thu Apr 12 00:02:58 2012 loick michard
+// Last update Thu Apr 12 19:35:39 2012 loick michard
 //
 
 #include <gle/opengl.h>
@@ -23,16 +23,9 @@ const char *gle::ShaderSource::VertexShader =
   "#define NB_DIRECTIONAL_LIGHTS %nb_directional_lights \n"
   "#define NB_POINT_LIGHTS %nb_point_lights \n"
 
+  //"layout(std140) uniform sceneBlock\n"
+  //"{\n"
   "uniform mat4 gle_PMatrix; \n"
-  "uniform mat4 gle_MVMatrix; \n"
-  "uniform mat3 gle_NMatrix;\n"
-
-  "uniform vec3 gle_ambientColor;\n"
-  "uniform vec3 gle_diffuseColor;\n"
-  "uniform vec3 gle_specularColor;\n"
-  "uniform float gle_shininess;\n"
-  "uniform float gle_specularIntensity;\n"
-  "uniform float gle_diffuseIntensity;\n"
   "#if NB_DIRECTIONAL_LIGHTS > 0\n"
   "uniform vec3 gle_directionalLightDirection[NB_DIRECTIONAL_LIGHTS];\n"
   "uniform vec3 gle_directionalLightColor[NB_DIRECTIONAL_LIGHTS];\n"
@@ -42,6 +35,23 @@ const char *gle::ShaderSource::VertexShader =
   "uniform vec3 gle_pointLightColor[NB_POINT_LIGHTS];\n"
   "uniform vec3 gle_pointLightSpecularColor[NB_POINT_LIGHTS];\n"
   "#endif\n"
+  //"};\n"
+
+  //  "layout(std140) uniform meshBlock\n"
+  //"{\n"
+  "uniform mat4 gle_MVMatrix; \n"
+  "uniform mat3 gle_NMatrix;\n"
+  //"};\n"
+
+  //  "layout(std140, binding=5) uniform materialBlock\n"
+  //"{\n"
+  "uniform vec3 gle_ambientColor;\n"
+  "uniform vec3 gle_diffuseColor;\n"
+  "uniform vec3 gle_specularColor;\n"
+  "uniform float gle_shininess;\n"
+  "uniform float gle_specularIntensity;\n"
+  "uniform float gle_diffuseIntensity;\n"
+  //"};\n"
 
   "layout (location = GLE_IN_VERTEX_POSITION_LOCATION) in vec3 gle_vPosition; \n"
   "layout (location = GLE_IN_VERTEX_NORMAL_LOCATION) in vec3 gle_vNormal; \n"

@@ -5,7 +5,7 @@
 // Login   <michar_l@epitech.net>
 // 
 // Started on  Mon Feb 20 18:25:23 2012 loick michard
-// Last update Wed Apr 11 23:24:45 2012 gael jochaud-du-plessix
+// Last update Thu Apr 12 18:09:03 2012 loick michard
 //
 
 #include <algorithm>
@@ -19,6 +19,7 @@ gle::Mesh::Mesh(Material* material)
     _material(material),
     _indexes(NULL),
     _attributes(NULL),
+    _uniforms(NULL),
     _nbIndexes(0),
     _nbVertexes(0),
     _position(0, 0, 0),
@@ -33,6 +34,9 @@ gle::Mesh::Mesh(Material* material)
 					 gle::Buffer<GLfloat>::StaticDraw);
   _indexes = new gle::Buffer<GLuint>(gle::Buffer<GLuint>::ElementArray,
 				     gle::Buffer<GLuint>::StaticDraw);
+  _uniforms = new gle::Buffer<GLfloat>(gle::Buffer<GLfloat>::UniformArray,
+				       gle::Buffer<GLfloat>::StaticDraw);
+  _uniforms->resize(27);
 }
 
 gle::Mesh::Mesh(gle::Mesh const & other)
@@ -43,6 +47,7 @@ gle::Mesh::Mesh(gle::Mesh const & other)
     _material(other._material),
     _indexes(NULL),
     _attributes(NULL),
+    _uniforms(NULL),
     _nbIndexes(other._nbIndexes),
     _nbVertexes(other._nbVertexes),
     _position(other._position),
@@ -56,6 +61,8 @@ gle::Mesh::Mesh(gle::Mesh const & other)
 {
   _indexes =  new gle::Buffer<GLuint>(*other._indexes);
   _attributes = new gle::Buffer<GLfloat>(*other._attributes);
+  _uniforms = new gle::Buffer<GLfloat>(*other._uniforms);
+  _uniforms->resize(27);
   std::vector<gle::Mesh*> children = other._children;
   for (std::vector<gle::Mesh*>::iterator it = children.begin(),
 	 end = children.end(); it != end; ++it)
@@ -68,6 +75,8 @@ gle::Mesh::~Mesh()
     delete _indexes;
   if (_attributes)
     delete _attributes;
+  if (_uniforms)
+    delete _uniforms;
 }
 
 void gle::Mesh::addChild(gle::Mesh* child)
@@ -346,3 +355,9 @@ GLsizeiptr gle::Mesh::getNbVertexes() const
 {
   return (_nbVertexes);
 }
+
+gle::Buffer<GLfloat>* gle::Mesh::getUniforms() const
+{
+  return (_uniforms);
+}
+

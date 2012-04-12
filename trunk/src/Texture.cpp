@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Wed Feb 29 19:37:40 2012 gael jochaud-du-plessix
-// Last update Wed Mar 14 12:18:16 2012 gael jochaud-du-plessix
+// Last update Thu Apr 12 19:36:10 2012 loick michard
 //
 
 #include <Texture.hpp>
@@ -46,8 +46,8 @@ void gle::Texture::setData(sf::Image const &image)
   glTexImage2D(GL_TEXTURE_2D, // Texture type
 	       0, // Level of detail (0 = max)
 	       GL_RGBA, // Internal format
-	       image.getWidth(), // Width
-	       image.getHeight(), // Height
+	       image.getSize().x, // Width
+	       image.getSize().y, // Height
 	       0, // This value must be 0
 	       GL_RGBA, // Format of the pixel datas
 	       GL_UNSIGNED_BYTE, // Data type of the pixel datas

@@ -5,7 +5,7 @@
 // Login   <michar_l@epitech.net>
 // 
 // Started on  Mon Feb 20 13:20:54 2012 loick michard
-// Last update Thu Apr 12 00:22:48 2012 loick michard
+// Last update Thu Apr 12 16:36:10 2012 loick michard
 //
 
 #ifndef _MESH_HPP_
@@ -259,6 +259,8 @@ namespace gle {
 
     Buffer<GLfloat>* getAttributesBuffer();
 
+    Buffer<GLfloat>* getUniforms() const;
+
   private:
     std::string		_name;
     PrimitiveType	_type;
@@ -268,6 +270,7 @@ namespace gle {
     Material* _material;
     Buffer<GLuint>* _indexes;
     Buffer<GLfloat>* _attributes;
+    Buffer<GLfloat> *_uniforms;
 
     GLsizeiptr _nbIndexes;
     GLsizeiptr _nbVertexes;
@@ -283,6 +286,7 @@ namespace gle {
     Matrix4<GLfloat> _mvMatrix;
     Matrix3<GLfloat> _normalMatrix;
     Matrix4<GLfloat>* _parentMatrix;
+
   };
 }
 
