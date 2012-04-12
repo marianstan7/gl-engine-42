@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Fri Mar 16 10:56:19 2012 gael jochaud-du-plessix
-// Last update Fri Mar 16 13:34:05 2012 gael jochaud-du-plessix
+// Last update Thu Apr 12 19:36:59 2012 loick michard
 //
 
 #include <iomanip>
@@ -27,7 +27,7 @@ void video::saveImage(sf::Window &app, int framerate)
   if (!app.isOpen())
     return ;
   sf::Vector2u size = app.getSize();
-  if (videoTexture.getHeight() != size.y)
+  if (videoTexture.getSize().y != size.y)
     videoTexture.create(size.x, size.y);
 
   if (videoTimer.getElapsedTime().asMilliseconds() > 1000/framerate)
