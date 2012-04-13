@@ -5,7 +5,7 @@
 // Login   <michar_l@epitech.net>
 // 
 // Started on  Mon Feb 13 20:57:51 2012 loick michard
-// Last update Wed Feb 29 16:58:20 2012 loick michard
+// Last update Thu Apr 12 22:13:40 2012 loick michard
 //
 
 #ifndef _GLE_MATRIX4_HPP_
@@ -535,6 +535,11 @@ namespace gle {
     */
 
     operator T*()
+    {
+      return (_matrix);
+    }
+
+    operator const T*() const
     {
       return (_matrix);
     }

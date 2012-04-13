@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Mon Feb 20 22:30:11 2012 gael jochaud-du-plessix
-// Last update Wed Apr 11 23:10:13 2012 loick michard
+// Last update Fri Apr 13 12:38:30 2012 loick michard
 //
 
 #ifndef _GLE_MATERIAL_HPP_
@@ -15,6 +15,7 @@
 # include <Program.hpp>
 # include <Texture.hpp>
 # include <Color.hpp>
+# include <Buffer.hpp>
 
 namespace gle {
 
@@ -132,10 +133,7 @@ namespace gle {
 
     void setColorMap(gle::Texture* colorMap);
 
-    //! Create the rendering that can be used to render this material
-    /*
-      \param scene Related scene
-    */
+    Buffer<GLfloat>* getUniforms();
 
   private:
     std::string _name;
@@ -154,6 +152,8 @@ namespace gle {
     bool _colorMapEnabled;
     gle::Texture* _colorMap;
 
+    Buffer<GLfloat> *_uniforms;
+    bool _needUniformsUpdate;
   };
 }
 

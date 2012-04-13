@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Fri Feb 17 16:21:24 2012 gael jochaud-du-plessix
-// Last update Thu Apr 12 00:11:06 2012 loick michard
+// Last update Fri Apr 13 12:09:07 2012 loick michard
 //
 
 #ifndef _GLE_PROGRAM_HPP_
@@ -47,6 +47,11 @@ namespace gle {
       Shininess,
       SpecularIntensity,
       DiffuseIntensity
+    };
+
+    enum UniformBlock {
+      MaterialBlock,
+      NbUniformBlocks
     };
 
     enum TextureUnit {
@@ -122,8 +127,14 @@ namespace gle {
     //! Return the OpenGL Program identifier
     GLuint getId() const;
 
+    void retreiveUniformBlockIndex(UniformBlock block, const std::string& name);
+
+    GLuint getUniformBlockIndex(UniformBlock block) const;
+
   private:
     GLuint _id;
+
+    GLuint _uniformBlockIndexes[NbUniformBlocks];
 
     std::vector<GLint> _uniformLocations;
     std::vector<std::string> _uniformNames;

@@ -5,7 +5,7 @@
 // Login   <michar_l@epitech.net>
 // 
 // Started on  Thu Feb 23 14:42:48 2012 loick michard
-// Last update Mon Feb 27 19:21:15 2012 gael jochaud-du-plessix
+// Last update Thu Apr 12 22:17:58 2012 loick michard
 //
 
 #ifndef _MATRIX3_HPP
@@ -128,6 +128,11 @@ namespace gle {
 
     //! Return a pointer to the matrix values
     operator T*()
+    {
+      return (_matrix);
+    }
+
+    operator const T*() const
     {
       return (_matrix);
     }

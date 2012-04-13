@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Mon Feb 20 19:12:49 2012 gael jochaud-du-plessix
-// Last update Thu Apr 12 00:11:39 2012 loick michard
+// Last update Fri Apr 13 13:13:06 2012 loick michard
 //
 
 #include <Scene.hpp>
@@ -271,15 +271,15 @@ void		gle::Scene::buildProgram()
 
   _program->getUniformLocation(gle::Program::MVMatrix);
   _program->getUniformLocation(gle::Program::PMatrix);
-  _program->getUniformLocation(gle::Program::AmbientColor);
+  /*  _program->getUniformLocation(gle::Program::AmbientColor);
   _program->getUniformLocation(gle::Program::DiffuseColor);
-  _program->getUniformLocation(gle::Program::SpecularColor);
+  _program->getUniformLocation(gle::Program::SpecularColor);*/
   _program->getUniformLocation(gle::Program::HasColorMap);
   _program->getUniformLocation(gle::Program::ColorMap);
   _program->getUniformLocation(gle::Program::NMatrix);
-  _program->getUniformLocation(gle::Program::Shininess);
+  /*_program->getUniformLocation(gle::Program::Shininess);
   _program->getUniformLocation(gle::Program::SpecularIntensity);
-  _program->getUniformLocation(gle::Program::DiffuseIntensity);
+  _program->getUniformLocation(gle::Program::DiffuseIntensity);*/
   if (getDirectionalLightsSize())
     {
       _program->getUniformLocation(gle::Program::DirectionalLightDirection);
@@ -291,6 +291,7 @@ void		gle::Scene::buildProgram()
       _program->getUniformLocation(gle::Program::PointLightColor);
       _program->getUniformLocation(gle::Program::PointLightSpecularColor);
     }
+  _program->retreiveUniformBlockIndex(gle::Program::MaterialBlock, "materialBlock");
   delete vertexShader;
   delete fragmentShader;
 }

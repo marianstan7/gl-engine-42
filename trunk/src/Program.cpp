@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Fri Feb 17 16:21:14 2012 gael jochaud-du-plessix
-// Last update Thu Apr 12 00:10:00 2012 loick michard
+// Last update Fri Apr 13 13:36:03 2012 loick michard
 //
 
 #include <Program.hpp>
@@ -158,4 +158,17 @@ void gle::Program::setUniform(Uniform uniform, TextureUnit texture)
 void gle::Program::setUniform(Uniform uniform, bool value)
 {
   glUniform1i(_uniformLocations[uniform], (value) ? 1 : 0);
+}
+
+void gle::Program::retreiveUniformBlockIndex(UniformBlock block, const std::string &name)
+{
+  _uniformBlockIndexes[block] = glGetUniformBlockIndex(_id, name.c_str());
+  glUniformBlockBinding(_id,
+                        _uniformBlockIndexes[block],
+                        block);
+}
+
+GLuint gle::Program::getUniformBlockIndex(UniformBlock block) const
+{
+  return (_uniformBlockIndexes[block]);
 }
