@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Wed Feb 15 16:10:11 2012 gael jochaud-du-plessix
-// Last update Thu Apr 12 16:12:33 2012 loick michard
+// Last update Thu Apr 12 22:50:00 2012 loick michard
 //
 
 #ifndef _GLE_BUFFER_HPP_
@@ -140,6 +140,11 @@ namespace gle {
     void bind() const
     {
       glBindBuffer(_type, _id);
+    }
+
+    void bindBase(GLuint binding) const
+    {
+      glBindBufferBase(_type, binding, _id);
     }
 
     //! Resize a buffer

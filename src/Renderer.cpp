@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Mon Feb 20 20:48:54 2012 gael jochaud-du-plessix
-// Last update Thu Apr 12 00:34:32 2012 loick michard
+// Last update Fri Apr 13 13:36:17 2012 loick michard
 //
 
 #include <Renderer.hpp>
@@ -152,7 +152,7 @@ void gle::Renderer::_setCurrentProgram(gle::Scene* scene,
 
 void gle::Renderer::_setMaterialUniforms(gle::Material* material)
 {  
-  _currentProgram->setUniform(gle::Program::AmbientColor,
+  /*  _currentProgram->setUniform(gle::Program::AmbientColor,
 			      material->getAmbientColor());
   _currentProgram->setUniform(gle::Program::DiffuseColor,
 			      material->getDiffuseColor());
@@ -164,7 +164,11 @@ void gle::Renderer::_setMaterialUniforms(gle::Material* material)
   _currentProgram->setUniform(gle::Program::DiffuseIntensity,
 			      material->getDiffuseIntensity());
   _currentProgram->setUniform(gle::Program::SpecularIntensity,
-			      material->getSpecularIntensity());
+			      material->getSpecularIntensity());*/
+  //  glUniformBlockBinding(_currentProgram->getId(),
+  //			_currentProgram->getUniformBlockIndex(gle::Program::MaterialBlock),
+  //			gle::Program::MaterialBlock);
+  material->getUniforms()->bindBase(gle::Program::MaterialBlock);
 }
 
 void gle::Renderer::_setSceneUniforms(gle::Scene* scene, gle::Camera* camera)
@@ -204,10 +208,14 @@ void gle::Renderer::_setMeshUniforms(gle::Scene* scene, gle::Mesh* mesh)
   inverse.inverse();
   gle::Matrix3<GLfloat> normalMatrix = inverse;
   normalMatrix.transpose();
-
   // Set modelview matrix
   _currentProgram->setUniform(gle::Program::MVMatrix, mvMatrix);
-
   // Set normals matrix
   _currentProgram->setUniform(gle::Program::NMatrix, normalMatrix);
+  /*
+  glUniformBlockBinding(_currentProgram->getId(), 
+			_currentProgram->getUniformBlockIndex(gle::Program::MaterialBlock),
+			gle::Program::MaterialBlock);
+			uniforms->bindBase(gle::Program::MaterialBlock);
+  */
 }
