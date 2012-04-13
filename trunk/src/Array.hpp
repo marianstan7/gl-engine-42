@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Tue Feb 28 11:10:10 2012 gael jochaud-du-plessix
-// Last update Tue Feb 28 17:30:47 2012 gael jochaud-du-plessix
+// Last update Fri Apr 13 14:49:46 2012 gael jochaud-du-plessix
 //
 
 #ifndef _GLE_ARRAY_HPP_
@@ -59,7 +59,7 @@ namespace gle {
 
     Array& push(T const & v)
     {
-      push_back(v);
+      this->push_back(v);
       return (*this);
     }
 
@@ -67,8 +67,8 @@ namespace gle {
 
     Array& push(T const & v1, T const & v2)
     {
-      push_back(v1);
-      push_back(v2);
+      this->push_back(v1);
+      this->push_back(v2);
       return (*this);
     }
 
@@ -76,9 +76,9 @@ namespace gle {
 
     Array& push(T const & v1, T const & v2, T const & v3)
     {
-      push_back(v1);
-      push_back(v2);
-      push_back(v3);
+      this->push_back(v1);
+      this->push_back(v2);
+      this->push_back(v3);
       return (*this);
     }
 
@@ -86,10 +86,10 @@ namespace gle {
 
     Array& push(T const & v1, T const & v2, T const & v3, T const & v4)
     {
-      push_back(v1);
-      push_back(v2);
-      push_back(v3);
-      push_back(v4);
+      this->push_back(v1);
+      this->push_back(v2);
+      this->push_back(v3);
+      this->push_back(v4);
       return (*this);
     }
 
@@ -97,9 +97,9 @@ namespace gle {
 
     Array& push(gle::Vector3<T> const & v)
     {
-      push_back(v.x);
-      push_back(v.y);
-      push_back(v.z);
+      this->push_back(v.x);
+      this->push_back(v.y);
+      this->push_back(v.z);
       return (*this);
     }
 
@@ -107,10 +107,10 @@ namespace gle {
 
     Array& push(gle::Color<T> const & c)
     {
-      push_back(c.r);
-      push_back(c.g);
-      push_back(c.b);
-      push_back(c.a);
+      this->push_back(c.r);
+      this->push_back(c.g);
+      this->push_back(c.b);
+      this->push_back(c.a);
       return (*this);
     }
     

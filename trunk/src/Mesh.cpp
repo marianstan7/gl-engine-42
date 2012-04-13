@@ -5,11 +5,12 @@
 // Login   <michar_l@epitech.net>
 // 
 // Started on  Mon Feb 20 18:25:23 2012 loick michard
-// Last update Fri Apr 13 11:35:08 2012 loick michard
+   Last update Fri Apr 13 18:07:57 2012 gael jochaud-du-plessix
 //
 
 #include <algorithm>
 #include <Mesh.hpp>
+#include <MeshBufferManager.hpp>
 
 gle::Mesh::Mesh(Material* material)
   : _name(""),
@@ -29,6 +30,8 @@ gle::Mesh::Mesh(Material* material)
     _normalMatrix(),
     _parentMatrix(NULL)
 {
+  MeshBufferManager::Chunk* test =
+    MeshBufferManager::getInstance().store(this, 42);
   _attributes = new gle::Buffer<GLfloat>(gle::Buffer<GLfloat>::VertexArray,
 					 gle::Buffer<GLfloat>::StaticDraw);
   _indexes = new gle::Buffer<GLuint>(gle::Buffer<GLuint>::ElementArray,

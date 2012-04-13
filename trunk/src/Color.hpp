@@ -5,7 +5,7 @@
 // Login   <michar_l@epitech.net>
 // 
 // Started on  Fri Feb 17 12:51:39 2012 loick michard
-// Last update Thu Feb 23 18:12:20 2012 loick michard
+// Last update Fri Apr 13 16:54:42 2012 gael jochaud-du-plessix
 //
 
 #ifndef _GLE_COLOR_HPP_
@@ -87,6 +87,8 @@ namespace gle {
     //! a component of the RGBA Color
     T a;
   };
+
+  typedef Color<GLfloat> fColor;
 }
 
 #endif // _COLOR_HPP_
