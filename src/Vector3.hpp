@@ -5,7 +5,7 @@
 // Login   <michar_l@epitech.net>
 // 
 // Started on  Fri Feb 17 12:51:39 2012 loick michard
-// Last update Sat Mar 10 00:46:43 2012 gael jochaud-du-plessix
+// Last update Fri Apr 13 16:53:56 2012 gael jochaud-du-plessix
 //
 
 #ifndef _GLE_VECTOR3_HPP_
@@ -131,6 +131,10 @@ namespace gle {
     //! z component of 3D vector
     T z;
   };
+
+  typedef Vector3<GLfloat> fVector3;
+  typedef Vector3<GLuint> uiVector3;
+  typedef Vector3<GLint> iVector3;
 }
 
 template <typename T>

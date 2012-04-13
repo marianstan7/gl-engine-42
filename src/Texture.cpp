@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Wed Feb 29 19:37:40 2012 gael jochaud-du-plessix
-// Last update Thu Apr 12 19:36:10 2012 loick michard
+// Last update Fri Apr 13 18:08:31 2012 gael jochaud-du-plessix
 //
 
 #include <Texture.hpp>
@@ -41,8 +41,6 @@ void gle::Texture::setData(sf::Image const &image)
   if (pixelsPtr == NULL)
     throw new gle::Exception::InvalidValue("Invalid texture image");
   bind();
-  glTexParameteri(_type, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-  glTexParameteri(_type, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
   glTexImage2D(GL_TEXTURE_2D, // Texture type
 	       0, // Level of detail (0 = max)
 	       GL_RGBA, // Internal format
@@ -52,6 +50,9 @@ void gle::Texture::setData(sf::Image const &image)
 	       GL_RGBA, // Format of the pixel datas
 	       GL_UNSIGNED_BYTE, // Data type of the pixel datas
 	       pixelsPtr);
+  glTexParameteri(_type, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_LINEAR);
+  glTexParameteri(_type, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+  glGenerateMipmap(GL_TEXTURE_2D);
   GLenum error = glGetError();
   if (error != GL_NO_ERROR)
     throw new gle::Exception::OpenGLError();
