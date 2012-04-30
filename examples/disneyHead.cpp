@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Wed Feb 15 17:24:36 2012 gael jochaud-du-plessix
-// Last update Wed Apr 11 23:58:18 2012 loick michard
+// Last update Mon Apr 30 15:44:46 2012 gael jochaud-du-plessix
 //
 
 /*! 
@@ -141,12 +141,12 @@ int glEngine(int ac, char **av)
   while (App.isOpen())
     {
       sf::Event event;
-      /*      if (time.getElapsedTime().asMilliseconds() >= 100)
+      if (time.getElapsedTime().asMilliseconds() >= 100)
 	{
 	  std::cout << "fps:" << (frameCounter * 10) << std::endl;
 	  frameCounter = 0;
 	  time.restart();
-	}*/
+	}
       frameCounter++;
       angle = (float)clock.getElapsedTime().asMilliseconds() / 1000;
       sf::Event Event;

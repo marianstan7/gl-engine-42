@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Fri Mar  2 17:27:21 2012 gael jochaud-du-plessix
-// Last update Wed Apr 11 22:54:06 2012 loick michard
+// Last update Mon Apr 30 15:16:29 2012 gael jochaud-du-plessix
 //
 
 #include <iomanip>
@@ -149,11 +149,21 @@ int glEngine(int ac, char **av)
 
   sf::Clock clock;
   sf::Clock time;
+  sf::Clock frameTimer;
+  int frameCounter = 0;
 
   App.setMouseCursorVisible(false);
   
   while (App.isOpen())
-    {      
+    {    
+      if (frameTimer.getElapsedTime().asMilliseconds() >= 1000)
+        {
+	  std::cout << "fps:" << (frameCounter * 1) << std::endl;
+          frameCounter = 0;
+          frameTimer.restart();
+        }
+      frameCounter++;
+  
       sf::Event Event;
       while (App.pollEvent(Event))
 	{
