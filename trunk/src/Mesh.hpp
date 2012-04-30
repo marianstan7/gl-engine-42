@@ -5,7 +5,7 @@
 // Login   <michar_l@epitech.net>
 // 
 // Started on  Mon Feb 20 13:20:54 2012 loick michard
-// Last update Fri Apr 13 11:36:20 2012 loick michard
+// Last update Tue May  1 01:44:42 2012 gael jochaud-du-plessix
 //
 
 #ifndef _MESH_HPP_
@@ -21,6 +21,7 @@
 # include <Material.hpp>
 # include <Quaternion.hpp>
 # include <Array.hpp>
+# include <MeshBufferManager.hpp>
 
 namespace gle {
   
@@ -267,7 +268,8 @@ namespace gle {
 
     Material* _material;
     Buffer<GLuint>* _indexes;
-    Buffer<GLfloat>* _attributes;
+    MeshBufferManager::Chunk*	_attributes;
+    //Buffer<GLfloat>* _attributes;
 
     GLsizeiptr _nbIndexes;
     GLsizeiptr _nbVertexes;

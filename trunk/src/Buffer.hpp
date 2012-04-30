@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Wed Feb 15 16:10:11 2012 gael jochaud-du-plessix
-// Last update Mon Apr 30 20:28:24 2012 gael jochaud-du-plessix
+// Last update Tue May  1 00:39:16 2012 gael jochaud-du-plessix
 //
 
 #ifndef _GLE_BUFFER_HPP_
@@ -129,27 +129,24 @@ namespace gle {
       _type(other._type), _usage(other._usage), _size(newSize), _id(0)
     {
       glGenBuffers(1, &_id);
-      if (other._size > 0)
-	{
-	  if (_size < other._size)
-	    _size = other._size;
-	  glBindBuffer(GL_COPY_WRITE_BUFFER, _id);
-	  glBufferData(GL_COPY_WRITE_BUFFER, _size * sizeof(T),
-		       NULL, _usage);
-	  glBindBuffer(GL_COPY_READ_BUFFER, other._id);
-	  bind();
-	  glCopyBufferSubData(GL_COPY_READ_BUFFER, GL_COPY_WRITE_BUFFER,
-			      0, 0, other._size * sizeof(T));
-	  GLenum error = glGetError();
-	  if (error == GL_OUT_OF_MEMORY)
-	    throw new gle::Exception::OutOfMemory("Cannot copy buffer");
-	  else if (error == GL_INVALID_VALUE)
-	    throw new gle::Exception::InvalidValue();
-	  else if (error == GL_INVALID_OPERATION)
-	    throw new gle::Exception::InvalidOperation();
-	  else if (error != GL_NO_ERROR)
-	    throw new gle::Exception::OpenGLError();
-	}
+      if (_size < other._size)
+	_size = other._size;
+      glBindBuffer(GL_COPY_WRITE_BUFFER, _id);
+      glBufferData(GL_COPY_WRITE_BUFFER, _size * sizeof(T),
+		   NULL, _usage);
+      glBindBuffer(GL_COPY_READ_BUFFER, other._id);
+      bind();
+      glCopyBufferSubData(GL_COPY_READ_BUFFER, GL_COPY_WRITE_BUFFER,
+			  0, 0, other._size * sizeof(T));
+      GLenum error = glGetError();
+      if (error == GL_OUT_OF_MEMORY)
+	throw new gle::Exception::OutOfMemory("Cannot copy buffer");
+      else if (error == GL_INVALID_VALUE)
+	throw new gle::Exception::InvalidValue();
+      else if (error == GL_INVALID_OPERATION)
+	throw new gle::Exception::InvalidOperation();
+      else if (error != GL_NO_ERROR)
+	throw new gle::Exception::OpenGLError();
     }
 
     //! Destruct a buffer
