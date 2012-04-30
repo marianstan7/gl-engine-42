@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Fri Mar  2 17:27:21 2012 gael jochaud-du-plessix
-// Last update Mon Apr 30 15:16:29 2012 gael jochaud-du-plessix
+// Last update Tue May  1 01:22:50 2012 gael jochaud-du-plessix
 //
 
 #include <iomanip>
@@ -22,6 +22,7 @@
 #include <ObjLoader.hpp>
 #include <DirectionalLight.hpp>
 #include <PointLight.hpp>
+#include <MeshBufferManager.hpp>
 
 #include "flycam.hpp"
 #include "video.hpp"
@@ -61,7 +62,7 @@ int glEngine(int ac, char **av)
   context.minorVersion = 3;
 
   sf::Window App(sf::VideoMode(W_WIDTH, W_HEIGHT, 32), "glEngine",
-		 sf::Style::Default, context);
+		 sf::Style::Default, context);  
   
   //! Print OpenGL supported version
   context = App.getSettings();
@@ -69,6 +70,17 @@ int glEngine(int ac, char **av)
 	    << context.minorVersion << std::endl;
 
   App.setActive();
+
+  float d1[42];
+  float d2[42];
+  float d3[4200];
+  //gle::MeshBufferManager::Chunk* test =
+  gle::MeshBufferManager::Chunk* test = gle::MeshBufferManager::getInstance().store(d1, 42);
+  gle::MeshBufferManager::Chunk* test2 = gle::MeshBufferManager::getInstance().store(d2, 42);
+  gle::MeshBufferManager::Chunk* test3 = gle::MeshBufferManager::getInstance().store(d3, 4200);
+  gle::MeshBufferManager::getInstance().free(test3);
+  gle::MeshBufferManager::getInstance().free(test);
+  gle::MeshBufferManager::getInstance().free(test2);
 
   gle::Scene scene;
   gle::PerspectiveCamera camera(gle::Vector3<GLfloat>(-20, 10, 0),
