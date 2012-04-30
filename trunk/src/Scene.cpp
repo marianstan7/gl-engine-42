@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Mon Feb 20 19:12:49 2012 gael jochaud-du-plessix
-// Last update Fri Apr 13 13:13:06 2012 loick michard
+// Last update Mon Apr 30 15:39:46 2012 gael jochaud-du-plessix
 //
 
 #include <Scene.hpp>
@@ -90,6 +90,7 @@ gle::Scene & gle::Scene::add(Light* light)
     {
       _lights.push_back(light);
       this->updateLights();
+      _needProgramCompilation = true;
     }
   return (*this);
 }
@@ -129,6 +130,7 @@ gle::Scene & gle::Scene::remove(Light* light)
     {
       _lights.erase(it);
       this->updateLights();
+      _needProgramCompilation = true;
     }
   return (*this);
 }
@@ -203,7 +205,6 @@ void gle::Scene::updateLights()
     }
   _directionalLightsSize = dSize;
   _pointLightsSize = pSize;
-  _needProgramCompilation = true;
 }
 
 GLfloat* gle::Scene::getDirectionalLightsDirection() const

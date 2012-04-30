@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Fri Apr 13 17:10:24 2012 gael jochaud-du-plessix
-// Last update Fri Apr 13 17:12:43 2012 gael jochaud-du-plessix
+// Last update Mon Apr 30 20:19:19 2012 gael jochaud-du-plessix
 //
 
 #ifndef _MESH_BUFFER_MANAGER_HPP_
@@ -25,7 +25,9 @@ namespace gle {
       setStorageBuffer(new fBuffer(fBuffer::VertexArray,
                                    fBuffer::StaticDraw));
     }
-    ~MeshBufferManager() {}
+    ~MeshBufferManager()
+    {
+    }
 
   public:
   };
