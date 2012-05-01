@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Wed Feb 15 16:10:11 2012 gael jochaud-du-plessix
-// Last update Tue May  1 00:39:16 2012 gael jochaud-du-plessix
+// Last update Tue May  1 18:30:56 2012 gael jochaud-du-plessix
 //
 
 #ifndef _GLE_BUFFER_HPP_
@@ -270,8 +270,15 @@ namespace gle {
     T* map(GLintptr offset, GLsizeiptr length, MapAccess access=ReadWrite)
     {
       bind();
+      GLbitfield accessBits = 0;
+      if (access == ReadOnly)
+	accessBits = GL_MAP_READ_BIT;
+      else if (access == WriteOnly)
+	accessBits = GL_MAP_WRITE_BIT;
+      else if (access == ReadWrite)
+	accessBits = GL_MAP_READ_BIT | GL_MAP_WRITE_BIT;
       T* ptr = (T*)glMapBufferRange(_type, offset * sizeof(T),
-				    length * sizeof(T), access);
+				    length * sizeof(T), accessBits);
       GLenum error = glGetError();
       if (error == GL_INVALID_VALUE)
 	throw new gle::Exception::InvalidValue("Invalid offset or length");

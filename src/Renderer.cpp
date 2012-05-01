@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Mon Feb 20 20:48:54 2012 gael jochaud-du-plessix
-// Last update Mon Apr 30 15:58:22 2012 gael jochaud-du-plessix
+// Last update Tue May  1 18:52:07 2012 gael jochaud-du-plessix
 //
 
 #include <Renderer.hpp>
@@ -63,6 +63,8 @@ void gle::Renderer::render(Scene* scene)
   glEnableVertexAttribArray(gle::ShaderSource::Vertex::
 			    Default::NormalLocation);
 
+  MeshBufferManager::getInstance().bind();
+
   for (std::vector<gle::Mesh*>::iterator it = meshes.begin();
        it != meshesEnd; ++it)
     _renderMesh(scene, *it);
@@ -72,9 +74,11 @@ void gle::Renderer::_renderMesh(gle::Scene* scene, gle::Mesh* mesh)
 {
   GLsizeiptr nbIndexes = mesh->getNbIndexes();
   GLsizeiptr nbVertexes = mesh->getNbVertexes();
+
   if (nbIndexes < 1 || nbVertexes < 1)
     return ;
-  gle::Buffer<GLfloat> * attributesBuffer = mesh->getAttributesBuffer();
+
+  gle::MeshBufferManager::Chunk* vertexAttributes = mesh->getAttributes();
   gle::Buffer<GLuint> * indexesBuffer = mesh->getIndexesBuffer();
   gle::Material* material = mesh->getMaterial();
 
@@ -87,17 +91,17 @@ void gle::Renderer::_renderMesh(gle::Scene* scene, gle::Mesh* mesh)
   _setMaterialUniforms(material);
   _setMeshUniforms(scene, mesh);
   
-  attributesBuffer->bind();
-  
   // Set Position buffer
   glVertexAttribPointer(gle::ShaderSource::Vertex::Default::PositionLocation,
-			3, GL_FLOAT, GL_FALSE, 0, 0);
+			3, GL_FLOAT, GL_FALSE,
+			gle::Mesh::VertexAttributesSize * sizeof(GLfloat),
+			(GLvoid*)(vertexAttributes->getOffset() * sizeof(GLfloat)));
 
   // Set Normal buffer
   glVertexAttribPointer(gle::ShaderSource::Vertex::Default::NormalLocation,
-			3, GL_FLOAT, GL_FALSE, 0,
-			(GLvoid*)(nbVertexes
-				  * gle::Mesh::VertexAttributeSizeCoords
+			3, GL_FLOAT, GL_FALSE, gle::Mesh::VertexAttributesSize * sizeof(GLfloat),
+			(GLvoid*)((vertexAttributes->getOffset()
+				   + gle::Mesh::VertexAttributeSizeCoords)
 				  * sizeof(GLfloat)));
 
   // Set up ColorMap
@@ -110,10 +114,10 @@ void gle::Renderer::_renderMesh(gle::Scene* scene, gle::Mesh* mesh)
       //textureCoordsBuffer->bind();
       glVertexAttribPointer(gle::ShaderSource::Vertex::
                             ColorMap::TextureCoordLocation,
-                            2, GL_FLOAT, GL_FALSE, 0,
-			    (GLvoid*)(nbVertexes
-				      * (gle::Mesh::VertexAttributeSizeCoords
-					 + gle::Mesh::VertexAttributeSizeNormal)
+                            2, GL_FLOAT, GL_FALSE, gle::Mesh::VertexAttributesSize * sizeof(GLfloat),
+			    (GLvoid*)((vertexAttributes->getOffset()
+				       + gle::Mesh::VertexAttributeSizeCoords
+				       + gle::Mesh::VertexAttributeSizeNormal)
 				      * sizeof(GLfloat)));
 
       // Set texture to the shader

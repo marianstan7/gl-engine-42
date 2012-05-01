@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Fri Apr 13 12:43:29 2012 gael jochaud-du-plessix
-// Last update Tue May  1 16:07:33 2012 loick michard
+// Last update Tue May  1 18:58:05 2012 gael jochaud-du-plessix
 //
 
 #ifndef _GLE_BUFFER_MANAGER_HPP_
@@ -103,16 +103,14 @@ namespace gle {
 	  delete this;
       }
 
-      void setData(const void* data, GLsizeiptr size = 0)
+      void setData(const void* data)
       {
-	if (size > _size)
-	  UnderClass::getInstance().resize(this, size);
 	gle::Buffer<T>* buffer = UnderClass::getInstance().getStorageBuffer();
 
 	buffer->setData(reinterpret_cast<const T*>(data), _offset, _size);
       }
 
-      T* map(Buffer<T>::MapAccess access=Buffer<T>::ReadWrite)
+      T* map(typename gle::Buffer<T>::MapAccess access=gle::Buffer<T>::ReadWrite)
       {
 	gle::Buffer<T>* buffer = UnderClass::getInstance().getStorageBuffer();
 
@@ -132,6 +130,12 @@ namespace gle {
       bool		_isFree;
       int		_refCount;
     };
+
+    void bind()
+    {
+      if (_buffer)
+	_buffer->bind();
+    }
     
     void drain()
     {
@@ -139,31 +143,44 @@ namespace gle {
 	delete chunk;
     }
 
-    Chunk* resize(Chunk *chunk, GLsizeiptr size)
+    Chunk* resize(Chunk *chunk, GLsizeiptr size, const void* data=NULL)
     {
       typename decltype(_chunks)::iterator it = find(_chunks.begin(), _chunks.end(), chunk);
-      if (it = _chunks.end())
+      if (it == _chunks.end())
 	return (NULL);
       typename decltype(_chunks)::iterator next = (++it);
       --it;
       if (size <= chunk->getSize())
-	return (chunck);
+	return (chunk);
       if (next != _chunks.end() && (*next)->isFree() &&
 	  (*it)->getSize() + (*next)->getSize() >= size)
 	{
 	  (*next)->setSize((*next)->getSize() - size + (*it)->getSize());
 	  (*it)->setSize(size);
-	  if ((*next)->getSize == 0)
+	  if ((*next)->getSize() == 0)
 	    {
 	      Chunk* tmp = *next;
-	      _freeChunks.erase(tmp);
-	      _chunks.remove(next);
+	      _freeChunks.remove(tmp);
+	      _chunks.erase(next);
 	      delete tmp;
 	    }
+	  if (data)
+	    (*it)->setData(data);
 	  return (*it);
 	}
+      if (data)
+	{
+	  free(chunk);
+	  return (store(data, size));
+	}
+      Chunk* newChunk = store(NULL, size);
+      glBindBuffer(GL_COPY_WRITE_BUFFER, _buffer->getId());
+      glBindBuffer(GL_COPY_READ_BUFFER, _buffer->getId());
+      glCopyBufferSubData(GL_COPY_READ_BUFFER, GL_COPY_WRITE_BUFFER,
+			  chunk->getOffset(), newChunk->getOffset(),
+			  chunk->getSize());
       free(chunk);
-      return (store(NULL, size));
+      return (newChunk);
     }
 
     Chunk* store(const void* data, GLsizeiptr size)
@@ -217,7 +234,6 @@ namespace gle {
 	    newChunk->setData(data);
 	  return (newChunk);
 	}
-      std::cout << "--> " << bestChunk->getSize() << "\n";
       bestChunkIt = _freeChunks.erase(bestChunkIt);
       bestChunk->setFree(false);
       if (bestChunk->getSize() > (size + BufferManager::Chunk::MinSize))

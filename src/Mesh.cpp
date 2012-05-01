@@ -5,7 +5,7 @@
 // Login   <michar_l@epitech.net>
 // 
 // Started on  Mon Feb 20 18:25:23 2012 loick michard
-// Last update Tue May  1 01:44:19 2012 gael jochaud-du-plessix
+// Last update Tue May  1 19:21:39 2012 gael jochaud-du-plessix
 //
 
 #include <Mesh.hpp>
@@ -28,8 +28,6 @@ gle::Mesh::Mesh(Material* material)
     _normalMatrix(),
     _parentMatrix(NULL)
 {
-  _attributes = new gle::Buffer<GLfloat>(gle::Buffer<GLfloat>::VertexArray,
-					 gle::Buffer<GLfloat>::StaticDraw);
   _indexes = new gle::Buffer<GLuint>(gle::Buffer<GLuint>::ElementArray,
 				     gle::Buffer<GLuint>::StaticDraw);
 }
@@ -53,8 +51,12 @@ gle::Mesh::Mesh(gle::Mesh const & other)
     _normalMatrix(other._mvMatrix),
     _parentMatrix(other._parentMatrix)
 {
+  static int max = 0, nb = 0;
+  max += _nbVertexes;
+  nb++;
+  std::cout << nb << " " << max / 3 << "\n";
   _indexes =  new gle::Buffer<GLuint>(*other._indexes);
-  _attributes = new gle::Buffer<GLfloat>(*other._attributes);
+  _attributes = other._attributes;
   std::vector<gle::Mesh*> children = other._children;
   for (std::vector<gle::Mesh*>::iterator it = children.begin(),
 	 end = children.end(); it != end; ++it)
@@ -178,43 +180,65 @@ void gle::Mesh::setScale(GLfloat scale)
   this->setScale(scale, scale, scale);
 }
 
+void gle::Mesh::setVertexAttributes(const GLfloat* attributes, GLsizeiptr nbVertexes)
+{
+  if (!_attributes)
+    _attributes = MeshBufferManager::getInstance()
+      .store(attributes, nbVertexes * VertexAttributeSizeTextureCoords);
+  else
+    _attributes = MeshBufferManager::getInstance()
+      .resize(_attributes, nbVertexes * VertexAttributeSizeTextureCoords, attributes);
+  _nbVertexes = nbVertexes;
+}
+
 void gle::Mesh::setVertexes(const GLfloat* vertexes, GLsizeiptr size)
 {
   GLsizeiptr nbVertexes = size / VertexAttributeSizeCoords;
-  if (nbVertexes != _nbVertexes)
-    {
-      _nbVertexes = nbVertexes;
-      _attributes->resize(VertexAttributesSize * nbVertexes);
-    }
-  _attributes->setData(vertexes, 0, size);
+
+  _nbVertexes = nbVertexes;
+  if (!_attributes)
+    _attributes = MeshBufferManager::getInstance()
+      .store(NULL, nbVertexes * VertexAttributesSize);
+  GLfloat* attributes = _attributes->map();
+  for (GLsizeiptr i = 0; i < nbVertexes; ++i)
+    for (GLuint j = 0; j < VertexAttributeSizeCoords; ++j)
+      attributes[i * VertexAttributesSize + j] =
+	vertexes[i * VertexAttributeSizeCoords + j];
+  attributes[0] = vertexes[0];
+  _attributes->unmap();
 }
 
 void gle::Mesh::setNormals(const GLfloat* normals, GLsizeiptr size)
 {
   GLsizeiptr nbVertexes = size / VertexAttributeSizeNormal;
-  if (nbVertexes != _nbVertexes)
-    {
-      _nbVertexes = nbVertexes;
-      _attributes->resize(VertexAttributesSize * nbVertexes);
-    }
-  _attributes->setData(normals,
-		       nbVertexes * VertexAttributeSizeCoords,
-		       size);
+
+  _nbVertexes = nbVertexes;
+  if (!_attributes)
+    _attributes = MeshBufferManager::getInstance()
+      .store(NULL, nbVertexes * VertexAttributesSize);
+  GLfloat* attributes = _attributes->map();
+  for (GLsizeiptr i = 0; i < nbVertexes; ++i)
+    for (GLuint j = 0; j < VertexAttributeSizeNormal; ++j)
+      attributes[i * VertexAttributesSize + VertexAttributeSizeCoords + j] =
+	normals[i * VertexAttributeSizeNormal + j];
+  _attributes->unmap();
 }
 
 void gle::Mesh::setTextureCoords(const GLfloat* textureCoords, GLsizeiptr size)
 {
-  GLsizeiptr nbVertexes = size
-    / VertexAttributeSizeTextureCoords;
-  if (nbVertexes != _nbVertexes)
-    {
-      _nbVertexes = nbVertexes;
-      _attributes->resize(VertexAttributesSize * nbVertexes);
-    }
-  _attributes->setData(textureCoords,
-		       nbVertexes * (VertexAttributeSizeCoords
-				     + VertexAttributeSizeNormal),
-		       size);
+  GLsizeiptr nbVertexes = size / VertexAttributeSizeTextureCoords;
+
+  _nbVertexes = nbVertexes;
+  if (!_attributes)
+    _attributes = MeshBufferManager::getInstance()
+      .store(NULL, nbVertexes * VertexAttributesSize);
+  GLfloat* attributes = _attributes->map();
+  for (GLsizeiptr i = 0; i < nbVertexes; ++i)
+    for (GLuint j = 0; j < VertexAttributeSizeTextureCoords; ++j)
+      attributes[i * VertexAttributesSize + VertexAttributeSizeCoords +
+		 VertexAttributeSizeNormal + j] =
+	textureCoords[i * VertexAttributeSizeTextureCoords + j];
+  _attributes->unmap();
 }
 
 void gle::Mesh::setIndexes(const GLuint* indexes, GLsizeiptr size)
@@ -226,41 +250,50 @@ void gle::Mesh::setIndexes(const GLuint* indexes, GLsizeiptr size)
 void gle::Mesh::setVertexes(gle::Array<GLfloat> const &vertexes)
 {
   GLsizeiptr nbVertexes = vertexes.size() / VertexAttributeSizeCoords;
-  if (nbVertexes != _nbVertexes)
-    {
-      _nbVertexes = nbVertexes;
-      _attributes->resize(VertexAttributesSize * nbVertexes);
-    }
-  _attributes->setData((const GLfloat*)vertexes, 0,
-		       nbVertexes * VertexAttributeSizeCoords);
+
+  _nbVertexes = nbVertexes;
+  if (!_attributes)
+    _attributes = MeshBufferManager::getInstance()
+      .store(NULL, nbVertexes * VertexAttributesSize);
+  GLfloat* attributes = _attributes->map();
+  for (GLsizeiptr i = 0; i < nbVertexes; ++i)
+    for (GLsizeiptr j = 0; j < VertexAttributeSizeCoords; ++j)
+      attributes[i * VertexAttributesSize + j] =
+	vertexes[(GLuint)(i * VertexAttributeSizeCoords + j)];
+  _attributes->unmap();
 }
 
 void gle::Mesh::setNormals(gle::Array<GLfloat> const &normals)
 {
   GLsizeiptr nbVertexes = normals.size() / VertexAttributeSizeNormal;
-  if (nbVertexes != _nbVertexes)
-    {
-      _nbVertexes = nbVertexes;
-      _attributes->resize(VertexAttributesSize * nbVertexes);
-    }
-  _attributes->setData((const GLfloat*)normals,
-		       nbVertexes * VertexAttributeSizeCoords,
-		       nbVertexes * VertexAttributeSizeNormal);
+
+  _nbVertexes = nbVertexes;
+  if (!_attributes)
+    _attributes = MeshBufferManager::getInstance()
+      .store(NULL, nbVertexes * VertexAttributesSize);
+  GLfloat* attributes = _attributes->map();
+  for (GLsizeiptr i = 0; i < nbVertexes; ++i)
+    for (GLuint j = 0; j < VertexAttributeSizeNormal; ++j)
+      attributes[i * VertexAttributesSize + VertexAttributeSizeCoords + j] =
+	normals[(GLuint)(i * VertexAttributeSizeNormal + j)];
+  _attributes->unmap();
 }
 
 void gle::Mesh::setTextureCoords(gle::Array<GLfloat> const &textureCoords)
 {
-  GLsizeiptr nbVertexes = textureCoords.size()
-    / VertexAttributeSizeTextureCoords;
-  if (nbVertexes != _nbVertexes)
-    {
-      _nbVertexes = nbVertexes;
-      _attributes->resize(VertexAttributesSize * nbVertexes);
-    }
-  _attributes->setData((const GLfloat*)textureCoords,
-		       nbVertexes * (VertexAttributeSizeCoords
-				     + VertexAttributeSizeNormal),
-		       nbVertexes * VertexAttributeSizeTextureCoords);
+  GLsizeiptr nbVertexes = textureCoords.size() / VertexAttributeSizeTextureCoords;
+
+  _nbVertexes = nbVertexes;
+  if (!_attributes)
+    _attributes = MeshBufferManager::getInstance()
+      .store(NULL, nbVertexes * VertexAttributesSize);
+  GLfloat* attributes = _attributes->map();
+  for (GLsizeiptr i = 0; i < nbVertexes; ++i)
+    for (GLuint j = 0; j < VertexAttributeSizeTextureCoords; ++j)
+      attributes[i * VertexAttributesSize + VertexAttributeSizeCoords +
+		 VertexAttributeSizeNormal + j] =
+	textureCoords[(GLuint)(i * VertexAttributeSizeTextureCoords + j)];
+  _attributes->unmap();
 }
 
 void gle::Mesh::setIndexes(gle::Array<GLuint> const &indexes)
@@ -331,7 +364,7 @@ gle::Buffer<GLuint> * gle::Mesh::getIndexesBuffer()
   return (_indexes);
 }
 
-gle::Buffer<GLfloat>* gle::Mesh::getAttributesBuffer()
+gle::MeshBufferManager::Chunk* gle::Mesh::getAttributes()
 {
   return (_attributes);
 }

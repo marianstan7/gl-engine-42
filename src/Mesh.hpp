@@ -5,7 +5,7 @@
 // Login   <michar_l@epitech.net>
 // 
 // Started on  Mon Feb 20 13:20:54 2012 loick michard
-// Last update Tue May  1 01:44:42 2012 gael jochaud-du-plessix
+// Last update Tue May  1 16:14:21 2012 gael jochaud-du-plessix
 //
 
 #ifndef _MESH_HPP_
@@ -45,13 +45,13 @@ namespace gle {
       Point = GL_POINT
     };
 
-    static const int VertexAttributeSizeCoords = 3;
-    static const int VertexAttributeSizeNormal = 3;
-    static const int VertexAttributeSizeTextureCoords = 2;
+    static const GLsizeiptr VertexAttributeSizeCoords = 3;
+    static const GLsizeiptr VertexAttributeSizeNormal = 3;
+    static const GLsizeiptr VertexAttributeSizeTextureCoords = 2;
 
     //! Size of a vertex packed attributes
 
-    static const int VertexAttributesSize =
+    static const GLsizeiptr VertexAttributesSize =
       (VertexAttributeSizeCoords
        + VertexAttributeSizeNormal
        + VertexAttributeSizeTextureCoords);
@@ -179,6 +179,10 @@ namespace gle {
 
     void setScale(GLfloat scale);
 
+    //! Set the mesh vertex attributes
+
+    void setVertexAttributes(const GLfloat* attributes, GLsizeiptr nbVertexes);
+
     //! Set the mesh vertexes
 
     void setVertexes(const GLfloat* vertexes, GLsizeiptr size);
@@ -256,9 +260,9 @@ namespace gle {
 
     GLsizeiptr getNbVertexes() const;
 
-    //! Get the attributes buffer, rebuild it if necessary
+    //! Get the attributes chunk in the mesh buffer manager
 
-    Buffer<GLfloat>* getAttributesBuffer();
+    gle::MeshBufferManager::Chunk* getAttributes();
 
   private:
     std::string		_name;

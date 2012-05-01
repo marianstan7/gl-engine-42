@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Wed Feb 22 23:17:47 2012 gael jochaud-du-plessix
-// Last update Wed Apr 11 16:35:40 2012 gael jochaud-du-plessix
+// Last update Tue May  1 13:58:08 2012 gael jochaud-du-plessix
 //
 
 #include <fstream>
@@ -268,7 +268,7 @@ void gle::ObjLoader::_addCurrentMesh(Mesh* parent)
 					 * 2 + 1]);
 	      indexes.push(i + j);
 	    }
-	}      
+	}
       _currentMesh->setVertexes(vertexes);
       _currentMesh->setNormals(normals);
       _currentMesh->setIndexes(indexes);
