@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Fri Mar  2 17:27:21 2012 gael jochaud-du-plessix
-// Last update Tue May  1 01:22:50 2012 gael jochaud-du-plessix
+// Last update Tue May  1 19:11:20 2012 gael jochaud-du-plessix
 //
 
 #include <iomanip>
@@ -70,17 +70,6 @@ int glEngine(int ac, char **av)
 	    << context.minorVersion << std::endl;
 
   App.setActive();
-
-  float d1[42];
-  float d2[42];
-  float d3[4200];
-  //gle::MeshBufferManager::Chunk* test =
-  gle::MeshBufferManager::Chunk* test = gle::MeshBufferManager::getInstance().store(d1, 42);
-  gle::MeshBufferManager::Chunk* test2 = gle::MeshBufferManager::getInstance().store(d2, 42);
-  gle::MeshBufferManager::Chunk* test3 = gle::MeshBufferManager::getInstance().store(d3, 4200);
-  gle::MeshBufferManager::getInstance().free(test3);
-  gle::MeshBufferManager::getInstance().free(test);
-  gle::MeshBufferManager::getInstance().free(test2);
 
   gle::Scene scene;
   gle::PerspectiveCamera camera(gle::Vector3<GLfloat>(-20, 10, 0),

@@ -37,7 +37,13 @@ file (
 # Add build of glEngine library
 add_library(glEngine SHARED ${SOURCES})
 
+
 # Add examples
+add_executable (
+    examples/cube
+    examples/cube.cpp
+)
+
 add_executable (
     examples/example00
     examples/example00.cpp
@@ -90,6 +96,13 @@ add_executable (
 )
 
 # Librairies to link
+target_link_libraries (
+    examples/cube
+    ${SFML_LIBRARIES}
+    ${OPENGL_LIBRARIES}
+    glEngine
+)
+
 target_link_libraries (
     examples/example00
     ${SFML_LIBRARIES}
