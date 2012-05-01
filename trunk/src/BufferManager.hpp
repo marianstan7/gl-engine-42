@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Fri Apr 13 12:43:29 2012 gael jochaud-du-plessix
-// Last update Tue May  1 01:22:27 2012 gael jochaud-du-plessix
+// Last update Tue May  1 16:07:33 2012 loick michard
 //
 
 #ifndef _GLE_BUFFER_MANAGER_HPP_
@@ -103,11 +103,27 @@ namespace gle {
 	  delete this;
       }
 
-      void setData(const void* data)
+      void setData(const void* data, GLsizeiptr size = 0)
       {
+	if (size > _size)
+	  UnderClass::getInstance().resize(this, size);
 	gle::Buffer<T>* buffer = UnderClass::getInstance().getStorageBuffer();
 
 	buffer->setData(reinterpret_cast<const T*>(data), _offset, _size);
+      }
+
+      T* map(Buffer<T>::MapAccess access=Buffer<T>::ReadWrite)
+      {
+	gle::Buffer<T>* buffer = UnderClass::getInstance().getStorageBuffer();
+
+	return (buffer->map(_offset, _size, access));
+      }
+
+      void unmap()
+      {
+	gle::Buffer<T>* buffer = UnderClass::getInstance().getStorageBuffer();
+
+        buffer->unmap();
       }
 
     private:
@@ -121,6 +137,33 @@ namespace gle {
     {
       for (Chunk* &chunk : _chunks)
 	delete chunk;
+    }
+
+    Chunk* resize(Chunk *chunk, GLsizeiptr size)
+    {
+      typename decltype(_chunks)::iterator it = find(_chunks.begin(), _chunks.end(), chunk);
+      if (it = _chunks.end())
+	return (NULL);
+      typename decltype(_chunks)::iterator next = (++it);
+      --it;
+      if (size <= chunk->getSize())
+	return (chunck);
+      if (next != _chunks.end() && (*next)->isFree() &&
+	  (*it)->getSize() + (*next)->getSize() >= size)
+	{
+	  (*next)->setSize((*next)->getSize() - size + (*it)->getSize());
+	  (*it)->setSize(size);
+	  if ((*next)->getSize == 0)
+	    {
+	      Chunk* tmp = *next;
+	      _freeChunks.erase(tmp);
+	      _chunks.remove(next);
+	      delete tmp;
+	    }
+	  return (*it);
+	}
+      free(chunk);
+      return (store(NULL, size));
     }
 
     Chunk* store(const void* data, GLsizeiptr size)
@@ -170,7 +213,8 @@ namespace gle {
 	    }
 	  newChunk->setFree(false);
 	  newChunk->setSize(size);
-	  newChunk->setData(data);
+	  if (data)
+	    newChunk->setData(data);
 	  return (newChunk);
 	}
       std::cout << "--> " << bestChunk->getSize() << "\n";
@@ -185,7 +229,8 @@ namespace gle {
 	  bestChunkIt = std::find(_chunks.begin(), _chunks.end(), bestChunk);
 	  _chunks.insert(++bestChunkIt, newChunk);
 	}
-      bestChunk->setData(data);
+      if (data)
+	bestChunk->setData(data);
       return (bestChunk);
     }
 
