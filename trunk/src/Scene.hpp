@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Mon Feb 20 18:18:01 2012 gael jochaud-du-plessix
-// Last update Wed Apr 11 23:50:50 2012 loick michard
+// Last update Thu May  3 15:49:08 2012 gael jochaud-du-plessix
 //
 
 #ifndef _GLE_SCENE_HPP_
@@ -211,30 +211,31 @@ namespace gle {
     gle::Program* getProgram();
 
   private:
-    gle::Shader* _createVertexShader();
-    gle::Shader* _createFragmentShader();
-    std::string _replace(std::string const& search,
-                         int number,
-                         std::string const& str);
+    gle::Shader*		_createVertexShader();
+    gle::Shader*		_createFragmentShader();
+    std::string			_replace(std::string const& search, int number, std::string const& str);
+    
+    gle::Color<GLfloat>		_backgroundColor;
+    std::vector<Camera*>	_cameras;
+    std::vector<Mesh*>		_meshes;
+    std::vector<Material*>	_materials;
+    std::vector<Light*>		_lights;
 
-    gle::Color<GLfloat>	_backgroundColor;
-    std::vector<Camera*> _cameras;
-    std::vector<Mesh*> _meshes;
-    std::vector<Material*> _materials;
-    std::vector<Light*> _lights;
+    std::vector<GLfloat>	_directionalLightsDirection;
+    std::vector<GLfloat>	_directionalLightsColor;
+    GLsizeiptr			_directionalLightsSize;
 
-    std::vector<GLfloat> _directionalLightsDirection;
-    std::vector<GLfloat> _directionalLightsColor;
-    GLsizeiptr _directionalLightsSize;
+    std::vector<GLfloat>	_pointLightsPosition;
+    std::vector<GLfloat>	_pointLightsColor;
+    std::vector<GLfloat>	_pointLightsSpecularColor;
+    GLsizeiptr			_pointLightsSize;
 
-    std::vector<GLfloat> _pointLightsPosition;
-    std::vector<GLfloat> _pointLightsColor;
-    std::vector<GLfloat> _pointLightsSpecularColor;
-    GLsizeiptr _pointLightsSize;    
+    Camera*			_currentCamera;
+    gle::Program*		_program;
+    bool			_needProgramCompilation;
 
-    Camera* _currentCamera;
-    gle::Program* _program;
-    bool _needProgramCompilation;
+    std::vector<Mesh*>		_meshesToRender;
+    std::map<Mesh*, GLuint>	_meshUniformBlockIndexes;
   };
 }
 

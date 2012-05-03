@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Mon Feb 20 19:12:49 2012 gael jochaud-du-plessix
-// Last update Mon Apr 30 15:39:46 2012 gael jochaud-du-plessix
+// Last update Thu May  3 20:08:00 2012 gael jochaud-du-plessix
 //
 
 #include <Scene.hpp>
@@ -22,9 +22,9 @@ gle::Scene::Scene() :
   _directionalLightsColor(), _directionalLightsSize(0),
   _pointLightsPosition(),
   _pointLightsColor(), _pointLightsSize(0),
-  _currentCamera(NULL), _program(NULL), _needProgramCompilation(true)
+  _currentCamera(NULL), _program(NULL), _needProgramCompilation(true),
+  _meshesToRender(), _meshUniformBlockIndexes()
 {
-
 }
 
 gle::Scene::~Scene()
@@ -62,6 +62,7 @@ gle::Scene & gle::Scene::add(Mesh* mesh)
     _meshes.push_back(mesh);
   std::vector<gle::Mesh*> & childs = mesh->getChildren();
   add(childs);
+  _needProgramCompilation = true;
   return (*this);
 }
 
@@ -270,14 +271,21 @@ void		gle::Scene::buildProgram()
       throw e;
     }
 
-  _program->getUniformLocation(gle::Program::MVMatrix);
+  _meshUniformBlockIndexes.clear();
+  GLuint meshUniformsBlockIndex = _program->getUniformBlockIndex("gle_meshUniformsBlock");
+  glUniformBlockBinding(_program->getId(), meshUniformsBlockIndex, 1);
+  GLint binding = -1;  
+  glGetActiveUniformBlockiv(_program->getId(), meshUniformsBlockIndex, GL_UNIFORM_BLOCK_BINDING, &binding);
+  std::cout << binding << "\n";
+
+  // _program->getUniformLocation(gle::Program::MVMatrix);
   _program->getUniformLocation(gle::Program::PMatrix);
   /*  _program->getUniformLocation(gle::Program::AmbientColor);
   _program->getUniformLocation(gle::Program::DiffuseColor);
   _program->getUniformLocation(gle::Program::SpecularColor);*/
   _program->getUniformLocation(gle::Program::HasColorMap);
   _program->getUniformLocation(gle::Program::ColorMap);
-  _program->getUniformLocation(gle::Program::NMatrix);
+  // _program->getUniformLocation(gle::Program::NMatrix);
   /*_program->getUniformLocation(gle::Program::Shininess);
   _program->getUniformLocation(gle::Program::SpecularIntensity);
   _program->getUniformLocation(gle::Program::DiffuseIntensity);*/
@@ -303,7 +311,16 @@ gle::Shader* gle::Scene::_createVertexShader()
 
   shaderSource += gle::ShaderSource::VertexShader;
   shaderSource = _replace("%nb_directional_lights", getDirectionalLightsSize(), shaderSource);
-  shaderSource =_replace("%nb_point_lights", getPointLightsSize(), shaderSource);
+  shaderSource = _replace("%nb_point_lights", getPointLightsSize(), shaderSource);
+
+  _meshesToRender.clear();
+  for (Mesh* &mesh : _meshes)
+    if (mesh->getNbIndexes() > 0)
+      _meshesToRender.push_back(mesh);
+
+  std::cout << _meshesToRender.size() << " meshes\n";
+  shaderSource = _replace("%nb_meshes", _meshesToRender.size(), shaderSource);
+
   gle::Shader *shader = new gle::Shader(gle::Shader::Vertex, shaderSource);
 
   return (shader);

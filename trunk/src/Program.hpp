@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Fri Feb 17 16:21:24 2012 gael jochaud-du-plessix
-// Last update Fri Apr 13 12:09:07 2012 loick michard
+// Last update Thu May  3 15:38:38 2012 gael jochaud-du-plessix
 //
 
 #ifndef _GLE_PROGRAM_HPP_
@@ -95,7 +95,7 @@ namespace gle {
     void use() const;
 
     //! Return the location of a uniform variable from its name
-    GLint getUniformLocation(const GLchar *name) const;
+    GLint getUniformLocation(const std::string& name) const;
 
     //! Return the location of a uniform variable
     GLint getUniformLocation(Uniform uniform);
@@ -128,6 +128,8 @@ namespace gle {
     GLuint getId() const;
 
     void retreiveUniformBlockIndex(UniformBlock block, const std::string& name);
+
+    GLuint getUniformBlockIndex(const std::string& name) const;
 
     GLuint getUniformBlockIndex(UniformBlock block) const;
 
