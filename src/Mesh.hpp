@@ -5,7 +5,7 @@
 // Login   <michar_l@epitech.net>
 // 
 // Started on  Mon Feb 20 13:20:54 2012 loick michard
-// Last update Tue May  1 16:14:21 2012 gael jochaud-du-plessix
+// Last update Wed May  2 19:20:34 2012 gael jochaud-du-plessix
 //
 
 #ifndef _MESH_HPP_
@@ -22,6 +22,7 @@
 # include <Quaternion.hpp>
 # include <Array.hpp>
 # include <MeshBufferManager.hpp>
+# include <IndexBufferManager.hpp>
 
 namespace gle {
   
@@ -250,7 +251,7 @@ namespace gle {
 
     //! Get the indexes buffer
 
-    Buffer<GLuint> * getIndexesBuffer();
+    gle::IndexBufferManager::Chunk* getIndexes();
     
     //! Get the number of indexes in the mesh
 
@@ -271,8 +272,9 @@ namespace gle {
     GLfloat	_pointSize;
 
     Material* _material;
-    Buffer<GLuint>* _indexes;
+    IndexBufferManager::Chunk*	_indexes;
     MeshBufferManager::Chunk*	_attributes;
+    // Buffer<GLuint>* _indexes;
     //Buffer<GLfloat>* _attributes;
 
     GLsizeiptr _nbIndexes;

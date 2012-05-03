@@ -5,7 +5,7 @@
 // Login   <michar_l@epitech.net>
 // 
 // Started on  Mon Feb 20 18:25:23 2012 loick michard
-// Last update Tue May  1 19:21:39 2012 gael jochaud-du-plessix
+// Last update Thu May  3 12:30:31 2012 gael jochaud-du-plessix
 //
 
 #include <Mesh.hpp>
@@ -28,8 +28,6 @@ gle::Mesh::Mesh(Material* material)
     _normalMatrix(),
     _parentMatrix(NULL)
 {
-  _indexes = new gle::Buffer<GLuint>(gle::Buffer<GLuint>::ElementArray,
-				     gle::Buffer<GLuint>::StaticDraw);
 }
 
 gle::Mesh::Mesh(gle::Mesh const & other)
@@ -51,11 +49,8 @@ gle::Mesh::Mesh(gle::Mesh const & other)
     _normalMatrix(other._mvMatrix),
     _parentMatrix(other._parentMatrix)
 {
-  static int max = 0, nb = 0;
-  max += _nbVertexes;
-  nb++;
-  std::cout << nb << " " << max / 3 << "\n";
-  _indexes =  new gle::Buffer<GLuint>(*other._indexes);
+  if (other._indexes)
+    _indexes = IndexBufferManager::getInstance().duplicate(*other._indexes);
   _attributes = other._attributes;
   std::vector<gle::Mesh*> children = other._children;
   for (std::vector<gle::Mesh*>::iterator it = children.begin(),
@@ -65,10 +60,6 @@ gle::Mesh::Mesh(gle::Mesh const & other)
 
 gle::Mesh::~Mesh()
 {
-  if (_indexes)
-    delete _indexes;
-  if (_attributes)
-    delete _attributes;
 }
 
 void gle::Mesh::addChild(gle::Mesh* child)
@@ -243,8 +234,24 @@ void gle::Mesh::setTextureCoords(const GLfloat* textureCoords, GLsizeiptr size)
 
 void gle::Mesh::setIndexes(const GLuint* indexes, GLsizeiptr size)
 {
+  GLuint* newIndexes = NULL;
+  if (_attributes != NULL)
+    {
+      newIndexes = new GLuint[size];
+      GLuint offset = _attributes->getOffset();
+      for (GLsizeiptr i = 0; i < size; ++i)
+	newIndexes[i] = indexes[i] + offset;
+    }
+  else
+    newIndexes = (GLuint*)indexes;
   _nbIndexes = size;
-  _indexes->resize(size, indexes);
+  if (!_indexes)
+    _indexes = IndexBufferManager::getInstance()
+      .store(indexes, size);
+  else
+    _indexes->setData(indexes);
+  if (indexes != newIndexes)
+    delete[] newIndexes;
 }
 
 void gle::Mesh::setVertexes(gle::Array<GLfloat> const &vertexes)
@@ -298,8 +305,19 @@ void gle::Mesh::setTextureCoords(gle::Array<GLfloat> const &textureCoords)
 
 void gle::Mesh::setIndexes(gle::Array<GLuint> const &indexes)
 {
-  _nbIndexes = indexes.size();
-  _indexes->resize(indexes.size(), (GLuint const *)indexes);
+  gle::Array<GLuint> newIndexes(indexes);
+  if (_attributes != NULL)
+    {
+      GLuint offset = _attributes->getOffset();
+      for (GLuint i = 0; i < indexes.size(); ++i)
+	newIndexes[i] = indexes[i] + offset;
+    }
+  _nbIndexes = newIndexes.size();
+  if (!_indexes)
+    _indexes = IndexBufferManager::getInstance()
+      .store((GLuint const*)newIndexes, indexes.size());
+  else
+    _indexes->setData((GLuint const*)newIndexes);
 }
 
 void gle::Mesh::updateMatrix()
@@ -359,7 +377,7 @@ gle::Material* gle::Mesh::getMaterial()
   return (_material);
 }
 
-gle::Buffer<GLuint> * gle::Mesh::getIndexesBuffer()
+gle::IndexBufferManager::Chunk* gle::Mesh::getIndexes()
 {
   return (_indexes);
 }

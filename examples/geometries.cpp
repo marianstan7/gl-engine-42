@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Fri Mar  2 17:27:21 2012 gael jochaud-du-plessix
-// Last update Tue May  1 19:11:20 2012 gael jochaud-du-plessix
+// Last update Thu May  3 17:52:38 2012 gael jochaud-du-plessix
 //
 
 #include <iomanip>
@@ -23,6 +23,7 @@
 #include <DirectionalLight.hpp>
 #include <PointLight.hpp>
 #include <MeshBufferManager.hpp>
+#include <Exception.hpp>
 
 #include "flycam.hpp"
 #include "video.hpp"
@@ -45,7 +46,13 @@ int main(int ac, char **av)
   }
   catch (std::exception *e)
     {
-      std::cout << "Error: " << e->what() << std::endl;
+      if (dynamic_cast<gle::Exception::LinkageError*>(e))
+	std::cout << "Linkage error";
+      else if (dynamic_cast<gle::Exception::CompilationError*>(e))
+	std::cout << "Compilation error";
+      else
+	std::cout << "Error";
+      std::cout << ": " << e->what() << std::endl;
     }
   return (ret);
 }
@@ -174,11 +181,15 @@ int glEngine(int ac, char **av)
 	  else if (Event.type == sf::Event::KeyPressed
 		   && Event.key.code == sf::Keyboard::Escape)
 	    App.close();
+
 	  // Adjust the viewport when the window is resized
 	  if (Event.type == sf::Event::Resized)
 	    glViewport(0, 0, Event.size.width, Event.size.height);
 	  flycam::event(Event, App);
 	}
+
+      if (!App.isOpen())
+	continue ;
 
       sf::Mouse::setPosition(sf::Vector2i(W_WIDTH/2, W_HEIGHT/2), App);
       flycam::flycam(&camera);

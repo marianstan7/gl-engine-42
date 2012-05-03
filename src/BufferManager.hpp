@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Fri Apr 13 12:43:29 2012 gael jochaud-du-plessix
-// Last update Tue May  1 18:58:05 2012 gael jochaud-du-plessix
+// Last update Wed May  2 19:44:12 2012 gael jochaud-du-plessix
 //
 
 #ifndef _GLE_BUFFER_MANAGER_HPP_
@@ -35,16 +35,6 @@ namespace gle {
       drain();
       if (_buffer)
 	delete _buffer;
-    }
-
-    void setStorageBuffer(gle::Buffer<T> *buffer)
-    {
-      _buffer = buffer;
-    }
-
-    gle::Buffer<T>* getStorageBuffer() const
-    {
-      return (_buffer);
     }
 
   public:
@@ -131,6 +121,17 @@ namespace gle {
       int		_refCount;
     };
 
+    void setStorageBuffer(gle::Buffer<T> *buffer)
+    {
+      _buffer = buffer;
+    }
+
+    gle::Buffer<T>* getStorageBuffer() const
+    {
+      return (_buffer);
+    }
+
+
     void bind()
     {
       if (_buffer)
@@ -181,6 +182,16 @@ namespace gle {
 			  chunk->getSize());
       free(chunk);
       return (newChunk);
+    }
+
+    Chunk* duplicate(const Chunk& chunk)
+    {
+      Chunk* newChunk = store(NULL, chunk.getSize());
+      glBindBuffer(GL_COPY_WRITE_BUFFER, _buffer->getId());
+      glBindBuffer(GL_COPY_READ_BUFFER, _buffer->getId());
+      glCopyBufferSubData(GL_COPY_READ_BUFFER, GL_COPY_WRITE_BUFFER,
+			  chunk.getOffset(), newChunk->getOffset(),
+			  chunk.getSize());
     }
 
     Chunk* store(const void* data, GLsizeiptr size)
