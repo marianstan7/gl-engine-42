@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Mon Feb 20 18:18:01 2012 gael jochaud-du-plessix
-// Last update Thu May  3 15:49:08 2012 gael jochaud-du-plessix
+// Last update Mon May  7 16:41:28 2012 gael jochaud-du-plessix
 //
 
 #ifndef _GLE_SCENE_HPP_
@@ -148,6 +148,10 @@ namespace gle {
 
     std::vector<Mesh*> & getMeshes();
 
+    //! Get a vector of all meshes to render
+
+    std::vector<Mesh*> & getMeshesToRender();
+
     //! Get a vector of all cameras which are in the scene
 
     std::vector<Camera*> & getCameras();
@@ -208,6 +212,8 @@ namespace gle {
 
     void buildProgram();
 
+    void bindMeshesUniforms();
+
     gle::Program* getProgram();
 
   private:
@@ -235,7 +241,6 @@ namespace gle {
     bool			_needProgramCompilation;
 
     std::vector<Mesh*>		_meshesToRender;
-    std::map<Mesh*, GLuint>	_meshUniformBlockIndexes;
   };
 }
 

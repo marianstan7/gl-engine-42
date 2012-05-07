@@ -5,17 +5,23 @@
 // Login   <michar_l@epitech.net>
 // 
 // Started on  Wed Apr 11 18:41:59 2012 loick michard
-// Last update Fri May  4 11:27:45 2012 gael jochaud-du-plessix
+// Last update Mon May  7 16:53:19 2012 gael jochaud-du-plessix
 //
 
 #include <gle/opengl.h>
 #include <ShaderSource.hpp>
 
+GLuint gle::ShaderSource::Vertex::Default::MeshIndexLocation = 0;
+GLuint gle::ShaderSource::Vertex::Default::PositionLocation = 1;
+GLuint gle::ShaderSource::Vertex::Default::NormalLocation = 2;
+GLuint gle::ShaderSource::Vertex::ColorMap::TextureCoordLocation = 3;
+
 const char *gle::ShaderSource::VertexShader =
-  "#version 330 core \n"
+  "#version 420 core \n"
   "\n"
-  "#define GLE_IN_VERTEX_POSITION_LOCATION 0 \n"
-  "#define GLE_IN_VERTEX_NORMAL_LOCATION 1 \n"
+  "#define GLE_IN_VERTEX_MESH_INDEX_LOCATION 0 \n"
+  "#define GLE_IN_VERTEX_POSITION_LOCATION 1 \n"
+  "#define GLE_IN_VERTEX_NORMAL_LOCATION 2 \n"
   "\n"
   "#define GLE_IN_VERTEX_TEXTURE_COORD_LOCATION 2 \n"
   "\n"
@@ -50,6 +56,7 @@ const char *gle::ShaderSource::VertexShader =
   "uniform float gle_diffuseIntensity;\n"
   "};\n"
   "\n"
+  "layout (location = GLE_IN_VERTEX_MESH_INDEX_LOCATION) in vec3 gle_vMeshIndex; \n"
   "layout (location = GLE_IN_VERTEX_POSITION_LOCATION) in vec3 gle_vPosition; \n"
   "layout (location = GLE_IN_VERTEX_NORMAL_LOCATION) in vec3 gle_vNormal; \n"
   "layout (location = GLE_IN_VERTEX_TEXTURE_COORD_LOCATION) in vec2 gle_vTextureCoord; \n" 
@@ -61,8 +68,8 @@ const char *gle::ShaderSource::VertexShader =
   "\n"
   "void main(void) { \n"
   "\n"
-  "mat4 MVMatrix = gle_meshUniforms[0].MVMatrix;\n"
-  "mat3 NMatrix = gle_meshUniforms[0].NMatrix;\n"
+  "mat4 MVMatrix = gle_meshUniforms[int(gle_vMeshIndex)].MVMatrix;\n"
+  "mat3 NMatrix = gle_meshUniforms[int(gle_vMeshIndex)].NMatrix;\n"
   "vec4 gle_mvPosition = MVMatrix * vec4(gle_vPosition, 1.0); \n"
   "gl_Position = gle_PMatrix * gle_mvPosition; \n"
   "gle_varying_vPosition = gle_vPosition; \n"

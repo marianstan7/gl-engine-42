@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Mon Feb 20 19:12:49 2012 gael jochaud-du-plessix
-// Last update Mon May  7 14:08:41 2012 gael jochaud-du-plessix
+// Last update Mon May  7 16:41:45 2012 gael jochaud-du-plessix
 //
 
 #include <Scene.hpp>
@@ -23,7 +23,7 @@ gle::Scene::Scene() :
   _pointLightsPosition(),
   _pointLightsColor(), _pointLightsSize(0),
   _currentCamera(NULL), _program(NULL), _needProgramCompilation(true),
-  _meshesToRender(), _meshUniformBlockIndexes()
+  _meshesToRender()
 {
 }
 
@@ -139,6 +139,11 @@ gle::Scene & gle::Scene::remove(Light* light)
 std::vector<gle::Mesh*> & gle::Scene::getMeshes()
 {
   return (_meshes);
+}
+
+std::vector<gle::Mesh*> & gle::Scene::getMeshesToRender()
+{
+  return (_meshesToRender);
 }
 
 std::vector<gle::Camera*> & gle::Scene::getCameras()
@@ -271,7 +276,6 @@ void		gle::Scene::buildProgram()
       throw e;
     }
 
-  _meshUniformBlockIndexes.clear();
   GLuint i = 0;
   for (Mesh* &mesh : _meshesToRender)
     {
@@ -281,9 +285,13 @@ void		gle::Scene::buildProgram()
       GLuint meshUniformsBlockIndex = _program->getUniformBlockIndex(ss.str().c_str());
       if (meshUniformsBlockIndex == -1)
 	throw new gle::Exception::InvalidOperation(std::string("Uniform block ") + ss.str() + " doesn't exists");
-      _meshUniformBlockIndexes[mesh] = meshUniformsBlockIndex;
       glUniformBlockBinding(_program->getId(), meshUniformsBlockIndex, gle::Program::MeshUniformsBinding + i);
+      ++i;
     }
+
+  GLenum error = glGetError();
+  if (error != GL_NO_ERROR)
+    throw new gle::Exception::OpenGLError();
 
   // _program->getUniformLocation(gle::Program::MVMatrix);
   _program->getUniformLocation(gle::Program::PMatrix);
@@ -310,6 +318,17 @@ void		gle::Scene::buildProgram()
   _program->retreiveUniformBlockIndex(gle::Program::MaterialBlock, "materialBlock");
   delete vertexShader;
   delete fragmentShader;
+}
+
+void gle::Scene::bindMeshesUniforms()
+{
+  GLuint i = 0;
+  for (Mesh* &mesh : _meshesToRender)
+    {
+      gle::MeshUniformsBufferManager::Chunk* uniforms = mesh->getUniforms();
+      uniforms->bind(gle::Program::MeshUniformsBinding + i);
+      ++i;
+    }
 }
 
 gle::Shader* gle::Scene::_createVertexShader()
