@@ -5,7 +5,7 @@
 // Login   <michar_l@epitech.net>
 // 
 // Started on  Wed Apr 11 18:41:59 2012 loick michard
-// Last update Mon May  7 16:53:19 2012 gael jochaud-du-plessix
+// Last update Mon May  7 17:00:29 2012 gael jochaud-du-plessix
 //
 
 #include <gle/opengl.h>
@@ -23,7 +23,7 @@ const char *gle::ShaderSource::VertexShader =
   "#define GLE_IN_VERTEX_POSITION_LOCATION 1 \n"
   "#define GLE_IN_VERTEX_NORMAL_LOCATION 2 \n"
   "\n"
-  "#define GLE_IN_VERTEX_TEXTURE_COORD_LOCATION 2 \n"
+  "#define GLE_IN_VERTEX_TEXTURE_COORD_LOCATION 3 \n"
   "\n"
   "#define GLE_LIGHT_ENABLED 1\n"
   "#define NB_DIRECTIONAL_LIGHTS %nb_directional_lights \n"
@@ -56,7 +56,7 @@ const char *gle::ShaderSource::VertexShader =
   "uniform float gle_diffuseIntensity;\n"
   "};\n"
   "\n"
-  "layout (location = GLE_IN_VERTEX_MESH_INDEX_LOCATION) in vec3 gle_vMeshIndex; \n"
+  "layout (location = GLE_IN_VERTEX_MESH_INDEX_LOCATION) in float gle_vMeshIndex; \n"
   "layout (location = GLE_IN_VERTEX_POSITION_LOCATION) in vec3 gle_vPosition; \n"
   "layout (location = GLE_IN_VERTEX_NORMAL_LOCATION) in vec3 gle_vNormal; \n"
   "layout (location = GLE_IN_VERTEX_TEXTURE_COORD_LOCATION) in vec2 gle_vTextureCoord; \n" 
