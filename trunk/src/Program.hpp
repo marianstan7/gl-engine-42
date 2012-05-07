@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Fri Feb 17 16:21:24 2012 gael jochaud-du-plessix
-// Last update Thu May  3 15:38:38 2012 gael jochaud-du-plessix
+// Last update Fri May  4 14:40:08 2012 gael jochaud-du-plessix
 //
 
 #ifndef _GLE_PROGRAM_HPP_
@@ -58,6 +58,8 @@ namespace gle {
       ColorMapTexture = GL_TEXTURE0,
       ColorMapTextureIndex = 0,
     };
+
+    static const int MeshUniformsBinding = 1;
     
     //! Create a new OpenGL Program
     /*!

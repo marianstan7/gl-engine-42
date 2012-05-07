@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Mon Feb 20 19:12:49 2012 gael jochaud-du-plessix
-// Last update Thu May  3 20:08:00 2012 gael jochaud-du-plessix
+// Last update Mon May  7 14:08:41 2012 gael jochaud-du-plessix
 //
 
 #include <Scene.hpp>
@@ -272,23 +272,30 @@ void		gle::Scene::buildProgram()
     }
 
   _meshUniformBlockIndexes.clear();
-  GLuint meshUniformsBlockIndex = _program->getUniformBlockIndex("gle_meshUniformsBlock");
-  glUniformBlockBinding(_program->getId(), meshUniformsBlockIndex, 1);
-  GLint binding = -1;  
-  glGetActiveUniformBlockiv(_program->getId(), meshUniformsBlockIndex, GL_UNIFORM_BLOCK_BINDING, &binding);
-  std::cout << binding << "\n";
+  GLuint i = 0;
+  for (Mesh* &mesh : _meshesToRender)
+    {
+      std::stringstream ss;
+
+      ss << "gle_meshUniformsBlock[" << i << "]";
+      GLuint meshUniformsBlockIndex = _program->getUniformBlockIndex(ss.str().c_str());
+      if (meshUniformsBlockIndex == -1)
+	throw new gle::Exception::InvalidOperation(std::string("Uniform block ") + ss.str() + " doesn't exists");
+      _meshUniformBlockIndexes[mesh] = meshUniformsBlockIndex;
+      glUniformBlockBinding(_program->getId(), meshUniformsBlockIndex, gle::Program::MeshUniformsBinding + i);
+    }
 
   // _program->getUniformLocation(gle::Program::MVMatrix);
   _program->getUniformLocation(gle::Program::PMatrix);
   /*  _program->getUniformLocation(gle::Program::AmbientColor);
-  _program->getUniformLocation(gle::Program::DiffuseColor);
-  _program->getUniformLocation(gle::Program::SpecularColor);*/
+      _program->getUniformLocation(gle::Program::DiffuseColor);
+      _program->getUniformLocation(gle::Program::SpecularColor);*/
   _program->getUniformLocation(gle::Program::HasColorMap);
   _program->getUniformLocation(gle::Program::ColorMap);
   // _program->getUniformLocation(gle::Program::NMatrix);
   /*_program->getUniformLocation(gle::Program::Shininess);
-  _program->getUniformLocation(gle::Program::SpecularIntensity);
-  _program->getUniformLocation(gle::Program::DiffuseIntensity);*/
+    _program->getUniformLocation(gle::Program::SpecularIntensity);
+    _program->getUniformLocation(gle::Program::DiffuseIntensity);*/
   if (getDirectionalLightsSize())
     {
       _program->getUniformLocation(gle::Program::DirectionalLightDirection);
