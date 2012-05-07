@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Mon Feb 20 20:48:54 2012 gael jochaud-du-plessix
-// Last update Thu May  3 12:39:37 2012 gael jochaud-du-plessix
+// Last update Mon May  7 16:50:59 2012 gael jochaud-du-plessix
 //
 
 #include <Renderer.hpp>
@@ -54,62 +54,63 @@ void gle::Renderer::render(Scene* scene)
   _currentMaterial = NULL;
   Camera* camera = scene->getCurrentCamera();
   _setCurrentProgram(scene, camera);
-  std::vector<gle::Mesh*> & meshes = scene->getMeshes();
+  std::vector<gle::Mesh*> & meshes = scene->getMeshesToRender();
   std::vector<gle::Mesh*>::iterator meshesEnd = meshes.end();
 
+  scene->bindMeshesUniforms();
+
   // Enable vertex attributes commons to all meshes
+  glEnableVertexAttribArray(gle::ShaderSource::Vertex::
+			    Default::MeshIndexLocation);
   glEnableVertexAttribArray(gle::ShaderSource::Vertex::
 			    Default::PositionLocation);
   glEnableVertexAttribArray(gle::ShaderSource::Vertex::
 			    Default::NormalLocation);
 
   MeshBufferManager::getInstance().bind();
+  IndexBufferManager::getInstance().bind();
 
   // for (std::vector<gle::Mesh*>::iterator it = meshes.begin();
   //      it != meshesEnd; ++it)
   //   _renderMesh(scene, *it);
 
   GLsizeiptr nbIndexes = IndexBufferManager::getInstance().getStorageBuffer()->getSize();
-  static int caca = 0;
-  if (caca < 2)
-    {
-      caca++;
-      gle::Mesh* mesh = NULL;
+  gle::Mesh* mesh = meshes[0];
 
-      for (std::vector<gle::Mesh*>::iterator it = meshes.begin();
-	   it != meshesEnd; ++it)
-	{
-	  if (!mesh && (*it)->getNbIndexes() > 0)
-	    mesh = *it;
-	}
+  gle::Material* material = mesh->getMaterial();
 
-      gle::Material* material = mesh->getMaterial();
+  if (!_currentProgram)
+    return ;
 
-      if (!_currentProgram)
-	return ;
+  _setMaterialUniforms(material);
+  _setMeshUniforms(scene, mesh);
 
-      _setMaterialUniforms(material);
-      _setMeshUniforms(scene, mesh);
+  // Set Mesh Index attribute
+  glVertexAttribPointer(gle::ShaderSource::Vertex::Default::MeshIndexLocation,
+			1, GL_FLOAT, GL_FALSE,
+			gle::Mesh::VertexAttributesSize * sizeof(GLfloat),
+			(GLvoid*)(0 * sizeof(GLfloat)));
   
-      // Set Position buffer
-      glVertexAttribPointer(gle::ShaderSource::Vertex::Default::PositionLocation,
-			    3, GL_FLOAT, GL_FALSE,
-			    gle::Mesh::VertexAttributesSize * sizeof(GLfloat),
-			    (GLvoid*)(0 * sizeof(GLfloat)));
+  // Set Position attribute
+  glVertexAttribPointer(gle::ShaderSource::Vertex::Default::PositionLocation,
+			3, GL_FLOAT, GL_FALSE,
+			gle::Mesh::VertexAttributesSize * sizeof(GLfloat),
+			(GLvoid*)((0
+				   + gle::Mesh::MeshUniformsSize)
+				  * sizeof(GLfloat)));
 
-      // Set Normal buffer
-      glVertexAttribPointer(gle::ShaderSource::Vertex::Default::NormalLocation,
-			    3, GL_FLOAT, GL_FALSE, gle::Mesh::VertexAttributesSize * sizeof(GLfloat),
-			    (GLvoid*)((0
-				       + gle::Mesh::VertexAttributeSizeCoords)
-				      * sizeof(GLfloat)));
+  // Set Normal attribute
+  glVertexAttribPointer(gle::ShaderSource::Vertex::Default::NormalLocation,
+			3, GL_FLOAT, GL_FALSE, gle::Mesh::VertexAttributesSize * sizeof(GLfloat),
+			(GLvoid*)((0
+				   + gle::Mesh::MeshUniformsSize
+				   + gle::Mesh::VertexAttributeSizeCoords)
+				  * sizeof(GLfloat)));
 
-      // Set up ColorMap
-      _currentProgram->setUniform(gle::Program::HasColorMap, false && material->isColorMapEnabled());
+  // Set up ColorMap
+  _currentProgram->setUniform(gle::Program::HasColorMap, false && material->isColorMapEnabled());
 
-      // Draw the mesh elements
-      IndexBufferManager::getInstance().bind();
-    }
+  // Draw the mesh elements
   glDrawElements(GL_TRIANGLES, nbIndexes, GL_UNSIGNED_INT, 0);
 }
 

@@ -5,7 +5,7 @@
 // Login   <michar_l@epitech.net>
 // 
 // Started on  Mon Feb 20 13:20:54 2012 loick michard
-// Last update Wed May  2 19:20:34 2012 gael jochaud-du-plessix
+// Last update Mon May  7 15:34:54 2012 gael jochaud-du-plessix
 //
 
 #ifndef _MESH_HPP_
@@ -22,6 +22,7 @@
 # include <Quaternion.hpp>
 # include <Array.hpp>
 # include <MeshBufferManager.hpp>
+# include <MeshUniformsBufferManager.hpp>
 # include <IndexBufferManager.hpp>
 
 namespace gle {
@@ -46,14 +47,18 @@ namespace gle {
       Point = GL_POINT
     };
 
+    static const GLsizeiptr VertexAttributeMeshIndex = 1;
     static const GLsizeiptr VertexAttributeSizeCoords = 3;
     static const GLsizeiptr VertexAttributeSizeNormal = 3;
     static const GLsizeiptr VertexAttributeSizeTextureCoords = 2;
 
+    static const GLsizeiptr MeshUniformsSize = 25;
+
     //! Size of a vertex packed attributes
 
     static const GLsizeiptr VertexAttributesSize =
-      (VertexAttributeSizeCoords
+      (VertexAttributeMeshIndex
+       + VertexAttributeSizeCoords
        + VertexAttributeSizeNormal
        + VertexAttributeSizeTextureCoords);
 
@@ -138,6 +143,10 @@ namespace gle {
 
     void updateMatrix();
 
+    //! Update the uniforms buffer
+
+    void updateUniformsBuffer();
+
     //! Translate a mesh
     /*!
       \param vec Vector of translation
@@ -184,6 +193,10 @@ namespace gle {
 
     void setVertexAttributes(const GLfloat* attributes, GLsizeiptr nbVertexes);
 
+    //! Set the mesh index
+
+    void setMeshIndex(GLuint index);
+    
     //! Set the mesh vertexes
 
     void setVertexes(const GLfloat* vertexes, GLsizeiptr size);
@@ -265,6 +278,10 @@ namespace gle {
 
     gle::MeshBufferManager::Chunk* getAttributes();
 
+    //! Get the uniforms chunk in the mesh uniforms buffer manager
+
+    gle::MeshUniformsBufferManager::Chunk* getUniforms();
+
   private:
     std::string		_name;
     PrimitiveType	_type;
@@ -272,8 +289,9 @@ namespace gle {
     GLfloat	_pointSize;
 
     Material* _material;
-    IndexBufferManager::Chunk*	_indexes;
-    MeshBufferManager::Chunk*	_attributes;
+    IndexBufferManager::Chunk*		_indexes;
+    MeshBufferManager::Chunk*		_attributes;
+    MeshUniformsBufferManager::Chunk*	_uniforms;
     // Buffer<GLuint>* _indexes;
     //Buffer<GLfloat>* _attributes;
 

@@ -5,14 +5,14 @@
 // Login   <michar_l@epitech.net>
 // 
 // Started on  Wed Apr 11 23:15:58 2012 loick michard
-// Last update Thu Apr 12 00:17:28 2012 loick michard
+// Last update Mon May  7 14:29:30 2012 gael jochaud-du-plessix
 //
 
 #include <gle/opengl.h>
 #include <ShaderSource.hpp>
 
 const char *gle::ShaderSource::FragmentShader =
-  "#version 330 core \n"
+  "#version 420 core \n"
   
   "#define GLE_OUT_FRAGMENT_COLOR_LOCATION 0 \n"
   

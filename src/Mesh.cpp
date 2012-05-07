@@ -5,8 +5,10 @@
 // Login   <michar_l@epitech.net>
 // 
 // Started on  Mon Feb 20 18:25:23 2012 loick michard
-// Last update Thu May  3 12:30:31 2012 gael jochaud-du-plessix
+// Last update Mon May  7 15:35:18 2012 gael jochaud-du-plessix
 //
+
+#include <cstring>
 
 #include <Mesh.hpp>
 
@@ -18,6 +20,7 @@ gle::Mesh::Mesh(Material* material)
     _material(material),
     _indexes(NULL),
     _attributes(NULL),
+    _uniforms(NULL),
     _nbIndexes(0),
     _nbVertexes(0),
     _position(0, 0, 0),
@@ -38,6 +41,7 @@ gle::Mesh::Mesh(gle::Mesh const & other)
     _material(other._material),
     _indexes(NULL),
     _attributes(NULL),
+    _uniforms(NULL),
     _nbIndexes(other._nbIndexes),
     _nbVertexes(other._nbVertexes),
     _position(other._position),
@@ -51,6 +55,8 @@ gle::Mesh::Mesh(gle::Mesh const & other)
 {
   if (other._indexes)
     _indexes = IndexBufferManager::getInstance().duplicate(*other._indexes);
+  if (other._uniforms)
+    _uniforms = MeshUniformsBufferManager::getInstance().duplicate(*other._uniforms);
   _attributes = other._attributes;
   std::vector<gle::Mesh*> children = other._children;
   for (std::vector<gle::Mesh*>::iterator it = children.begin(),
@@ -182,6 +188,16 @@ void gle::Mesh::setVertexAttributes(const GLfloat* attributes, GLsizeiptr nbVert
   _nbVertexes = nbVertexes;
 }
 
+void gle::Mesh::setMeshIndex(GLuint index)
+{
+  if (!_attributes)
+    return ;
+  GLfloat* attributes = _attributes->map();
+  for (GLsizeiptr i = 0; i < _nbVertexes; ++i)
+    attributes[i * VertexAttributesSize] = (GLfloat)index;
+  _attributes->unmap();
+}
+
 void gle::Mesh::setVertexes(const GLfloat* vertexes, GLsizeiptr size)
 {
   GLsizeiptr nbVertexes = size / VertexAttributeSizeCoords;
@@ -193,7 +209,7 @@ void gle::Mesh::setVertexes(const GLfloat* vertexes, GLsizeiptr size)
   GLfloat* attributes = _attributes->map();
   for (GLsizeiptr i = 0; i < nbVertexes; ++i)
     for (GLuint j = 0; j < VertexAttributeSizeCoords; ++j)
-      attributes[i * VertexAttributesSize + j] =
+      attributes[i * VertexAttributesSize + VertexAttributeMeshIndex + j] =
 	vertexes[i * VertexAttributeSizeCoords + j];
   attributes[0] = vertexes[0];
   _attributes->unmap();
@@ -210,7 +226,9 @@ void gle::Mesh::setNormals(const GLfloat* normals, GLsizeiptr size)
   GLfloat* attributes = _attributes->map();
   for (GLsizeiptr i = 0; i < nbVertexes; ++i)
     for (GLuint j = 0; j < VertexAttributeSizeNormal; ++j)
-      attributes[i * VertexAttributesSize + VertexAttributeSizeCoords + j] =
+      attributes[i * VertexAttributesSize
+		 + VertexAttributeMeshIndex
+		 + VertexAttributeSizeCoords + j] =
 	normals[i * VertexAttributeSizeNormal + j];
   _attributes->unmap();
 }
@@ -226,8 +244,10 @@ void gle::Mesh::setTextureCoords(const GLfloat* textureCoords, GLsizeiptr size)
   GLfloat* attributes = _attributes->map();
   for (GLsizeiptr i = 0; i < nbVertexes; ++i)
     for (GLuint j = 0; j < VertexAttributeSizeTextureCoords; ++j)
-      attributes[i * VertexAttributesSize + VertexAttributeSizeCoords +
-		 VertexAttributeSizeNormal + j] =
+      attributes[i * VertexAttributesSize
+		 + VertexAttributeMeshIndex
+		 + VertexAttributeSizeCoords
+		 + VertexAttributeSizeNormal + j] =
 	textureCoords[i * VertexAttributeSizeTextureCoords + j];
   _attributes->unmap();
 }
@@ -343,6 +363,23 @@ void gle::Mesh::updateMatrix()
   inverse.inverse();
   _normalMatrix = inverse;
   _normalMatrix.transpose();
+  updateUniformsBuffer();
+}
+
+void gle::Mesh::updateUniformsBuffer()
+{
+  GLfloat* uniforms = new GLfloat[MeshUniformsSize];
+  GLfloat* mvMatrix = (GLfloat*)_mvMatrix;
+  GLfloat* nMatrix = (GLfloat*)_normalMatrix;
+  for (GLuint i = 0; i < 16; ++i)
+    uniforms[i] = mvMatrix[i];
+  for (GLuint i = 0; i < 9; ++i)
+    uniforms[i + 16] = nMatrix[i];
+  if (!_uniforms)
+    _uniforms = gle::MeshUniformsBufferManager::getInstance().store(uniforms, MeshUniformsSize);
+  else
+    _uniforms->setData(uniforms);
+  delete[] uniforms;
 }
 
 void gle::Mesh::translate(gle::Vector3<GLfloat> const& vec)
@@ -385,6 +422,11 @@ gle::IndexBufferManager::Chunk* gle::Mesh::getIndexes()
 gle::MeshBufferManager::Chunk* gle::Mesh::getAttributes()
 {
   return (_attributes);
+}
+
+gle::MeshUniformsBufferManager::Chunk* gle::Mesh::getUniforms()
+{
+  return (_uniforms);
 }
 
 GLsizeiptr gle::Mesh::getNbIndexes() const

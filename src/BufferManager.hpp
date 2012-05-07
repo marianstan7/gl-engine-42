@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Fri Apr 13 12:43:29 2012 gael jochaud-du-plessix
-// Last update Wed May  2 19:44:12 2012 gael jochaud-du-plessix
+// Last update Mon May  7 16:38:04 2012 gael jochaud-du-plessix
 //
 
 #ifndef _GLE_BUFFER_MANAGER_HPP_
@@ -105,6 +105,13 @@ namespace gle {
 	gle::Buffer<T>* buffer = UnderClass::getInstance().getStorageBuffer();
 
 	return (buffer->map(_offset, _size, access));
+      }
+
+      void bind(GLuint bindingPoint)
+      {
+	gle::Buffer<T>* buffer = UnderClass::getInstance().getStorageBuffer();
+
+	buffer->bindRange(bindingPoint, _offset, _size);
       }
 
       void unmap()

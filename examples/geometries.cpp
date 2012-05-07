@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Fri Mar  2 17:27:21 2012 gael jochaud-du-plessix
-// Last update Thu May  3 17:52:38 2012 gael jochaud-du-plessix
+// Last update Mon May  7 14:25:46 2012 gael jochaud-du-plessix
 //
 
 #include <iomanip>
@@ -65,8 +65,8 @@ int glEngine(int ac, char **av)
   context.depthBits = 24;
   context.stencilBits = 24;
   context.antialiasingLevel = 2;
-  context.majorVersion = 3;
-  context.minorVersion = 3;
+  context.majorVersion = 4;
+  context.minorVersion = 2;
 
   sf::Window App(sf::VideoMode(W_WIDTH, W_HEIGHT, 32), "glEngine",
 		 sf::Style::Default, context);  
