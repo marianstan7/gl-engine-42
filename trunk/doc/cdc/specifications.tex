@@ -1,0 +1,127 @@
+\documentclass [a4 paper,11pt]{article}
+\usepackage [english]{babel}
+\usepackage [utf8]{inputenc}
+\usepackage [T1]{fontenc}
+\usepackage{textcomp}
+\usepackage{vmargin}
+\setmarginsrb{2.5cm}{0.5cm}{2.5cm}{1,5cm}{1,5cm}{0.5cm}{1.0cm}{2.0cm}
+
+
+\title {glEngine : Specifications}
+\author {Gaël Jochaud du Plessix\\
+Loick Michard}
+\date {2012}
+
+\begin{document}
+\maketitle
+
+\newpage
+
+\tableofcontents
+
+\newpage
+
+\part{Introduction}
+Today, there are very few 3D engines that use the power of the APIs provided by OpenGL 4.2. glEngine is designed is this way: to provide a skeleton for a basic 3D rendering engine that uses the latest features of OpenGL.\\
+This document describes the functional specifications for the glEngine project. It comes with the Technical Specifications document that explain the retained solutions for the following specifications. This document describes the required features and some technical restrictions, such as the use of the OpenGL 4.2 and OpenCL APIs. Theses specifications are divided in three parts: the description of the scene management, how the 3D rendering must work and the expected experience report.
+
+\part{Scene management}
+In order to render a virtual world in 3D, the engine must manage a lot of data describing a scene. This part of the specifications describes the different elements that may be part of a scene and how they are arranged hierarchically.
+ 
+\section{Scene elements}
+A scene is composed of various kinds of elements that describe all the aspects of the virtual world to render.
+
+\subsection{Materials}
+Materials allow to specify how an object visually appear when rendered. It contains information such as the object color, its texture and how it reacts to light.
+\subsubsection{Creation}
+The engine should allow the creation of materials programmatically. The user may be able to specify and update all the properties of a material before adding it to the scene.
+\subsubsection{Import}
+It should be possible to import materials from a file in a standard format.
+
+\subsection{Models}
+Models are the virtual representation of 3D objects. They have a geometry that describes their shape and a set of information like their position and their orientation.\\
+Models must also have a material (Cf. Section 1.1) that describes how they appear.
+\subsubsection{Creation}
+The user should be able to create a model programmatically. Thus, he can manually specify all the model information.
+\subsubsection{Import}
+It should be possible to import a model from a file in a standard format.
+\subsubsection{Update}
+Models may be updated at any time. The engine must be able to update all or part of the information concerning a model added to a scene.
+
+\subsection{Lights}
+Lights allow to describe how a scene is illuminated. They must contain information like their color and their position.\\
+There can be different types of lights, such as point light or directional light.
+\subsubsection{Creation}
+Lights may be created programmatically by the user, specifying all their properties manually.
+\subsubsection{Update}
+It should be possible to update the properties of the lights at any time. The engine must allow the user to update all or part of the information concerning a light added to a scene.
+
+\subsection{Cameras}
+Cameras permit to specify the point of view of the observer in a scene. They have several properties common to other scene elements such as a position and an orientation. A camera can also have specific information like its field of view, aspect, etc...
+\subsubsection{Creation}
+Cameras may be created programmatically by the user, specifying all their properties manually.
+\subsubsection{Update}
+It should be possible to update the properties of the cameras at any time. The engine must allow the user to update all or part of the information concerning a camera added to a scene.
+
+\section{Structural information}
+Scene elements may be structured hierarchically and have particular meta-data in order to improve the rendering process.\\
+These data include information about whether the element is static or dynamic, its position in the scene graph and a representation of the world based on spatial partitioning.
+
+\subsection{Elements hierarchy}
+Each element of the scene must be represented as the node of a graph, in order to hierarchy them. Thus, each element should have a parent and a list of child elements.\\
+In addition, it should be possible to name the elements and retrieve them easily in the scene graph.
+
+\subsection{Static vs Dynamic}
+In the scene, there are two main types of elements: static ones and dynamic ones.\\
+As their name suggest, static elements are not subject to change with time. Thereby, the renderer can improve its performance when processing these elements.\\
+Dynamic elements may rather be updated very often, so the engine must provide ability to efficiently update the data of these elements.
+
+\subsection{Spatial partitioning}
+In order to improve the rendering performance, the scene should have a representation of its elements based on spatial partitioning. Thanks to that representation, the engine should be able to efficiently treat a lot of elements.
+
+\part{3D Rendering}
+This part of the specifications describes the different features and requirements of the engine for its main purpose: 3D rendering.\\
+It lists the basic and advanced features of the renderer and describes the expected techniques for performance improvements.
+
+\section{Basic features}
+This section describes the main features that have to be supported by the glEngine renderer.
+
+\subsection{Rasterisation}
+The renderer must be able to rasterize triangles processed from the scene graph.
+\subsection{Textures}
+Triangles rasterized by the renderer should be textured. It should be possible to configure the quality of the textures and how they are rendered.
+
+\section{Advanced features}
+A lot of visual effects can be added to the renderer in order to improve the realism of the rendered image.\\
+These advanced features could be:
+\begin{itemize}
+\item Diffuse/Phong shading
+\item Fog
+\item Environment mapping
+\item Shadows
+\item Volumetric light scattering
+\item ...
+\end{itemize}
+
+\section{Performance}
+In order to provide an efficient rendering process, some techniques must be used by the glEngine to improve its performance capabilities.
+
+\subsection{Metadatas processing}
+The engine should be able to process the scene meta-data in order to improve the rendering performance. Furthermore, it should be able to perform a frustum culling.
+
+\subsection{OpenGL 4.2}
+Since this is the main purpose of this project, the glEngine must take advantage of the features of OpenGL 4.2 APIs to improve the rendering performance.
+
+\subsection{GPU capabilities and OpenCL}
+The engine should take advantage of the capabilities of the GPU. Thus, it may use the OpenCL APIs to process data on the GPU.
+
+\part{Experience report}
+The last part of this project is the report of the experience acquired during the development of the glEngine. It may consists in a document describing several benchmark results realized with the engine and different hardware configurations.
+
+\section{Benchmarks}
+A set of benchmark results should be provided, showing the contribution of the several features improving the engine performances.
+
+\section{Comparison GPU / CPU-GPU / APU}
+In the same time that benchmarks, tests should be processed with different kinds of hardware such as GPU / CPU-GPU and APU. The result of these experiments may be written in the report of experiences.
+
+\end{document}
