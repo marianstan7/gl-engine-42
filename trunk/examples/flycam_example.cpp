@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Fri Mar  2 17:27:21 2012 gael jochaud-du-plessix
-// Last update Wed Apr 11 22:53:35 2012 loick michard
+// Last update Thu May 24 14:38:12 2012 loick michard
 //
 
 #include <iostream>
@@ -98,10 +98,10 @@ int glEngine(int ac, char **av)
   materialLight.setSpecularLightEnabled(true);
   gle::PointLight l(gle::Vector3<GLfloat>(0, 2000, 0),
 		    gle::Color<GLfloat>(0.8, 0.8, 0.8));
-  gle::Mesh* sp = gle::Geometries::Sphere(&materialLight, 10);
-  sp->setPosition(gle::Vector3<GLfloat>(0, 200, 0));
+  //gle::Mesh* sp = gle::Geometries::Sphere(&materialLight, 20);
+  //sp->setPosition(gle::Vector3<GLfloat>(0, 0, 0));
 
-  scene << &camera << &materialLight << sp;
+  scene << &camera;
   scene << &l;
 
   gle::Renderer renderer;
@@ -140,7 +140,7 @@ int glEngine(int ac, char **av)
 	}
       sf::Mouse::setPosition(sf::Vector2i(W_WIDTH/2, W_HEIGHT/2), App);
       flycam::flycam(&camera);
-      l.setPosition(camera.getPosition());
+      l.setPosition(camera.getAbsolutePosition());
       scene.updateLights();
       renderer.render(&scene);
       App.display();

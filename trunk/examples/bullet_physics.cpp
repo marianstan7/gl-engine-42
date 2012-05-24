@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Fri Mar  2 17:27:21 2012 gael jochaud-du-plessix
-// Last update Wed Apr 11 22:52:00 2012 loick michard
+// Last update Thu May 24 14:34:28 2012 loick michard
 //
 
 #include <iostream>
@@ -157,7 +157,7 @@ int glEngine(int ac, char **av)
   gle::Mesh* sp = gle::Geometries::Sphere(&materialLight, 10);
   sp->setPosition(gle::Vector3<GLfloat>(0, 200, 0));
 
-  scene << &camera << &materialLight << sp;
+  scene << &camera << sp;
   scene << &l;
 
   gle::Renderer renderer;
@@ -255,9 +255,9 @@ int glEngine(int ac, char **av)
 	    {
 	      gle::Mesh* sphere = gle::Geometries::Sphere(&material, 2.5);
 	      PhysicMesh* physicSphere = new PhysicMesh(btTransform(btQuaternion(0, 0, 0, 1),
-								    btVector3(camera.getPosition().x, camera.getPosition().y, camera.getPosition().z)),
+								    btVector3(camera.getAbsolutePosition().x, camera.getAbsolutePosition().y, camera.getAbsolutePosition().z)),
 						      sphere, new btSphereShape(2.5), dynamicsWorld, 10000);
-	      gle::Vector3<GLfloat> velocity = camera.getTarget() - camera.getPosition();
+	      gle::Vector3<GLfloat> velocity = camera.getTarget() - camera.getAbsolutePosition();
 	      velocity.normalize();
 	      velocity *= 100;
 	      physicSphere->getGroundRigidBody()->setLinearVelocity(btVector3(velocity.x, velocity.y, velocity.z));
@@ -285,11 +285,11 @@ int glEngine(int ac, char **av)
       
       sf::Mouse::setPosition(sf::Vector2i(W_WIDTH/2, W_HEIGHT/2), App);
       flycam::flycam(&camera);
-      l.setPosition(camera.getPosition());
+      l.setPosition(camera.getAbsolutePosition());
       scene.updateLights();
       renderer.render(&scene);
       App.display();
-      video::saveImage(App, W_FRAMERATE);
+      //video::saveImage(App, W_FRAMERATE);
       GLfloat elapsed = time.getElapsedTime().asMicroseconds();
       time.restart();      
       dynamicsWorld->stepSimulation(elapsed / 100000.f);
@@ -297,7 +297,7 @@ int glEngine(int ac, char **av)
 	sf::sleep(sf::microseconds(1000000.0/W_FRAMERATE - elapsed));
     }
   
-  video::save(av[0], W_FRAMERATE);
+  //video::save(av[0], W_FRAMERATE);
 
   delete dynamicsWorld;
   delete solver;

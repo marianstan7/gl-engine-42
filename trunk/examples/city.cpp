@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Fri Mar  2 17:27:21 2012 gael jochaud-du-plessix
-// Last update Wed May  2 19:51:11 2012 gael jochaud-du-plessix
+// Last update Thu May 24 17:32:24 2012 loick michard
 //
 
 #include <iostream>
@@ -26,9 +26,9 @@
 
 #define W_WIDTH 1280
 #define W_HEIGHT 720
-#define W_FRAMERATE 30
+#define W_FRAMERATE 3000
 
-#define NB_HOUSES 20
+#define NB_HOUSES 100
 
 int glEngine(int, char**);
 
@@ -72,10 +72,11 @@ int glEngine(int ac, char **av)
   App.setActive();
 
   gle::Scene scene;
+  //scene.displayBoundingVolume();
   scene.setBackgroundColor(gle::Color<GLfloat>(1.0, 1.0, 1.0));
   gle::PerspectiveCamera camera(gle::Vector3<GLfloat>(-50, 20, 0),
 				gle::Vector3<GLfloat>(0, 0, 0),
-				45, (GLfloat)W_WIDTH/W_HEIGHT, 1, 10000);
+				45, (GLfloat)W_WIDTH/W_HEIGHT, 1, 800);
 
   gle::ObjLoader loader;
   gle::Material material;
@@ -86,6 +87,8 @@ int glEngine(int ac, char **av)
 
   gle::Mesh* houseModel = loader.load("./examples/city_resources/houseUK.obj",
 				      NULL);
+  gle::Mesh* house2Model = new gle::Mesh(*houseModel);
+  house2Model->setScale(12, 10, -10);
   gle::Mesh* carModelBase =
     loader.load("./examples/city_resources/db9/db9.obj", NULL);  
   carModelBase->setScale(5, 5, 5);
@@ -99,15 +102,15 @@ int glEngine(int ac, char **av)
 
   // Place the houses
   houseModel->setScale(12, 10, 10);
+
   for (int i = 0; i < NB_HOUSES; ++i)
     {
       gle::Mesh* house = new gle::Mesh(*houseModel);
-      gle::Mesh* house2 = new gle::Mesh(*houseModel);
+      gle::Mesh* house2 = new gle::Mesh(*house2Model);
       gle::Mesh* car = new gle::Mesh(*carModel);
       gle::Mesh* car2 = new gle::Mesh(*carModel);
       car->setPosition(gle::Vector3<GLfloat>(-22 + i * 65, 0.6, 25));
       house->setPosition(gle::Vector3<GLfloat>(i * 71, 0, 0));
-      house2->setScale(12, 10, -10);
       house2->setPosition(gle::Vector3<GLfloat>(i * 71, -0.1, 150));
       car2->setPosition(gle::Vector3<GLfloat>(-22 + i * 65, 0.6, 125));
       scene << house << house2 << car << car2;
@@ -124,9 +127,9 @@ int glEngine(int ac, char **av)
   gle::Mesh* sp = gle::Geometries::Sphere(&materialLight, 10);
   sp->setPosition(gle::Vector3<GLfloat>(0, 200, 0));
 
-  scene << &camera << &materialLight << sp;
+  scene << &camera << sp;
   scene << &l;
-
+  //camera.addChild(&l);
   gle::Renderer renderer;
 
   sf::Clock clock;
@@ -137,7 +140,12 @@ int glEngine(int ac, char **av)
   sf::Clock frameTimer;
   int frameCounter = 0;
   double cameraCircleAngle = 0;
-  
+
+  //scene.generateTree();
+  //scene.displayTree();
+  scene.setCamera(&camera);
+  scene.enableFrustumCulling();
+  scene.updateScene();
   while (App.isOpen())
     {
       if (frameTimer.getElapsedTime().asMilliseconds() >= 1000)
@@ -160,17 +168,18 @@ int glEngine(int ac, char **av)
 	  // Adjust the viewport when the window is resized
 	  if (Event.type == sf::Event::Resized)
 	    glViewport(0, 0, Event.size.width, Event.size.height);
-	  //flycam::event(Event, App);
+	  flycam::event(Event, App);
 	}
-      // sf::Mouse::setPosition(sf::Vector2i(W_WIDTH/2, W_HEIGHT/2), App);
-      // flycam::flycam(&camera);
-      camera.setPosition(gle::Vector3<GLfloat>(cos(cameraCircleAngle) * 100
+      sf::Mouse::setPosition(sf::Vector2i(W_WIDTH/2, W_HEIGHT/2), App);
+      flycam::flycam(&camera);
+      /*camera.setPosition(gle::Vector3<GLfloat>(cos(cameraCircleAngle) * 100
 	+ 305,
 	50,
 	sin(cameraCircleAngle) * 100
 	+ 75));
-	camera.setTarget(gle::Vector3<GLfloat>(305, 15, 75));
-      l.setPosition(camera.getPosition());
+	camera.setTarget(gle::Vector3<GLfloat>(305, 15, 75));*/
+      l.setPosition(camera.getAbsolutePosition());
+      std::cout << camera.getAbsolutePosition() << std::endl;
       scene.updateLights();
       renderer.render(&scene);
       App.display();

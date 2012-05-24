@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Fri Feb 17 16:21:24 2012 gael jochaud-du-plessix
-// Last update Fri May  4 14:40:08 2012 gael jochaud-du-plessix
+// Last update Wed May 23 16:02:46 2012 loick michard
 //
 
 #ifndef _GLE_PROGRAM_HPP_
@@ -58,8 +58,6 @@ namespace gle {
       ColorMapTexture = GL_TEXTURE0,
       ColorMapTextureIndex = 0,
     };
-
-    static const int MeshUniformsBinding = 1;
     
     //! Create a new OpenGL Program
     /*!
@@ -97,7 +95,7 @@ namespace gle {
     void use() const;
 
     //! Return the location of a uniform variable from its name
-    GLint getUniformLocation(const std::string& name) const;
+    GLint getUniformLocation(const GLchar *name) const;
 
     //! Return the location of a uniform variable
     GLint getUniformLocation(Uniform uniform);
@@ -106,10 +104,10 @@ namespace gle {
     GLint getSavedUniformLocation(Uniform uniform) const;
 
     //! Set the value of a uniform matrix
-    void setUniform(Uniform uniformLocation, Matrix4<GLfloat> & matrix);
+    void setUniform(Uniform uniformLocation, const Matrix4<GLfloat> & matrix);
 
     //! Set the value of a uniform matrix3
-    void setUniform(Uniform uniformLocation, Matrix3<GLfloat> & matrix);
+    void setUniform(Uniform uniformLocation, const Matrix3<GLfloat> & matrix);
 
     //! Set the value of a uniform array of vec3
     void setUniform3v(Uniform uniformLocation, GLfloat* values,
@@ -130,8 +128,6 @@ namespace gle {
     GLuint getId() const;
 
     void retreiveUniformBlockIndex(UniformBlock block, const std::string& name);
-
-    GLuint getUniformBlockIndex(const std::string& name) const;
 
     GLuint getUniformBlockIndex(UniformBlock block) const;
 

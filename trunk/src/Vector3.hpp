@@ -5,7 +5,7 @@
 // Login   <michar_l@epitech.net>
 // 
 // Started on  Fri Feb 17 12:51:39 2012 loick michard
-// Last update Fri May  4 12:04:46 2012 gael jochaud-du-plessix
+// Last update Sat May  5 11:49:34 2012 loick michard
 //
 
 #ifndef _GLE_VECTOR3_HPP_
@@ -85,7 +85,6 @@ namespace gle {
       return (*this);
     }
 
-
     //! Multiply a vector
     /*!
       \param value multiply vector by this value
@@ -96,6 +95,30 @@ namespace gle {
       x *= value;
       y *= value;
       z *= value;
+      return (*this);
+    }
+
+    Vector3& operator-=(T const& value)
+    {
+      x -= value;
+      y -= value;
+      z -= value;
+      return (*this);
+    }
+
+    Vector3& operator+=(T const& value)
+    {
+      x += value;
+      y += value;
+      z += value;
+      return (*this);
+    }
+
+    Vector3& operator/=(T const& value)
+    {
+      x /= value;
+      y /= value;
+      z /= value;
       return (*this);
     }
 
@@ -132,9 +155,9 @@ namespace gle {
     T z;
   };
 
-  typedef Vector3<GLfloat> Vector3f;
-  typedef Vector3<GLuint> Vector3ui;
-  typedef Vector3<GLint> Vector3i;
+  typedef Vector3<GLfloat> fVector3;
+  typedef Vector3<GLuint> uiVector3;
+  typedef Vector3<GLint> iVector3;
 }
 
 template <typename T>

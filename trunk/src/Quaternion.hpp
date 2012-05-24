@@ -5,7 +5,7 @@
 // Login   <michar_l@epitech.net>
 // 
 // Started on  Wed Feb 15 18:22:27 2012 loick michard
-// Last update Tue Apr 10 22:20:23 2012 loick michard
+// Last update Tue May 22 12:26:57 2012 loick michard
 //
 
 #ifndef _GLE_QUATERNION_HPP
@@ -51,6 +51,12 @@ namespace gle {
       w(w), x(x), y(y), z(z)
     {
       
+    }
+
+    Quaternion(Vector3<T> axis, T const& angle) :
+      w(1), x(0), y(0), z(0)
+    {
+      this->setRotation(axis, angle);
     }
 
     //! Default destructor
@@ -103,7 +109,7 @@ namespace gle {
 
     //! Get matrix from quaternion
 
-    Matrix4<T> getMatrix()
+    Matrix4<T> getMatrix() const
     {
       return (Matrix4<T>(1 - 2 * y * y - 2 * z * z,
 			 2 * x * y  - 2 * z * w,

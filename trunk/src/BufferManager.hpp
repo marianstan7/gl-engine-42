@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Fri Apr 13 12:43:29 2012 gael jochaud-du-plessix
-// Last update Mon May  7 16:38:04 2012 gael jochaud-du-plessix
+// Last update Mon May  7 15:54:59 2012 loick michard
 //
 
 #ifndef _GLE_BUFFER_MANAGER_HPP_
@@ -27,6 +27,7 @@ namespace gle {
     }
     ~BufferManager()
     {
+      if (0)
       for (Chunk* &chunk : _chunks)
 	{
 	  std::cout << " - " << chunk->getOffset() << ": " << chunk->getSize()
@@ -35,6 +36,16 @@ namespace gle {
       drain();
       if (_buffer)
 	delete _buffer;
+    }
+
+    void setStorageBuffer(gle::Buffer<T> *buffer)
+    {
+      _buffer = buffer;
+    }
+
+    gle::Buffer<T>* getStorageBuffer() const
+    {
+      return (_buffer);
     }
 
   public:
@@ -89,8 +100,8 @@ namespace gle {
       void release()
       {
 	_refCount = _refCount - 1;
-	if (_refCount < 0)
-	  delete this;
+	if (_refCount == 0)
+	  UnderClass::getInstance().free(this);
       }
 
       void setData(const void* data)
@@ -107,18 +118,16 @@ namespace gle {
 	return (buffer->map(_offset, _size, access));
       }
 
-      void bind(GLuint bindingPoint)
-      {
-	gle::Buffer<T>* buffer = UnderClass::getInstance().getStorageBuffer();
-
-	buffer->bindRange(bindingPoint, _offset, _size);
-      }
-
       void unmap()
       {
 	gle::Buffer<T>* buffer = UnderClass::getInstance().getStorageBuffer();
 
         buffer->unmap();
+      }
+
+      void setRefCount(int count)
+      {
+	_refCount = count;
       }
 
     private:
@@ -128,16 +137,14 @@ namespace gle {
       int		_refCount;
     };
 
-    void setStorageBuffer(gle::Buffer<T> *buffer)
+    void print()
     {
-      _buffer = buffer;
+      for (Chunk* &chunk : _chunks)
+	{
+	  std::cout << chunk << " - " << chunk->getOffset() << ": " << chunk->getSize()
+		    << ", free: " << chunk->isFree() << "\n";
+	}
     }
-
-    gle::Buffer<T>* getStorageBuffer() const
-    {
-      return (_buffer);
-    }
-
 
     void bind()
     {
@@ -189,16 +196,6 @@ namespace gle {
 			  chunk->getSize());
       free(chunk);
       return (newChunk);
-    }
-
-    Chunk* duplicate(const Chunk& chunk)
-    {
-      Chunk* newChunk = store(NULL, chunk.getSize());
-      glBindBuffer(GL_COPY_WRITE_BUFFER, _buffer->getId());
-      glBindBuffer(GL_COPY_READ_BUFFER, _buffer->getId());
-      glCopyBufferSubData(GL_COPY_READ_BUFFER, GL_COPY_WRITE_BUFFER,
-			  chunk.getOffset(), newChunk->getOffset(),
-			  chunk.getSize());
     }
 
     Chunk* store(const void* data, GLsizeiptr size)
@@ -301,6 +298,7 @@ namespace gle {
 	    }
 	}
       newFreeNode->setFree(true);
+      newFreeNode->setRefCount(1);
       for (typename decltype(_chunks)::iterator it = _freeChunks.begin();
 	   it != _freeChunks.end(); ++it)
 	{

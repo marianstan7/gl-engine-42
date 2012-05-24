@@ -38,12 +38,6 @@ file (
 add_library(glEngine SHARED ${SOURCES})
 
 
-# Add examples
-add_executable (
-    examples/cube
-    examples/cube.cpp
-)
-
 add_executable (
     examples/example00
     examples/example00.cpp
@@ -95,9 +89,15 @@ add_executable (
     examples/video.cpp
 )
 
-# Librairies to link
+add_executable (
+    examples/boundingvolume
+    examples/boundingvolume.cpp
+    examples/flycam.cpp
+    examples/video.cpp
+)
+
 target_link_libraries (
-    examples/cube
+    examples/boundingvolume
     ${SFML_LIBRARIES}
     ${OPENGL_LIBRARIES}
     glEngine

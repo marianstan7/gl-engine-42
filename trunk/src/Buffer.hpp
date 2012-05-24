@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Wed Feb 15 16:10:11 2012 gael jochaud-du-plessix
-// Last update Mon May  7 16:10:15 2012 gael jochaud-du-plessix
+// Last update Wed May 23 16:10:34 2012 loick michard
 //
 
 #ifndef _GLE_BUFFER_HPP_
@@ -163,22 +163,13 @@ namespace gle {
 
     void bind() const
     {
+      //std::cout << _id << std::endl;
       glBindBuffer(_type, _id);
     }
 
     void bindBase(GLuint binding) const
     {
       glBindBufferBase(_type, binding, _id);
-    }
-
-    //! Bind a range of the buffer
-    /*!
-      Bind the buffer at the specified 'bindingPoint'
-    */
-
-    void bindRange(GLuint bindingPoint, GLintptr offset, GLsizeiptr size) const
-    {
-      glBindBufferRange(_type, bindingPoint, _id, offset, size);
     }
 
     //! Resize a buffer
@@ -209,12 +200,19 @@ namespace gle {
     void setData(const T* data)
     {
       bind();
-      glBufferData(_type, _size * sizeof(T), data, _usage);
       GLenum error = glGetError();
+      if (error != GL_NO_ERROR)
+	{
+	  throw new gle::Exception::OpenGLError("setData: bind()");
+	}
+      glBufferData(_type, _size * sizeof(T), data, _usage);
+      error = glGetError();
       if (error == GL_OUT_OF_MEMORY)
 	throw new gle::Exception::OutOfMemory("Cannot set buffer data");
       else if (error != GL_NO_ERROR)
-	throw new gle::Exception::OpenGLError();
+	{
+	  throw new gle::Exception::OpenGLError("setData: glBufferData()");
+	}
     }
 
     //! Set a part of the buffer data

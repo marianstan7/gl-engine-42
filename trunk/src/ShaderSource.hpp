@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Tue Feb 21 15:47:17 2012 gael jochaud-du-plessix
-// Last update Mon May  7 16:51:44 2012 gael jochaud-du-plessix
+// Last update Wed Apr 11 23:19:09 2012 loick michard
 //
 
 #ifndef _GLE_SHADER_SOURCE_HPP_
@@ -29,7 +29,6 @@ namespace gle {
 
 	extern const char *Head;
 	extern const char *UniformDeclarations;	
-	extern GLuint MeshIndexLocation;
 	extern GLuint PositionLocation;
 	extern GLuint NormalLocation;
 	extern const char * InputLocations;

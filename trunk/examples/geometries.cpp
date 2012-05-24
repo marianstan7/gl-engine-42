@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Fri Mar  2 17:27:21 2012 gael jochaud-du-plessix
-// Last update Mon May  7 14:25:46 2012 gael jochaud-du-plessix
+// Last update Thu May 24 17:25:24 2012 loick michard
 //
 
 #include <iomanip>
@@ -23,7 +23,6 @@
 #include <DirectionalLight.hpp>
 #include <PointLight.hpp>
 #include <MeshBufferManager.hpp>
-#include <Exception.hpp>
 
 #include "flycam.hpp"
 #include "video.hpp"
@@ -46,13 +45,7 @@ int main(int ac, char **av)
   }
   catch (std::exception *e)
     {
-      if (dynamic_cast<gle::Exception::LinkageError*>(e))
-	std::cout << "Linkage error";
-      else if (dynamic_cast<gle::Exception::CompilationError*>(e))
-	std::cout << "Compilation error";
-      else
-	std::cout << "Error";
-      std::cout << ": " << e->what() << std::endl;
+      std::cout << "Error: " << e->what() << std::endl;
     }
   return (ret);
 }
@@ -65,8 +58,8 @@ int glEngine(int ac, char **av)
   context.depthBits = 24;
   context.stencilBits = 24;
   context.antialiasingLevel = 2;
-  context.majorVersion = 4;
-  context.minorVersion = 2;
+  context.majorVersion = 3;
+  context.minorVersion = 3;
 
   sf::Window App(sf::VideoMode(W_WIDTH, W_HEIGHT, 32), "glEngine",
 		 sf::Style::Default, context);  
@@ -95,21 +88,23 @@ int glEngine(int ac, char **av)
 
   gle::Mesh* cube = gle::Geometries::Cube(&material, 10);
   cube->setPosition(gle::Vector3<GLfloat>(8, 0, -8));
+  cube->setRotation(gle::Vector3<GLfloat>(0, 1, 0), 45);
   gle::Mesh* pointCube = gle::Geometries::Cube(&material2, 10);
   pointCube->setPosition(gle::Vector3<GLfloat>(-24, 0, -8));
-  pointCube->setType(gle::Mesh::Points);
+  pointCube->setPrimitiveType(gle::Mesh::Points);
   pointCube->setPointSize(5);
   gle::Mesh* sphere = gle::Geometries::Sphere(&material, 5);
   sphere->setPosition(gle::Vector3<GLfloat>(8, 0, 8));
   gle::Mesh* pointSphere = gle::Geometries::Sphere(&material2, 5, 100, 100);
   pointSphere->setPosition(gle::Vector3<GLfloat>(-24, 0, 8));
-  pointSphere->setType(gle::Mesh::Points);
-  gle::Mesh* plane = gle::Geometries::Plane(&material, 80, 80, 2, 2);
+  pointSphere->setPrimitiveType(gle::Mesh::Points);
+  pointSphere->setScale(3);
+  gle::Mesh* plane = gle::Geometries::Plane(&material, 80, 80, 20, 20);
   plane->setPosition(gle::Vector3<GLfloat>(0, -5, 0));
   gle::Mesh* pointPlane =
     gle::Geometries::Plane(&material2, 80, 80, 100, 100);
   pointPlane->setPosition(gle::Vector3<GLfloat>(0, -5, 80));
-  pointPlane->setType(gle::Mesh::Points);
+  pointPlane->setPrimitiveType(gle::Mesh::Points);
   pointPlane->setPointSize(2);
 
   gle::Mesh* wiredSphere = new gle::Mesh(*sphere);
@@ -161,7 +156,8 @@ int glEngine(int ac, char **av)
   int frameCounter = 0;
 
   App.setMouseCursorVisible(false);
-  
+
+  scene.updateScene();
   while (App.isOpen())
     {    
       if (frameTimer.getElapsedTime().asMilliseconds() >= 1000)
@@ -181,19 +177,15 @@ int glEngine(int ac, char **av)
 	  else if (Event.type == sf::Event::KeyPressed
 		   && Event.key.code == sf::Keyboard::Escape)
 	    App.close();
-
 	  // Adjust the viewport when the window is resized
 	  if (Event.type == sf::Event::Resized)
 	    glViewport(0, 0, Event.size.width, Event.size.height);
 	  flycam::event(Event, App);
 	}
 
-      if (!App.isOpen())
-	continue ;
-
       sf::Mouse::setPosition(sf::Vector2i(W_WIDTH/2, W_HEIGHT/2), App);
       flycam::flycam(&camera);
-      l.setPosition(camera.getPosition());
+      l.setPosition(camera.getAbsolutePosition());
       scene.updateLights();
       renderer.render(&scene);
       App.display();

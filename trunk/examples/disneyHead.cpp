@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Wed Feb 15 17:24:36 2012 gael jochaud-du-plessix
-// Last update Mon Apr 30 15:44:46 2012 gael jochaud-du-plessix
+// Last update Thu May 24 14:06:01 2012 loick michard
 //
 
 /*! 
@@ -128,8 +128,12 @@ int glEngine(int ac, char **av)
 
   //gle::DirectionalLight		l4(gle::Vector3<GLfloat>(1, 1, 0), gle::Color<GLfloat>(0.5, 0.5, 0.5));
 
-  scene << &camera << &material << &materialLight << &materialLight2 << &materialLight3 << &materialLight4 << sp << sp2 << sp3 << sp4;
-  scene << &l << &l2 << &l3 << &l4 << &l5;
+  sp->addChild(&l);
+  sp2->addChild(&l2);
+  sp3->addChild(&l3);
+  sp4->addChild(&l4);
+  scene << &camera << sp << sp2 << sp3 << sp4;
+  scene << /*&l << &l2 << &l3 << &l4 << */&l5;
 
   gle::Renderer		renderer;
   GLfloat		angle = 0;
@@ -137,7 +141,8 @@ int glEngine(int ac, char **av)
   sf::Clock		time;
   size_t		frameCounter = 0;
   float			dist = 170;
-  
+ 
+  scene.updateScene();
   while (App.isOpen())
     {
       sf::Event event;
@@ -173,16 +178,16 @@ int glEngine(int ac, char **av)
       float		dist2 = dist / 3;
 
       sp->setPosition(gle::Vector3<GLfloat>(sin(angle/2) * dist2, cos(angle/2) * dist2 + 30, 0));
-      l.setPosition(gle::Vector3<GLfloat>(sin(angle/2) * dist2, cos(angle/2) * dist2 + 30, 0));
+      //l.setPosition(gle::Vector3<GLfloat>(sin(angle/2) * dist2, cos(angle/2) * dist2 + 30, 0));
 
       sp2->setPosition(gle::Vector3<GLfloat>(sin(angle/2) * dist2, 30, cos(angle/2) * dist2));
-      l2.setPosition(gle::Vector3<GLfloat>(sin(angle/2) * dist2, 30, cos(angle/2) * dist2));
+      //l2.setPosition(gle::Vector3<GLfloat>(sin(angle/2) * dist2, 30, cos(angle/2) * dist2));
 
       sp3->setPosition(gle::Vector3<GLfloat>(0, sin(angle/2) * dist2+30, cos(angle/2) * dist2));
-      l3.setPosition(gle::Vector3<GLfloat>(0, sin(angle/2) * dist2+30, cos(angle/2) * dist2));
+      //l3.setPosition(gle::Vector3<GLfloat>(0, sin(angle/2) * dist2+30, cos(angle/2) * dist2));
 
       sp4->setPosition(gle::Vector3<GLfloat>(0, cos(angle/2) * dist2+30, sin(angle/2) * dist2));
-      l4.setPosition(gle::Vector3<GLfloat>(0, cos(angle/2) * dist2+30, sin(angle/2) * dist2));
+      //l4.setPosition(gle::Vector3<GLfloat>(0, cos(angle/2) * dist2+30, sin(angle/2) * dist2));
 
       scene.updateLights();
 

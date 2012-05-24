@@ -5,7 +5,7 @@
 // Login   <michar_l@epitech.net>
 // 
 // Started on  Mon Feb 13 20:57:51 2012 loick michard
-// Last update Thu Apr 12 22:13:40 2012 loick michard
+// Last update Thu May 24 17:04:02 2012 loick michard
 //
 
 #ifndef _GLE_MATRIX4_HPP_
@@ -426,50 +426,27 @@ namespace gle {
 
     //! Return an initisialised 4x4 matrix for viewing transformation
     /*!
-      \param eyex, eyey, eyez Position of eye.
-      \param centerx, centery, centerz Position of reference.
-      \param upx, upy, upz Direction of up vector.
-      \return An initisialised 4x4 matrix for viewing transformation
-    */
-
-    static Matrix4 lookAt(T const& eyex, T const& eyey, T const& eyez,
-			  T const& centerx, T const& centery, T const& centerz,
-			  T const& upx, T const& upy, T const& upz)
-    {
-      T xx, xy, xz, yx, yy, yz, zx, zy, zz;
-
-      zx = eyex - centerx;
-      zy = eyey - centery;
-      zz = eyez - centerz;
-      normalizeVector(zx, zy, zz);
-      xx = upy * zz - upz * zy;
-      xy = upz * zx - upx * zz;
-      xz = upx * zy - upy * zx;
-      normalizeVector(xx, xy, xz);
-      yx = zy * xz - zz * xy;
-      yy = zz * xx - zx * xz;
-      yz = zx * xy - zy * xx;
-      normalizeVector(yx, yy, yz);
-
-      return (Matrix4(xx, xy, xz, -(xx * eyex + xy * eyey + xz * eyez),
-		      yx, yy, yz, -(yx * eyex + yy * eyey + yz * eyez),
-		      zx, zy, zz, -(zx * eyex + zy * eyey + zz * eyez),
-		      0, 0, 0, 1));
-    }
-
-    //! Return an initisialised 4x4 matrix for viewing transformation
-    /*!
       \param eye Position of eye.
       \param center Position of reference.
       \param up Direction of up vector.
       \return An initisialised 4x4 matrix for viewing transformation
     */
 
-    static Matrix4 lookAt(Vector3<T> const& eye, Vector3<T> const& center,
-			  Vector3<T> const& up)
+    static Matrix4 lookAt(Vector3<T> const& eyePosition, Vector3<T> const& center,
+			  Vector3<T> const& upVector)
     {
-      return (lookAt(eye.x, eye.y, eye.z, center.x, center.y, center.z,
-		     up.x, up.y, up.z));
+      gle::Vector3<T> forward, side, up;
+      forward.x = center.x - eyePosition.x;
+      forward.y = center.y - eyePosition.y;
+      forward.z = center.z - eyePosition.z;
+      forward.normalize();
+      side = forward ^ upVector;
+      side.normalize();
+      up = side ^ forward;
+      return (Matrix4(side.x, side.y, side.z, 0.0,
+		      up.x, up.y, up.z, 0.0,
+		      -forward.x, -forward.y, -forward.z, 0.0,
+		      0.0, 0.0, 0.0, 1.0));
     }
 
     //! Translate matrix
