@@ -5,7 +5,7 @@
 // Login   <michar_l@epitech.net>
 // 
 // Started on  Thu Feb 23 17:36:20 2012 loick michard
-// Last update Wed Feb 29 17:03:28 2012 loick michard
+// Last update Thu May 24 14:08:42 2012 loick michard
 //
 
 #ifndef _POINT_LIGHT_HPP_
@@ -49,12 +49,6 @@ namespace gle {
 
     ~PointLight();
 
-    //! Set the light position
-    /*!
-      \param position New light position
-    */
-
-    void setPosition(Vector3<GLfloat> const& position);
 
     //! Set the light color
     /*!
@@ -70,10 +64,6 @@ namespace gle {
 
     void setSpecularColor(Color<GLfloat> const& specularColor);
 
-    //! Get the light position
-
-    Vector3<GLfloat>& getPosition();
-
     //! Get the light color
 
     GLfloat* getColor();
@@ -82,8 +72,9 @@ namespace gle {
 
     GLfloat* getSpecularColor();
 
+    virtual void update();
+
   private:
-    Vector3<GLfloat> _position;
     GLfloat _color[3];
     GLfloat _specularColor[3];
   };

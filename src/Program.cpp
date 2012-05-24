@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Fri Feb 17 16:21:14 2012 gael jochaud-du-plessix
-// Last update Thu May  3 17:51:16 2012 gael jochaud-du-plessix
+// Last update Wed May 23 16:11:40 2012 loick michard
 //
 
 #include <Program.hpp>
@@ -94,11 +94,11 @@ void gle::Program::use() const
     throw new gle::Exception::OpenGLError();
 }
 
-GLint gle::Program::getUniformLocation(const std::string& name) const
+GLint gle::Program::getUniformLocation(const GLchar *name) const
 {
-  GLint location = glGetUniformLocation(_id, name.c_str());
+  GLint location = glGetUniformLocation(_id, name);
   if (location == -1)
-    throw new gle::Exception::InvalidOperation(std::string("Uniform ") + name + " doesn't exists");
+    throw new gle::Exception::InvalidOperation(std::string(name) + ": Uniform doesn't exists");
   else if (glGetError() != GL_NO_ERROR)
     throw new gle::Exception::OpenGLError();
   return (location);
@@ -121,16 +121,16 @@ GLuint gle::Program::getId() const
   return (_id);
 }
 
-void gle::Program::setUniform(Uniform uniform, Matrix4<GLfloat> & matrix)
+void gle::Program::setUniform(Uniform uniform, const Matrix4<GLfloat> & matrix)
 {
   glUniformMatrix4fv(_uniformLocations[uniform], 1, GL_FALSE,
-		     (GLfloat*)matrix);
+		     (const GLfloat*)matrix);
 }
 
-void gle::Program::setUniform(Uniform uniform, Matrix3<GLfloat> & matrix)
+void gle::Program::setUniform(Uniform uniform, const Matrix3<GLfloat> & matrix)
 {
   glUniformMatrix3fv(_uniformLocations[uniform], 1, GL_FALSE,
-		     (GLfloat*)matrix);
+		     (const GLfloat*)matrix);
 }
 
 void gle::Program::setUniform3v(Uniform uniform, GLfloat* values,
@@ -166,19 +166,6 @@ void gle::Program::retreiveUniformBlockIndex(UniformBlock block, const std::stri
   glUniformBlockBinding(_id,
                         _uniformBlockIndexes[block],
                         block);
-  if (_uniformBlockIndexes[block] == GL_INVALID_INDEX)
-    throw new gle::Exception::InvalidOperation(std::string("Uniform block ") + name + " doesn't exists");
-  else if (glGetError() != GL_NO_ERROR)
-    throw new gle::Exception::OpenGLError();
-}
-
-GLuint gle::Program::getUniformBlockIndex(const std::string &name) const
-{
-  GLuint index = glGetUniformBlockIndex(_id, name.c_str());
-  if (index == GL_INVALID_INDEX)
-    throw new gle::Exception::InvalidOperation(std::string("Uniform block ") + name + " doesn't exists");
-  else if (glGetError() != GL_NO_ERROR)
-    throw new gle::Exception::OpenGLError();
 }
 
 GLuint gle::Program::getUniformBlockIndex(UniformBlock block) const

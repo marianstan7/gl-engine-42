@@ -5,10 +5,12 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Mon Feb 20 19:12:49 2012 gael jochaud-du-plessix
-// Last update Mon May  7 16:41:45 2012 gael jochaud-du-plessix
+// Last update Thu May 24 14:29:15 2012 loick michard
 //
 
 #include <Scene.hpp>
+#include <Mesh.hpp>
+#include <Camera.hpp>
 #include <algorithm>
 #include <DirectionalLight.hpp>
 #include <PointLight.hpp>
@@ -17,14 +19,15 @@
 
 gle::Scene::Scene() :
   _backgroundColor(0.0, 0.0, 0.0, 0.0),
-  _cameras(), _meshes(), _materials(),
+  _cameras(), _meshesToRender(), _unboundingMeshesToRender(),
   _lights(), _directionalLightsDirection(),
   _directionalLightsColor(), _directionalLightsSize(0),
   _pointLightsPosition(),
   _pointLightsColor(), _pointLightsSize(0),
   _currentCamera(NULL), _program(NULL), _needProgramCompilation(true),
-  _meshesToRender()
+  _displayBoundingVolume(false), _frustumCulling(false)
 {
+  //_root.setName("root");
 }
 
 gle::Scene::~Scene()
@@ -42,6 +45,25 @@ gle::Color<GLfloat> const & gle::Scene::getBackgroundColor() const
   return (_backgroundColor);
 }
 
+gle::Scene & gle::Scene::add(gle::Scene::Node* node)
+{
+  _root.addChild(node);
+  return (*this);
+}
+
+gle::Scene & gle::Scene::add(std::vector<gle::Scene::Node*> nodes)
+{
+  for (gle::Scene::Node* &node : nodes)
+    _root.addChild(node);
+  return (*this);
+}
+
+gle::Scene & gle::Scene::remove(gle::Scene::Node* node)
+{
+  _root.removeChild(node);
+  return (*this);
+}
+/*
 gle::Scene & gle::Scene::add(Camera* camera)
 {  
   if (find(_cameras.begin(), _cameras.end(), camera) == _cameras.end())
@@ -58,11 +80,14 @@ gle::Scene & gle::Scene::add(Mesh* mesh)
   if (!mesh)
     return (*this);
   add(mesh->getMaterial());
-  if (find(_meshes.begin(), _meshes.end(), mesh) == _meshes.end())
+  if (mesh->getBoundingVolume() && find(_meshes.begin(), _meshes.end(), mesh) == _meshes.end())
     _meshes.push_back(mesh);
+  else if (find(_meshes.begin(), _meshes.end(), mesh) == _meshes.end())
+    _unboundingMeshes.push_back(mesh);
   std::vector<gle::Mesh*> & childs = mesh->getChildren();
   add(childs);
-  _needProgramCompilation = true;
+  if (_displayBoundingVolume && mesh->getBoundingVolume())
+      add(mesh->getBoundingVolume()->getMesh());
   return (*this);
 }
 
@@ -111,6 +136,8 @@ gle::Scene & gle::Scene::remove(Mesh* mesh)
 
   if ((it = find(_meshes.begin(), _meshes.end(), mesh)) != _meshes.end())
     _meshes.erase(it);
+  if ((it = find(_unboundingMeshes.begin(), _unboundingMeshes.end(), mesh)) != _unboundingMeshes.end())
+    _unboundingMeshes.erase(it);
   return (*this);
 }
 
@@ -135,28 +162,32 @@ gle::Scene & gle::Scene::remove(Light* light)
     }
   return (*this);
 }
-
-std::vector<gle::Mesh*> & gle::Scene::getMeshes()
+*/
+const std::vector<gle::Mesh*> & gle::Scene::getMeshesToRender()
 {
-  return (_meshes);
+  if (_frustumCulling)
+    return (reinterpret_cast<const std::vector<gle::Mesh*>&>
+	    (_tree.getElementsInFrustum(_currentCamera->getProjectionMatrix(),
+					_currentCamera->getTransformationMatrix())));
+  return (_meshesToRender);
 }
 
-std::vector<gle::Mesh*> & gle::Scene::getMeshesToRender()
+const std::vector<gle::Mesh*> & gle::Scene::getUnboundingMeshesToRender()
 {
-  return (_meshesToRender);
+  return (_unboundingMeshesToRender);
 }
 
 std::vector<gle::Camera*> & gle::Scene::getCameras()
 {
   return (_cameras);
 }
-
+/*
 std::vector<gle::Material*> & gle::Scene::getMaterials()
 {
   return (_materials);
 }
-
-std::vector<gle::Light*> & gle::Scene::getLights()
+*/
+const std::vector<gle::Light*> & gle::Scene::getLights() const
 {
   return (_lights);
 }
@@ -176,10 +207,10 @@ void gle::Scene::updateLights()
   _pointLightsSpecularColor.resize(0);
   unsigned int dSize = 0;
   unsigned int pSize = 0;
-  for (std::vector<Light*>::iterator it = _lights.begin();
+  for (auto it = _lights.begin();
        it != _lights.end(); ++it)
     {
-      if ((*it)->getType() == gle::Light::DIRECTIONAL)
+      if ((*it)->getLightType() == gle::Light::DIRECTIONAL)
 	{
 	  ++dSize;
 	  gle::Vector3<GLfloat> direction = ((gle::DirectionalLight*)(*it))->getDirection();
@@ -191,11 +222,13 @@ void gle::Scene::updateLights()
 	  _directionalLightsColor.push_back(color[1]);
 	  _directionalLightsColor.push_back(color[2]);
 	}
-      else if ((*it)->getType() == gle::Light::POINT)
+      else if ((*it)->getLightType() == gle::Light::POINT)
 	{
 	  ++pSize;
-	  gle::Vector3<GLfloat> position = ((gle::PointLight*)(*it))->getPosition();
-	  position *= _currentCamera->getModelViewMatrix();
+	  gle::Vector3<GLfloat> position = ((gle::PointLight*)(*it))->getAbsolutePosition();
+	  if (!_currentCamera)
+	    throw (new gle::Exception::Exception("No camera for the scene..."));
+	  position *= _currentCamera->getTransformationMatrix();
           GLfloat* color = ((gle::PointLight*)(*it))->getColor();
           GLfloat* specularColor = ((gle::PointLight*)(*it))->getSpecularColor();
           _pointLightsPosition.push_back(position.x);
@@ -275,35 +308,18 @@ void		gle::Scene::buildProgram()
       delete fragmentShader;
       throw e;
     }
-
-  GLuint i = 0;
-  for (Mesh* &mesh : _meshesToRender)
-    {
-      std::stringstream ss;
-
-      ss << "gle_meshUniformsBlock[" << i << "]";
-      GLuint meshUniformsBlockIndex = _program->getUniformBlockIndex(ss.str().c_str());
-      if (meshUniformsBlockIndex == -1)
-	throw new gle::Exception::InvalidOperation(std::string("Uniform block ") + ss.str() + " doesn't exists");
-      glUniformBlockBinding(_program->getId(), meshUniformsBlockIndex, gle::Program::MeshUniformsBinding + i);
-      ++i;
-    }
-
-  GLenum error = glGetError();
-  if (error != GL_NO_ERROR)
-    throw new gle::Exception::OpenGLError();
-
-  // _program->getUniformLocation(gle::Program::MVMatrix);
+  _program->getUniformLocation(gle::Program::MVMatrix);
   _program->getUniformLocation(gle::Program::PMatrix);
   /*  _program->getUniformLocation(gle::Program::AmbientColor);
-      _program->getUniformLocation(gle::Program::DiffuseColor);
-      _program->getUniformLocation(gle::Program::SpecularColor);*/
+  _program->getUniformLocation(gle::Program::DiffuseColor);
+  _program->getUniformLocation(gle::Program::SpecularColor);*/
   _program->getUniformLocation(gle::Program::HasColorMap);
   _program->getUniformLocation(gle::Program::ColorMap);
-  // _program->getUniformLocation(gle::Program::NMatrix);
+  if (getDirectionalLightsSize() || getPointLightsSize())
+    _program->getUniformLocation(gle::Program::NMatrix);
   /*_program->getUniformLocation(gle::Program::Shininess);
-    _program->getUniformLocation(gle::Program::SpecularIntensity);
-    _program->getUniformLocation(gle::Program::DiffuseIntensity);*/
+  _program->getUniformLocation(gle::Program::SpecularIntensity);
+  _program->getUniformLocation(gle::Program::DiffuseIntensity);*/
   if (getDirectionalLightsSize())
     {
       _program->getUniformLocation(gle::Program::DirectionalLightDirection);
@@ -320,33 +336,13 @@ void		gle::Scene::buildProgram()
   delete fragmentShader;
 }
 
-void gle::Scene::bindMeshesUniforms()
-{
-  GLuint i = 0;
-  for (Mesh* &mesh : _meshesToRender)
-    {
-      gle::MeshUniformsBufferManager::Chunk* uniforms = mesh->getUniforms();
-      uniforms->bind(gle::Program::MeshUniformsBinding + i);
-      ++i;
-    }
-}
-
 gle::Shader* gle::Scene::_createVertexShader()
 {
   std::string shaderSource;
 
   shaderSource += gle::ShaderSource::VertexShader;
   shaderSource = _replace("%nb_directional_lights", getDirectionalLightsSize(), shaderSource);
-  shaderSource = _replace("%nb_point_lights", getPointLightsSize(), shaderSource);
-
-  _meshesToRender.clear();
-  for (Mesh* &mesh : _meshes)
-    if (mesh->getNbIndexes() > 0)
-      _meshesToRender.push_back(mesh);
-
-  std::cout << _meshesToRender.size() << " meshes\n";
-  shaderSource = _replace("%nb_meshes", _meshesToRender.size(), shaderSource);
-
+  shaderSource =_replace("%nb_point_lights", getPointLightsSize(), shaderSource);
   gle::Shader *shader = new gle::Shader(gle::Shader::Vertex, shaderSource);
 
   return (shader);
@@ -378,4 +374,75 @@ gle::Program*	gle::Scene::getProgram()
   if (_needProgramCompilation)
     this->buildProgram();
   return (_program);
+}
+
+void		gle::Scene::displayBoundingVolume()
+{
+  _displayBoundingVolume = true;
+}
+
+void		gle::Scene::generateTree()
+{
+  std::cout << "Starting octree generation..." << std::endl;
+  _tree.generateTree(reinterpret_cast<std::vector<gle::Octree::Element*>&>(_meshesToRender));
+  std::cout << "End of octree generation" << std::endl;
+}
+
+void		gle::Scene::displayTree()
+{
+  _tree.addMeshes(*this);
+}
+
+void		gle::Scene::enableFrustumCulling(bool enable)
+{
+  _frustumCulling = enable;
+}
+
+void		gle::Scene::setCamera(gle::Camera* camera)
+{
+  _currentCamera = camera;
+}
+
+void		gle::Scene::updateScene(gle::Scene::Node* node, int depth)
+{
+  Mesh*		mesh;
+  Light*	light;
+  Camera*	camera;
+  bool		generate = false;
+
+  if (!node)
+    {
+      _meshesToRender.clear();
+      _lights.clear();
+      _cameras.clear();
+      _unboundingMeshesToRender.clear();
+      node = &_root;
+      generate = true;
+      _root.updateMatrix();
+    }
+  //std::cout << depth << " : [" << node->getName() << std::endl;
+  if (node->getType() == Node::Mesh && (mesh = dynamic_cast<Mesh*>(node)))
+    {
+      if (mesh->getBoundingVolume())
+	_meshesToRender.push_back(mesh);
+      else
+	_unboundingMeshesToRender.push_back(mesh);
+      if (_displayBoundingVolume && mesh->getBoundingVolume() &&
+	  mesh->getBoundingVolume()->getMesh())
+	_unboundingMeshesToRender.push_back(mesh->getBoundingVolume()->getMesh());
+    }
+  else if (node->getType() == Node::Light && (light = dynamic_cast<Light*>(node)))
+    _lights.push_back(light);
+  else if (! _currentCamera && node->getType() == Node::Camera && (camera = dynamic_cast<Camera*>(node)))
+    _currentCamera = camera;
+  const std::vector<Node*>& children = node->getChildren();
+  for (Node* const &child : children)
+    this->updateScene(child, depth + 1);
+  if (generate && _frustumCulling)
+    this->generateTree();
+  if (generate)
+    {
+      _needProgramCompilation = true;
+      this->updateLights();
+    }
 }

@@ -5,7 +5,7 @@
 // Login   <michar_l@epitech.net>
 // 
 // Started on  Sat Feb 18 10:43:04 2012 loick michard
-// Last update Thu Mar  1 19:21:39 2012 loick michard
+// Last update Thu May 24 14:20:38 2012 loick michard
 //
 
 #ifndef _GLE_CAMERA_HPP_
@@ -15,12 +15,13 @@
 # include <Vector3.hpp>
 # include <Matrix4.hpp>
 # include <Quaternion.hpp>
+# include <Scene.hpp>
 
 namespace gle {
   
   //! Abstract class for cameras
 
-  class Camera {
+  class Camera : public Scene::Node {
   public:
 
     //! Constructor of Camera
@@ -43,7 +44,7 @@ namespace gle {
       \param position New position
     */
 
-    virtual void setPosition(gle::Vector3<GLfloat> const& position);
+    //virtual void setPosition(gle::Vector3<GLfloat> const& position);
 
     //! Sets target of camera.
     /*!
@@ -51,7 +52,7 @@ namespace gle {
       \param target New target
     */
     
-    virtual void setTarget(gle::Vector3<GLfloat> const& target);
+    //virtual void setTarget(gle::Vector3<GLfloat> const& target);
 
     //! Set the camera rotation
     /*!
@@ -59,7 +60,7 @@ namespace gle {
       \param angle Angle of rotation
     */
 
-    virtual void setRotation(gle::Vector3<GLfloat> const& axis, GLfloat angle);
+    //virtual void setRotation(gle::Vector3<GLfloat> const& axis, GLfloat angle);
 
     //! Translates camera.
     /*!
@@ -67,15 +68,15 @@ namespace gle {
       \param vec Vector of translation
     */
 
-    virtual void translate(gle::Vector3<GLfloat> const& vec);
+    //virtual void translate(gle::Vector3<GLfloat> const& vec);
 
     //! Returns camera position
 
-    gle::Vector3<GLfloat> const&	getPosition() const;
+    //gle::Vector3<GLfloat> const&	getPosition() const;
 
     //! Returns camera targer
 
-    gle::Vector3<GLfloat> const&	getTarget() const;
+    //gle::Vector3<GLfloat> const&	getTarget() const;
 
     //! Returns projection matrix
 
@@ -83,11 +84,11 @@ namespace gle {
 
     //! Returns model view matrix
 
-    gle::Matrix4<GLfloat>&		getModelViewMatrix();
+    //gle::Matrix4<GLfloat>&		getModelViewMatrix();
 
     //! Update projection matrix
 
-    virtual void updateMatrix() = 0;
+    virtual void update() = 0;
 
   protected:
     
@@ -97,19 +98,19 @@ namespace gle {
 
     //! Projection matrix.
 
-    gle::Matrix4<GLfloat> _modelViewMatrix;
+    //gle::Matrix4<GLfloat> _modelViewMatrix;
 
     //! Camera position.
 
-    gle::Vector3<GLfloat> _position;
+    //gle::Vector3<GLfloat> _position;
 
     //! Camera rotation
 
-    gle::Quaternion<GLfloat> _rotation;
+    //gle::Quaternion<GLfloat> _rotation;
 
     //! Camera target.
 
-    gle::Vector3<GLfloat> _target;
+    //gle::Vector3<GLfloat> _target;
   };
 }
 

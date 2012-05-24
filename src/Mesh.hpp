@@ -5,7 +5,7 @@
 // Login   <michar_l@epitech.net>
 // 
 // Started on  Mon Feb 20 13:20:54 2012 loick michard
-// Last update Mon May  7 15:34:54 2012 gael jochaud-du-plessix
+// Last update Thu May 24 09:35:15 2012 loick michard
 //
 
 #ifndef _MESH_HPP_
@@ -22,8 +22,9 @@
 # include <Quaternion.hpp>
 # include <Array.hpp>
 # include <MeshBufferManager.hpp>
-# include <MeshUniformsBufferManager.hpp>
-# include <IndexBufferManager.hpp>
+# include <BoundingVolume.hpp>
+# include <Octree.hpp>
+# include <Scene.hpp>
 
 namespace gle {
   
@@ -32,7 +33,7 @@ namespace gle {
     This class creates, initializes and operates on meshes.
   */
 
-  class Mesh {
+  class Mesh : public Octree::Element, public Scene::Node {
   public:
 
     enum PrimitiveType {
@@ -47,18 +48,14 @@ namespace gle {
       Point = GL_POINT
     };
 
-    static const GLsizeiptr VertexAttributeMeshIndex = 1;
     static const GLsizeiptr VertexAttributeSizeCoords = 3;
     static const GLsizeiptr VertexAttributeSizeNormal = 3;
     static const GLsizeiptr VertexAttributeSizeTextureCoords = 2;
 
-    static const GLsizeiptr MeshUniformsSize = 25;
-
     //! Size of a vertex packed attributes
 
     static const GLsizeiptr VertexAttributesSize =
-      (VertexAttributeMeshIndex
-       + VertexAttributeSizeCoords
+      (VertexAttributeSizeCoords
        + VertexAttributeSizeNormal
        + VertexAttributeSizeTextureCoords);
 
@@ -77,8 +74,8 @@ namespace gle {
     /*
       \param child Pointer to the child to add
     */
-
-    void addChild(Mesh* child);
+    
+    //void addChild(Mesh* child);
 
     //! Get the mesh children list
     /*!
@@ -86,35 +83,35 @@ namespace gle {
       loop through them.
      */
 
-    std::vector<Mesh*> & getChildren();
+    //std::vector<Mesh*> & getChildren();
 
     //! Recursively search for children matching a given name
     
-    void getChildrenByName(std::string const & name,
-			   std::vector<gle::Mesh*> & vector);
+    //void getChildrenByName(std::string const & name,
+    //			   std::vector<gle::Mesh*> & vector);
 
     //! Search for a child matching a given name
 
-    gle::Mesh* getChildByName(std::string const & name);
+    //gle::Mesh* getChildByName(std::string const & name);
 
     //! Set the name of the mesh
     /*!
       param name New name
      */
 
-    void setName(std::string const & name);
+    //void setName(std::string const & name);
 
     //! Return the name of the mesh
 
-    std::string const & getName();
+    //std::string const & getName();
 
     //! Set the primitive type of the mesh
 
-    void setType(PrimitiveType type);
+    void setPrimitiveType(PrimitiveType type);
 
     //! Get the primitive type of the mesh
 
-    PrimitiveType getType() const;
+    PrimitiveType getPrimitiveType() const;
 
     //! Set the rasterization mode of the mesh
 
@@ -130,33 +127,31 @@ namespace gle {
 
     //! Get the point size for mesh with point rasterization mode
 
-    GLfloat getPointSize();
+    GLfloat getPointSize() const;
 
     //! Set the movement matrix of parent
     /*!
       \param parentMatrix Pointer the the parent matrix
     */
 
-    void setParentMatrix(Matrix4<GLfloat>* parentMatrix=NULL);
+    //void setParentMatrix(Matrix4<GLfloat>* parentMatrix=NULL);
 
     //! Update the movement matrix
 
-    void updateMatrix();
+    //void updateMatrix();
 
-    //! Update the uniforms buffer
-
-    void updateUniformsBuffer();
+    //void setMatrices(Matrix4<GLfloat> &mvMatrix, Matrix3<GLfloat> &normalMatrix);
 
     //! Translate a mesh
     /*!
       \param vec Vector of translation
     */
     
-    void translate(Vector3<GLfloat> const& vec);
+    //void translate(Vector3<GLfloat> const& vec);
 
     //! Set the position of the mesh
 
-    void setPosition(Vector3<GLfloat> const& pos);
+    //void setPosition(Vector3<GLfloat> const& pos);
 
     //! Set the rotation of the mesh
     /*!
@@ -164,13 +159,13 @@ namespace gle {
       \param angle Angle of the rotation
      */
 
-    void setRotation(Vector3<GLfloat> const& axis, GLfloat angle);
+    //void setRotation(Vector3<GLfloat> const& axis, GLfloat angle);
 
     //! Set the rotation target
     /*!
       \param target The point the mesh should 'look at'
      */
-    void setRotationTarget(const Vector3<GLfloat>& target);
+    //void setRotationTarget(const Vector3<GLfloat>& target);
 
     //! Set scale
     /*!
@@ -179,7 +174,7 @@ namespace gle {
       \param z Scale coefficient on z
     */
     
-    void setScale(GLfloat x, GLfloat y, GLfloat z);
+    //void setScale(GLfloat x, GLfloat y, GLfloat z);
 
     //! Set scale
     /*!
@@ -187,19 +182,15 @@ namespace gle {
       \param scale Scale coefficient
     */
 
-    void setScale(GLfloat scale);
+    //void setScale(GLfloat scale);
 
     //! Set the mesh vertex attributes
 
     void setVertexAttributes(const GLfloat* attributes, GLsizeiptr nbVertexes);
 
-    //! Set the mesh index
-
-    void setMeshIndex(GLuint index);
-    
     //! Set the mesh vertexes
 
-    void setVertexes(const GLfloat* vertexes, GLsizeiptr size);
+    void setVertexes(const GLfloat* vertexes, GLsizeiptr size, bool boundingBox = true);
 
     //! Set the mesh normals
 
@@ -215,7 +206,7 @@ namespace gle {
 
     //! Set the mesh vertexes
 
-    void setVertexes(gle::Array<GLfloat> const &vertexes);
+    void setVertexes(gle::Array<GLfloat> const &vertexes, bool boundingBox = true);
 
     //! Set the mesh normals
 
@@ -231,7 +222,7 @@ namespace gle {
 
     //! Return movement matrix
 
-    Matrix4<GLfloat>& getMatrix();
+    //const Matrix4<GLfloat>& getMatrix() const;
 
     //! Set the mesh material
 
@@ -244,11 +235,11 @@ namespace gle {
       altering it.
      */
 
-    Matrix3<GLfloat>& getNormalMatrix();
+    //Matrix3<GLfloat>& getNormalMatrix();
 
     //! Get the mesh material
 
-    Material* getMaterial();
+    Material* getMaterial() const;
 
     //! Get the vertexes buffer
 
@@ -264,7 +255,7 @@ namespace gle {
 
     //! Get the indexes buffer
 
-    gle::IndexBufferManager::Chunk* getIndexes();
+    Buffer<GLuint> * getIndexesBuffer() const;
     
     //! Get the number of indexes in the mesh
 
@@ -276,29 +267,32 @@ namespace gle {
 
     //! Get the attributes chunk in the mesh buffer manager
 
-    gle::MeshBufferManager::Chunk* getAttributes();
+    gle::MeshBufferManager::Chunk* getAttributes() const;
 
-    //! Get the uniforms chunk in the mesh uniforms buffer manager
+    BoundingVolume* getBoundingVolume() const;
 
-    gle::MeshUniformsBufferManager::Chunk* getUniforms();
+    virtual const Vector3<GLfloat>& getMaxPoint() const;
+    virtual const Vector3<GLfloat>& getMinPoint() const;
+    virtual const Vector3<GLfloat>& getCenter() const;
+    virtual bool isInFrustum(const GLfloat frustum[6][4]) const;
 
+    virtual Node* duplicate() const;
+    virtual void update();
+    
   private:
-    std::string		_name;
-    PrimitiveType	_type;
+    PrimitiveType	_primitiveType;
     RasterizationMode	_rasterizationMode;
     GLfloat	_pointSize;
 
     Material* _material;
-    IndexBufferManager::Chunk*		_indexes;
-    MeshBufferManager::Chunk*		_attributes;
-    MeshUniformsBufferManager::Chunk*	_uniforms;
-    // Buffer<GLuint>* _indexes;
+    Buffer<GLuint>* _indexes;
+    MeshBufferManager::Chunk*	_attributes;
     //Buffer<GLfloat>* _attributes;
 
     GLsizeiptr _nbIndexes;
     GLsizeiptr _nbVertexes;
 
-    Vector3<GLfloat> _position;
+    /*Vector3<GLfloat> _position;
     Vector3<GLfloat> _target;
     bool _hasTarget;
     Quaternion<GLfloat> _rotation;
@@ -309,7 +303,8 @@ namespace gle {
     Matrix4<GLfloat> _mvMatrix;
     Matrix3<GLfloat> _normalMatrix;
     Matrix4<GLfloat>* _parentMatrix;
-
+    */
+    BoundingVolume*	_boundingVolume;
   };
 }
 

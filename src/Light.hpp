@@ -5,17 +5,19 @@
 // Login   <michar_l@epitech.net>
 // 
 // Started on  Thu Feb 23 16:56:43 2012 loick michard
-// Last update Wed Feb 29 17:11:20 2012 loick michard
+// Last update Thu May 24 10:42:47 2012 loick michard
 //
 
 #ifndef _LIGHT_HPP_
 # define _LIGHT_HPP_
 
+# include <Scene.hpp>
+
 namespace gle {
 
   //! Abstract light class
   
-  class Light {
+  class Light : public Scene::Node {
   public:
 
     //! All types of lights
@@ -30,7 +32,7 @@ namespace gle {
       \param type Type of light
     */
 
-    Light(Type type) : _type(type){}
+    Light(Type type) : Scene::Node(Scene::Node::Light), _lightType(type){}
 
     //! Default constructor
 
@@ -38,10 +40,12 @@ namespace gle {
     
     //! Return light type
     
-    Type getType() const{ return (_type); }
+    Type getLightType() const{ return (_lightType); }
+
+    virtual void update() {};
 
   private:
-    Type _type;
+    Type _lightType;
   };
 }
 

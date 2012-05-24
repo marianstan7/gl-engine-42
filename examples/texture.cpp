@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Wed Feb 29 19:44:13 2012 gael jochaud-du-plessix
-// Last update Wed Apr 11 22:54:20 2012 loick michard
+// Last update Sun May 20 16:19:15 2012 loick michard
 //
 
 #include <iostream>
@@ -100,7 +100,7 @@ int glEngine(int ac, char **av)
   gle::Mesh* sp3 = gle::Geometries::Sphere(&materialLight, dist/100);
   sp3->setPosition(gle::Vector3<GLfloat>(40, 0, 0));
 
-  scene << &camera << &material << &materialLight << sp << sp2 << sp3;
+  scene << &camera << sp << sp2 << sp3;
   scene << &l << &l2 << &l3;
 
   gle::Renderer renderer;

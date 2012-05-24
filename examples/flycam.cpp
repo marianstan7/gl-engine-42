@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Fri Mar  2 17:27:21 2012 gael jochaud-du-plessix
-// Last update Tue Apr 10 21:58:24 2012 loick michard
+// Last update Thu May 24 14:33:56 2012 loick michard
 //
 
 #include <iostream>
@@ -35,7 +35,7 @@ GLfloat flycam::camSpeed = 2;
 
 void flycam::flycam(gle::Camera* camera)
 {
-  gle::Vector3<GLfloat> pos = camera->getPosition();
+  gle::Vector3<GLfloat> pos = camera->getAbsolutePosition();
   gle::Vector3<GLfloat> viewVector;
   viewVector.x = sin(teta) * cos(phi);
   viewVector.y = cos(teta);

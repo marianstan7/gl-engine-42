@@ -5,69 +5,64 @@
 // Login   <michar_l@epitech.net>
 // 
 // Started on  Mon Feb 20 18:25:23 2012 loick michard
-// Last update Mon May  7 15:35:18 2012 gael jochaud-du-plessix
+// Last update Thu May 24 09:36:38 2012 loick michard
 //
 
-#include <cstring>
-
 #include <Mesh.hpp>
+#include <BoundingBox.hpp>
+#include <BoundingBox.hpp>
 
 gle::Mesh::Mesh(Material* material)
-  : _name(""),
-    _type(Triangles),
+  : gle::Scene::Node(gle::Scene::Node::Mesh),
+    _primitiveType(Triangles),
     _rasterizationMode(Fill),
     _pointSize(1.0),
     _material(material),
     _indexes(NULL),
     _attributes(NULL),
-    _uniforms(NULL),
     _nbIndexes(0),
     _nbVertexes(0),
-    _position(0, 0, 0),
-    _hasTarget(false),
-    _rotation(),
-    _scaleMatrix(),
-    _mvMatrix(),
-    _normalMatrix(),
-    _parentMatrix(NULL)
+    _boundingVolume(NULL)
 {
+  _indexes = new gle::Buffer<GLuint>(gle::Buffer<GLuint>::ElementArray,
+				     gle::Buffer<GLuint>::StaticDraw);
 }
 
 gle::Mesh::Mesh(gle::Mesh const & other)
-  : _name(other._name),
-    _type(other._type),
+  : gle::Scene::Node(other),
+    _primitiveType(other._primitiveType),
     _rasterizationMode(other._rasterizationMode),
     _pointSize(other._pointSize),
     _material(other._material),
     _indexes(NULL),
     _attributes(NULL),
-    _uniforms(NULL),
     _nbIndexes(other._nbIndexes),
-    _nbVertexes(other._nbVertexes),
-    _position(other._position),
-    _target(other._target),
-    _hasTarget(other._hasTarget),
-    _rotation(other._rotation),
-    _scaleMatrix(other._scaleMatrix),
-    _mvMatrix(other._mvMatrix),
-    _normalMatrix(other._mvMatrix),
-    _parentMatrix(other._parentMatrix)
+    _nbVertexes(other._nbVertexes)
 {
-  if (other._indexes)
-    _indexes = IndexBufferManager::getInstance().duplicate(*other._indexes);
-  if (other._uniforms)
-    _uniforms = MeshUniformsBufferManager::getInstance().duplicate(*other._uniforms);
+  if (other._boundingVolume)
+    _boundingVolume = other._boundingVolume->duplicate();
+  else
+    _boundingVolume = NULL;
+  static int max = 0, nb = 0;
+  max += _nbVertexes;
+  nb++;
+  //std::cout << nb << " " << max / 3 << "\n";
+  _indexes =  new gle::Buffer<GLuint>(*other._indexes);
   _attributes = other._attributes;
-  std::vector<gle::Mesh*> children = other._children;
-  for (std::vector<gle::Mesh*>::iterator it = children.begin(),
-	 end = children.end(); it != end; ++it)
-    addChild(new gle::Mesh(*(*it)));
+  if (_attributes)
+    _attributes->retain();
 }
 
 gle::Mesh::~Mesh()
 {
+  if (_indexes)
+    delete _indexes;
+  if (_attributes)
+    _attributes->release();
+  if (_boundingVolume)
+    delete _boundingVolume;
 }
-
+/*
 void gle::Mesh::addChild(gle::Mesh* child)
 {
   if (find(_children.begin(), _children.end(), child) == _children.end())
@@ -116,15 +111,16 @@ std::string const & gle::Mesh::getName()
 {
   return (_name);
 }
+*/
 
-void gle::Mesh::setType(PrimitiveType type)
+void gle::Mesh::setPrimitiveType(PrimitiveType type)
 {
-  _type = type;
+  _primitiveType = type;
 }
 
-gle::Mesh::PrimitiveType gle::Mesh::getType() const
+gle::Mesh::PrimitiveType gle::Mesh::getPrimitiveType() const
 {
-  return (_type);
+  return (_primitiveType);
 }
 
 void gle::Mesh::setRasterizationMode(RasterizationMode rasterizationMode)
@@ -142,11 +138,11 @@ void gle::Mesh::setPointSize(GLfloat v)
   _pointSize = v;
 }
 
-GLfloat gle::Mesh::getPointSize()
+GLfloat gle::Mesh::getPointSize() const
 {
   return (_pointSize);
 }
-
+/*
 void gle::Mesh::setParentMatrix(gle::Matrix4<GLfloat>* parentMatrix)
 {
   _parentMatrix = parentMatrix;
@@ -176,7 +172,7 @@ void gle::Mesh::setScale(GLfloat scale)
 {
   this->setScale(scale, scale, scale);
 }
-
+*/
 void gle::Mesh::setVertexAttributes(const GLfloat* attributes, GLsizeiptr nbVertexes)
 {
   if (!_attributes)
@@ -188,17 +184,7 @@ void gle::Mesh::setVertexAttributes(const GLfloat* attributes, GLsizeiptr nbVert
   _nbVertexes = nbVertexes;
 }
 
-void gle::Mesh::setMeshIndex(GLuint index)
-{
-  if (!_attributes)
-    return ;
-  GLfloat* attributes = _attributes->map();
-  for (GLsizeiptr i = 0; i < _nbVertexes; ++i)
-    attributes[i * VertexAttributesSize] = (GLfloat)index;
-  _attributes->unmap();
-}
-
-void gle::Mesh::setVertexes(const GLfloat* vertexes, GLsizeiptr size)
+void gle::Mesh::setVertexes(const GLfloat* vertexes, GLsizeiptr size, bool boundingVolume)
 {
   GLsizeiptr nbVertexes = size / VertexAttributeSizeCoords;
 
@@ -209,10 +195,17 @@ void gle::Mesh::setVertexes(const GLfloat* vertexes, GLsizeiptr size)
   GLfloat* attributes = _attributes->map();
   for (GLsizeiptr i = 0; i < nbVertexes; ++i)
     for (GLuint j = 0; j < VertexAttributeSizeCoords; ++j)
-      attributes[i * VertexAttributesSize + VertexAttributeMeshIndex + j] =
+      attributes[i * VertexAttributesSize + j] =
 	vertexes[i * VertexAttributeSizeCoords + j];
   attributes[0] = vertexes[0];
   _attributes->unmap();
+  if (boundingVolume)
+    {
+      if (_boundingVolume)
+	delete _boundingVolume;
+      _boundingVolume = new BoundingBox();
+      _boundingVolume->setBestFit(vertexes, size);
+    }
 }
 
 void gle::Mesh::setNormals(const GLfloat* normals, GLsizeiptr size)
@@ -226,9 +219,7 @@ void gle::Mesh::setNormals(const GLfloat* normals, GLsizeiptr size)
   GLfloat* attributes = _attributes->map();
   for (GLsizeiptr i = 0; i < nbVertexes; ++i)
     for (GLuint j = 0; j < VertexAttributeSizeNormal; ++j)
-      attributes[i * VertexAttributesSize
-		 + VertexAttributeMeshIndex
-		 + VertexAttributeSizeCoords + j] =
+      attributes[i * VertexAttributesSize + VertexAttributeSizeCoords + j] =
 	normals[i * VertexAttributeSizeNormal + j];
   _attributes->unmap();
 }
@@ -244,37 +235,19 @@ void gle::Mesh::setTextureCoords(const GLfloat* textureCoords, GLsizeiptr size)
   GLfloat* attributes = _attributes->map();
   for (GLsizeiptr i = 0; i < nbVertexes; ++i)
     for (GLuint j = 0; j < VertexAttributeSizeTextureCoords; ++j)
-      attributes[i * VertexAttributesSize
-		 + VertexAttributeMeshIndex
-		 + VertexAttributeSizeCoords
-		 + VertexAttributeSizeNormal + j] =
+      attributes[i * VertexAttributesSize + VertexAttributeSizeCoords +
+		 VertexAttributeSizeNormal + j] =
 	textureCoords[i * VertexAttributeSizeTextureCoords + j];
   _attributes->unmap();
 }
 
 void gle::Mesh::setIndexes(const GLuint* indexes, GLsizeiptr size)
 {
-  GLuint* newIndexes = NULL;
-  if (_attributes != NULL)
-    {
-      newIndexes = new GLuint[size];
-      GLuint offset = _attributes->getOffset();
-      for (GLsizeiptr i = 0; i < size; ++i)
-	newIndexes[i] = indexes[i] + offset;
-    }
-  else
-    newIndexes = (GLuint*)indexes;
   _nbIndexes = size;
-  if (!_indexes)
-    _indexes = IndexBufferManager::getInstance()
-      .store(indexes, size);
-  else
-    _indexes->setData(indexes);
-  if (indexes != newIndexes)
-    delete[] newIndexes;
+  _indexes->resize(size, indexes);
 }
 
-void gle::Mesh::setVertexes(gle::Array<GLfloat> const &vertexes)
+void gle::Mesh::setVertexes(gle::Array<GLfloat> const &vertexes, bool boundingVolume)
 {
   GLsizeiptr nbVertexes = vertexes.size() / VertexAttributeSizeCoords;
 
@@ -288,6 +261,13 @@ void gle::Mesh::setVertexes(gle::Array<GLfloat> const &vertexes)
       attributes[i * VertexAttributesSize + j] =
 	vertexes[(GLuint)(i * VertexAttributeSizeCoords + j)];
   _attributes->unmap();
+  if (boundingVolume)
+    {
+      if (_boundingVolume)
+	delete _boundingVolume;
+      _boundingVolume = new BoundingBox();
+      _boundingVolume->setBestFit(vertexes, vertexes.size());
+    }
 }
 
 void gle::Mesh::setNormals(gle::Array<GLfloat> const &normals)
@@ -325,21 +305,10 @@ void gle::Mesh::setTextureCoords(gle::Array<GLfloat> const &textureCoords)
 
 void gle::Mesh::setIndexes(gle::Array<GLuint> const &indexes)
 {
-  gle::Array<GLuint> newIndexes(indexes);
-  if (_attributes != NULL)
-    {
-      GLuint offset = _attributes->getOffset();
-      for (GLuint i = 0; i < indexes.size(); ++i)
-	newIndexes[i] = indexes[i] + offset;
-    }
-  _nbIndexes = newIndexes.size();
-  if (!_indexes)
-    _indexes = IndexBufferManager::getInstance()
-      .store((GLuint const*)newIndexes, indexes.size());
-  else
-    _indexes->setData((GLuint const*)newIndexes);
+  _nbIndexes = indexes.size();
+  _indexes->resize(indexes.size(), (GLuint const *)indexes);
 }
-
+/*
 void gle::Mesh::updateMatrix()
 {
   if (_parentMatrix)
@@ -363,23 +332,14 @@ void gle::Mesh::updateMatrix()
   inverse.inverse();
   _normalMatrix = inverse;
   _normalMatrix.transpose();
-  updateUniformsBuffer();
+  if (_boundingVolume)
+    _boundingVolume->update(this);
 }
 
-void gle::Mesh::updateUniformsBuffer()
+void gle::Mesh::setMatrices(Matrix4<GLfloat> &mvMatrix, Matrix3<GLfloat> &normalMatrix)
 {
-  GLfloat* uniforms = new GLfloat[MeshUniformsSize];
-  GLfloat* mvMatrix = (GLfloat*)_mvMatrix;
-  GLfloat* nMatrix = (GLfloat*)_normalMatrix;
-  for (GLuint i = 0; i < 16; ++i)
-    uniforms[i] = mvMatrix[i];
-  for (GLuint i = 0; i < 9; ++i)
-    uniforms[i + 16] = nMatrix[i];
-  if (!_uniforms)
-    _uniforms = gle::MeshUniformsBufferManager::getInstance().store(uniforms, MeshUniformsSize);
-  else
-    _uniforms->setData(uniforms);
-  delete[] uniforms;
+  _mvMatrix = mvMatrix;
+  _normalMatrix = normalMatrix;
 }
 
 void gle::Mesh::translate(gle::Vector3<GLfloat> const& vec)
@@ -394,39 +354,34 @@ void gle::Mesh::setPosition(gle::Vector3<GLfloat> const& vec)
   this->updateMatrix();
 }
 
-gle::Matrix4<GLfloat>& gle::Mesh::getMatrix()
+const gle::Matrix4<GLfloat>& gle::Mesh::getMatrix() const
 {
   return (_mvMatrix);
 }
-
+*/
 void gle::Mesh::setMaterial(gle::Material* material)
 {
   _material = material;
 }
-
+/*
 gle::Matrix3<GLfloat>& gle::Mesh::getNormalMatrix()
 {
   return (_normalMatrix);
 }
-
-gle::Material* gle::Mesh::getMaterial()
+*/
+gle::Material* gle::Mesh::getMaterial() const
 {
   return (_material);
 }
 
-gle::IndexBufferManager::Chunk* gle::Mesh::getIndexes()
+gle::Buffer<GLuint> * gle::Mesh::getIndexesBuffer() const
 {
   return (_indexes);
 }
 
-gle::MeshBufferManager::Chunk* gle::Mesh::getAttributes()
+gle::MeshBufferManager::Chunk* gle::Mesh::getAttributes() const
 {
   return (_attributes);
-}
-
-gle::MeshUniformsBufferManager::Chunk* gle::Mesh::getUniforms()
-{
-  return (_uniforms);
 }
 
 GLsizeiptr gle::Mesh::getNbIndexes() const
@@ -439,3 +394,46 @@ GLsizeiptr gle::Mesh::getNbVertexes() const
   return (_nbVertexes);
 }
 
+gle::BoundingVolume* gle::Mesh::getBoundingVolume() const
+{
+  return (_boundingVolume);
+}
+
+const gle::Vector3<GLfloat>& gle::Mesh::getMaxPoint() const
+{
+  if (_boundingVolume)
+    return (_boundingVolume->getMaxPoint());
+  return (_position);
+}
+
+const gle::Vector3<GLfloat>& gle::Mesh::getMinPoint() const
+{
+  if (_boundingVolume)
+    return (_boundingVolume->getMinPoint());
+  return (_position);
+}
+
+const gle::Vector3<GLfloat>& gle::Mesh::getCenter() const
+{
+  if (_boundingVolume)
+    return (_boundingVolume->getCenter());
+  return (_position);
+}
+
+bool gle::Mesh::isInFrustum(const GLfloat frustum[6][4]) const
+{
+  if (_boundingVolume)
+    return (_boundingVolume->isInFrustum(frustum));
+  return (true);
+}
+
+gle::Scene::Node* gle::Mesh::duplicate() const
+{
+  return (new Mesh(*this));
+}
+
+void gle::Mesh::update()
+{
+  if (_boundingVolume)
+    _boundingVolume->update(this);
+}

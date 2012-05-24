@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Tue Feb 14 17:12:21 2012 gael jochaud-du-plessix
-// Last update Wed Apr 11 22:38:57 2012 loick michard
+// Last update Thu May 24 11:09:41 2012 loick michard
 //
 
 #ifndef _GLE_RENDERER_HPP_
@@ -13,6 +13,8 @@
 
 # include <string>
 # include <Scene.hpp>
+# include <Mesh.hpp>
+# include <Camera.hpp>
 
 namespace gle {
 

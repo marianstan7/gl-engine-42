@@ -5,7 +5,7 @@
 // Login   <michar_l@epitech.net>
 // 
 // Started on  Mon Feb 20 22:26:19 2012 loick michard
-// Last update Sat Mar 10 22:12:40 2012 gael jochaud-du-plessix
+// Last update Thu May  3 14:23:24 2012 loick michard
 //
 
 #ifndef _GEOMETRIES_HPP_
@@ -18,13 +18,13 @@
 namespace gle {
 
   namespace Geometries {
-    gle::Mesh* Cube(gle::Material* material, GLfloat size);
+    gle::Mesh* Cube(gle::Material* material, GLfloat size, bool boundingVolume = true);
     gle::Mesh* Cuboid(gle::Material* material,
-		      GLfloat width, GLfloat height, GLfloat depth);
+		      GLfloat width, GLfloat height, GLfloat depth, bool boundingVolume = true);
     gle::Mesh* Sphere(gle::Material* material, GLfloat radius,
-		      GLint slices = 15, GLint stacks = 15);
+		      GLint slices = 15, GLint stacks = 15, bool boundingVolume = true);
     gle::Mesh* Plane(gle::Material* material, GLfloat width, GLfloat height,
-		     GLint divisionsX=1, GLint divisionsY=1);
+		     GLint divisionsX=1, GLint divisionsY=1, bool boundingVolume = true);
   }
 
 }

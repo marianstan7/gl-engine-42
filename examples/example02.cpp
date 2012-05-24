@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Wed Feb 15 17:24:36 2012 gael jochaud-du-plessix
-// Last update Wed Apr 11 22:53:09 2012 loick michard
+// Last update Thu May 24 12:19:25 2012 loick michard
 //
 
 /*! 
@@ -65,18 +65,17 @@ int glEngine(char **av)
 				       gle::Vector3<GLfloat>(0, 0, 0),
 				       45, WIDTH / HEIGHT, 1, 10000);
 
-  gle::Mesh solarSystem;
+  gle::Scene::Node solarSystem;
 
   gle::Material sunMaterial;
   sunMaterial.setDiffuseLightEnabled(true);
   sunMaterial.setSpecularLightEnabled(true);
   sunMaterial.setShininess(32);
-  sunMaterial.setAmbientColor(gle::Color<GLfloat>(1, 1, 1));
   sunMaterial.setColorMap(new gle::Texture("./examples/sun.jpg"));
 
   gle::Mesh *sun = gle::Geometries::Sphere(&sunMaterial, 100, 300, 300);
   solarSystem.addChild(sun);
-  gle::Mesh earthSystem;
+  gle::Scene::Node earthSystem;
   gle::Material earthMaterial;
   earthMaterial.setDiffuseLightEnabled(true);
   earthMaterial.setSpecularLightEnabled(true);
@@ -87,11 +86,12 @@ int glEngine(char **av)
   earth->setPosition(gle::Vector3<GLfloat>(500, 0, 0));
   solarSystem.addChild(&earthSystem);
 
-  gle::Mesh moonSystem;
+  gle::Scene::Node moonSystem;
   gle::Material moonMaterial;
   moonMaterial.setDiffuseLightEnabled(true);
   moonMaterial.setSpecularLightEnabled(true);
   moonMaterial.setShininess(32);
+  moonMaterial.setAmbientColor(gle::Color<GLfloat>(1, 1, 1));;
   moonMaterial.setColorMap(new gle::Texture("./examples/moon.jpg"));
   gle::Mesh *moon = gle::Geometries::Sphere(&moonMaterial, 7, 300, 300);
   moonSystem.addChild(moon);
@@ -100,8 +100,8 @@ int glEngine(char **av)
   gle::PointLight sunLight(gle::Vector3<GLfloat>(0, 0, 0),
 			   gle::Color<GLfloat>(1, 1, 0.8),
 			   gle::Color<GLfloat>(1, 1, 0.8));
-  scene << sun << &sunMaterial << &camera << earth << &earthMaterial << &sunLight;
-  scene << &moonMaterial << moon;
+  moon->addChild(&sunLight);
+  scene << &solarSystem << &camera;
 
   gle::Renderer		renderer;
   GLfloat		angle = 0;
@@ -109,6 +109,8 @@ int glEngine(char **av)
   sf::Clock		time;
   size_t		frameCounter = 0;
   
+  scene.setCamera(&camera);
+  scene.updateScene();
   while (App.isOpen())
     {
       if (time.getElapsedTime().asMilliseconds() >= 100)
@@ -135,6 +137,7 @@ int glEngine(char **av)
       earthSystem.setRotation(gle::Vector3<GLfloat>(0, 1, 0), angle * 10);
       earth->setRotation(gle::Vector3<GLfloat>(0, 1, 0), angle * 100);
       sun->setRotation(gle::Vector3<GLfloat>(0, 1, 0), angle * 10);
+      scene.updateLights();
       renderer.render(&scene);
       App.display();
       GLfloat elapsed = time.getElapsedTime().asMicroseconds();
@@ -143,10 +146,10 @@ int glEngine(char **av)
 	  sf::sleep(sf::microseconds(1000000/W_FRAMERATE - elapsed));
           time.restart();
         }
-      video::saveImage(App, W_FRAMERATE);
+      //video::saveImage(App, W_FRAMERATE);
 
     }
-  video::save(av[0], W_FRAMERATE);
+  //video::save(av[0], W_FRAMERATE);
   
   return (0);
 }

@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Wed Feb 22 23:17:47 2012 gael jochaud-du-plessix
-// Last update Tue May  1 13:58:08 2012 gael jochaud-du-plessix
+// Last update Wed May 23 16:56:19 2012 loick michard
 //
 
 #include <fstream>
@@ -71,6 +71,7 @@ gle::Mesh* gle::ObjLoader::load(std::string const & file,
   _currentVertexesIndexes.clear();
   _currentTexturesIndexes.clear();
   _currentNormalsIndexes.clear();
+  parentMesh->setName(file);
   return (parentMesh);
 }
 

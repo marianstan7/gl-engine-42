@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Tue Feb 21 15:47:17 2012 gael jochaud-du-plessix
-// Last update Mon May  7 16:52:13 2012 gael jochaud-du-plessix
+// Last update Thu Mar  1 19:00:09 2012 loick michard
 //
 
 #include <gle/opengl.h>
@@ -32,8 +32,8 @@ const char *gle::ShaderSource::Vertex::Default::UniformDeclarations =
   "uniform mat3 gle_NMatrix;\n"
   ;
 	
-// GLuint gle::ShaderSource::Vertex::Default::PositionLocation = 0;
-// GLuint gle::ShaderSource::Vertex::Default::NormalLocation = 1;
+GLuint gle::ShaderSource::Vertex::Default::PositionLocation = 0;
+GLuint gle::ShaderSource::Vertex::Default::NormalLocation = 1;
 
 const char * gle::ShaderSource::Vertex::Default::InputLocations =
   "#define GLE_IN_VERTEX_POSITION_LOCATION 0 \n"
