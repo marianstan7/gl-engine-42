@@ -5,7 +5,7 @@
 // Login   <michar_l@epitech.net>
 // 
 // Started on  Mon Feb 13 20:57:51 2012 loick michard
-// Last update Thu May 24 17:04:02 2012 loick michard
+// Last update Fri May 25 15:46:22 2012 loick michard
 //
 
 #ifndef _GLE_MATRIX4_HPP_
@@ -422,6 +422,16 @@ namespace gle {
                       0, 0, (far + near) / (near - far),
                       (2 * near * far) / (near - far),
                       0, 0, -1, 0));
+    }
+
+    static Matrix4 orthographic(T const & near, T const & far,
+				T const & left, T const & right,
+				T const & bottom, T const & top)
+    {
+      return (Matrix4(2.0 / (right - left), 0, 0, - (right + left) / (right - left),
+		      0, 2.0 / (top - bottom), 0, - (top + bottom) / (top - bottom),
+		      0, 0, - 2 / (far - near), - (far + near) / (far - near),
+		      0, 0, 0, 1));
     }
 
     //! Return an initisialised 4x4 matrix for viewing transformation
