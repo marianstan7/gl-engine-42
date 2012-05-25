@@ -37,67 +37,47 @@ file (
 # Add build of glEngine library
 add_library(glEngine SHARED ${SOURCES})
 
+# Add build of examples library
+add_library(Examples STATIC
+		     examples/Example.cpp
+		     examples/flycam.cpp
+		     examples/trackball.cpp
+		     examples/video.cpp
+		     examples/fps.cpp)
 
 add_executable (
-    examples/example00
-    examples/example00.cpp
+    examples/objloader
+    examples/objloader.cpp
 )
 
 add_executable (
-    examples/disneyHead
-    examples/disneyHead.cpp
-    examples/flycam.cpp
-    examples/video.cpp
+    examples/pointLights
+    examples/pointLights.cpp
 )
 
 add_executable (
-    examples/example02
-    examples/example02.cpp
-    examples/video.cpp
-)
-
-add_executable (
-    examples/texture
-    examples/texture.cpp
-)
-
-add_executable (
-    examples/flycam_example
-    examples/flycam.cpp
-    examples/flycam_example.cpp
-    examples/video.cpp
+    examples/solarSystem
+    examples/solarSystem.cpp
 )
 
 add_executable (
     examples/geometries
-    examples/Example.cpp
     examples/geometries.cpp
-    examples/flycam.cpp
-    examples/trackball.cpp
-    examples/video.cpp
-    examples/fps.cpp
 )
 
 add_executable (
     examples/city
     examples/city.cpp
-    examples/flycam.cpp
-    examples/fps.cpp
-    examples/video.cpp
 )
 
 add_executable (
     examples/bullet_physics
     examples/bullet_physics.cpp
-    examples/flycam.cpp
-    examples/video.cpp
 )
 
 add_executable (
     examples/boundingvolume
     examples/boundingvolume.cpp
-    examples/flycam.cpp
-    examples/video.cpp
 )
 
 target_link_libraries (
@@ -105,41 +85,31 @@ target_link_libraries (
     ${SFML_LIBRARIES}
     ${OPENGL_LIBRARIES}
     glEngine
+    Examples
 )
 
 target_link_libraries (
-    examples/example00
+    examples/objloader
     ${SFML_LIBRARIES}
     ${OPENGL_LIBRARIES}
     glEngine
+    Examples
 )
 
 target_link_libraries (
-    examples/disneyHead
+    examples/pointLights
     ${SFML_LIBRARIES}
     ${OPENGL_LIBRARIES}
     glEngine
+    Examples
 )
 
 target_link_libraries (
-    examples/example02
+    examples/solarSystem
     ${SFML_LIBRARIES}
     ${OPENGL_LIBRARIES}
     glEngine
-)
-
-target_link_libraries (
-    examples/texture
-    ${SFML_LIBRARIES}
-    ${OPENGL_LIBRARIES}
-    glEngine
-)
-
-target_link_libraries (
-    examples/flycam_example
-    ${SFML_LIBRARIES}
-    ${OPENGL_LIBRARIES}
-    glEngine
+    Examples
 )
 
 target_link_libraries (
@@ -147,6 +117,7 @@ target_link_libraries (
     ${SFML_LIBRARIES}
     ${OPENGL_LIBRARIES}
     glEngine
+    Examples
 )
 
 target_link_libraries (
@@ -154,6 +125,7 @@ target_link_libraries (
     ${SFML_LIBRARIES}
     ${OPENGL_LIBRARIES}
     glEngine
+    Examples
 )
 
 target_link_libraries (
@@ -161,6 +133,7 @@ target_link_libraries (
     ${SFML_LIBRARIES}
     ${OPENGL_LIBRARIES}
     glEngine
+    Examples
     BulletDynamics
     BulletCollision
     LinearMath

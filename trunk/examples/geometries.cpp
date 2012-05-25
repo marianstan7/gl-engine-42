@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Fri Mar  2 17:27:21 2012 gael jochaud-du-plessix
-// Last update Fri May 25 13:56:24 2012 gael jochaud-du-plessix
+// Last update Fri May 25 14:25:49 2012 gael jochaud-du-plessix
 //
 
 #include <iomanip>
@@ -38,8 +38,8 @@ int accelerometerId = 0;
 
 class App : public Example {
 public:
-  App() :
-    Example(W_WIDTH, W_HEIGHT, W_FRAMERATE, "glEngine : Geometries"),
+  App(int ac, char** av) :
+    Example(ac, av, W_WIDTH, W_HEIGHT, W_FRAMERATE, "glEngine : Geometries"),
     _light(), _plane()
   {
     _cameraType = Trackball;
@@ -93,6 +93,8 @@ public:
     wiredCube->setRasterizationMode(gle::Mesh::Line);
     wiredCube->setMaterial(material2);
 
+    //_camera->setTarget(wiredCube->getAbsolutePosition());
+
     gle::Mesh* wiredPlane = new gle::Mesh(*_plane);
     wiredPlane->setPosition(gle::Vector3f(0, -5, -80));
     wiredPlane->setRasterizationMode(gle::Mesh::Line);
@@ -133,15 +135,13 @@ private:
 
 int main(int ac, char **av)
 {
-  int ret;
-
   try {
-    App app;
+    App app(ac, av);
     return (app.run());
   }
   catch (std::exception *e)
     {
       std::cout << "Error: " << e->what() << std::endl;
     }
-  return (ret);
+  return (EXIT_FAILURE);
 }
