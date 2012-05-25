@@ -70,15 +70,18 @@ add_executable (
 
 add_executable (
     examples/geometries
+    examples/Example.cpp
     examples/geometries.cpp
     examples/flycam.cpp
     examples/video.cpp
+    examples/fps.cpp
 )
 
 add_executable (
     examples/city
     examples/city.cpp
     examples/flycam.cpp
+    examples/fps.cpp
     examples/video.cpp
 )
 

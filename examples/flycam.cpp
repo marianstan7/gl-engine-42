@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Fri Mar  2 17:27:21 2012 gael jochaud-du-plessix
-// Last update Thu May 24 14:33:56 2012 loick michard
+// Last update Thu May 24 22:34:28 2012 gael jochaud-du-plessix
 //
 
 #include <iostream>
@@ -24,6 +24,7 @@
 
 using namespace flycam;
 
+sf::Clock flycam::timer;
 GLfloat flycam::teta = M_PI / 2;
 GLfloat flycam::phi = 0;
 std::map<sf::Keyboard::Key, bool> flycam::keyState;
@@ -31,10 +32,13 @@ GLfloat flycam::mouseX = 0.0;
 GLfloat flycam::mouseY = 0.0;
 GLfloat flycam::moveUp = 0.0;
 GLfloat flycam::mouseSensibility = 3;
-GLfloat flycam::camSpeed = 2;
+GLfloat flycam::camSpeed = 80;
 
 void flycam::flycam(gle::Camera* camera)
 {
+  GLfloat elapsed = timer.getElapsedTime().asMicroseconds();
+  GLfloat speed = elapsed * (camSpeed/1000000);
+
   gle::Vector3<GLfloat> pos = camera->getAbsolutePosition();
   gle::Vector3<GLfloat> viewVector;
   viewVector.x = sin(teta) * cos(phi);
@@ -43,7 +47,7 @@ void flycam::flycam(gle::Camera* camera)
 
   viewVector.normalize();
 
-  viewVector *= camSpeed;
+  viewVector *= speed;
 
   // Keyboard moves
   if (keyState[sf::Keyboard::W])
@@ -56,7 +60,7 @@ void flycam::flycam(gle::Camera* camera)
       gle::Vector3<GLfloat> viewVectorSide =
 	viewVector ^ gle::Vector3<GLfloat>(0, 1, 0);
       viewVectorSide.normalize();
-      viewVectorSide *= camSpeed;
+      viewVectorSide *= speed;
       pos -= viewVectorSide;
     }
   if (keyState[sf::Keyboard::D])
@@ -64,7 +68,7 @@ void flycam::flycam(gle::Camera* camera)
       gle::Vector3<GLfloat> viewVectorSide =
 	viewVector ^ gle::Vector3<GLfloat>(0, 1, 0);
       viewVectorSide.normalize();
-      viewVectorSide *= camSpeed;
+      viewVectorSide *= speed;
       pos += viewVectorSide;
     }
 
@@ -75,9 +79,9 @@ void flycam::flycam(gle::Camera* camera)
     phi += (M_PI / 5) * mouseX * mouseSensibility;;
   // Mouve up or down with clicks
   if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
-    pos += gle::Vector3<GLfloat>(0, 1 * (camSpeed), 0);
+    pos += gle::Vector3<GLfloat>(0, 1 * (speed), 0);
   if (sf::Mouse::isButtonPressed(sf::Mouse::Right))
-    pos -= gle::Vector3<GLfloat>(0, 1 * (camSpeed), 0);
+    pos -= gle::Vector3<GLfloat>(0, 1 * (speed), 0);
 
   // Joystick moves
   GLfloat rightY =
@@ -96,9 +100,9 @@ void flycam::flycam(gle::Camera* camera)
      + 1) / 2;
 
   if (std::abs(rightY) > 0.1)
-    teta += (M_PI / 5) * rightY * camSpeed / 30;
+    teta += (M_PI / 5) * rightY * speed / 30;
   if (std::abs(rightX) > 0.1)
-    phi += (M_PI / 5) * rightX * camSpeed / 30;
+    phi += (M_PI / 5) * rightX * speed / 30;
 
   if (std::abs(leftY) > 0.1)
     pos += viewVector * -leftY;
@@ -108,13 +112,13 @@ void flycam::flycam(gle::Camera* camera)
       gle::Vector3<GLfloat> viewVectorSide =
 	viewVector ^ gle::Vector3<GLfloat>(0, 1, 0);
       viewVectorSide.normalize();
-      pos += viewVectorSide * (camSpeed * leftX);
+      pos += viewVectorSide * (speed * leftX);
     }
 
   if (trigRight > 0.1)
-    pos += gle::Vector3<GLfloat>(0, trigRight * camSpeed, 0);
+    pos += gle::Vector3<GLfloat>(0, trigRight * speed, 0);
   if (trigLeft > 0.1)
-    pos -= gle::Vector3<GLfloat>(0, trigLeft * camSpeed, 0);
+    pos -= gle::Vector3<GLfloat>(0, trigLeft * speed, 0);
 
   teta = teta > (M_PI - 0.001) ? (M_PI - 0.001) : teta;
   teta = teta < 0.001 ? 0.001 : teta;
@@ -125,6 +129,7 @@ void flycam::flycam(gle::Camera* camera)
   gle::Vector3<GLfloat> target = pos + viewVector;
   camera->setTarget(target);
   camera->setPosition(pos);
+  timer.restart();
 }
 
 void flycam::event(sf::Event &event, sf::Window & app)
