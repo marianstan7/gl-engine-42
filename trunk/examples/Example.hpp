@@ -4,8 +4,8 @@
 // Made by gael jochaud-du-plessix
 // Login   <jochau_g@epitech.net>
 // 
-// Started on  Fri May 25 00:36:20 2012 gael jochaud-du-plessix
-// Last update Fri May 25 11:23:51 2012 gael jochaud-du-plessix
+// Started on  Fri May 25 12:25:22 2012 gael jochaud-du-plessix
+// Last update Fri May 25 13:00:20 2012 gael jochaud-du-plessix
 //
 
 #ifndef _EXAMPLE_HPP_
@@ -25,6 +25,7 @@ class Example {
 public:
   enum CameraType {
     Flycam,
+    Trackball,
     NoCamera
   };
 
@@ -39,7 +40,7 @@ protected:
   int		_winWidth;
   int		_winHeight;
   int		_framerate;
-  std::string	_name;  
+  std::string	_name;
 
   sf::Window*	_window;
 

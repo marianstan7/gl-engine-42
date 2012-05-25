@@ -5,19 +5,20 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Fri May 25 00:33:16 2012 gael jochaud-du-plessix
-// Last update Fri May 25 11:25:24 2012 gael jochaud-du-plessix
+// Last update Fri May 25 13:10:27 2012 gael jochaud-du-plessix
 //
 
 #include "Example.hpp"
 
 #include "fps.hpp"
 #include "flycam.hpp"
+#include "trackball.hpp"
 
 Example::Example(int winWidth, int winHeight, int framerate, std::string const & name)
   : _winWidth(winWidth), _winHeight(winHeight), _framerate(framerate),
     _name(name),
     _window(NULL),
-    _showFramerate(true), _limitFramerate(true), _cameraType(Example::Flycam),
+    _showFramerate(true), _limitFramerate(true), _cameraType(Flycam),
     _scene(), _camera(NULL), _renderer(NULL)
 {
   
@@ -50,7 +51,8 @@ int Example::run()
 
   initScene();
 
-  _window->setMouseCursorVisible(false);
+  if (_cameraType == Flycam)
+    _window->setMouseCursorVisible(false);
 
   while (_window->isOpen())
     {
@@ -68,17 +70,22 @@ int Example::run()
             glViewport(0, 0, event.size.width, event.size.height);
 	  if (_cameraType == Flycam)
 	    flycam::event(event, *_window);
+	  if (_cameraType == Trackball)
+	    trackball::event(event, *_window);	  
         }
-      
+
       if (_cameraType == Flycam)
 	{
 	  sf::Mouse::setPosition(sf::Vector2i(_winWidth/2, _winHeight/2), *_window);
 	  flycam::flycam(_camera);
 	}
+      else if (_cameraType == Trackball)
+	trackball::trackball(_camera);
 
       animate();
       _renderer->render(_scene);
       _window->display();
+
       if (_showFramerate)
 	fps::print();
       if (_limitFramerate)

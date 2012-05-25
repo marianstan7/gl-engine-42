@@ -73,6 +73,7 @@ add_executable (
     examples/Example.cpp
     examples/geometries.cpp
     examples/flycam.cpp
+    examples/trackball.cpp
     examples/video.cpp
     examples/fps.cpp
 )
