@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Mon Feb 20 20:48:54 2012 gael jochaud-du-plessix
-// Last update Thu May 24 14:28:24 2012 loick michard
+// Last update Fri May 25 02:07:20 2012 gael jochaud-du-plessix
 //
 
 #include <Renderer.hpp>
@@ -110,6 +110,7 @@ void gle::Renderer::_renderMesh(gle::Scene* scene, gle::Mesh* mesh)
 			(GLvoid*)((vertexAttributes->getOffset()
 				   + gle::Mesh::VertexAttributeSizeCoords)
 				  * sizeof(GLfloat)));
+
   // Set up ColorMap
   _currentProgram->setUniform(gle::Program::HasColorMap, material->isColorMapEnabled());
   if (material->isColorMapEnabled())
@@ -142,6 +143,7 @@ void gle::Renderer::_renderMesh(gle::Scene* scene, gle::Mesh* mesh)
       throw new gle::Exception::OpenGLError("_renderMesh: indexesBuffer->bind()");
 
   }
+
   if (mesh->getPrimitiveType() == gle::Mesh::Points
       || mesh->getRasterizationMode() == gle::Mesh::Point)
     glPointSize(mesh->getPointSize());

@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Wed Feb 15 16:10:11 2012 gael jochaud-du-plessix
-// Last update Wed May 23 16:10:34 2012 loick michard
+// Last update Fri May 25 02:20:18 2012 gael jochaud-du-plessix
 //
 
 #ifndef _GLE_BUFFER_HPP_

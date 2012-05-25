@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Fri Mar  2 17:27:21 2012 gael jochaud-du-plessix
-// Last update Thu May 24 17:32:24 2012 loick michard
+// Last update Fri May 25 00:30:15 2012 gael jochaud-du-plessix
 //
 
 #include <iostream>
@@ -22,6 +22,7 @@
 #include <PointLight.hpp>
 
 #include "flycam.hpp"
+#include "fps.hpp"
 #include "video.hpp"
 
 #define W_WIDTH 1280
@@ -132,13 +133,8 @@ int glEngine(int ac, char **av)
   //camera.addChild(&l);
   gle::Renderer renderer;
 
-  sf::Clock clock;
-  sf::Clock time;
-
   App.setMouseCursorVisible(false);
 
-  sf::Clock frameTimer;
-  int frameCounter = 0;
   double cameraCircleAngle = 0;
 
   //scene.generateTree();
@@ -148,13 +144,7 @@ int glEngine(int ac, char **av)
   scene.updateScene();
   while (App.isOpen())
     {
-      if (frameTimer.getElapsedTime().asMilliseconds() >= 1000)
-        {
-	  std::cout << "fps:" << (frameCounter * 1) << std::endl;
-          frameCounter = 0;
-          frameTimer.restart();
-        }
-      frameCounter++;
+      fps::print();
 
       sf::Event Event;
       while (App.pollEvent(Event))
@@ -179,16 +169,12 @@ int glEngine(int ac, char **av)
 	+ 75));
 	camera.setTarget(gle::Vector3<GLfloat>(305, 15, 75));*/
       l.setPosition(camera.getAbsolutePosition());
-      std::cout << camera.getAbsolutePosition() << std::endl;
+      // std::cout << camera.getAbsolutePosition() << std::endl;
       scene.updateLights();
       renderer.render(&scene);
       App.display();
       //video::saveImage(App, W_FRAMERATE);
-      GLfloat elapsed = time.getElapsedTime().asMicroseconds();
-      cameraCircleAngle += (elapsed / 10000000);
-      if ((1000000.0/W_FRAMERATE) - elapsed > 0)
-	sf::sleep(sf::microseconds(1000000.0/W_FRAMERATE - elapsed));
-      time.restart();
+      fps::limit(W_FRAMERATE);
     }
   
   //video::save(av[0], W_FRAMERATE);
