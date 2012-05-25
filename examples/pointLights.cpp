@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Wed Feb 15 17:24:36 2012 gael jochaud-du-plessix
-// Last update Thu May 24 14:06:01 2012 loick michard
+// Last update Fri May 25 14:51:48 2012 gael jochaud-du-plessix
 //
 
 /*! 
@@ -58,7 +58,7 @@ int glEngine(int ac, char **av)
   context.majorVersion = 3;
   context.minorVersion = 3;
 
-  sf::Window App(sf::VideoMode(W_WIDTH, W_HEIGHT, 32), "Example 01",
+  sf::Window App(sf::VideoMode(W_WIDTH, W_HEIGHT, 32), "glEngine : Point lights",
 		 sf::Style::Default, context);
   App.setActive();
 

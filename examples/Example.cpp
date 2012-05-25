@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Fri May 25 00:33:16 2012 gael jochaud-du-plessix
-// Last update Fri May 25 13:10:27 2012 gael jochaud-du-plessix
+// Last update Fri May 25 14:31:19 2012 gael jochaud-du-plessix
 //
 
 #include "Example.hpp"
@@ -14,14 +14,16 @@
 #include "flycam.hpp"
 #include "trackball.hpp"
 
-Example::Example(int winWidth, int winHeight, int framerate, std::string const & name)
-  : _winWidth(winWidth), _winHeight(winHeight), _framerate(framerate),
+Example::Example(int ac, char**av, int winWidth, int winHeight, int framerate, std::string const & name)
+  : _argv(),
+    _winWidth(winWidth), _winHeight(winHeight), _framerate(framerate),
     _name(name),
     _window(NULL),
     _showFramerate(true), _limitFramerate(true), _cameraType(Flycam),
     _scene(), _camera(NULL), _renderer(NULL)
 {
-  
+  for (int i = 0; i < ac; ++i)
+    _argv.push_back(av[i]);
 }
 
 Example::~Example()

@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Wed Feb 15 17:24:36 2012 gael jochaud-du-plessix
-// Last update Thu May 24 12:19:25 2012 loick michard
+// Last update Fri May 25 14:53:52 2012 gael jochaud-du-plessix
 //
 
 /*! 
@@ -56,7 +56,7 @@ int glEngine(char **av)
   context.majorVersion = 3;
   context.minorVersion = 3;
 
-  sf::Window App(sf::VideoMode(WIDTH, HEIGHT, 32), "Example 02",
+  sf::Window App(sf::VideoMode(WIDTH, HEIGHT, 32), "glEngine : Solar sytem",
 		 sf::Style::Default, context);
   App.setActive();
 

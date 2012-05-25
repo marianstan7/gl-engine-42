@@ -5,13 +5,14 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Fri May 25 12:25:22 2012 gael jochaud-du-plessix
-// Last update Fri May 25 13:00:20 2012 gael jochaud-du-plessix
+// Last update Fri May 25 14:24:37 2012 gael jochaud-du-plessix
 //
 
 #ifndef _EXAMPLE_HPP_
 # define _EXAMPLE_HPP_
 
 # include <string>
+# include <vector>
 # include <SFML/Window.hpp>
 
 #include <Scene.hpp>
@@ -29,7 +30,7 @@ public:
     NoCamera
   };
 
-  Example(int winWidth=1280, int winHeight=720, int framerate=60, std::string const & name="glEngine");
+  Example(int argc, char** argv, int winWidth=1280, int winHeight=720, int framerate=60, std::string const & name="glEngine");
   virtual ~Example();
   
   int		run();
@@ -37,6 +38,8 @@ public:
   virtual void	animate();
 
 protected:
+  std::vector<std::string>	_argv;
+
   int		_winWidth;
   int		_winHeight;
   int		_framerate;
