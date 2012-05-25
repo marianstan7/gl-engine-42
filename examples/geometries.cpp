@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Fri Mar  2 17:27:21 2012 gael jochaud-du-plessix
-// Last update Fri May 25 11:30:31 2012 gael jochaud-du-plessix
+// Last update Fri May 25 13:56:24 2012 gael jochaud-du-plessix
 //
 
 #include <iomanip>
@@ -32,7 +32,7 @@
 #define W_WIDTH 1280
 #define W_HEIGHT 720
 
-#define W_FRAMERATE 42
+#define W_FRAMERATE 60
 
 int accelerometerId = 0;
 
@@ -42,6 +42,7 @@ public:
     Example(W_WIDTH, W_HEIGHT, W_FRAMERATE, "glEngine : Geometries"),
     _light(), _plane()
   {
+    _cameraType = Trackball;
   }
 
   void initScene()
@@ -105,22 +106,20 @@ public:
 
     materialLight->setDiffuseLightEnabled(true);
     materialLight->setSpecularLightEnabled(true);
-
-    _light = new gle::PointLight(gle::Vector3f(0, 0, 0),
+    _light = new gle::PointLight(gle::Vector3f(0, 2000, 0),
 				 gle::Colorf(0.8, 0.8, 0.8));
-    _camera->addChild(_light);
-
     gle::Mesh* sp = gle::Geometries::Sphere(materialLight, 10);
     sp->setPosition(gle::Vector3f(0, 200, 0));
 
     *_scene << _camera << sp;
+    *_scene << _light;
 
     _scene->updateScene();
   }
 
   void animate()
   {
-    //_light->setPosition(_camera->getAbsolutePosition());
+    _light->setPosition(_camera->getAbsolutePosition());
     _scene->updateLights();
     _plane->setRotation(gle::Vector3<GLfloat>(1, 0, 0),
     			-sf::Joystick::getAxisPosition(accelerometerId,
