@@ -80,6 +80,11 @@ add_executable (
     examples/boundingvolume.cpp
 )
 
+add_executable (
+    examples/lookat
+    examples/lookat.cpp
+)
+
 target_link_libraries (
     examples/boundingvolume
     ${SFML_LIBRARIES}
@@ -139,4 +144,12 @@ target_link_libraries (
     LinearMath
     BulletMultiThreaded
     pthread
+)
+
+target_link_libraries (
+    examples/lookat
+    ${SFML_LIBRARIES}
+    ${OPENGL_LIBRARIES}
+    glEngine
+    Examples
 )

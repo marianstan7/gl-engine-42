@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Fri Mar  2 17:27:21 2012 gael jochaud-du-plessix
-// Last update Fri May 25 13:55:49 2012 gael jochaud-du-plessix
+// Last update Sat May 26 16:15:20 2012 loick michard
 //
 
 #include <iostream>
@@ -28,7 +28,7 @@ sf::Clock trackball::timer;
 sf::Clock trackball::mouseTimer;
 GLfloat trackball::rotationX = M_PI / 2;
 GLfloat trackball::rotationY = M_PI / 2;
-GLfloat trackball::zoom = 50;
+GLfloat trackball::zoom = -1;
 GLfloat trackball::rotationSpeedX = 0;
 GLfloat trackball::rotationSpeedY = 0;
 GLfloat trackball::zoomSpeed = 0;
@@ -56,6 +56,10 @@ void trackball::trackball(gle::Camera* camera)
   GLfloat elapsed = timer.getElapsedTime().asMicroseconds();
   GLfloat speed = elapsed * (camSpeed/1000000);
 
+  if (zoom == -1)
+    zoom = sqrt((camera->getTarget().x - camera->getPosition().x) * (camera->getTarget().x - camera->getPosition().x) +
+		(camera->getTarget().y - camera->getPosition().y) * (camera->getTarget().y - camera->getPosition().y) +
+		(camera->getTarget().z - camera->getPosition().z) * (camera->getTarget().z - camera->getPosition().z));
   // Calc mouse speed and applie speed damping every 10ms
   if (mouseTimer.getElapsedTime().asMilliseconds() > 10)
     {

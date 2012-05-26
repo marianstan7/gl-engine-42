@@ -5,7 +5,7 @@
 // Login   <michar_l@epitech.net>
 // 
 // Started on  Mon Feb 13 20:57:51 2012 loick michard
-// Last update Fri May 25 15:46:22 2012 loick michard
+// Last update Sat May 26 18:33:41 2012 loick michard
 //
 
 #ifndef _GLE_MATRIX4_HPP_
@@ -442,7 +442,7 @@ namespace gle {
       \return An initisialised 4x4 matrix for viewing transformation
     */
 
-    static Matrix4 lookAt(Vector3<T> const& eyePosition, Vector3<T> const& center,
+    static Matrix4  cameraLookAt(Vector3<T> const& eyePosition, Vector3<T> const& center,
 			  Vector3<T> const& upVector)
     {
       gle::Vector3<T> forward, side, up;
@@ -457,6 +457,37 @@ namespace gle {
 		      up.x, up.y, up.z, 0.0,
 		      -forward.x, -forward.y, -forward.z, 0.0,
 		      0.0, 0.0, 0.0, 1.0));
+    }
+
+    void lookAt(Vector3<T> const& eyePosition, Vector3<T> const& center,
+		Vector3<T> const& upVector)
+    {
+      gle::Vector3<T> x, y, z;
+      
+      z.x = eyePosition.x - center.x;
+      z.y = eyePosition.y - center.y;
+      z.z = eyePosition.z - center.z;
+      z.normalize();
+      if (z.x*z.x + z.y*z.y +z.z*z.z == 0)
+	z.z = 1;
+      x = upVector ^ z;
+      x.normalize();
+      if (x.x*x.x + x.y*x.y +x.z*x.z == 0)
+	{
+	  z.x += 0.0001;
+	  x = upVector ^ z;
+	  x.normalize();
+	}
+      y = z ^ x;
+      _matrix[0] = x.x;
+      _matrix[1] = x.y;
+      _matrix[2] = x.z;
+      _matrix[4] = y.x;
+      _matrix[5] = y.y;
+      _matrix[6] = y.z;
+      _matrix[8] = z.x;
+      _matrix[9] = z.y;
+      _matrix[10] = z.z;
     }
 
     //! Translate matrix

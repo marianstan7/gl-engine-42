@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Wed Feb 15 17:24:36 2012 gael jochaud-du-plessix
-// Last update Fri May 25 14:53:52 2012 gael jochaud-du-plessix
+// Last update Fri May 25 19:56:15 2012 loick michard
 //
 
 /*! 
@@ -134,6 +134,7 @@ int glEngine(char **av)
 	  if (Event.type == sf::Event::Resized)
 	    glViewport(0, 0, Event.size.width, Event.size.height);
 	}
+      camera.setTarget(moon->getAbsolutePosition());
       earthSystem.setRotation(gle::Vector3<GLfloat>(0, 1, 0), angle * 10);
       earth->setRotation(gle::Vector3<GLfloat>(0, 1, 0), angle * 100);
       sun->setRotation(gle::Vector3<GLfloat>(0, 1, 0), angle * 10);

@@ -5,7 +5,7 @@
 // Login   <michar_l@epitech.net>
 // 
 // Started on  Sat Feb 18 12:53:42 2012 loick michard
-// Last update Thu May 24 15:15:58 2012 loick michard
+// Last update Fri May 25 19:47:59 2012 loick michard
 //
 
 #include <PerspectiveCamera.hpp>
@@ -37,7 +37,7 @@ gle::PerspectiveCamera::PerspectiveCamera(gle::Vector3<GLfloat>
   this->updateMatrix();
 }
 
-void gle::PerspectiveCamera::update()
+void gle::PerspectiveCamera::updateProjectionMatrix()
 {
   _projectionMatrix = gle::Matrix4<GLfloat>::perspective(_fovy, _aspect,
 							 _near, _far);

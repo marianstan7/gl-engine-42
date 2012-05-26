@@ -5,7 +5,7 @@
 // Login   <michar_l@epitech.net>
 // 
 // Started on  Tue May 15 19:32:41 2012 loick michard
-// Last update Thu May 24 17:13:54 2012 loick michard
+// Last update Sat May 26 18:41:17 2012 loick michard
 //
 
 #include <Scene.hpp>
@@ -97,22 +97,51 @@ void gle::Scene::Node::updateMatrix()
     _transformationMatrix = _parent->_transformationMatrix;
   else
     _transformationMatrix.identity();
+
+  _cameraTransformationMatrix = _transformationMatrix;
   _transformationMatrix.translate(_position);
+  if (_hasTarget && _type != Camera)
+    _transformationMatrix.lookAt(_position,
+				 _target,
+				 Vector3<GLfloat>(0, 1, 0));
   _transformationMatrix *= _rotationMatrix;
   _transformationMatrix *= _scaleMatrix;
-  _absolutePosition = _position;
-  _absolutePosition *= _transformationMatrix;
-  _absolutePosition.x -= _position.x;
-  _absolutePosition.y -= _position.y;
-  _absolutePosition.z -= _position.z;
-  if (_hasTarget)
+
+  if (_type == Camera)
     {
-      _transformationMatrix.translate(-_position.x, -_position.y, -_position.z);
+      if (_hasTarget)
+	{
+	  _cameraTransformationMatrix *= gle::Matrix4<GLfloat>::cameraLookAt(_position,
+									     _target,
+									     Vector3<GLfloat>(0, 1, 0));
+	  _cameraTransformationMatrix.translate(-_position.x, -_position.y, -_position.z);
+	}
+      _cameraTransformationMatrix *= _rotationMatrix;
+      _cameraTransformationMatrix *= _scaleMatrix;
+    }
+
+  /*  if (!_hasTarget || _type != Camera)
+    _transformationMatrix.translate(_position);
+  if (_hasTarget && _type == Camera)
+    {
+      //_transformationMatrix.translate(-_position.x, -_position.y, -_position.z);
       _transformationMatrix *= gle::Matrix4<GLfloat>::lookAt(_position,
 							     _target,
 							     Vector3<GLfloat>(0, 1, 0));
       _transformationMatrix.translate(-_position.x, -_position.y, -_position.z);
     }
+  else if (_hasTarget)
+    {
+      _transformationMatrix.cameraLookAt(_position,
+					 _target,
+					 Vector3<GLfloat>(0, 1, 0));
+    }
+  _transformationMatrix *= _rotationMatrix;
+  _transformationMatrix *= _scaleMatrix;*/
+
+  _absolutePosition.x = _absolutePosition.y = _absolutePosition.z = 0;
+  _absolutePosition *= _transformationMatrix;
+
   Matrix4<GLfloat> inverse(_transformationMatrix);
   inverse.inverse();
   _normalMatrix = inverse;
@@ -132,6 +161,8 @@ void gle::Scene::Node::setMatrices(gle::Matrix4<GLfloat> &transformationMatrix,
 
 const gle::Matrix4<GLfloat>& gle::Scene::Node::getTransformationMatrix()
 {
+  if (_type == Camera)
+    return (_cameraTransformationMatrix);
   return (_transformationMatrix);
 }
 
@@ -169,6 +200,11 @@ void gle::Scene::Node::setScale(GLfloat scaleX, GLfloat scaleY, GLfloat scaleZ)
 {
   _scaleMatrix = gle::Matrix4<GLfloat>::scale(scaleX, scaleY, scaleZ);
   this->updateMatrix();
+}
+
+const gle::Vector3<GLfloat>& gle::Scene::Node::getPosition() const
+{
+  return (_position);
 }
 
 const gle::Vector3<GLfloat>& gle::Scene::Node::getAbsolutePosition() const

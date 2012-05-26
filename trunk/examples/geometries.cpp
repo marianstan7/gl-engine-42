@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Fri Mar  2 17:27:21 2012 gael jochaud-du-plessix
-// Last update Fri May 25 14:25:49 2012 gael jochaud-du-plessix
+// Last update Sat May 26 18:47:59 2012 loick michard
 //
 
 #include <iomanip>
@@ -42,7 +42,7 @@ public:
     Example(ac, av, W_WIDTH, W_HEIGHT, W_FRAMERATE, "glEngine : Geometries"),
     _light(), _plane()
   {
-    _cameraType = Trackball;
+    //_cameraType = Trackball;
   }
 
   void initScene()
@@ -62,9 +62,9 @@ public:
     material2->setDiffuseLightEnabled(true);
     material2->setSpecularLightEnabled(true);
 
-    gle::Mesh* cube = gle::Geometries::Cube(material, 10);
-    cube->setPosition(gle::Vector3f(8, 0, -8));
-    cube->setRotation(gle::Vector3f(0, 1, 0), 45);
+    _cube = gle::Geometries::Cube(material, 10);
+    _cube->setPosition(gle::Vector3f(8, 0, -8));
+    _cube->setRotation(gle::Vector3f(0, 1, 0), 45);
     gle::Mesh* pointCube = gle::Geometries::Cube(material2, 10);
     pointCube->setPosition(gle::Vector3f(-24, 0, -8));
     pointCube->setPrimitiveType(gle::Mesh::Points);
@@ -88,7 +88,7 @@ public:
     wiredSphere->setRasterizationMode(gle::Mesh::Line);
     wiredSphere->setMaterial(material2);
 
-    gle::Mesh* wiredCube = new gle::Mesh(*cube);
+    gle::Mesh* wiredCube = new gle::Mesh(*_cube);
     wiredCube->setPosition(gle::Vector3f(-8, 0, -8));
     wiredCube->setRasterizationMode(gle::Mesh::Line);
     wiredCube->setMaterial(material2);
@@ -100,7 +100,7 @@ public:
     wiredPlane->setRasterizationMode(gle::Mesh::Line);
     wiredPlane->setMaterial(material2);
 
-    *_scene << cube << wiredCube << pointCube;
+    *_scene << _cube << wiredCube << pointCube;
     *_scene << sphere << wiredSphere << pointSphere;
     *_scene << _plane << wiredPlane << pointPlane;
 
@@ -108,20 +108,21 @@ public:
 
     materialLight->setDiffuseLightEnabled(true);
     materialLight->setSpecularLightEnabled(true);
-    _light = new gle::PointLight(gle::Vector3f(0, 2000, 0),
+    _light = new gle::PointLight(gle::Vector3f(0, 0, 0),
 				 gle::Colorf(0.8, 0.8, 0.8));
     gle::Mesh* sp = gle::Geometries::Sphere(materialLight, 10);
     sp->setPosition(gle::Vector3f(0, 200, 0));
 
     *_scene << _camera << sp;
-    *_scene << _light;
-
+    //*_scene << _light;
+    _camera->addChild(_light);
     _scene->updateScene();
   }
 
   void animate()
   {
-    _light->setPosition(_camera->getAbsolutePosition());
+    //_light->setPosition(_camera->getAbsolutePosition());
+    _cube->setTarget(_camera->getAbsolutePosition());
     _scene->updateLights();
     _plane->setRotation(gle::Vector3<GLfloat>(1, 0, 0),
     			-sf::Joystick::getAxisPosition(accelerometerId,
@@ -131,6 +132,7 @@ public:
 private:
   gle::PointLight*	_light;
   gle::Mesh*		_plane;
+  gle::Mesh*		_cube;
 };
 
 int main(int ac, char **av)

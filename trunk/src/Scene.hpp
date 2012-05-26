@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Mon Feb 20 18:18:01 2012 gael jochaud-du-plessix
-// Last update Thu May 24 14:35:48 2012 loick michard
+// Last update Sat May 26 18:31:33 2012 loick michard
 //
 
 #ifndef _GLE_SCENE_HPP_
@@ -82,6 +82,7 @@ namespace gle {
 	this->setRotation(Quaternion<GLfloat>(args...));
       }
 
+      const Vector3<GLfloat>& getPosition() const;
       const Vector3<GLfloat>& getAbsolutePosition() const;
       const Vector3<GLfloat>& getTarget() const;
 
@@ -114,6 +115,7 @@ namespace gle {
       Matrix4<GLfloat>		_rotationMatrix;
       
       Matrix4<GLfloat>		_transformationMatrix;
+      Matrix4<GLfloat>		_cameraTransformationMatrix;
       Matrix3<GLfloat>		_normalMatrix;
 
     };

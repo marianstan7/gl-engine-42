@@ -5,7 +5,7 @@
 // Login   <michar_l@epitech.net>
 // 
 // Started on  Sat Feb 18 12:43:33 2012 loick michard
-// Last update Thu May 24 14:21:28 2012 loick michard
+// Last update Fri May 25 19:47:50 2012 loick michard
 //
 
 #ifndef _PERSPECTIVE_CAMERA_HPP_
@@ -52,7 +52,7 @@ namespace gle {
 
     ~PerspectiveCamera(){}
 
-    virtual void update();
+    virtual void updateProjectionMatrix();
   private:
     GLfloat _fovy;
     GLfloat _aspect;

@@ -5,7 +5,7 @@
 // Login   <michar_l@epitech.net>
 // 
 // Started on  Sat Feb 18 11:16:08 2012 loick michard
-// Last update Thu May 24 14:43:22 2012 loick michard
+// Last update Fri May 25 19:56:35 2012 loick michard
 //
 
 #include <Camera.hpp>
@@ -69,3 +69,14 @@ gle::Matrix4<GLfloat>& gle::Camera::getModelViewMatrix()
   return (_modelViewMatrix);
 }
 */
+ /*
+void gle::Camera::setProjectionTarget(const gle::Vector3<GLfloat>& target)
+{
+  _projectionTarget = target;
+  this->update();
+}
+ */
+void gle::Camera::update()
+{
+  this->updateProjectionMatrix();
+}
