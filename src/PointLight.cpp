@@ -5,7 +5,7 @@
 // Login   <michar_l@epitech.net>
 // 
 // Started on  Thu Feb 23 17:55:31 2012 loick michard
-// Last update Thu May 24 17:31:50 2012 loick michard
+// Last update Sat May 26 15:55:06 2012 loick michard
 //
 
 #include <PointLight.hpp>
@@ -21,6 +21,7 @@ gle::PointLight::PointLight(Vector3<GLfloat> const& position,
   _specularColor[0] = specularColor.r;
   _specularColor[1] = specularColor.g;
   _specularColor[2] = specularColor.b;
+  _position = position;
 }
 
 gle::PointLight::PointLight(Vector3<GLfloat> const& position,
@@ -33,6 +34,7 @@ gle::PointLight::PointLight(Vector3<GLfloat> const& position,
   _specularColor[0] = color.r;
   _specularColor[1] = color.g;
   _specularColor[2] = color.b;
+  _position = position;
 }
 
 gle::PointLight::~PointLight()

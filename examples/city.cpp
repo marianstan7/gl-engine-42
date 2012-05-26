@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Fri Mar  2 17:27:21 2012 gael jochaud-du-plessix
-// Last update Fri May 25 15:37:08 2012 loick michard
+// Last update Fri May 25 19:04:22 2012 loick michard
 //
 
 #include <iostream>
@@ -13,7 +13,7 @@
 #include <map>
 #include <SFML/Window.hpp>
 #include <Scene.hpp>
-#include <OrthographicCamera.hpp>
+#include <PerspectiveCamera.hpp>
 #include <Geometries.hpp>
 #include <Material.hpp>
 #include <Renderer.hpp>
@@ -75,8 +75,9 @@ int glEngine(int ac, char **av)
   gle::Scene scene;
   //scene.displayBoundingVolume();
   scene.setBackgroundColor(gle::Color<GLfloat>(1.0, 1.0, 1.0));
-  gle::OrthographicCamera camera(gle::Vector3<GLfloat>(-50, 20, 0),
-				gle::Vector3<GLfloat>(0, 0, 0));
+  gle::PerspectiveCamera camera(gle::Vector3<GLfloat>(-50, 20, 0),
+				gle::Vector3<GLfloat>(0, 0, 0),
+				45, (GLfloat)W_WIDTH/W_HEIGHT, 1, 800);
 
   gle::ObjLoader loader;
   gle::Material material;

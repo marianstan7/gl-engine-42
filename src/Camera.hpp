@@ -5,7 +5,7 @@
 // Login   <michar_l@epitech.net>
 // 
 // Started on  Sat Feb 18 10:43:04 2012 loick michard
-// Last update Thu May 24 14:20:38 2012 loick michard
+// Last update Fri May 25 19:55:00 2012 loick michard
 //
 
 #ifndef _GLE_CAMERA_HPP_
@@ -82,13 +82,17 @@ namespace gle {
 
     gle::Matrix4<GLfloat>&		getProjectionMatrix();
 
+    //void setProjectionTarget(const gle::Vector3<GLfloat>& target);
+
     //! Returns model view matrix
 
     //gle::Matrix4<GLfloat>&		getModelViewMatrix();
 
     //! Update projection matrix
 
-    virtual void update() = 0;
+    virtual void update();
+
+    virtual void updateProjectionMatrix() = 0;
 
   protected:
     
@@ -110,7 +114,7 @@ namespace gle {
 
     //! Camera target.
 
-    //gle::Vector3<GLfloat> _target;
+    gle::Vector3<GLfloat> _projectionTarget;
   };
 }
 
