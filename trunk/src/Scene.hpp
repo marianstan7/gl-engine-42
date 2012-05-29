@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Mon Feb 20 18:18:01 2012 gael jochaud-du-plessix
-// Last update Sat May 26 18:31:33 2012 loick michard
+// Last update Tue May 29 22:58:08 2012 gael jochaud-du-plessix
 //
 
 #ifndef _GLE_SCENE_HPP_
@@ -133,6 +133,15 @@ namespace gle {
     void setBackgroundColor(gle::Color<GLfloat> const &color);
 
     gle::Color<GLfloat> const & getBackgroundColor() const;
+
+    void setFogColor(gle::Color<GLfloat> const &color);
+
+    gle::Color<GLfloat> const & getFogColor() const;
+
+    void setFogDensity(GLfloat density);
+
+    GLfloat getFogDensity() const;
+
 
     Scene & add(Node* element);
     Scene & add(std::vector<Node*> elements);
@@ -333,6 +342,8 @@ namespace gle {
                          std::string const& str);
 
     gle::Color<GLfloat>	_backgroundColor;
+    gle::Color<GLfloat>	_fogColor;
+    GLfloat		_fogDensity;
 
     std::vector<Camera*> _cameras;
     std::vector<Mesh*> _meshesToRender;

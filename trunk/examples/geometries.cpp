@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Fri Mar  2 17:27:21 2012 gael jochaud-du-plessix
-// Last update Sat May 26 18:47:59 2012 loick michard
+// Last update Tue May 29 23:16:59 2012 gael jochaud-du-plessix
 //
 
 #include <iomanip>
@@ -52,6 +52,8 @@ public:
 					 gle::Vector3f(0, 0, 0),
 					 45, (GLfloat)_winWidth/_winHeight, 1, 10000);
     _renderer = new gle::Renderer();
+
+    _scene->setFogDensity(0.01);
 
     gle::Material* material = new gle::Material();
     material->setDiffuseLightEnabled(true);

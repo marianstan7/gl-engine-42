@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Mon Feb 20 19:12:49 2012 gael jochaud-du-plessix
-// Last update Thu May 24 14:29:15 2012 loick michard
+// Last update Tue May 29 23:05:23 2012 gael jochaud-du-plessix
 //
 
 #include <Scene.hpp>
@@ -18,7 +18,7 @@
 #include <sstream>
 
 gle::Scene::Scene() :
-  _backgroundColor(0.0, 0.0, 0.0, 0.0),
+  _backgroundColor(0.0, 0.0, 0.0, 0.0), _fogColor(0.0, 0.0, 0.0, 0.0), _fogDensity(0.0),
   _cameras(), _meshesToRender(), _unboundingMeshesToRender(),
   _lights(), _directionalLightsDirection(),
   _directionalLightsColor(), _directionalLightsSize(0),
@@ -43,6 +43,26 @@ void gle::Scene::setBackgroundColor(gle::Color<GLfloat> const &color)
 gle::Color<GLfloat> const & gle::Scene::getBackgroundColor() const
 {
   return (_backgroundColor);
+}
+
+void gle::Scene::setFogColor(gle::Color<GLfloat> const &color)
+{
+  _fogColor = color;
+}
+
+gle::Color<GLfloat> const & gle::Scene::getFogColor() const
+{
+  return (_fogColor);
+}
+
+void gle::Scene::setFogDensity(GLfloat density)
+{
+  _fogDensity = density;
+}
+
+GLfloat gle::Scene::getFogDensity() const
+{
+  return (_fogDensity);
 }
 
 gle::Scene & gle::Scene::add(gle::Scene::Node* node)
@@ -313,6 +333,8 @@ void		gle::Scene::buildProgram()
   /*  _program->getUniformLocation(gle::Program::AmbientColor);
   _program->getUniformLocation(gle::Program::DiffuseColor);
   _program->getUniformLocation(gle::Program::SpecularColor);*/
+  _program->getUniformLocation(gle::Program::FogDensity);
+  _program->getUniformLocation(gle::Program::FogColor);
   _program->getUniformLocation(gle::Program::HasColorMap);
   _program->getUniformLocation(gle::Program::ColorMap);
   if (getDirectionalLightsSize() || getPointLightsSize())
