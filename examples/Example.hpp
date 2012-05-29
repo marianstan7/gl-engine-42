@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Fri May 25 12:25:22 2012 gael jochaud-du-plessix
-// Last update Fri May 25 14:24:37 2012 gael jochaud-du-plessix
+// Last update Wed May 30 01:31:56 2012 gael jochaud-du-plessix
 //
 
 #ifndef _EXAMPLE_HPP_
@@ -21,6 +21,7 @@
 #include <Material.hpp>
 #include <Renderer.hpp>
 #include <PointLight.hpp>
+#include <Exception.hpp>
 
 class Example {
 public:
@@ -50,6 +51,8 @@ protected:
   bool		_showFramerate;
   bool		_limitFramerate;
   CameraType	_cameraType;
+
+  bool		_recordVideo;
 
   gle::Scene*		_scene;
   gle::Camera*		_camera;

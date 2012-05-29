@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Fri Mar  2 17:27:21 2012 gael jochaud-du-plessix
-// Last update Tue May 29 23:16:59 2012 gael jochaud-du-plessix
+// Last update Wed May 30 01:32:26 2012 gael jochaud-du-plessix
 //
 
 #include <iomanip>
@@ -43,6 +43,7 @@ public:
     _light(), _plane()
   {
     //_cameraType = Trackball;
+    //_recordVideo = true;
   }
 
   void initScene()
@@ -53,7 +54,7 @@ public:
 					 45, (GLfloat)_winWidth/_winHeight, 1, 10000);
     _renderer = new gle::Renderer();
 
-    _scene->setFogDensity(0.01);
+    _scene->setFogDensity(0.005);
 
     gle::Material* material = new gle::Material();
     material->setDiffuseLightEnabled(true);
@@ -77,7 +78,7 @@ public:
     pointSphere->setPosition(gle::Vector3f(-24, 0, 8));
     pointSphere->setPrimitiveType(gle::Mesh::Points);
     pointSphere->setScale(3);
-    _plane = gle::Geometries::Plane(material, 80, 80, 20, 20);
+    _plane = gle::Geometries::Plane(material, 80, 80, 50, 50);
     _plane->setPosition(gle::Vector3f(0, -5, 0));
     gle::Mesh* pointPlane =
       gle::Geometries::Plane(material2, 80, 80, 100, 100);
@@ -143,6 +144,11 @@ int main(int ac, char **av)
     App app(ac, av);
     return (app.run());
   }
+  catch (gle::Exception::CompilationError* e)
+    {
+      std::cout << "Compilation error in " << e->getFilename() << ":\n"
+		<< e->what() << std::endl;
+    }
   catch (std::exception *e)
     {
       std::cout << "Error: " << e->what() << std::endl;

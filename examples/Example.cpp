@@ -5,14 +5,17 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Fri May 25 00:33:16 2012 gael jochaud-du-plessix
-// Last update Fri May 25 14:31:19 2012 gael jochaud-du-plessix
+// Last update Wed May 30 00:39:45 2012 gael jochaud-du-plessix
 //
+
+#include <algorithm>
 
 #include "Example.hpp"
 
 #include "fps.hpp"
 #include "flycam.hpp"
 #include "trackball.hpp"
+#include "video.hpp"
 
 Example::Example(int ac, char**av, int winWidth, int winHeight, int framerate, std::string const & name)
   : _argv(),
@@ -20,10 +23,39 @@ Example::Example(int ac, char**av, int winWidth, int winHeight, int framerate, s
     _name(name),
     _window(NULL),
     _showFramerate(true), _limitFramerate(true), _cameraType(Flycam),
+    _recordVideo(false),
     _scene(), _camera(NULL), _renderer(NULL)
 {
   for (int i = 0; i < ac; ++i)
-    _argv.push_back(av[i]);
+      _argv.push_back(av[i]);
+  for (int i = 0; i < ac; ++i)
+    {
+      if (_argv[i] == "--width" && i + 1 < ac)
+	_winWidth = atoi(_argv[i + 1].c_str());
+      else if (_argv[i] == "--height" && i + 1 < ac)
+	_winHeight = atoi(_argv[i + 1].c_str());
+      else if (_argv[i] == "--framerate" && i + 1 < ac)
+	_framerate = atoi(_argv[i + 1].c_str());
+      else if (_argv[i] == "--show-framerate")
+	_showFramerate = true;
+      else if (_argv[i] == "--limit-framerate" && i + 1 < ac)
+	_limitFramerate = atoi(_argv[i + 1].c_str());
+      else if (_argv[i] == "--record-video")
+	_recordVideo = true;
+      else if (_argv[i] == "--help")
+	{
+	  std::cout << "Usage: \n\t" << av[0] << " [OPTIONS]\n"
+		    << "Options:\n"
+		    << "\t--width WINDOW_WIDTH\n"
+		    << "\t--height WINDOW_HEIGHT\n"
+		    << "\t--framerate FRAMERATE\n"
+		    << "\t--limit-framerate [0-1]\n"
+		    << "\t--show-framerate\n"
+		    << "\t--record-video\n"
+		    << "\t--help\n";
+	  exit(EXIT_SUCCESS);
+	}
+    }
 }
 
 Example::~Example()
@@ -73,7 +105,7 @@ int Example::run()
 	  if (_cameraType == Flycam)
 	    flycam::event(event, *_window);
 	  if (_cameraType == Trackball)
-	    trackball::event(event, *_window);	  
+	    trackball::event(event, *_window);
         }
 
       if (_cameraType == Flycam)
@@ -87,11 +119,22 @@ int Example::run()
       animate();
       _renderer->render(_scene);
       _window->display();
+      if (_recordVideo)
+	video::saveImage(*_window, _framerate);
 
       if (_showFramerate)
 	fps::print();
       if (_limitFramerate)
 	fps::limit(_framerate);
+    }
+
+  if (_recordVideo)
+    {
+      std::string filename = _name;
+      std::replace(filename.begin(), filename.end(), ' ', '_');
+      std::replace(filename.begin(), filename.end(), ':', '_');
+      std::replace(filename.begin(), filename.end(), '-', '_');
+      video::save(filename, _framerate);
     }
 
   return (0);
