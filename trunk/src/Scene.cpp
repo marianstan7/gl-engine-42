@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Mon Feb 20 19:12:49 2012 gael jochaud-du-plessix
-// Last update Tue May 29 23:05:23 2012 gael jochaud-du-plessix
+// Last update Wed May 30 01:30:05 2012 gael jochaud-du-plessix
 //
 
 #include <Scene.hpp>
@@ -365,7 +365,16 @@ gle::Shader* gle::Scene::_createVertexShader()
   shaderSource += gle::ShaderSource::VertexShader;
   shaderSource = _replace("%nb_directional_lights", getDirectionalLightsSize(), shaderSource);
   shaderSource =_replace("%nb_point_lights", getPointLightsSize(), shaderSource);
-  gle::Shader *shader = new gle::Shader(gle::Shader::Vertex, shaderSource);
+  gle::Shader *shader;
+  try
+    {
+      shader = new gle::Shader(gle::Shader::Vertex, shaderSource);
+    }
+  catch (gle::Exception::CompilationError* e)
+    {
+      e->setFilename("Vertex.glsl");
+      throw e;
+    }
 
   return (shader);
 }
@@ -375,7 +384,16 @@ gle::Shader* gle::Scene::_createFragmentShader()
   std::string shaderSource;
 
   shaderSource += gle::ShaderSource::FragmentShader;
-  gle::Shader *shader = new gle::Shader(gle::Shader::Fragment, shaderSource);
+  gle::Shader *shader;
+  try
+    {
+      shader = new gle::Shader(gle::Shader::Fragment, shaderSource);
+    }
+  catch (gle::Exception::CompilationError* e)
+    {
+      e->setFilename("Fragment.glsl");
+      throw e;
+    }
 
   return (shader);
 }

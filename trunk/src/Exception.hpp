@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Wed Feb 15 19:06:53 2012 gael jochaud-du-plessix
-// Last update Tue Feb 28 14:12:00 2012 gael jochaud-du-plessix
+// Last update Wed May 30 01:28:51 2012 gael jochaud-du-plessix
 //
 
 #ifndef _GLE_EXCEPTION_HPP_
@@ -104,9 +104,19 @@ namespace gle {
     class CompilationError : public OpenGLError {
     public:
       //! Construct a CompilationError exception with the specified message
-      CompilationError(std::string const message="Compilation Error") throw() :
-	OpenGLError(message) {}
+      CompilationError(std::string const message="Compilation Error",
+		       std::string const filename="") throw() :
+	OpenGLError(message), _filename(filename) {}
       virtual ~CompilationError() throw() {}
+
+      //! Return the filename where the error occured (if specified)
+      std::string const & getFilename() const { return (_filename); }
+
+      //! Set the name of the file where the error occured
+      void setFilename(std::string const filename="") { _filename = filename; }
+
+    private:
+      std::string _filename;
     };
 
     //! An OpenGL Error caused by a linkage error (typically for a program)
