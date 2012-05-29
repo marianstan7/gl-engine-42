@@ -5,7 +5,7 @@
 // Login   <michar_l@epitech.net>
 // 
 // Started on  Tue May 15 19:32:41 2012 loick michard
-// Last update Sat May 26 18:41:17 2012 loick michard
+// Last update Tue May 29 21:53:48 2012 gael jochaud-du-plessix
 //
 
 #include <Scene.hpp>
@@ -52,7 +52,7 @@ void gle::Scene::Node::setName(const std::string& name)
 
 void gle::Scene::Node::addChild(gle::Scene::Node* child)
 {
-  //std::cout << _name << " -> " << child->_name << std::endl;
+  //std::cout << child->_name << std::endl;
   _children.push_back(child);
   child->setParent(this);
   child->updateMatrix();

@@ -5,7 +5,7 @@
 // Login   <michar_l@epitech.net>
 // 
 // Started on  Wed Apr 11 18:41:59 2012 loick michard
-// Last update Wed May 23 11:58:18 2012 loick michard
+// Last update Tue May 29 23:09:32 2012 gael jochaud-du-plessix
 //
 
 #include <gle/opengl.h>
@@ -24,6 +24,7 @@ const char *gle::ShaderSource::VertexShader =
   "#define NB_POINT_LIGHTS %nb_point_lights \n"
 
   "uniform mat4 gle_PMatrix; \n"
+  "uniform float gle_fogDensity;\n"
   "#if NB_DIRECTIONAL_LIGHTS > 0\n"
   "uniform vec3 gle_directionalLightDirection[NB_DIRECTIONAL_LIGHTS];\n"
   "uniform vec3 gle_directionalLightColor[NB_DIRECTIONAL_LIGHTS];\n"
@@ -53,7 +54,7 @@ const char *gle::ShaderSource::VertexShader =
   "layout (location = GLE_IN_VERTEX_NORMAL_LOCATION) in vec3 gle_vNormal; \n"
   "layout (location = GLE_IN_VERTEX_TEXTURE_COORD_LOCATION) in vec2 gle_vTextureCoord; \n" 
  
-  "out vec3 gle_varying_vPosition; \n"
+  "out float gle_varying_fogFactor; \n"
   "out vec3 gle_varying_vLightWeighting; \n"
   "out vec2 gle_varying_vTextureCoord; \n"
 
@@ -62,7 +63,10 @@ const char *gle::ShaderSource::VertexShader =
 
   "vec4 gle_mvPosition = gle_MVMatrix * vec4(gle_vPosition, 1.0); \n"
   "gl_Position = gle_PMatrix * gle_mvPosition; \n"
-  "gle_varying_vPosition = gle_vPosition; \n"
+  "float fogDistance = length(gle_mvPosition); \n"
+  "const float LOG2 = 1.442695; \n"
+  "gle_varying_fogFactor = exp2(-gle_fogDensity * gle_fogDensity * fogDistance * fogDistance * LOG2); \n"
+  "gle_varying_fogFactor = clamp(gle_varying_fogFactor, 0.0, 1.0); \n"
   "#if NB_DIRECTIONAL_LIGHTS > 0 || NB_POINT_LIGHTS > 0\n"
   "vec3 transformedNormal = normalize(gle_NMatrix * gle_vNormal);\n"
   "#endif\n"

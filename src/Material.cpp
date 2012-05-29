@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Mon Feb 20 22:50:35 2012 gael jochaud-du-plessix
-// Last update Fri May 25 02:20:06 2012 gael jochaud-du-plessix
+// Last update Tue May 29 21:46:48 2012 gael jochaud-du-plessix
 //
 
 #include <Material.hpp>
@@ -156,7 +156,7 @@ gle::Texture* gle::Material::getColorMap() const
 void gle::Material::setColorMap(gle::Texture* colorMap)
 {
   _colorMap = colorMap;
-  _colorMapEnabled = true;
+  _colorMapEnabled = colorMap != NULL ? true : false;
   _needUniformsUpdate = true;
 }
 

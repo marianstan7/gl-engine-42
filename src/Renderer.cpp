@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Mon Feb 20 20:48:54 2012 gael jochaud-du-plessix
-// Last update Fri May 25 02:07:20 2012 gael jochaud-du-plessix
+// Last update Tue May 29 23:16:11 2012 gael jochaud-du-plessix
 //
 
 #include <Renderer.hpp>
@@ -194,6 +194,8 @@ void gle::Renderer::_setSceneUniforms(gle::Scene* scene, gle::Camera* camera)
   gle::Matrix4<GLfloat> & projectionMatrix = camera->getProjectionMatrix();
 
   _currentProgram->setUniform(gle::Program::PMatrix, projectionMatrix);
+  _currentProgram->setUniform(gle::Program::FogColor, scene->getFogColor());
+  _currentProgram->setUniform(gle::Program::FogDensity, scene->getFogDensity());
   // Send light infos to the shader
   if (scene->getDirectionalLightsSize())
     {

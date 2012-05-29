@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Fri Feb 17 16:21:24 2012 gael jochaud-du-plessix
-// Last update Wed May 23 16:02:46 2012 loick michard
+// Last update Tue May 29 23:07:50 2012 gael jochaud-du-plessix
 //
 
 #ifndef _GLE_PROGRAM_HPP_
@@ -33,6 +33,8 @@ namespace gle {
     enum Uniform {
       MVMatrix,
       PMatrix,
+      FogColor,
+      FogDensity,
       ColorMap,
       HasColorMap,
       NMatrix,

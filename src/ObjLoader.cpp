@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Wed Feb 22 23:17:47 2012 gael jochaud-du-plessix
-// Last update Wed May 23 16:56:19 2012 loick michard
+// Last update Tue May 29 21:51:45 2012 gael jochaud-du-plessix
 //
 
 #include <fstream>
@@ -442,7 +442,14 @@ gle::Texture* gle::ObjLoader::_getTexture(std::string const & path)
   gle::Texture* texture = _loadedTextures[path];
   if (texture)
     return (texture);
-  texture = new gle::Texture(path);
+  try
+    {
+      texture = new gle::Texture(path);
+    }
+  catch (std::exception* e)
+    {
+      texture = NULL;
+    }
   if (texture)
     _loadedTextures[path] = texture;
   else
