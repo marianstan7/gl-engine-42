@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Fri Feb 17 16:21:14 2012 gael jochaud-du-plessix
-// Last update Tue May 29 23:15:53 2012 gael jochaud-du-plessix
+// Last update Mon Jun  4 15:44:41 2012 loick michard
 //
 
 #include <Program.hpp>
@@ -33,6 +33,8 @@ gle::Program::Program() :
   _uniformNames[gle::Program::PointLightColor] = "gle_pointLightColor";
   _uniformNames[gle::Program::PointLightSpecularColor] =
     "gle_pointLightSpecularColor";
+  _uniformNames[gle::Program::PointLightAttenuation] =
+    "gle_pointLightAttenuation";
   _uniformNames[gle::Program::Shininess] = "gle_shininess";
   _uniformNames[gle::Program::DiffuseIntensity] = "gle_diffuseIntensity";
   _uniformNames[gle::Program::SpecularIntensity] = "gle_specularIntensity";

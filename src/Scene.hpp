@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Mon Feb 20 18:18:01 2012 gael jochaud-du-plessix
-// Last update Thu May 31 00:56:52 2012 gael jochaud-du-plessix
+// Last update Mon Jun  4 17:25:46 2012 loick michard
 //
 
 #ifndef _GLE_SCENE_HPP_
@@ -398,6 +398,8 @@ namespace gle {
 
     GLfloat* getPointLightsSpecularColor() const;
 
+    GLfloat* getPointLightsAttenuation() const;
+
     //! Get number of point lights in the scene
 
     GLsizeiptr getPointLightsSize() const;
@@ -470,6 +472,7 @@ namespace gle {
     std::vector<GLfloat> _pointLightsPosition;
     std::vector<GLfloat> _pointLightsColor;
     std::vector<GLfloat> _pointLightsSpecularColor;
+    std::vector<GLfloat> _pointLightsAttenuation;
     GLsizeiptr _pointLightsSize;    
 
     Camera* _currentCamera;

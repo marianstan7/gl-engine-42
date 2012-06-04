@@ -10,7 +10,8 @@ uniform sampler2D gle_colorMap;
 uniform bool gle_hasColorMap;
 
 in float gle_varying_fogFactor; 
-in vec3 gle_varying_vLightWeighting; 
+in vec3 gle_varying_vLightWeighting;
+in float gle_varying_vLightAttenuation;
 in vec2 gle_varying_vTextureCoord; 
 
 void main(void) { 
@@ -23,6 +24,9 @@ void main(void) {
 	{
 		gle_FragColor = vec4(1.0);
 	}
-	gle_FragColor *= vec4(gle_varying_vLightWeighting, 1.0);
+	if (gle_varying_vLightAttenuation > 1.0)
+	   gle_FragColor *= vec4(gle_varying_vLightWeighting, 1.0);
+	else
+	   gle_FragColor *= vec4(gle_varying_vLightWeighting * gle_varying_vLightAttenuation, 1.0);
 	gle_FragColor = mix(vec4(gle_fogColor, 1.0), gle_FragColor, gle_varying_fogFactor);
 }

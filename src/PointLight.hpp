@@ -5,7 +5,7 @@
 // Login   <michar_l@epitech.net>
 // 
 // Started on  Thu Feb 23 17:36:20 2012 loick michard
-// Last update Thu May 24 14:08:42 2012 loick michard
+// Last update Mon Jun  4 14:56:41 2012 loick michard
 //
 
 #ifndef _POINT_LIGHT_HPP_
@@ -64,6 +64,8 @@ namespace gle {
 
     void setSpecularColor(Color<GLfloat> const& specularColor);
 
+    void setAttenuation(GLfloat constant, GLfloat linear, GLfloat quadratic);
+
     //! Get the light color
 
     GLfloat* getColor();
@@ -72,11 +74,14 @@ namespace gle {
 
     GLfloat* getSpecularColor();
 
+    GLfloat* getAttenuation();
+
     virtual void update();
 
   private:
     GLfloat _color[3];
     GLfloat _specularColor[3];
+    GLfloat _attenuation[3];
   };
 }
 
