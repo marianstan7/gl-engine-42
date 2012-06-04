@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Fri Feb 17 16:21:24 2012 gael jochaud-du-plessix
-// Last update Wed May 30 17:18:53 2012 gael jochaud-du-plessix
+// Last update Mon Jun  4 17:26:03 2012 loick michard
 //
 
 #ifndef _GLE_PROGRAM_HPP_
@@ -46,6 +46,7 @@ namespace gle {
       PointLightPosition,
       PointLightColor,
       PointLightSpecularColor,
+      PointLightAttenuation,
       Shininess,
       SpecularIntensity,
       DiffuseIntensity

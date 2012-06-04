@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Mon Feb 20 19:12:49 2012 gael jochaud-du-plessix
-// Last update Thu May 31 00:57:14 2012 gael jochaud-du-plessix
+// Last update Mon Jun  4 17:25:52 2012 loick michard
 //
 
 #include <Scene.hpp>
@@ -126,6 +126,7 @@ void gle::Scene::updateLights()
   _pointLightsPosition.resize(0);
   _pointLightsColor.resize(0);
   _pointLightsSpecularColor.resize(0);
+  _pointLightsAttenuation.resize(0);
   unsigned int dSize = 0;
   unsigned int pSize = 0;
   for (auto it = _lights.begin();
@@ -152,6 +153,7 @@ void gle::Scene::updateLights()
 	  position *= _currentCamera->getTransformationMatrix();
           GLfloat* color = ((gle::PointLight*)(*it))->getColor();
           GLfloat* specularColor = ((gle::PointLight*)(*it))->getSpecularColor();
+          GLfloat* attenuation = ((gle::PointLight*)(*it))->getAttenuation();
           _pointLightsPosition.push_back(position.x);
           _pointLightsPosition.push_back(position.y);
           _pointLightsPosition.push_back(position.z);
@@ -161,6 +163,9 @@ void gle::Scene::updateLights()
           _pointLightsSpecularColor.push_back(specularColor[0]);
           _pointLightsSpecularColor.push_back(specularColor[1]);
           _pointLightsSpecularColor.push_back(specularColor[2]);
+	  _pointLightsAttenuation.push_back(attenuation[0]);
+          _pointLightsAttenuation.push_back(attenuation[1]);
+          _pointLightsAttenuation.push_back(attenuation[2]);
 	}
     }
   _directionalLightsSize = dSize;
@@ -195,6 +200,11 @@ GLfloat* gle::Scene::getPointLightsColor() const
 GLfloat* gle::Scene::getPointLightsSpecularColor() const
 {
   return ((GLfloat*)&_pointLightsSpecularColor[0]);
+}
+
+GLfloat* gle::Scene::getPointLightsAttenuation() const
+{
+  return ((GLfloat*)&_pointLightsAttenuation[0]);
 }
 
 GLsizeiptr gle::Scene::getPointLightsSize() const
@@ -253,6 +263,7 @@ void		gle::Scene::buildProgram()
       _program->getUniformLocation(gle::Program::PointLightPosition);
       _program->getUniformLocation(gle::Program::PointLightColor);
       _program->getUniformLocation(gle::Program::PointLightSpecularColor);
+      _program->getUniformLocation(gle::Program::PointLightAttenuation);
     }
   _program->retreiveUniformBlockIndex(gle::Program::MaterialBlock, "materialBlock");
   delete vertexShader;

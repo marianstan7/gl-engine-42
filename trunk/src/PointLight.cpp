@@ -5,7 +5,7 @@
 // Login   <michar_l@epitech.net>
 // 
 // Started on  Thu Feb 23 17:55:31 2012 loick michard
-// Last update Sat May 26 15:55:06 2012 loick michard
+// Last update Mon Jun  4 14:59:48 2012 loick michard
 //
 
 #include <PointLight.hpp>
@@ -22,6 +22,7 @@ gle::PointLight::PointLight(Vector3<GLfloat> const& position,
   _specularColor[1] = specularColor.g;
   _specularColor[2] = specularColor.b;
   _position = position;
+  _attenuation[0] = _attenuation[1] = _attenuation[2] = 0;
 }
 
 gle::PointLight::PointLight(Vector3<GLfloat> const& position,
@@ -35,6 +36,9 @@ gle::PointLight::PointLight(Vector3<GLfloat> const& position,
   _specularColor[1] = color.g;
   _specularColor[2] = color.b;
   _position = position;
+  _attenuation[0] = _attenuation[0];
+  _attenuation[1] = _attenuation[1];
+  _attenuation[2] = _attenuation[2];
 }
 
 gle::PointLight::~PointLight()
@@ -56,6 +60,13 @@ void gle::PointLight::setSpecularColor(Color<GLfloat> const& specularColor)
   _specularColor[2] = specularColor.b;
 }
 
+void gle::PointLight::setAttenuation(GLfloat constant, GLfloat linear, GLfloat quadratic)
+{
+  _attenuation[0] = constant;
+  _attenuation[1] = linear;
+  _attenuation[2] = quadratic;
+}
+
 GLfloat* gle::PointLight::getColor()
 {
   return (_color);
@@ -64,6 +75,11 @@ GLfloat* gle::PointLight::getColor()
 GLfloat* gle::PointLight::getSpecularColor()
 {
   return (_specularColor);
+}
+
+GLfloat* gle::PointLight::getAttenuation()
+{
+  return (_attenuation);
 }
 
 void gle::PointLight::update()

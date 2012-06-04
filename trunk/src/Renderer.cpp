@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Mon Feb 20 20:48:54 2012 gael jochaud-du-plessix
-// Last update Mon Jun  4 16:03:25 2012 gael jochaud-du-plessix
+// Last update Mon Jun  4 17:26:13 2012 loick michard
 //
 
 #include <Renderer.hpp>
@@ -209,6 +209,9 @@ void gle::Renderer::_setSceneUniforms(gle::Scene* scene, gle::Camera* camera)
 				    scene->getPointLightsSize());
       _currentProgram->setUniform3v(gle::Program::PointLightSpecularColor,
 				    scene->getPointLightsSpecularColor(),
+				    scene->getPointLightsSize());
+      _currentProgram->setUniform3v(gle::Program::PointLightAttenuation,
+				    scene->getPointLightsAttenuation(),
 				    scene->getPointLightsSize());
     }
 }
