@@ -5,29 +5,13 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Fri Mar  2 17:27:21 2012 gael jochaud-du-plessix
-// Last update Wed May 30 01:32:26 2012 gael jochaud-du-plessix
+// Last update Mon Jun  4 16:28:52 2012 gael jochaud-du-plessix
 //
 
-#include <iomanip>
 #include <iostream>
-#include <sstream>
-#include <map>
-#include <SFML/Window.hpp>
-#include <SFML/Graphics.hpp>
-#include <Scene.hpp>
-#include <PerspectiveCamera.hpp>
-#include <Geometries.hpp>
-#include <Material.hpp>
-#include <Renderer.hpp>
-#include <ObjLoader.hpp>
-#include <DirectionalLight.hpp>
-#include <PointLight.hpp>
-#include <MeshBufferManager.hpp>
 
+#include "TextureFrameBuffer.hpp"
 #include "Example.hpp"
-#include "flycam.hpp"
-#include "fps.hpp"
-#include "video.hpp"
 
 #define W_WIDTH 1280
 #define W_HEIGHT 720
@@ -42,6 +26,7 @@ public:
     Example(ac, av, W_WIDTH, W_HEIGHT, W_FRAMERATE, "glEngine : Geometries"),
     _light(), _plane()
   {
+    printGPUMemInfo();
     //_cameraType = Trackball;
     //_recordVideo = true;
   }
@@ -54,6 +39,8 @@ public:
 					 45, (GLfloat)_winWidth/_winHeight, 1, 10000);
     _renderer = new gle::Renderer();
 
+    _scene->setBackgroundColor(gle::Colorf(1, 1, 1));
+    _scene->setFogColor(gle::Colorf(1, 1, 1));
     _scene->setFogDensity(0.005);
 
     gle::Material* material = new gle::Material();
@@ -96,8 +83,6 @@ public:
     wiredCube->setRasterizationMode(gle::Mesh::Line);
     wiredCube->setMaterial(material2);
 
-    //_camera->setTarget(wiredCube->getAbsolutePosition());
-
     gle::Mesh* wiredPlane = new gle::Mesh(*_plane);
     wiredPlane->setPosition(gle::Vector3f(0, -5, -80));
     wiredPlane->setRasterizationMode(gle::Mesh::Line);
@@ -112,30 +97,48 @@ public:
     materialLight->setDiffuseLightEnabled(true);
     materialLight->setSpecularLightEnabled(true);
     _light = new gle::PointLight(gle::Vector3f(0, 0, 0),
-				 gle::Colorf(0.8, 0.8, 0.8));
+				 gle::Colorf(1, 1, 1));
     gle::Mesh* sp = gle::Geometries::Sphere(materialLight, 10);
     sp->setPosition(gle::Vector3f(0, 200, 0));
 
+    gle::Material* screenMaterial = new gle::Material();
+    screenMaterial->setSpecularLightEnabled(false);
+    gle::Mesh* screenPlane = gle::Geometries::Plane(screenMaterial, 16*2, 9*2);
+    screenPlane->rotate(gle::Vector3f(1, 0, 0), 90);
+    screenPlane->setPosition(gle::Vector3f(0, 20, -50));
+
+    _framebuffer = new gle::TextureFrameBuffer(500, 500);
+    screenMaterial->setColorMap(_framebuffer->getRenderTexture());
+
+    *_scene << screenPlane;
+
     *_scene << _camera << sp;
-    //*_scene << _light;
+
     _camera->addChild(_light);
     _scene->updateScene();
+
+    printGPUMemInfo();
   }
 
   void animate()
   {
-    //_light->setPosition(_camera->getAbsolutePosition());
-    _cube->setTarget(_camera->getAbsolutePosition());
     _scene->updateLights();
     _plane->setRotation(gle::Vector3<GLfloat>(1, 0, 0),
     			-sf::Joystick::getAxisPosition(accelerometerId,
     						       sf::Joystick::X));
   }
 
+  void render()
+  {
+    _renderer->render(_scene, _framebuffer->getRenderTexture()->getSize(), _framebuffer);
+    _renderer->render(_scene, gle::Rectf(0, 0, _winWidth, _winHeight));
+  }
+
 private:
-  gle::PointLight*	_light;
-  gle::Mesh*		_plane;
-  gle::Mesh*		_cube;
+  gle::PointLight*		_light;
+  gle::Mesh*			_plane;
+  gle::Mesh*			_cube;
+  gle::TextureFrameBuffer*	_framebuffer;
 };
 
 int main(int ac, char **av)

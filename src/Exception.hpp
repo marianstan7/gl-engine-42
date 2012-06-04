@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Wed Feb 15 19:06:53 2012 gael jochaud-du-plessix
-// Last update Wed May 30 01:28:51 2012 gael jochaud-du-plessix
+// Last update Thu May 31 18:03:34 2012 gael jochaud-du-plessix
 //
 
 #ifndef _GLE_EXCEPTION_HPP_
@@ -99,6 +99,15 @@ namespace gle {
 	OpenGLError(message) {}
       virtual ~InvalidOperation() throw() {}
     };
+    
+    //! An OpenGL Error caused by an invalid enum parameter
+    class InvalidEnum : public OpenGLError {
+    public:
+      //! Construct an InvalidEnum exception with the specified message
+      InvalidEnum(std::string const message="Invalid Enum") throw() :
+	OpenGLError(message) {}
+      virtual ~InvalidEnum() throw() {}
+    };
 
     //! An OpenGL Error caused by a compilation error (typically for a shader)
     class CompilationError : public OpenGLError {
@@ -128,6 +137,7 @@ namespace gle {
       virtual ~LinkageError() throw() {}
     };
 
+    void CheckOpenGLError(const std::string& message="");
   };
   
 };

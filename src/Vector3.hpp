@@ -5,7 +5,7 @@
 // Login   <michar_l@epitech.net>
 // 
 // Started on  Fri Feb 17 12:51:39 2012 loick michard
-// Last update Thu May 24 22:13:05 2012 gael jochaud-du-plessix
+// Last update Wed May 30 17:20:42 2012 gael jochaud-du-plessix
 //
 
 #ifndef _GLE_VECTOR3_HPP_
@@ -98,6 +98,8 @@ namespace gle {
       return (*this);
     }
 
+    //! Substract a value to all components of a vector
+
     Vector3& operator-=(T const& value)
     {
       x -= value;
@@ -105,6 +107,8 @@ namespace gle {
       z -= value;
       return (*this);
     }
+
+    //! Add a value to all components of a vector
 
     Vector3& operator+=(T const& value)
     {
@@ -114,6 +118,8 @@ namespace gle {
       return (*this);
     }
 
+    //! Divide all components of a vector by a value
+
     Vector3& operator/=(T const& value)
     {
       x /= value;
@@ -121,6 +127,8 @@ namespace gle {
       z /= value;
       return (*this);
     }
+
+    //! Multiply a vector with a 4x4 Matrix
 
     Vector3& operator*=(gle::Matrix4<T> const& mat)
     {

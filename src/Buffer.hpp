@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Wed Feb 15 16:10:11 2012 gael jochaud-du-plessix
-// Last update Fri May 25 02:20:18 2012 gael jochaud-du-plessix
+// Last update Wed May 30 15:16:46 2012 gael jochaud-du-plessix
 //
 
 #ifndef _GLE_BUFFER_HPP_
@@ -20,7 +20,7 @@ namespace gle {
   
   //! Class for manipulating OpenGL Buffers
   /*!
-    This class encapsulate the creation, initialisation and destruction of
+    This class encapsulate the creation, initialisation, copy and destruction of
     an OpenGL Buffer.
     It also allows to map a buffer in memory or update part or all of its
     data once created.
@@ -99,6 +99,12 @@ namespace gle {
 	}
     }
 
+    //! Copy a buffer
+    /*!
+      Create a new buffer with the content and properties of an existing one.
+      Data are copied directly from gpu to gpu.
+    */
+
     Buffer(Buffer const & other) :
       _type(other._type), _usage(other._usage), _size(0), _id(0)
     {
@@ -124,6 +130,14 @@ namespace gle {
 	    throw new gle::Exception::OpenGLError();
 	}
     }
+
+    //! Copy a buffer with a new size
+    /*!
+      Create a new buffer with the content and properties of an existing one,
+      and with the size specified.
+      Only newSize bytes are copied from the existing buffer.
+      Data are copied directly from gpu to gpu.
+    */
 
     Buffer(Buffer const & other, GLsizeiptr newSize) :
       _type(other._type), _usage(other._usage), _size(newSize), _id(0)
@@ -163,9 +177,14 @@ namespace gle {
 
     void bind() const
     {
-      //std::cout << _id << std::endl;
       glBindBuffer(_type, _id);
     }
+
+    //! Bind a buffer to a binding point
+    /*!
+      Binding a buffer make it the 'current buffer' for all OpenGL operations
+      on its Type of buffer.
+    */
 
     void bindBase(GLuint binding) const
     {

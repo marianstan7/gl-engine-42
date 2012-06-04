@@ -5,7 +5,7 @@
 // Login   <michar_l@epitech.net>
 // 
 // Started on  Tue May 15 19:32:41 2012 loick michard
-// Last update Tue May 29 21:53:48 2012 gael jochaud-du-plessix
+// Last update Thu May 31 20:01:41 2012 gael jochaud-du-plessix
 //
 
 #include <Scene.hpp>
@@ -32,7 +32,6 @@ gle::Scene::Node::Node(const gle::Scene::Node& other) :
 
 gle::Scene::Node::~Node()
 {
-
 }
 
 gle::Scene::Node::Type gle::Scene::Node::getType() const
@@ -52,8 +51,8 @@ void gle::Scene::Node::setName(const std::string& name)
 
 void gle::Scene::Node::addChild(gle::Scene::Node* child)
 {
-  //std::cout << child->_name << std::endl;
-  _children.push_back(child);
+  if (find(_children.begin(), _children.end(), child) == _children.end())
+    _children.push_back(child);
   child->setParent(this);
   child->updateMatrix();
 }
@@ -75,15 +74,33 @@ const std::vector<gle::Scene::Node*>& gle::Scene::Node::getChildren() const
   return (_children);
 }
 
+int	gle::Scene::Node::getChildrenByName(std::string const & name,
+					    std::vector<gle::Scene::Node*> & vector)
+{
+  int     nb = 0;
+
+  if (_name.find(name) != std::string::npos)
+    {
+      vector.push_back(this);
+      ++nb;
+    }
+  for (gle::Scene::Node* &child : _children)
+    nb += child->getChildrenByName(name, vector);
+  return (nb);
+}
+
 gle::Scene::Node* gle::Scene::Node::getChildByName(std::string const& name)
 {
-  if (_name == name)
-    return (this);
   for (gle::Scene::Node* &child : _children)
-    if (child->_name == name)
+    if (child->_name.find(name) != std::string::npos)
       return (child);
   for (gle::Scene::Node* &child : _children)
-    child->getChildByName(name);
+    {
+      gle::Scene::Node* found = child->getChildByName(name);
+      if (found)
+	return (found);
+    }
+  return (NULL);
 }
 
 void gle::Scene::Node::setParent(gle::Scene::Node* parent)
@@ -119,25 +136,6 @@ void gle::Scene::Node::updateMatrix()
       _cameraTransformationMatrix *= _rotationMatrix;
       _cameraTransformationMatrix *= _scaleMatrix;
     }
-
-  /*  if (!_hasTarget || _type != Camera)
-    _transformationMatrix.translate(_position);
-  if (_hasTarget && _type == Camera)
-    {
-      //_transformationMatrix.translate(-_position.x, -_position.y, -_position.z);
-      _transformationMatrix *= gle::Matrix4<GLfloat>::lookAt(_position,
-							     _target,
-							     Vector3<GLfloat>(0, 1, 0));
-      _transformationMatrix.translate(-_position.x, -_position.y, -_position.z);
-    }
-  else if (_hasTarget)
-    {
-      _transformationMatrix.cameraLookAt(_position,
-					 _target,
-					 Vector3<GLfloat>(0, 1, 0));
-    }
-  _transformationMatrix *= _rotationMatrix;
-  _transformationMatrix *= _scaleMatrix;*/
 
   _absolutePosition.x = _absolutePosition.y = _absolutePosition.z = 0;
   _absolutePosition *= _transformationMatrix;

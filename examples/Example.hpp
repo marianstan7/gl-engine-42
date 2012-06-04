@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Fri May 25 12:25:22 2012 gael jochaud-du-plessix
-// Last update Wed May 30 01:31:56 2012 gael jochaud-du-plessix
+// Last update Thu May 31 19:50:35 2012 gael jochaud-du-plessix
 //
 
 #ifndef _EXAMPLE_HPP_
@@ -15,13 +15,13 @@
 # include <vector>
 # include <SFML/Window.hpp>
 
-#include <Scene.hpp>
-#include <PerspectiveCamera.hpp>
-#include <Geometries.hpp>
-#include <Material.hpp>
-#include <Renderer.hpp>
-#include <PointLight.hpp>
-#include <Exception.hpp>
+# include <Scene.hpp>
+# include <PerspectiveCamera.hpp>
+# include <Geometries.hpp>
+# include <Material.hpp>
+# include <Renderer.hpp>
+# include <PointLight.hpp>
+# include <Exception.hpp>
 
 class Example {
 public:
@@ -37,6 +37,9 @@ public:
   int		run();
   virtual void	initScene() = 0;
   virtual void	animate();
+  virtual void	render();
+
+  void printGPUMemInfo();
 
 protected:
   std::vector<std::string>	_argv;
@@ -47,6 +50,7 @@ protected:
   std::string	_name;
 
   sf::Window*	_window;
+  sf::Clock	_time;
 
   bool		_showFramerate;
   bool		_limitFramerate;
@@ -57,6 +61,8 @@ protected:
   gle::Scene*		_scene;
   gle::Camera*		_camera;
   gle::Renderer*	_renderer;
+  
+  GLint			_lastGPUMemUsed;
 };
 
 #endif

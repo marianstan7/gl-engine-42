@@ -5,13 +5,15 @@
 // Login   <michar_l@epitech.net>
 // 
 // Started on  Wed May  2 16:41:28 2012 loick michard
-// Last update Wed May 23 11:00:19 2012 loick michard
+// Last update Wed May 30 14:19:04 2012 gael jochaud-du-plessix
 //
 
 #include <BoundingSphere.hpp>
 #include <Geometries.hpp>
 
-gle::BoundingSphere::BoundingSphere() : _material(), _mesh(NULL), _absoluteRadius(0)
+gle::BoundingSphere::BoundingSphere() :
+  _center(0, 0, 0), _absoluteRadius(0),
+  _material(), _mesh(NULL)
 {
   _material.setDiffuseLightEnabled(true);
   _material.setSpecularLightEnabled(true);
@@ -126,5 +128,7 @@ const gle::Vector3<float>& gle::BoundingSphere::getCenter() const
 
 bool gle::BoundingSphere::isInFrustum(const GLfloat frustum[6][4]) const
 {
+  (void)frustum;
+#warning Todo: BoundingSphere::isInFrustum
   return (false);
 }

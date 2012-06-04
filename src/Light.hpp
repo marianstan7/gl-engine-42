@@ -5,7 +5,7 @@
 // Login   <michar_l@epitech.net>
 // 
 // Started on  Thu Feb 23 16:56:43 2012 loick michard
-// Last update Thu May 24 10:42:47 2012 loick michard
+// Last update Wed May 30 16:54:33 2012 gael jochaud-du-plessix
 //
 
 #ifndef _LIGHT_HPP_
@@ -20,10 +20,12 @@ namespace gle {
   class Light : public Scene::Node {
   public:
 
-    //! All types of lights
+    //! Different types of light
 
     enum Type {
+      //! Light with the same angle at any point
       DIRECTIONAL = 0,
+      //! Light representing a omnidirectional lighting point
       POINT = 1
     };
 
@@ -32,17 +34,19 @@ namespace gle {
       \param type Type of light
     */
 
-    Light(Type type) : Scene::Node(Scene::Node::Light), _lightType(type){}
+    Light(Type type);
 
-    //! Default constructor
+    //! Destructor to implement
 
-    virtual ~Light()=0;
+    virtual ~Light() = 0;
     
     //! Return light type
     
-    Type getLightType() const{ return (_lightType); }
+    Type getLightType() const;
 
-    virtual void update() {};
+    //! Update the light
+
+    virtual void update();
 
   private:
     Type _lightType;
@@ -50,4 +54,3 @@ namespace gle {
 }
 
 #endif // _LIGHT_HPP_
-

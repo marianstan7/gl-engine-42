@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Mon Feb 20 19:12:49 2012 gael jochaud-du-plessix
-// Last update Wed May 30 01:30:05 2012 gael jochaud-du-plessix
+// Last update Thu May 31 00:57:14 2012 gael jochaud-du-plessix
 //
 
 #include <Scene.hpp>
@@ -27,7 +27,7 @@ gle::Scene::Scene() :
   _currentCamera(NULL), _program(NULL), _needProgramCompilation(true),
   _displayBoundingVolume(false), _frustumCulling(false)
 {
-  //_root.setName("root");
+  _root.setName("root");
 }
 
 gle::Scene::~Scene()
@@ -83,106 +83,12 @@ gle::Scene & gle::Scene::remove(gle::Scene::Node* node)
   _root.removeChild(node);
   return (*this);
 }
-/*
-gle::Scene & gle::Scene::add(Camera* camera)
-{  
-  if (find(_cameras.begin(), _cameras.end(), camera) == _cameras.end())
-    {
-      if (!_currentCamera)
-	_currentCamera = camera;
-      _cameras.push_back(camera);
-    }
-  return (*this);
-}
 
-gle::Scene & gle::Scene::add(Mesh* mesh)
+gle::Scene::Node & gle::Scene::getRootNode()
 {
-  if (!mesh)
-    return (*this);
-  add(mesh->getMaterial());
-  if (mesh->getBoundingVolume() && find(_meshes.begin(), _meshes.end(), mesh) == _meshes.end())
-    _meshes.push_back(mesh);
-  else if (find(_meshes.begin(), _meshes.end(), mesh) == _meshes.end())
-    _unboundingMeshes.push_back(mesh);
-  std::vector<gle::Mesh*> & childs = mesh->getChildren();
-  add(childs);
-  if (_displayBoundingVolume && mesh->getBoundingVolume())
-      add(mesh->getBoundingVolume()->getMesh());
-  return (*this);
+  return (_root);
 }
 
-gle::Scene & gle::Scene::add(std::vector<gle::Mesh*> const & meshes)
-{
-  for (std::vector<gle::Mesh*>::const_iterator it = meshes.begin();
-       it != meshes.end(); ++it)
-    add(*it);
-  return (*this);
-}
-
-gle::Scene & gle::Scene::add(Material* material)
-{
-  if (!material)
-    return (*this);
-  if (find(_materials.begin(), _materials.end(), material) == _materials.end())
-    _materials.push_back(material);
-  return (*this);
-}
-
-gle::Scene & gle::Scene::add(Light* light)
-{
-  if (!light)
-    return (*this);
-  if (find(_lights.begin(), _lights.end(), light) == _lights.end())
-    {
-      _lights.push_back(light);
-      this->updateLights();
-      _needProgramCompilation = true;
-    }
-  return (*this);
-}
-
-gle::Scene & gle::Scene::remove(Camera* camera)
-{
-  std::vector<Camera*>::iterator it;
-
-  if ((it = find(_cameras.begin(), _cameras.end(), camera)) != _cameras.end())
-    _cameras.erase(it);
-  return (*this);
-}
-
-gle::Scene & gle::Scene::remove(Mesh* mesh)
-{
-  std::vector<Mesh*>::iterator it;
-
-  if ((it = find(_meshes.begin(), _meshes.end(), mesh)) != _meshes.end())
-    _meshes.erase(it);
-  if ((it = find(_unboundingMeshes.begin(), _unboundingMeshes.end(), mesh)) != _unboundingMeshes.end())
-    _unboundingMeshes.erase(it);
-  return (*this);
-}
-
-gle::Scene & gle::Scene::remove(Material* material)
-{
-  std::vector<Material*>::iterator it;
-
-  if ((it = find(_materials.begin(), _materials.end(), material)) != _materials.end())
-    _materials.erase(it);
-  return (*this);
-}
-
-gle::Scene & gle::Scene::remove(Light* light)
-{
-  std::vector<Light*>::iterator it;
-
-  if ((it = find(_lights.begin(), _lights.end(), light)) != _lights.end())
-    {
-      _lights.erase(it);
-      this->updateLights();
-      _needProgramCompilation = true;
-    }
-  return (*this);
-}
-*/
 const std::vector<gle::Mesh*> & gle::Scene::getMeshesToRender()
 {
   if (_frustumCulling)
@@ -201,12 +107,7 @@ std::vector<gle::Camera*> & gle::Scene::getCameras()
 {
   return (_cameras);
 }
-/*
-std::vector<gle::Material*> & gle::Scene::getMaterials()
-{
-  return (_materials);
-}
-*/
+
 const std::vector<gle::Light*> & gle::Scene::getLights() const
 {
   return (_lights);
@@ -460,7 +361,6 @@ void		gle::Scene::updateScene(gle::Scene::Node* node, int depth)
       generate = true;
       _root.updateMatrix();
     }
-  //std::cout << depth << " : [" << node->getName() << std::endl;
   if (node->getType() == Node::Mesh && (mesh = dynamic_cast<Mesh*>(node)))
     {
       if (mesh->getBoundingVolume())

@@ -5,7 +5,7 @@
 // Login   <michar_l@epitech.net>
 // 
 // Started on  Sat May  5 10:59:21 2012 loick michard
-// Last update Thu May 24 14:31:39 2012 loick michard
+// Last update Wed May 30 15:04:45 2012 gael jochaud-du-plessix
 //
 
 #include <Octree.hpp>
@@ -17,7 +17,8 @@ gle::Octree::Node::Node(const Vector3<GLfloat>& min,
 			const Vector3<GLfloat>& max,
 			const std::vector<Element*> &elements,
 			const std::vector<Element*> &partialsElements) :
-  _material(NULL), _mesh(NULL), _elements(elements), _partialsElements(partialsElements), _leaf(true)
+  _elements(elements), _partialsElements(partialsElements),
+  _material(NULL), _mesh(NULL), _leaf(true)
 {
   for (int i = 0; i < 8; ++i)
     _children[i] = NULL;
@@ -97,13 +98,6 @@ void gle::Octree::generateTree(std::vector<Element*> &elements)
   _root->splitNode(false, &_nbThreads, 8);
 }
 
-struct subdivision {
-  gle::Vector3<GLfloat> min;
-  gle::Vector3<GLfloat> max;
-  std::vector<gle::Octree::Element*> elements;
-  std::vector<gle::Octree::Element*> partialsElements;
-};
-
 static void split(gle::Octree::Node *node, bool thread, std::atomic<int> *nbThreads, int maxThreads, int depth)
 {
   node->splitNode(thread, nbThreads, maxThreads, depth);
@@ -111,6 +105,13 @@ static void split(gle::Octree::Node *node, bool thread, std::atomic<int> *nbThre
 
 void gle::Octree::Node::splitNode(bool thread, std::atomic<int> *nbThreads, int maxThreads, int depth)
 {
+  struct subdivision {
+    gle::Vector3<GLfloat> min;
+    gle::Vector3<GLfloat> max;
+    std::vector<gle::Octree::Element*> elements;
+    std::vector<gle::Octree::Element*> partialsElements;
+  };
+
   if (_elements.size() <= 8)
     {
       if (thread)

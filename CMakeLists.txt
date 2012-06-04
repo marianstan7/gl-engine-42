@@ -14,6 +14,9 @@ find_package (SFML 2.0 REQUIRED window graphics system)
 # Executable path
 set (EXECUTABLE_OUTPUT_PATH ${CMAKE_BUILD_TYPE})
 
+# Set the compiler flags to support c++0x
+set(CMAKE_CXX_FLAGS "-std=c++0x -Wall -Wextra" CACHE STRING "Compiler flags" FORCE)
+
 # Includes paths
 include_directories (
     includes
@@ -85,6 +88,16 @@ add_executable (
     examples/lookat.cpp
 )
 
+add_executable (
+    examples/assimp
+    examples/assimp.cpp
+)
+
+add_executable (
+    examples/renderToTexture
+    examples/renderToTexture.cpp
+)
+
 target_link_libraries (
     examples/boundingvolume
     ${SFML_LIBRARIES}
@@ -148,6 +161,23 @@ target_link_libraries (
 
 target_link_libraries (
     examples/lookat
+    ${SFML_LIBRARIES}
+    ${OPENGL_LIBRARIES}
+    glEngine
+    Examples
+)
+
+target_link_libraries (
+    examples/assimp
+    ${SFML_LIBRARIES}
+    ${OPENGL_LIBRARIES}
+    glEngine
+    Examples
+    assimp
+)
+
+target_link_libraries (
+    examples/renderToTexture
     ${SFML_LIBRARIES}
     ${OPENGL_LIBRARIES}
     glEngine

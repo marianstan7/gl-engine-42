@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Fri Apr 13 12:43:29 2012 gael jochaud-du-plessix
-// Last update Mon May  7 15:54:59 2012 loick michard
+// Last update Wed May 30 16:19:50 2012 gael jochaud-du-plessix
 //
 
 #ifndef _GLE_BUFFER_MANAGER_HPP_
@@ -18,6 +18,13 @@
 
 namespace gle {
   
+  //! Class for managing a lot of data in one buffer
+  /*!
+    This class allows to store data in chunks of memory allocated
+    on the gpu.
+    It allows to store data, to resize a chunk and to free its memory
+    in order to reuse it later.
+   */
   template<typename UnderClass, typename T>
   class BufferManager : public Singleton<UnderClass>
   {
@@ -38,10 +45,14 @@ namespace gle {
 	delete _buffer;
     }
 
+    //! Set the internal OpenGL buffer used to store the data
+
     void setStorageBuffer(gle::Buffer<T> *buffer)
     {
       _buffer = buffer;
     }
+
+    //! Return the internal OpenGL buffer used to store the data
 
     gle::Buffer<T>* getStorageBuffer() const
     {
@@ -49,60 +60,102 @@ namespace gle {
     }
 
   public:
+    
+    //! Size of pages for allocations on the gpu
+
     static const GLsizeiptr PageSize = 4096;
 
+    //! Class representing a chunk of memory in a BufferManager
+    /*!
+      Chunks represent space allocated in the gpu memory and managed
+      by a BufferManager.
+      They are used internally by the BufferManager to partition its allocated
+      space and are returned when data is stored.
+     */
+
     class Chunk
-    {      
+    {
     public:
+
+      //! Minimum size that has to be allocated for the data of a chunk
+
       static const GLsizeiptr MinSize = 4;
+
+      //! Constructs a chunk
+      /*!
+	Constructs the representation of a new chunk. This does not allocate
+	memory and may not be used directly. Instead, call the store() function
+	of BufferManager.
+	\param size Size of the chunk
+	\param offset Offset in the BufferManager memory
+	\param Indicated wether the chunk represents a free or used memory
+       */
 
       Chunk(GLsizeiptr size=0, GLintptr offset=0, bool isFree=true) :
 	_offset(offset), _size(size), _isFree(isFree), _refCount(1)
       {
       }
-      ~Chunk() {}
+
+      //! Destructs a chunk
+      /*!
+	The data is not freed.
+	Chunks may not be destructed directly, instead use the free()
+	functions from the associated BufferManager.
+       */
+
+      ~Chunk()
+      {
+      }
+
+
+      //! Returns the offset of the chunk in memory
 
       GLintptr getOffset() const
       {
 	return (_offset);
       }
 
+      //! Returns the size of the chunk
+
       GLsizeiptr getSize() const
       {
 	return (_size);
       }
 
+      //! Set the offset of the chunk in memory
+
       void setOffset(GLintptr offset)
       {
 	_offset = offset;
       }
+      
+      //! Set the size of the chunk
 
       void setSize(GLsizeiptr size)
       {
 	_size = size;
       }
+
+      //! Indicates wether the chunk represents a free or used memory
       
       bool isFree() const
       {
 	return (_isFree);
       }
 
+      //! Set wether the chunk is free or not
+
       void setFree(bool free)
       {
 	_isFree = free;
       }
 
-      void retain()
-      {
-	_refCount = _refCount + 1;
-      }
-
-      void release()
-      {
-	_refCount = _refCount - 1;
-	if (_refCount == 0)
-	  UnderClass::getInstance().free(this);
-      }
+      //! Set the data of the chunk
+      /*!
+	Save data in the memory allocated for the chunk.
+	\param data A pointer to the data to save in the chunk,
+	must be at least as big as the size of the chunk.
+       */
 
       void setData(const void* data)
       {
@@ -111,12 +164,16 @@ namespace gle {
 	buffer->setData(reinterpret_cast<const T*>(data), _offset, _size);
       }
 
+      //! Map the chunk memory
+
       T* map(typename gle::Buffer<T>::MapAccess access=gle::Buffer<T>::ReadWrite)
       {
 	gle::Buffer<T>* buffer = UnderClass::getInstance().getStorageBuffer();
 
 	return (buffer->map(_offset, _size, access));
       }
+
+      //! Unmap the chunk memory
 
       void unmap()
       {
@@ -125,9 +182,27 @@ namespace gle {
         buffer->unmap();
       }
 
+      //! Set the reference count of the chunk
+
       void setRefCount(int count)
       {
 	_refCount = count;
+      }
+
+      //! Increments the references counter of the chunk
+
+      void retain()
+      {
+	_refCount = _refCount + 1;
+      }
+
+      //! Decrement the references counter of the chunk
+
+      void release()
+      {
+	_refCount = _refCount - 1;
+	if (_refCount == 0)
+	  UnderClass::getInstance().free(this);
       }
 
     private:
@@ -136,6 +211,8 @@ namespace gle {
       bool		_isFree;
       int		_refCount;
     };
+
+    //! Print informations about the BufferManager on standart output
 
     void print()
     {
@@ -146,17 +223,33 @@ namespace gle {
 	}
     }
 
+    //! Bind the internal storage buffer of the BufferManager
+
     void bind()
     {
       if (_buffer)
 	_buffer->bind();
     }
+
+    //! Delete all the chunks of the BufferManager
     
     void drain()
     {
       for (Chunk* &chunk : _chunks)
 	delete chunk;
     }
+
+    //! Resize a chunk of memory
+    /*!
+      If the new size if greater than the precedent, the BufferManager
+      creates a new chunk and copy the data from the old to the new one.
+      If the new size is smaller than the precedent, the chunk is resized
+      and the leaving memory can be reused by the BufferManager.
+      \param chunk The chunk to resize
+      \param size New size for the chunk
+      \param data New data to store in the chunk
+      \return A new chunk representing the resized memory
+     */
 
     Chunk* resize(Chunk *chunk, GLsizeiptr size, const void* data=NULL)
     {
@@ -197,6 +290,14 @@ namespace gle {
       free(chunk);
       return (newChunk);
     }
+
+    //! Store data in the buffer manager
+    /*!
+      Returns a new chunk of memory allocated by the buffer manager
+      \param data The data to store in the chunk. Can be NULL to just allocate the memory
+      \param size The size of the data to store
+      \return The new allocated chunk of memory
+    */
 
     Chunk* store(const void* data, GLsizeiptr size)
     {
@@ -264,6 +365,13 @@ namespace gle {
 	bestChunk->setData(data);
       return (bestChunk);
     }
+
+    //! Free a memory chunk
+    /*!
+      Deallocate a chunk of memory. This function delete the chunk
+      if necessary.
+      \param chunk The chunk to free
+     */
 
     void free(Chunk* chunk)
     {
