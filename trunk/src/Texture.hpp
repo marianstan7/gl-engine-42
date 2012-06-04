@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Wed Feb 29 19:37:51 2012 gael jochaud-du-plessix
-// Last update Thu Mar  1 13:56:21 2012 gael jochaud-du-plessix
+// Last update Mon Jun  4 16:06:00 2012 gael jochaud-du-plessix
 //
 
 #ifndef _GLE_TEXTURE_HPP_
@@ -14,6 +14,7 @@
 # include <SFML/Graphics/Image.hpp>
 # include <string>
 # include <gle/opengl.h>
+# include <Rect.hpp>
 
 namespace gle {
 
@@ -23,7 +24,14 @@ namespace gle {
       Texture2D = GL_TEXTURE_2D
     };
 
-    Texture(std::string filename, Type type=Texture2D);
+    enum InternalFormat {
+      RGBA = GL_RGBA,
+      RGB = GL_RGB,
+      CompressedRGBA = GL_COMPRESSED_RGBA
+    };
+
+    Texture(std::string filename, Type type=Texture2D, InternalFormat internalFormat=CompressedRGBA);
+    Texture(GLuint width=0, GLuint height=0, Type type=Texture2D, InternalFormat internalFormat=CompressedRGBA);
 
     ~Texture();
 
@@ -31,10 +39,22 @@ namespace gle {
     
     void setData(std::string filename);
     void setData(sf::Image const & image);
+    void setData(const char* pixelsPtr, GLuint width=0, GLuint height=0);
+
+    void generateMipmap();
+
+    GLuint	getId() const;
+    Type	getType() const;
+    void	setUseMipmap(bool use=true);
+    Rectf	getSize() const;
 
   private:
-    GLuint _id;
-    Type _type;
+    GLuint		_id;
+    Type		_type;
+    InternalFormat	_internalFormat;
+    GLuint		_width;
+    GLuint		_height;
+    bool		_useMipmap;
   };
 
 }

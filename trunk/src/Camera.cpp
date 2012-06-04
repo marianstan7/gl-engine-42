@@ -5,7 +5,7 @@
 // Login   <michar_l@epitech.net>
 // 
 // Started on  Sat Feb 18 11:16:08 2012 loick michard
-// Last update Fri May 25 19:56:35 2012 loick michard
+// Last update Wed May 30 16:46:47 2012 gael jochaud-du-plessix
 //
 
 #include <Camera.hpp>
@@ -23,59 +23,12 @@ gle::Camera::~Camera()
 {
 
 }
-/*
-void gle::Camera::setPosition(gle::Vector3<GLfloat> const& position)
-{
-  _position = position;
-  this->updateMatrix();
-}
 
-void gle::Camera::setTarget(gle::Vector3<GLfloat> const& target)
-{
-  _target = target;
-  this->updateMatrix();
-}
-
-void gle::Camera::setRotation(gle::Vector3<GLfloat> const& axis, GLfloat angle)
-{
-  _rotation.setRotation(axis, angle);
-  this->updateMatrix();
-}
-
-void gle::Camera::translate(gle::Vector3<GLfloat> const& vec)
-{
-  _position += vec;
-  _target += vec;
-  this->updateMatrix();
-}
-
-gle::Vector3<GLfloat> const& gle::Camera::getPosition() const
-{
-  return (_position);
-}
-
-gle::Vector3<GLfloat> const& gle::Camera::getTarget() const
-{
-  return (_target);
-}
-*/
-gle::Matrix4<GLfloat>& gle::Camera::getProjectionMatrix()
+const gle::Matrix4<GLfloat>& gle::Camera::getProjectionMatrix() const
 {
   return (_projectionMatrix);
 }
-/*
-gle::Matrix4<GLfloat>& gle::Camera::getModelViewMatrix()
-{
-  return (_modelViewMatrix);
-}
-*/
- /*
-void gle::Camera::setProjectionTarget(const gle::Vector3<GLfloat>& target)
-{
-  _projectionTarget = target;
-  this->update();
-}
- */
+
 void gle::Camera::update()
 {
   this->updateProjectionMatrix();

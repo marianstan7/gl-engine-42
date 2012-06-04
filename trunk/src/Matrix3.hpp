@@ -5,7 +5,7 @@
 // Login   <michar_l@epitech.net>
 // 
 // Started on  Thu Feb 23 14:42:48 2012 loick michard
-// Last update Thu Apr 12 22:17:58 2012 loick michard
+// Last update Wed May 30 16:57:31 2012 gael jochaud-du-plessix
 //
 
 #ifndef _MATRIX3_HPP
@@ -24,7 +24,6 @@ namespace gle {
   class Matrix3 {
   public:
 
-    
     // ! Construct and initialise an identity 3x3 matrix
     /*!
       Create an identity matrix:
@@ -132,6 +131,7 @@ namespace gle {
       return (_matrix);
     }
 
+    //! Return a const pointer to the matrix values
     operator const T*() const
     {
       return (_matrix);

@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Wed Feb 15 17:24:36 2012 gael jochaud-du-plessix
-// Last update Fri May 25 14:51:48 2012 gael jochaud-du-plessix
+// Last update Mon Jun  4 16:05:03 2012 gael jochaud-du-plessix
 //
 
 /*! 
@@ -191,7 +191,7 @@ int glEngine(int ac, char **av)
 
       scene.updateLights();
 
-      renderer.render(&scene);
+      renderer.render(&scene, gle::Rectf(0, 0, W_WIDTH, W_HEIGHT));
       App.display();
       //video::saveImage(App, W_FRAMERATE);
     }

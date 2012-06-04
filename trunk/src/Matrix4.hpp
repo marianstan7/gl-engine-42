@@ -5,7 +5,7 @@
 // Login   <michar_l@epitech.net>
 // 
 // Started on  Mon Feb 13 20:57:51 2012 loick michard
-// Last update Sat May 26 18:33:41 2012 loick michard
+// Last update Wed May 30 16:59:38 2012 gael jochaud-du-plessix
 //
 
 #ifndef _GLE_MATRIX4_HPP_
@@ -459,6 +459,7 @@ namespace gle {
 		      0.0, 0.0, 0.0, 1.0));
     }
 
+    //! Create a transformation matrix that allows to "look at" something
     void lookAt(Vector3<T> const& eyePosition, Vector3<T> const& center,
 		Vector3<T> const& upVector)
     {
@@ -556,6 +557,11 @@ namespace gle {
     {
       return (_matrix);
     }
+
+    //! Get a const pointer to matrix data.
+    /*!
+      \return A const pointer to the matrix data(T*).
+    */
 
     operator const T*() const
     {

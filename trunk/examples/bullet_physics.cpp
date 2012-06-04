@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Fri Mar  2 17:27:21 2012 gael jochaud-du-plessix
-// Last update Tue May 29 22:09:32 2012 gael jochaud-du-plessix
+// Last update Mon Jun  4 16:04:40 2012 gael jochaud-du-plessix
 //
 
 #include <iostream>
@@ -291,7 +291,7 @@ int glEngine(int ac, char **av)
       flycam::flycam(&camera);
       l.setPosition(camera.getAbsolutePosition());
       scene.updateLights();
-      renderer.render(&scene);
+      renderer.render(&scene, gle::Rectf(0, 0, W_WIDTH, W_HEIGHT));
       App.display();
       //video::saveImage(App, W_FRAMERATE);
       GLfloat elapsed = time.getElapsedTime().asMicroseconds();

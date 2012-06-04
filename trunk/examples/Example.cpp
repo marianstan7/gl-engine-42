@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Fri May 25 00:33:16 2012 gael jochaud-du-plessix
-// Last update Wed May 30 00:39:45 2012 gael jochaud-du-plessix
+// Last update Mon Jun  4 16:02:17 2012 gael jochaud-du-plessix
 //
 
 #include <algorithm>
@@ -21,10 +21,11 @@ Example::Example(int ac, char**av, int winWidth, int winHeight, int framerate, s
   : _argv(),
     _winWidth(winWidth), _winHeight(winHeight), _framerate(framerate),
     _name(name),
-    _window(NULL),
+    _window(NULL), _time(),
     _showFramerate(true), _limitFramerate(true), _cameraType(Flycam),
     _recordVideo(false),
-    _scene(), _camera(NULL), _renderer(NULL)
+    _scene(), _camera(NULL), _renderer(NULL),
+    _lastGPUMemUsed(-1)
 {
   for (int i = 0; i < ac; ++i)
       _argv.push_back(av[i]);
@@ -101,12 +102,19 @@ int Example::run()
             _window->close();
           // Adjust the viewport when the window is resized
           if (event.type == sf::Event::Resized)
-            glViewport(0, 0, event.size.width, event.size.height);
+	    {
+	      _winWidth = event.size.width;
+	      _winHeight = event.size.height;
+	      glViewport(0, 0, _winWidth, _winHeight);
+	    }
 	  if (_cameraType == Flycam)
 	    flycam::event(event, *_window);
 	  if (_cameraType == Trackball)
 	    trackball::event(event, *_window);
         }
+
+      if (!_window->isOpen())
+	continue ;
 
       if (_cameraType == Flycam)
 	{
@@ -117,7 +125,8 @@ int Example::run()
 	trackball::trackball(_camera);
 
       animate();
-      _renderer->render(_scene);
+      render();
+
       _window->display();
       if (_recordVideo)
 	video::saveImage(*_window, _framerate);
@@ -126,7 +135,7 @@ int Example::run()
 	fps::print();
       if (_limitFramerate)
 	fps::limit(_framerate);
-    }
+    }  
 
   if (_recordVideo)
     {
@@ -143,4 +152,26 @@ int Example::run()
 void Example::animate()
 {
   
+}
+
+void Example::render()
+{
+  _renderer->render(_scene, gle::Rectf(0, 0, _winWidth, _winHeight));
+}
+
+void Example::printGPUMemInfo()
+{
+  GLint totalGPUMem = 0;
+  GLint availableGPUMem = 0;
+  glGetIntegerv(0x9048, &totalGPUMem);
+  glGetIntegerv(0x9049, &availableGPUMem);
+  totalGPUMem /= 1000;
+  availableGPUMem /= 1000;
+  GLint usedGPUMem = (totalGPUMem - availableGPUMem);
+  std::cout << "GPU memory: Total: " << totalGPUMem << "Mb, Available: " << availableGPUMem
+	    << "Mb, Used: " << usedGPUMem << "Mb";
+  if (_lastGPUMemUsed != -1)
+    std::cout << ", " << (_lastGPUMemUsed < usedGPUMem ? "+" : "") << (usedGPUMem - _lastGPUMemUsed) << "Mb";
+  std::cout << std::endl;
+  _lastGPUMemUsed = usedGPUMem;
 }

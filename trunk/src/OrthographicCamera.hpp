@@ -5,7 +5,7 @@
 // Login   <michar_l@epitech.net>
 // 
 // Started on  Sat Feb 18 12:43:33 2012 loick michard
-// Last update Fri May 25 15:47:27 2012 loick michard
+// Last update Wed May 30 14:03:44 2012 gael jochaud-du-plessix
 //
 
 #ifndef _ORTHOGRAPHIC_CAMERA_HPP_
@@ -58,10 +58,10 @@ namespace gle {
   private:
     GLfloat _near;
     GLfloat _far;
-    GLfloat _top;
-    GLfloat _bottom;
     GLfloat _left;
     GLfloat _right;
+    GLfloat _bottom;
+    GLfloat _top;
   };
 }
 

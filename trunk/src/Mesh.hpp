@@ -5,7 +5,7 @@
 // Login   <michar_l@epitech.net>
 // 
 // Started on  Mon Feb 20 13:20:54 2012 loick michard
-// Last update Thu May 24 09:35:15 2012 loick michard
+// Last update Wed May 30 17:41:45 2012 gael jochaud-du-plessix
 //
 
 #ifndef _MESH_HPP_
@@ -36,20 +36,35 @@ namespace gle {
   class Mesh : public Octree::Element, public Scene::Node {
   public:
 
+    //! Different types of primitive that can be drawn
+
     enum PrimitiveType {
+      //! Represent triangles defined by series of 3 vertices
       Triangles = GL_TRIANGLES,
+      //! Represent lines defined by successing vertices
       Lines = GL_LINES,
+      // Represent points defined by vertices
       Points = GL_POINTS
     };
 
+    //! Ways of rasterizing the mesh
+
     enum RasterizationMode {
+      //! Fill the primitives
       Fill = GL_FILL,
+      //! Just draw outlines of the primitives
       Line = GL_LINE,
+      // Just draw edges (vertices) of the primitives
       Point = GL_POINT
     };
 
+    //! Size of the vertex coords  attribute
     static const GLsizeiptr VertexAttributeSizeCoords = 3;
+
+    //! Size of the vertex normal  attribute
     static const GLsizeiptr VertexAttributeSizeNormal = 3;
+
+    //! Size of the vertex texture coords  attribute
     static const GLsizeiptr VertexAttributeSizeTextureCoords = 2;
 
     //! Size of a vertex packed attributes
@@ -64,46 +79,12 @@ namespace gle {
     Mesh(Material* material=NULL);
 
     //! Copy constructor
+
     Mesh(Mesh const & other);
     
     //! Default destructor
 
     ~Mesh();
-
-    //! Add a child to mesh
-    /*
-      \param child Pointer to the child to add
-    */
-    
-    //void addChild(Mesh* child);
-
-    //! Get the mesh children list
-    /*!
-      Return the std::vector of children, allowing to directly
-      loop through them.
-     */
-
-    //std::vector<Mesh*> & getChildren();
-
-    //! Recursively search for children matching a given name
-    
-    //void getChildrenByName(std::string const & name,
-    //			   std::vector<gle::Mesh*> & vector);
-
-    //! Search for a child matching a given name
-
-    //gle::Mesh* getChildByName(std::string const & name);
-
-    //! Set the name of the mesh
-    /*!
-      param name New name
-     */
-
-    //void setName(std::string const & name);
-
-    //! Return the name of the mesh
-
-    //std::string const & getName();
 
     //! Set the primitive type of the mesh
 
@@ -128,61 +109,6 @@ namespace gle {
     //! Get the point size for mesh with point rasterization mode
 
     GLfloat getPointSize() const;
-
-    //! Set the movement matrix of parent
-    /*!
-      \param parentMatrix Pointer the the parent matrix
-    */
-
-    //void setParentMatrix(Matrix4<GLfloat>* parentMatrix=NULL);
-
-    //! Update the movement matrix
-
-    //void updateMatrix();
-
-    //void setMatrices(Matrix4<GLfloat> &mvMatrix, Matrix3<GLfloat> &normalMatrix);
-
-    //! Translate a mesh
-    /*!
-      \param vec Vector of translation
-    */
-    
-    //void translate(Vector3<GLfloat> const& vec);
-
-    //! Set the position of the mesh
-
-    //void setPosition(Vector3<GLfloat> const& pos);
-
-    //! Set the rotation of the mesh
-    /*!
-      \param axis Axis of the rotation
-      \param angle Angle of the rotation
-     */
-
-    //void setRotation(Vector3<GLfloat> const& axis, GLfloat angle);
-
-    //! Set the rotation target
-    /*!
-      \param target The point the mesh should 'look at'
-     */
-    //void setRotationTarget(const Vector3<GLfloat>& target);
-
-    //! Set scale
-    /*!
-      \param x Scale coefficient on x
-      \param y Scale coefficient on y
-      \param z Scale coefficient on z
-    */
-    
-    //void setScale(GLfloat x, GLfloat y, GLfloat z);
-
-    //! Set scale
-    /*!
-      Is equivalent of setScale(scale, scale, scale)
-      \param scale Scale coefficient
-    */
-
-    //void setScale(GLfloat scale);
 
     //! Set the mesh vertex attributes
 
@@ -220,22 +146,9 @@ namespace gle {
 
     void setIndexes(gle::Array<GLuint> const &vertexes);
 
-    //! Return movement matrix
-
-    //const Matrix4<GLfloat>& getMatrix() const;
-
     //! Set the mesh material
 
     void setMaterial(Material* material);
-    
-    //! Get the normal 3x3 matrix of the mesh
-    /*!
-      The normal matrix is the transposed inverse of the 4x4
-      model matrix. It's used to transform normals without
-      altering it.
-     */
-
-    //Matrix3<GLfloat>& getNormalMatrix();
 
     //! Get the mesh material
 
@@ -269,14 +182,32 @@ namespace gle {
 
     gle::MeshBufferManager::Chunk* getAttributes() const;
 
+    //! Get the bounding volume of the mesh
+
     BoundingVolume* getBoundingVolume() const;
 
+    //! Get the coords of the highest values of the mesh vertices
+
     virtual const Vector3<GLfloat>& getMaxPoint() const;
+
+    //! Get the coords of the lowest values of the mesh vertices
+
     virtual const Vector3<GLfloat>& getMinPoint() const;
+
+    //! Get the coords of the point representing the center of the mesh
+
     virtual const Vector3<GLfloat>& getCenter() const;
+
+    //! Return wether the mesh is in a frutum or not
+
     virtual bool isInFrustum(const GLfloat frustum[6][4]) const;
 
+    //! Duplicate the mesh
+
     virtual Node* duplicate() const;
+
+    //! Update the mesh
+
     virtual void update();
     
   private:
@@ -287,23 +218,9 @@ namespace gle {
     Material* _material;
     Buffer<GLuint>* _indexes;
     MeshBufferManager::Chunk*	_attributes;
-    //Buffer<GLfloat>* _attributes;
 
-    GLsizeiptr _nbIndexes;
-    GLsizeiptr _nbVertexes;
-
-    /*Vector3<GLfloat> _position;
-    Vector3<GLfloat> _target;
-    bool _hasTarget;
-    Quaternion<GLfloat> _rotation;
-    Matrix4<GLfloat> _scaleMatrix;
-
-    std::vector<Mesh*> _children;
-
-    Matrix4<GLfloat> _mvMatrix;
-    Matrix3<GLfloat> _normalMatrix;
-    Matrix4<GLfloat>* _parentMatrix;
-    */
+    GLsizeiptr		_nbIndexes;
+    GLsizeiptr		_nbVertexes;
     BoundingVolume*	_boundingVolume;
   };
 }

@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Mon Feb 20 20:48:54 2012 gael jochaud-du-plessix
-// Last update Tue May 29 23:16:11 2012 gael jochaud-du-plessix
+// Last update Mon Jun  4 16:03:25 2012 gael jochaud-du-plessix
 //
 
 #include <Renderer.hpp>
@@ -45,10 +45,17 @@ void gle::Renderer::clear()
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
-void gle::Renderer::render(Scene* scene)
+void gle::Renderer::render(Scene* scene, const Rectf& size, FrameBuffer* customFramebuffer)
 {
+  gle::FrameBuffer& framebuffer = customFramebuffer 
+    ? *customFramebuffer : gle::FrameBuffer::getDefaultFrameBuffer();
+
+  glViewport(size.x, size.y, size.width, size.height);
+
+  framebuffer.bind();
+
   Camera*			camera = scene->getCurrentCamera();
-  gle::Color<GLfloat> const &	backgroundColor = scene->getBackgroundColor();
+  gle::Color<GLfloat> const &	backgroundColor = scene->getBackgroundColor();  
 
   glClearColor(backgroundColor.r, backgroundColor.b, backgroundColor.a,
 	       1.f);
@@ -77,6 +84,7 @@ void gle::Renderer::render(Scene* scene)
   for (auto it = unboundingMeshes.begin();
        it != unboundingMeshesEnd; ++it)
     _renderMesh(scene, *it);
+  framebuffer.update();
 }
 
 void gle::Renderer::_renderMesh(gle::Scene* scene, gle::Mesh* mesh)
@@ -170,28 +178,12 @@ void gle::Renderer::_setCurrentProgram(gle::Scene* scene,
 
 void gle::Renderer::_setMaterialUniforms(gle::Material* material)
 {  
-  /*  _currentProgram->setUniform(gle::Program::AmbientColor,
-			      material->getAmbientColor());
-  _currentProgram->setUniform(gle::Program::DiffuseColor,
-			      material->getDiffuseColor());
-  _currentProgram->setUniform(gle::Program::SpecularColor,
-			      material->getSpecularColor());
-
-  _currentProgram->setUniform(gle::Program::Shininess,
-			      material->getShininess());
-  _currentProgram->setUniform(gle::Program::DiffuseIntensity,
-			      material->getDiffuseIntensity());
-  _currentProgram->setUniform(gle::Program::SpecularIntensity,
-			      material->getSpecularIntensity());*/
-  //  glUniformBlockBinding(_currentProgram->getId(),
-  //			_currentProgram->getUniformBlockIndex(gle::Program::MaterialBlock),
-  //			gle::Program::MaterialBlock);
   material->getUniforms()->bindBase(gle::Program::MaterialBlock);
 }
 
 void gle::Renderer::_setSceneUniforms(gle::Scene* scene, gle::Camera* camera)
 {
-  gle::Matrix4<GLfloat> & projectionMatrix = camera->getProjectionMatrix();
+  const gle::Matrix4<GLfloat> & projectionMatrix = camera->getProjectionMatrix();
 
   _currentProgram->setUniform(gle::Program::PMatrix, projectionMatrix);
   _currentProgram->setUniform(gle::Program::FogColor, scene->getFogColor());

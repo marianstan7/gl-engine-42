@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Wed Feb 15 17:24:36 2012 gael jochaud-du-plessix
-// Last update Fri May 25 19:56:15 2012 loick michard
+// Last update Mon Jun  4 16:07:58 2012 gael jochaud-du-plessix
 //
 
 /*! 
@@ -139,7 +139,7 @@ int glEngine(char **av)
       earth->setRotation(gle::Vector3<GLfloat>(0, 1, 0), angle * 100);
       sun->setRotation(gle::Vector3<GLfloat>(0, 1, 0), angle * 10);
       scene.updateLights();
-      renderer.render(&scene);
+      renderer.render(&scene, gle::Rectf(0, 0, WIDTH, HEIGHT));
       App.display();
       GLfloat elapsed = time.getElapsedTime().asMicroseconds();
       if (1000000/W_FRAMERATE - elapsed > 0)

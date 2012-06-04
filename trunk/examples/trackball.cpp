@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Fri Mar  2 17:27:21 2012 gael jochaud-du-plessix
-// Last update Sat May 26 16:15:20 2012 loick michard
+// Last update Thu May 31 21:15:43 2012 gael jochaud-du-plessix
 //
 
 #include <iostream>
@@ -141,8 +141,8 @@ void trackball::event(sf::Event &event, sf::Window & window)
 	  rotationSpeedX = mouseSpeedY;
 	  rotationSpeedY = mouseSpeedX;
 	}
-      rotationSpeedX = rotationSpeedX > 1 ? 1 : rotationSpeedX < -1 ? -1 : rotationSpeedX;
-      rotationSpeedY = rotationSpeedY > 1 ? 1 : rotationSpeedY < -1 ? -1 : rotationSpeedY;
-      zoomSpeed = zoomSpeed > 1 ? 1 : zoomSpeed < -1 ? -1 : zoomSpeed;
+      rotationSpeedX = rotationSpeedX > 2 ? 2 : rotationSpeedX < -2 ? -2 : rotationSpeedX;
+      rotationSpeedY = rotationSpeedY > 2 ? 2 : rotationSpeedY < -2 ? -2 : rotationSpeedY;
+      zoomSpeed = zoomSpeed > 2 ? 2 : zoomSpeed < -2 ? -2 : zoomSpeed;
     }
 }

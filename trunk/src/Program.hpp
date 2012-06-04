@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Fri Feb 17 16:21:24 2012 gael jochaud-du-plessix
-// Last update Tue May 29 23:07:50 2012 gael jochaud-du-plessix
+// Last update Wed May 30 17:18:53 2012 gael jochaud-du-plessix
 //
 
 #ifndef _GLE_PROGRAM_HPP_
@@ -51,11 +51,13 @@ namespace gle {
       DiffuseIntensity
     };
 
+    //! Uniform blocks that can be set in a program
     enum UniformBlock {
       MaterialBlock,
       NbUniformBlocks
     };
 
+    //! Texture units that can be set in a program
     enum TextureUnit {
       ColorMapTexture = GL_TEXTURE0,
       ColorMapTextureIndex = 0,
@@ -115,6 +117,8 @@ namespace gle {
     void setUniform3v(Uniform uniformLocation, GLfloat* values,
 		      GLsizeiptr size);
 
+    //! Set the value of a uniform color
+
     void setUniform(Uniform uniform, gle::Color<GLfloat> const & color);
 
     //! Set a value of an uniform GLfloat
@@ -129,7 +133,11 @@ namespace gle {
     //! Return the OpenGL Program identifier
     GLuint getId() const;
 
+    //! Retrieve and store a uniform block index for future accessing
+
     void retreiveUniformBlockIndex(UniformBlock block, const std::string& name);
+
+    //! Return a previously retrieved uniform block index
 
     GLuint getUniformBlockIndex(UniformBlock block) const;
 

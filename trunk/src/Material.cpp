@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Mon Feb 20 22:50:35 2012 gael jochaud-du-plessix
-// Last update Tue May 29 21:46:48 2012 gael jochaud-du-plessix
+// Last update Thu May 31 00:00:21 2012 gael jochaud-du-plessix
 //
 
 #include <Material.hpp>
@@ -17,7 +17,7 @@ gle::Material::Material(std::string const & name) :
   _name(name),
   _ambientColor(0.0, 0.0, 0.0), _diffuseColor(1.0, 1.0, 1.0),
   _specularColor(1.0, 1.0, 1.0),
-  _diffuseLightEnabled(false), _specularLightEnabled(false),
+  _diffuseLightEnabled(true), _specularLightEnabled(true),
   _shininess(50), _diffuseIntensity(1), _specularIntensity(1),
   _colorMapEnabled(false), _colorMap(NULL), _uniforms(NULL), _needUniformsUpdate(true)
 {
@@ -50,7 +50,6 @@ void gle::Material::setAmbientColor(gle::Color<GLfloat> const & color)
 
 gle::Color<GLfloat> const & gle::Material::getAmbientColor() const
 {
-  //return(_colorMapEnabled ? gle::Color<GLfloat>(0, 0, 0) : _ambientColor);
   return (_ambientColor);
 }
 

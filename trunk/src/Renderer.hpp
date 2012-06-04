@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Tue Feb 14 17:12:21 2012 gael jochaud-du-plessix
-// Last update Thu May 24 11:09:41 2012 loick michard
+// Last update Mon Jun  4 15:57:40 2012 gael jochaud-du-plessix
 //
 
 #ifndef _GLE_RENDERER_HPP_
@@ -15,6 +15,8 @@
 # include <Scene.hpp>
 # include <Mesh.hpp>
 # include <Camera.hpp>
+# include <FrameBuffer.hpp>
+# include <Rect.hpp>
 
 namespace gle {
 
@@ -39,7 +41,7 @@ namespace gle {
     void clear();
 
     //! Render a scene
-    void render(Scene* scene);
+    void render(Scene* scene, const Rectf& size, FrameBuffer* customFramebuffer=NULL);
 
   private:
     void _renderMesh(gle::Scene* scene, gle::Mesh* mesh);

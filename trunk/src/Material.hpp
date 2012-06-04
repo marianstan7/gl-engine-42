@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Mon Feb 20 22:30:11 2012 gael jochaud-du-plessix
-// Last update Fri Apr 13 12:38:30 2012 loick michard
+// Last update Wed May 30 16:56:37 2012 gael jochaud-du-plessix
 //
 
 #ifndef _GLE_MATERIAL_HPP_
@@ -132,6 +132,11 @@ namespace gle {
     //! Set color map texture
 
     void setColorMap(gle::Texture* colorMap);
+
+    //! Returns the uniform buffer containing all datas for the material
+    /*!
+      Build the buffer if necessary
+     */
 
     Buffer<GLfloat>* getUniforms();
 

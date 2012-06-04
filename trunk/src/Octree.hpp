@@ -5,7 +5,7 @@
 // Login   <michar_l@epitech.net>
 // 
 // Started on  Sat May  5 10:50:13 2012 loick michard
-// Last update Thu May 24 14:31:31 2012 loick michard
+// Last update Wed May 30 14:15:50 2012 gael jochaud-du-plessix
 //
 
 #ifndef _OCTREE_HPP_
@@ -48,9 +48,10 @@ namespace gle {
 			std::vector<Element*>& elementsInFrustum,
 			std::map<Element*, bool>* alreadyDone);
 
+    protected:
       std::vector<Element*> _elements;
       std::vector<Element*> _partialsElements;
-      private:
+    private:
       Material*		_material;
       class Mesh*	_mesh;
       Vector3<GLfloat>	_min;

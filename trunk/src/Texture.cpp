@@ -5,17 +5,27 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Wed Feb 29 19:37:40 2012 gael jochaud-du-plessix
-// Last update Fri Apr 13 18:08:31 2012 gael jochaud-du-plessix
+// Last update Mon Jun  4 16:06:34 2012 gael jochaud-du-plessix
 //
 
 #include <Texture.hpp>
 #include <Exception.hpp>
 
-gle::Texture::Texture(std::string filename, Type type) :
-  _id(0), _type(type)
+gle::Texture::Texture(std::string filename, Type type, InternalFormat internalFormat) :
+  _id(0), _type(type), _internalFormat(internalFormat), _width(0), _height(0),
+  _useMipmap(true)
 {
   glGenTextures(1, &_id);
   setData(filename);
+}
+
+gle::Texture::Texture(GLuint width, GLuint height, Type type, InternalFormat internalFormat) :
+  _id(0), _type(type), _internalFormat(internalFormat), _width(width), _height(height),
+  _useMipmap(true)
+{
+  glGenTextures(1, &_id);
+  if (width != 0 && height != 0)
+    setData(NULL, width, height);
 }
 
 gle::Texture::~Texture()
@@ -32,6 +42,8 @@ void gle::Texture::setData(std::string filename)
 {
   sf::Image image;
   image.loadFromFile(filename);
+  _width = image.getSize().x;
+  _height = image.getSize().y;
   setData(image);
 }
 
@@ -40,20 +52,69 @@ void gle::Texture::setData(sf::Image const &image)
   const sf::Uint8* pixelsPtr = image.getPixelsPtr();
   if (pixelsPtr == NULL)
     throw new gle::Exception::InvalidValue("Invalid texture image");
+  setData((const char*)pixelsPtr);
+}
+
+void gle::Texture::setData(const char* pixelsPtr, GLuint width, GLuint height)
+{
+  if (width != 0 && height != 0)
+    {
+      _width = width;
+      _height = height;
+    }
   bind();
   glTexImage2D(GL_TEXTURE_2D, // Texture type
 	       0, // Level of detail (0 = max)
-	       GL_RGBA, // Internal format
-	       image.getSize().x, // Width
-	       image.getSize().y, // Height
+	       _internalFormat, // Internal format
+	       _width, // Width
+	       _height, // Height
 	       0, // This value must be 0
 	       GL_RGBA, // Format of the pixel datas
 	       GL_UNSIGNED_BYTE, // Data type of the pixel datas
 	       pixelsPtr);
-  glTexParameteri(_type, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_LINEAR);
   glTexParameteri(_type, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-  glGenerateMipmap(GL_TEXTURE_2D);
-  GLenum error = glGetError();
-  if (error != GL_NO_ERROR)
-    throw new gle::Exception::OpenGLError();
+  if (_useMipmap)
+    {
+      glTexParameteri(_type, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_LINEAR);
+      glGenerateMipmap(_type);
+    }
+  else
+    glTexParameteri(_type, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+  gle::Exception::CheckOpenGLError("Texture::setData()");
+}
+
+void gle::Texture::generateMipmap()
+{
+  if (!_useMipmap)
+    return ;
+  bind();
+  glGenerateMipmap(_type);  
+}
+
+GLuint	gle::Texture::getId() const
+{
+  return (_id);
+}
+
+gle::Texture::Type	gle::Texture::getType() const
+{
+  return (_type);
+}
+
+void	gle::Texture::setUseMipmap(bool use)
+{
+  _useMipmap = use;
+  bind();
+  if (_useMipmap)
+    {
+      glTexParameteri(_type, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_LINEAR);
+      glGenerateMipmap(_type);
+    }
+  else
+    glTexParameteri(_type, GL_TEXTURE_MIN_FILTER, GL_LINEAR);    
+}
+
+gle::Rectf	gle::Texture::getSize() const
+{
+  return (Rectf(0, 0, _width, _height));
 }
