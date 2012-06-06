@@ -43,9 +43,9 @@ out float gle_varying_fogFactor;
 out vec3 gle_varying_vLightWeighting; 
 out vec2 gle_varying_vTextureCoord;
 #if NB_POINT_LIGHTS > 0
-	smooth out vec3 gle_varying_normal;
-	smooth out vec3 gle_varying_eyeDirection;
-	smooth out vec3 gle_varying_pointLightDirection[NB_POINT_LIGHTS];
+	out vec3 gle_varying_normal;
+	out vec3 gle_varying_eyeDirection;
+	out vec3 gle_varying_pointLightDirection[NB_POINT_LIGHTS];
 	out float gle_varying_pointLightAttenuation[NB_POINT_LIGHTS];
 #endif
 

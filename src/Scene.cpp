@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Mon Feb 20 19:12:49 2012 gael jochaud-du-plessix
-// Last update Mon Jun  4 17:25:52 2012 loick michard
+// Last update Wed Jun  6 11:23:08 2012 loick michard
 //
 
 #include <Scene.hpp>
@@ -276,7 +276,7 @@ gle::Shader* gle::Scene::_createVertexShader()
 
   shaderSource += gle::ShaderSource::VertexShader;
   shaderSource = _replace("%nb_directional_lights", getDirectionalLightsSize(), shaderSource);
-  shaderSource =_replace("%nb_point_lights", getPointLightsSize(), shaderSource);
+  shaderSource = _replace("%nb_point_lights", getPointLightsSize(), shaderSource);
   gle::Shader *shader;
   try
     {
@@ -296,6 +296,8 @@ gle::Shader* gle::Scene::_createFragmentShader()
   std::string shaderSource;
 
   shaderSource += gle::ShaderSource::FragmentShader;
+  shaderSource = _replace("%nb_directional_lights", getDirectionalLightsSize(), shaderSource);
+  shaderSource = _replace("%nb_point_lights", getPointLightsSize(), shaderSource);
   gle::Shader *shader;
   try
     {
@@ -318,7 +320,10 @@ std::string gle::Scene::_replace(std::string const& search,
 
   ss << to;
   std::string ret = str;
-  return (ret.replace(str.find(search), search.size(), ss.str()));
+  size_t pos = str.find(search);
+  if (pos != std::string::npos)
+    return (ret.replace(pos, search.size(), ss.str()));
+  return (str);
 }
 
 gle::Program*	gle::Scene::getProgram()

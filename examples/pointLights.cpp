@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Wed Feb 15 17:24:36 2012 gael jochaud-du-plessix
-// Last update Mon Jun  4 16:05:03 2012 gael jochaud-du-plessix
+// Last update Wed Jun  6 11:10:16 2012 loick michard
 //
 
 /*! 
@@ -92,10 +92,10 @@ int glEngine(int ac, char **av)
   materialLight.setSpecularLightEnabled(false);
   materialLight.setAmbientColor(gle::Color<GLfloat>(1, 0, 0.25));
 
-  gle::PointLight		l(gle::Vector3<GLfloat>(0, 100, 0), gle::Color<GLfloat>(1, 0, 0.25));
+  gle::PointLight		l(gle::Vector3<GLfloat>(0, 0, 0), gle::Color<GLfloat>(1, 0, 0.25));
   gle::Mesh*			sp = gle::Geometries::Sphere(&materialLight,
 							     1);
-  gle::PointLight		l2(gle::Vector3<GLfloat>(0, 0, -20),
+  gle::PointLight		l2(gle::Vector3<GLfloat>(0, 0, 0),
 				   gle::Color<GLfloat>(0, 0.25, 1));
   gle::Material			materialLight2;
   materialLight2.setDiffuseLightEnabled(false);
@@ -107,7 +107,7 @@ int glEngine(int ac, char **av)
   materialLight3.setDiffuseLightEnabled(false);
   materialLight3.setSpecularLightEnabled(false);
   materialLight3.setAmbientColor(gle::Color<GLfloat>(0.5, 1, 0.5));
-  gle::PointLight		l3(gle::Vector3<GLfloat>(40, 0, 0),
+  gle::PointLight		l3(gle::Vector3<GLfloat>(0, 0, 0),
 				   gle::Color<GLfloat>(0.5, 1, 0.5));
   gle::Mesh*			sp3 = gle::Geometries::Sphere(&materialLight3,
 							      1);
@@ -116,11 +116,11 @@ int glEngine(int ac, char **av)
   materialLight4.setDiffuseLightEnabled(false);
   materialLight4.setSpecularLightEnabled(false);
   materialLight4.setAmbientColor(gle::Color<GLfloat>(1, 0.66, 0));
-  gle::PointLight		l4(gle::Vector3<GLfloat>(40, 0, 0),
+  gle::PointLight		l4(gle::Vector3<GLfloat>(0, 0, 0),
 				   gle::Color<GLfloat>(1, 0.66, 0));
   gle::Mesh*			sp4 = gle::Geometries::Sphere(&materialLight4,
 							      1);
-  gle::PointLight		l5(gle::Vector3<GLfloat>(40, 0, 0),
+  gle::PointLight		l5(gle::Vector3<GLfloat>(0, 0, 0),
 				   gle::Color<GLfloat>(0.1, 0.1, 0.1));
   sp->setPosition(gle::Vector3<GLfloat>(0, 100, 0));
   sp2->setPosition(gle::Vector3<GLfloat>(0, 0, -20));
@@ -132,8 +132,8 @@ int glEngine(int ac, char **av)
   sp2->addChild(&l2);
   sp3->addChild(&l3);
   sp4->addChild(&l4);
+  camera.addChild(&l5);
   scene << &camera << sp << sp2 << sp3 << sp4;
-  scene << /*&l << &l2 << &l3 << &l4 << */&l5;
 
   gle::Renderer		renderer;
   GLfloat		angle = 0;
@@ -171,9 +171,6 @@ int glEngine(int ac, char **av)
       camera.setPosition(gle::Vector3<GLfloat>(cos(angle/3) * -(dist/2),
 					       30,
 					       sin(angle/3) * -dist/0.8));
-      l5.setPosition(gle::Vector3<GLfloat>(cos(angle/3) * -dist,
-					   30,
-					   sin(angle/3) * -dist));
 
       float		dist2 = dist / 3;
 

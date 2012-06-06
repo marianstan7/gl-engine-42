@@ -30,9 +30,9 @@ in vec3 gle_varying_vLightWeighting;
 in float gle_varying_vLightAttenuation;
 in vec2 gle_varying_vTextureCoord;
 #if NB_POINT_LIGHTS > 0
-	smooth in vec3 gle_varying_normal;
-	smooth in vec3 gle_varying_eyeDirection;
-	smooth in vec3 gle_varying_pointLightDirection[NB_POINT_LIGHTS];
+	in vec3 gle_varying_normal;
+	in vec3 gle_varying_eyeDirection;
+	in vec3 gle_varying_pointLightDirection[NB_POINT_LIGHTS];
 	in float gle_varying_pointLightAttenuation[NB_POINT_LIGHTS];
 #endif
 
