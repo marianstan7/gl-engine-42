@@ -72,7 +72,7 @@ void main(void) {
 	#endif
 	#if NB_POINT_LIGHTS > 0
 		gle_varying_normal = transformedNormal;
-		gle_varying_eyeDirection = normalize(-gle_mvPosition.xyz);
+		gle_varying_eyeDirection = -gle_mvPosition.xyz;
 		for (int i = 0; i < NB_POINT_LIGHTS; ++i)
 		{
 			vec3 pointLightDirection = gle_pointLightPosition[i] - gle_mvPosition.xyz;
@@ -85,7 +85,7 @@ void main(void) {
 							 (gle_pointLightAttenuation[i].z * d * d));
 			if (gle_varying_pointLightAttenuation[i] > 1.0)
 				gle_varying_pointLightAttenuation[i] = 1.0;
-			gle_varying_pointLightDirection[i] = normalize(pointLightDirection);
+			gle_varying_pointLightDirection[i] = pointLightDirection;
 		}
 	#endif
 	

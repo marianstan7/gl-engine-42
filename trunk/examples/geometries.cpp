@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Fri Mar  2 17:27:21 2012 gael jochaud-du-plessix
-// Last update Wed Jun  6 11:58:25 2012 loick michard
+// Last update Wed Jun  6 16:40:35 2012 loick michard
 //
 
 #include <iostream>
@@ -71,7 +71,7 @@ public:
     pointSphere->setPosition(gle::Vector3f(-24, 0, 8));
     pointSphere->setPrimitiveType(gle::Mesh::Points);
     pointSphere->setScale(3);
-    _plane = gle::Geometries::Plane(material, 80, 80, 50, 50);
+    _plane = gle::Geometries::Plane(materialLight, 80, 80, 1, 1);
     _plane->setPosition(gle::Vector3f(0, -5, 0));
     gle::Mesh* pointPlane =
       gle::Geometries::Plane(material2, 80, 80, 100, 100);
@@ -118,7 +118,7 @@ public:
     gle::PointLight* _light2 = new gle::PointLight(gle::Vector3f(0, 200, 0),
 						   gle::Colorf(1.0, 0.0, 0.0));
 
-    *_scene << _camera << _light2;// << sp;
+    *_scene << _camera;// << _light2;// << sp;
     _camera->addChild(_light);
     _scene->updateScene();
 
