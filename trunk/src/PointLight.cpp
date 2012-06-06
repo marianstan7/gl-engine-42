@@ -5,7 +5,7 @@
 // Login   <michar_l@epitech.net>
 // 
 // Started on  Thu Feb 23 17:55:31 2012 loick michard
-// Last update Mon Jun  4 14:59:48 2012 loick michard
+// Last update Tue Jun  5 20:20:11 2012 loick michard
 //
 
 #include <PointLight.hpp>
@@ -36,9 +36,7 @@ gle::PointLight::PointLight(Vector3<GLfloat> const& position,
   _specularColor[1] = color.g;
   _specularColor[2] = color.b;
   _position = position;
-  _attenuation[0] = _attenuation[0];
-  _attenuation[1] = _attenuation[1];
-  _attenuation[2] = _attenuation[2];
+  _attenuation[0] = _attenuation[1] = _attenuation[2] = 0;
 }
 
 gle::PointLight::~PointLight()

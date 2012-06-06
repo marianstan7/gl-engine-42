@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Fri Mar  2 17:27:21 2012 gael jochaud-du-plessix
-// Last update Tue May 29 23:33:36 2012 gael jochaud-du-plessix
+// Last update Mon Jun  4 17:19:24 2012 loick michard
 //
 
 #include <iostream>
@@ -97,7 +97,7 @@ public:
     materialLight->setSpecularLightEnabled(true);
     gle::PointLight *light = new gle::PointLight(gle::Vector3<GLfloat>(0, 0, 0),
 						 gle::Color<GLfloat>(1.0, 1.0, 1.0));
-
+    light->setAttenuation(0, 0, 0.0006);
     _camera->addChild(light);
 
     *_scene << _camera;
