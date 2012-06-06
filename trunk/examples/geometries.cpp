@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Fri Mar  2 17:27:21 2012 gael jochaud-du-plessix
-// Last update Tue Jun  5 21:31:32 2012 loick michard
+// Last update Wed Jun  6 11:58:25 2012 loick michard
 //
 
 #include <iostream>
@@ -42,6 +42,11 @@ public:
     //_scene->setBackgroundColor(gle::Colorf(1, 1, 1));
     _scene->setFogColor(gle::Colorf(0, 0, 0));
     _scene->setFogDensity(0.005);
+
+    gle::Material* materialLight = new gle::Material();
+
+    materialLight->setDiffuseLightEnabled(true);
+    materialLight->setSpecularLightEnabled(true);
     
     gle::Material* material = new gle::Material();
     material->setDiffuseLightEnabled(true);
@@ -60,7 +65,7 @@ public:
     pointCube->setPosition(gle::Vector3f(-24, 0, -8));
     pointCube->setPrimitiveType(gle::Mesh::Points);
     pointCube->setPointSize(5);
-    gle::Mesh* sphere = gle::Geometries::Sphere(material, 5);
+    gle::Mesh* sphere = gle::Geometries::Sphere(material, 5, 30, 30);
     sphere->setPosition(gle::Vector3f(8, 0, 8));
     gle::Mesh* pointSphere = gle::Geometries::Sphere(material2, 5, 100, 100);
     pointSphere->setPosition(gle::Vector3f(-24, 0, 8));
@@ -93,10 +98,6 @@ public:
     *_scene << sphere << wiredSphere << pointSphere;
     *_scene << _plane << wiredPlane << pointPlane;
 
-    gle::Material* materialLight = new gle::Material();
-
-    materialLight->setDiffuseLightEnabled(true);
-    materialLight->setSpecularLightEnabled(true);
     _light = new gle::PointLight(gle::Vector3f(0, 0, 0),
 				 gle::Colorf(1.0, 1.0, 1.0));
     gle::Mesh* sp = gle::Geometries::Sphere(materialLight, 10, 50, 50);
@@ -114,7 +115,10 @@ public:
 
     *_scene << screenPlane;
 
-    *_scene << _camera;// << sp;
+    gle::PointLight* _light2 = new gle::PointLight(gle::Vector3f(0, 200, 0),
+						   gle::Colorf(1.0, 0.0, 0.0));
+
+    *_scene << _camera << _light2;// << sp;
     _camera->addChild(_light);
     _scene->updateScene();
 
