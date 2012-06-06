@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Wed Feb 15 17:24:36 2012 gael jochaud-du-plessix
-// Last update Fri May 25 14:34:31 2012 gael jochaud-du-plessix
+// Last update Wed Jun  6 19:53:21 2012 gael jochaud-du-plessix
 //
 
 /*! \mainpage glEngine Reference documentation
@@ -75,7 +75,7 @@ public:
 
     *_scene << _light;
 
-    _scene->updateScene();
+    _scene->update();
   }
 
   void animate()

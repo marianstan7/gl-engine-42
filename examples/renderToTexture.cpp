@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Thu May 31 19:08:59 2012 gael jochaud-du-plessix
-// Last update Mon Jun  4 16:10:52 2012 gael jochaud-du-plessix
+// Last update Wed Jun  6 19:53:07 2012 gael jochaud-du-plessix
 //
 
 #include <iostream>
@@ -52,7 +52,7 @@ public:
     gle::Mesh* cube = gle::Geometries::Cube(cubeMaterial, 5);
 
     *_scene << cube;
-    _scene->updateScene();
+    _scene->update();
 
     // Build texture scene
     _textureScene = new gle::Scene();
@@ -79,7 +79,7 @@ public:
 
     *_textureScene << _textureMesh;
 
-    _textureScene->updateScene();
+    _textureScene->update();
 
     // Build the framebuffer and attach it to the cube texture
     _textureFB = new gle::TextureFrameBuffer(500, 500);

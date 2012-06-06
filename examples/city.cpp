@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Fri Mar  2 17:27:21 2012 gael jochaud-du-plessix
-// Last update Mon Jun  4 17:19:24 2012 loick michard
+// Last update Wed Jun  6 19:53:42 2012 gael jochaud-du-plessix
 //
 
 #include <iostream>
@@ -103,7 +103,7 @@ public:
     *_scene << _camera;
 
     _scene->enableFrustumCulling();
-    _scene->updateScene();
+    _scene->update();
   }
 
   void animate()
