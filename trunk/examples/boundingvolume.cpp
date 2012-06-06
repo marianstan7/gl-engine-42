@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Fri Mar  2 17:27:21 2012 gael jochaud-du-plessix
-// Last update Mon Jun  4 16:05:17 2012 gael jochaud-du-plessix
+// Last update Wed Jun  6 19:54:57 2012 gael jochaud-du-plessix
 //
 
 #include <iomanip>
@@ -125,7 +125,7 @@ int glEngine(int ac, char **av)
   //scene.generateTree();
   //scene.displayTree();
   scene.enableFrustumCulling();
-  scene.updateScene();
+  scene.update();
   while (App.isOpen())
     {    
       if (frameTimer.getElapsedTime().asMilliseconds() >= 1000)

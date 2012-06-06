@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Wed Feb 15 17:24:36 2012 gael jochaud-du-plessix
-// Last update Wed Jun  6 11:10:16 2012 loick michard
+// Last update Wed Jun  6 19:53:17 2012 gael jochaud-du-plessix
 //
 
 /*! 
@@ -142,7 +142,7 @@ int glEngine(int ac, char **av)
   size_t		frameCounter = 0;
   float			dist = 170;
  
-  scene.updateScene();
+  scene.update();
   while (App.isOpen())
     {
       sf::Event event;

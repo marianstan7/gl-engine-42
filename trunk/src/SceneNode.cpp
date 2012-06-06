@@ -5,13 +5,13 @@
 // Login   <michar_l@epitech.net>
 // 
 // Started on  Tue May 15 19:32:41 2012 loick michard
-// Last update Wed Jun  6 11:04:58 2012 loick michard
+// Last update Wed Jun  6 18:44:09 2012 gael jochaud-du-plessix
 //
 
 #include <Scene.hpp>
 
 gle::Scene::Node::Node(gle::Scene::Node::Type type) :
-  _type(type), _parent(NULL), _hasTarget(false)
+  _type(type), _parent(NULL), _isDynamic(false), _hasTarget(false)
 {
 
 }
@@ -19,6 +19,7 @@ gle::Scene::Node::Node(gle::Scene::Node::Type type) :
 gle::Scene::Node::Node(const gle::Scene::Node& other) :
   _type(other._type), _name(other._name), 
   _children(), _parent(NULL), _position(other._position),
+  _isDynamic(other._isDynamic),
   _target(other._target), _hasTarget(other._hasTarget),
   _scaleMatrix(other._scaleMatrix), _rotationMatrix(other._rotationMatrix)
 {
@@ -208,6 +209,16 @@ const gle::Vector3<GLfloat>& gle::Scene::Node::getPosition() const
 const gle::Vector3<GLfloat>& gle::Scene::Node::getAbsolutePosition() const
 {
   return (_absolutePosition);
+}
+
+bool      gle::Scene::Node::isDynamic() const
+{
+  return (_isDynamic);
+}
+
+void      gle::Scene::Node::setDynamic(bool dynamic)
+{
+  _isDynamic = dynamic;
 }
 
 const gle::Vector3<GLfloat>& gle::Scene::Node::getTarget() const

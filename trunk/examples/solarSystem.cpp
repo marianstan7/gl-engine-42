@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Wed Feb 15 17:24:36 2012 gael jochaud-du-plessix
-// Last update Mon Jun  4 16:07:58 2012 gael jochaud-du-plessix
+// Last update Wed Jun  6 19:52:42 2012 gael jochaud-du-plessix
 //
 
 /*! 
@@ -110,7 +110,7 @@ int glEngine(char **av)
   size_t		frameCounter = 0;
   
   scene.setCamera(&camera);
-  scene.updateScene();
+  scene.update();
   while (App.isOpen())
     {
       if (time.getElapsedTime().asMilliseconds() >= 100)

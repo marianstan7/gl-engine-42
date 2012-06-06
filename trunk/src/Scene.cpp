@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Mon Feb 20 19:12:49 2012 gael jochaud-du-plessix
-// Last update Wed Jun  6 11:23:08 2012 loick michard
+// Last update Wed Jun  6 19:51:22 2012 gael jochaud-du-plessix
 //
 
 #include <Scene.hpp>
@@ -360,7 +360,7 @@ void		gle::Scene::setCamera(gle::Camera* camera)
   _currentCamera = camera;
 }
 
-void		gle::Scene::updateScene(gle::Scene::Node* node, int depth)
+void		gle::Scene::update(gle::Scene::Node* node, int depth)
 {
   Mesh*		mesh;
   Light*	light;
@@ -379,7 +379,7 @@ void		gle::Scene::updateScene(gle::Scene::Node* node, int depth)
     }
   if (node->getType() == Node::Mesh && (mesh = dynamic_cast<Mesh*>(node)))
     {
-      if (mesh->getBoundingVolume())
+      if (mesh->getBoundingVolume() && !mesh->isDynamic())
 	_meshesToRender.push_back(mesh);
       else
 	_unboundingMeshesToRender.push_back(mesh);
@@ -393,12 +393,18 @@ void		gle::Scene::updateScene(gle::Scene::Node* node, int depth)
     _currentCamera = camera;
   const std::vector<Node*>& children = node->getChildren();
   for (Node* const &child : children)
-    this->updateScene(child, depth + 1);
+    update(child, depth + 1);
   if (generate && _frustumCulling)
-    this->generateTree();
+    generateTree();
   if (generate)
     {
       _needProgramCompilation = true;
-      this->updateLights();
+      updateLights();
+      updateStaticMeshes();
     }
+}
+
+void gle::Scene::updateStaticMeshes()
+{
+  
 }

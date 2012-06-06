@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Mon Feb 20 18:18:01 2012 gael jochaud-du-plessix
-// Last update Mon Jun  4 17:25:46 2012 loick michard
+// Last update Wed Jun  6 19:50:59 2012 gael jochaud-du-plessix
 //
 
 #ifndef _GLE_SCENE_HPP_
@@ -192,6 +192,14 @@ namespace gle {
 
       const Vector3<GLfloat>& getAbsolutePosition() const;
 
+      //! Return true if the node is dynamic
+
+      bool	isDynamic() const;
+
+      //! Set if the node is dynamic or not
+
+      void	setDynamic(bool dynamic);
+
       //! Get the target of the node if it is looking at something
 
       const Vector3<GLfloat>& getTarget() const;
@@ -251,6 +259,9 @@ namespace gle {
 
       //! Absolute position of the node
       Vector3<GLfloat>		_absolutePosition;
+
+      //! Define if the node is dynamic or not
+      bool			_isDynamic;
 
       //! Target of the node
       Vector3<GLfloat>		_target;
@@ -415,6 +426,16 @@ namespace gle {
 
     void updateLights();
 
+    //! Update static meshes
+    /*!
+      You have to call this function when you add, remove or update
+      any static mesh in the scene
+      This function re-generates the mesh uniforms buffer and recompile
+      the shader so it is very CPU intensive
+    */
+
+    void updateStaticMeshes();
+
     //! Builds the shader program for the scene
 
     void buildProgram();
@@ -445,7 +466,7 @@ namespace gle {
 
     //! Update the scene. Must be called after any modification to the scene graph.
     
-    void updateScene(Node* node=NULL, int depth = 0);
+    void update(Node* node=NULL, int depth = 0);
 
   private:
     gle::Shader* _createVertexShader();

@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Fri Mar  2 17:27:21 2012 gael jochaud-du-plessix
-// Last update Mon Jun  4 16:04:40 2012 gael jochaud-du-plessix
+// Last update Wed Jun  6 19:53:44 2012 gael jochaud-du-plessix
 //
 
 #include <iostream>
@@ -233,7 +233,7 @@ int glEngine(int ac, char **av)
 					    sphere, new btSphereShape(2.5), dynamicsWorld, 10000);
   scene << sphere;
 
-  scene.updateScene();
+  scene.update();
 
   while (App.isOpen())
     {
@@ -265,7 +265,7 @@ int glEngine(int ac, char **av)
 	      velocity *= 100;
 	      physicSphere->getGroundRigidBody()->setLinearVelocity(btVector3(velocity.x, velocity.y, velocity.z));
 	      scene << sphere;
-	      scene.updateScene();
+	      scene.update();
 	    }
 	  // Adjust the viewport when the window is resized
 	  if (Event.type == sf::Event::Resized)

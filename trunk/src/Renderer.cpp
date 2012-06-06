@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Mon Feb 20 20:48:54 2012 gael jochaud-du-plessix
-// Last update Mon Jun  4 17:26:13 2012 loick michard
+// Last update Wed Jun  6 19:46:13 2012 gael jochaud-du-plessix
 //
 
 #include <Renderer.hpp>
@@ -55,10 +55,9 @@ void gle::Renderer::render(Scene* scene, const Rectf& size, FrameBuffer* customF
   framebuffer.bind();
 
   Camera*			camera = scene->getCurrentCamera();
-  gle::Color<GLfloat> const &	backgroundColor = scene->getBackgroundColor();  
+  gle::Color<GLfloat> const &	backgroundColor = scene->getBackgroundColor();
 
-  glClearColor(backgroundColor.r, backgroundColor.b, backgroundColor.a,
-	       1.f);
+  glClearColor(backgroundColor.r, backgroundColor.b, backgroundColor.a, 1.f);
   clear();
   _currentProgram = NULL;
     _currentMaterial = NULL;
@@ -71,19 +70,16 @@ void gle::Renderer::render(Scene* scene, const Rectf& size, FrameBuffer* customF
   auto unboundingMeshesEnd = unboundingMeshes.end();
 
   // Enable vertex attributes commons to all meshes
-  glEnableVertexAttribArray(gle::ShaderSource::Vertex::
-			    Default::PositionLocation);
-  glEnableVertexAttribArray(gle::ShaderSource::Vertex::
-			    Default::NormalLocation);
+  glEnableVertexAttribArray(gle::ShaderSource::Vertex::Default::PositionLocation);
+  glEnableVertexAttribArray(gle::ShaderSource::Vertex::Default::NormalLocation);
 
   MeshBufferManager::getInstance().bind();
 
-  for (auto it = meshes.begin();
-       it != meshesEnd; ++it)
+  for (auto it = meshes.begin(); it != meshesEnd; ++it)
     _renderMesh(scene, *it);
-  for (auto it = unboundingMeshes.begin();
-       it != unboundingMeshesEnd; ++it)
+  for (auto it = unboundingMeshes.begin(); it != unboundingMeshesEnd; ++it)
     _renderMesh(scene, *it);
+
   framebuffer.update();
 }
 
@@ -226,19 +222,9 @@ void gle::Renderer::_setMeshUniforms(gle::Scene* scene, gle::Mesh* mesh)
   normalMatrix.transpose();
   // Set modelview matrix
   _currentProgram->setUniform(gle::Program::MVMatrix, mvMatrix);
-  {
-    GLenum error = glGetError();
-    if (error != GL_NO_ERROR)
-      throw new gle::Exception::OpenGLError("_setMeshUniforms: _currentProgram->setUniform(gle::Program::MVMatrix, mvMatrix)");
-  }
   // Set normals matrix
   if (scene->getDirectionalLightsSize() || scene->getPointLightsSize())
     _currentProgram->setUniform(gle::Program::NMatrix, normalMatrix);
-  {
-    GLenum error = glGetError();
-    if (error != GL_NO_ERROR)
-      throw new gle::Exception::OpenGLError("_setMeshUniforms: _currentProgram->setUniform(gle::Program::NMatrix, inverse)");
-  }
   /*
   glUniformBlockBinding(_currentProgram->getId(), 
 			_currentProgram->getUniformBlockIndex(gle::Program::MaterialBlock),
