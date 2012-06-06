@@ -5,7 +5,7 @@
 // Login   <michar_l@epitech.net>
 // 
 // Started on  Thu Feb 23 16:56:43 2012 loick michard
-// Last update Wed May 30 16:54:33 2012 gael jochaud-du-plessix
+// Last update Wed Jun  6 15:52:15 2012 loick michard
 //
 
 #ifndef _LIGHT_HPP_
@@ -26,7 +26,8 @@ namespace gle {
       //! Light with the same angle at any point
       DIRECTIONAL = 0,
       //! Light representing a omnidirectional lighting point
-      POINT = 1
+      POINT = 1,
+      SPOT = 2
     };
 
     //! Constructor with type

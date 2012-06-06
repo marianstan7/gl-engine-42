@@ -38,19 +38,22 @@ in vec2 gle_varying_vTextureCoord;
 
 void main(void) { 
 	vec3 lightWeighting = gle_varying_vLightWeighting;
+	vec3 N = normalize(gle_varying_normal);
+	vec3 E = normalize(gle_varying_eyeDirection);
 	#if NB_POINT_LIGHTS > 0
 		for (int i = 0; i < NB_POINT_LIGHTS; ++i)
 		{
+			vec3 L = normalize(gle_varying_pointLightDirection[i]);
 			if (gle_diffuseIntensity > 0)
 			{
-				float pointLightWeighting = max(dot(gle_varying_normal, gle_varying_pointLightDirection[i]), 0.0);
+				float pointLightWeighting = max(dot(N, L), 0.0);
 				lightWeighting += gle_pointLightColor[i] * gle_diffuseColor.rgb * pointLightWeighting * gle_diffuseIntensity * 
 				gle_varying_pointLightAttenuation[i];
 			}
 			if (gle_specularIntensity > 0)
 			{
-				vec3 reflectionDirection = reflect(-gle_varying_pointLightDirection[i], gle_varying_normal);
-				float pointLightSpecularWeighting = pow(max(dot(reflectionDirection, gle_varying_eyeDirection), 0.0), gle_shininess);
+				vec3 reflectionDirection = reflect(-L, N);
+				float pointLightSpecularWeighting = pow(max(dot(reflectionDirection, E), 0.0), gle_shininess);
 				lightWeighting += gle_pointLightSpecularColor[i] * gle_specularColor.rgb
 							* pointLightSpecularWeighting * gle_specularIntensity * gle_varying_pointLightAttenuation[i];
 			}
