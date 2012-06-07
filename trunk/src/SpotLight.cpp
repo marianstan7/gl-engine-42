@@ -5,7 +5,7 @@
 // Login   <michar_l@epitech.net>
 // 
 // Started on  Thu Feb 23 17:55:31 2012 loick michard
-// Last update Wed Jun  6 17:31:34 2012 loick michard
+// Last update Wed Jun  6 20:39:35 2012 loick michard
 //
 
 #include <SpotLight.hpp>
@@ -13,7 +13,6 @@
 gle::SpotLight::SpotLight(Vector3<GLfloat> const& position,
 			  Color<GLfloat> const& color,
 			  Color<GLfloat> const& specularColor,
-			  gle::Vector3f const& direction,
 			  GLfloat cosCutOff)
   : gle::Light(gle::Light::SPOT)
 {
@@ -25,15 +24,13 @@ gle::SpotLight::SpotLight(Vector3<GLfloat> const& position,
   _specularColor[2] = specularColor.b;
   _position = position;
   _attenuation[0] = _attenuation[1] = _attenuation[2] = 0;
-  _direction[0] = direction.x;
-  _direction[1] = direction.y;
-  _direction[2] = direction.z;
   _cosCutOff = cosCutOff;
+  _target = gle::Vector3f(0.0, -1.0, 0.0);
+  _hasTarget = true;
 }
 
 gle::SpotLight::SpotLight(Vector3<GLfloat> const& position,
 			  Color<GLfloat> const& color,
-			  gle::Vector3f const& direction,
 			  GLfloat cosCutOff)
   : gle::Light(gle::Light::SPOT)
 {
@@ -45,10 +42,9 @@ gle::SpotLight::SpotLight(Vector3<GLfloat> const& position,
   _specularColor[2] = color.b;
   _position = position;
   _attenuation[0] = _attenuation[1] = _attenuation[2] = 0;
-  _direction[0] = direction.x;
-  _direction[1] = direction.y;
-  _direction[2] = direction.z;
   _cosCutOff = cosCutOff;
+  _target = gle::Vector3f(0.0, -1.0, 0.0);
+  _hasTarget = true;
 }
 
 gle::SpotLight::~SpotLight()
@@ -77,6 +73,11 @@ void gle::SpotLight::setAttenuation(GLfloat constant, GLfloat linear, GLfloat qu
   _attenuation[2] = quadratic;
 }
 
+void gle::SpotLight::setCosCutOff(GLfloat cosCutOff)
+{
+  _cosCutOff = cosCutOff;
+}
+
 GLfloat* gle::SpotLight::getColor()
 {
   return (_color);
@@ -90,6 +91,11 @@ GLfloat* gle::SpotLight::getSpecularColor()
 GLfloat* gle::SpotLight::getAttenuation()
 {
   return (_attenuation);
+}
+
+GLfloat gle::SpotLight::getCosCutOff()
+{
+  return (_cosCutOff);
 }
 
 void gle::SpotLight::update()

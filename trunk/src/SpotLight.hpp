@@ -5,7 +5,7 @@
 // Login   <michar_l@epitech.net>
 // 
 // Started on  Thu Feb 23 17:36:20 2012 loick michard
-// Last update Wed Jun  6 16:13:23 2012 loick michard
+// Last update Wed Jun  6 19:05:46 2012 loick michard
 //
 
 #ifndef _SPOT_LIGHT_HPP_
@@ -34,7 +34,7 @@ namespace gle {
     */
 
     SpotLight(Vector3<GLfloat> const& position, Color<GLfloat> const& color,
-	      Color<GLfloat> const& specularColor, Vector3f const& direction,
+	      Color<GLfloat> const& specularColor,
 	      GLfloat cosCutOff);
 
     //! Construct a spot light
@@ -45,7 +45,7 @@ namespace gle {
     */
 
     SpotLight(Vector3<GLfloat> const& position, Color<GLfloat> const& color,
-	      Vector3f const& direction, GLfloat cosCutOff);
+	      GLfloat cosCutOff);
 
     //! Default destructor
 
@@ -68,7 +68,6 @@ namespace gle {
 
     void setAttenuation(GLfloat constant, GLfloat linear, GLfloat quadratic);
 
-    void setDirection(Vector3f const& direction);
 
     void setCosCutOff(GLfloat cosCutOff);
 
@@ -81,6 +80,8 @@ namespace gle {
     GLfloat* getSpecularColor();
 
     GLfloat* getAttenuation();
+
+    GLfloat getCosCutOff();
 
     virtual void update();
 

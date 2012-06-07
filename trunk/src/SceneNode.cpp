@@ -5,7 +5,7 @@
 // Login   <michar_l@epitech.net>
 // 
 // Started on  Tue May 15 19:32:41 2012 loick michard
-// Last update Wed Jun  6 18:44:09 2012 gael jochaud-du-plessix
+// Last update Thu Jun  7 12:45:54 2012 loick michard
 //
 
 #include <Scene.hpp>
@@ -130,8 +130,8 @@ void gle::Scene::Node::updateMatrix()
       if (_hasTarget)
 	{
 	  _cameraTransformationMatrix *= gle::Matrix4<GLfloat>::cameraLookAt(_position,
-									     _target,
-									     Vector3<GLfloat>(0, 1, 0));
+	  								     _target,
+	  								     Vector3<GLfloat>(0, 1, 0));
 	  _cameraTransformationMatrix.translate(-_position.x, -_position.y, -_position.z);
 	}
       _cameraTransformationMatrix *= _rotationMatrix;

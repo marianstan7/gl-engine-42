@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Mon Feb 20 19:12:49 2012 gael jochaud-du-plessix
-// Last update Wed Jun  6 19:51:22 2012 gael jochaud-du-plessix
+// Last update Thu Jun  7 12:45:34 2012 loick michard
 //
 
 #include <Scene.hpp>
@@ -14,6 +14,7 @@
 #include <algorithm>
 #include <DirectionalLight.hpp>
 #include <PointLight.hpp>
+#include <SpotLight.hpp>
 #include <ShaderSource.hpp>
 #include <sstream>
 
@@ -127,8 +128,16 @@ void gle::Scene::updateLights()
   _pointLightsColor.resize(0);
   _pointLightsSpecularColor.resize(0);
   _pointLightsAttenuation.resize(0);
+
+  _spotLightsPosition.resize(0);
+  _spotLightsColor.resize(0);
+  _spotLightsSpecularColor.resize(0);
+  _spotLightsAttenuation.resize(0);
+  _spotLightsDirection.resize(0);
+  _spotLightsCosCutOff.resize(0);
   unsigned int dSize = 0;
   unsigned int pSize = 0;
+  unsigned int sSize = 0;
   for (auto it = _lights.begin();
        it != _lights.end(); ++it)
     {
@@ -167,9 +176,41 @@ void gle::Scene::updateLights()
           _pointLightsAttenuation.push_back(attenuation[1]);
           _pointLightsAttenuation.push_back(attenuation[2]);
 	}
+      else if ((*it)->getLightType() == gle::Light::SPOT)
+	{
+	  ++sSize;
+	  gle::Vector3<GLfloat> position = ((gle::SpotLight*)(*it))->getAbsolutePosition();
+
+	  if (!_currentCamera)
+	    throw (new gle::Exception::Exception("No camera for the scene..."));
+	  Vector3f direction = ((gle::SpotLight*)(*it))->getTarget();
+	  direction *= _currentCamera->getTransformationMatrix();
+	  position *= _currentCamera->getTransformationMatrix();
+	  direction -= position;
+          GLfloat* color = ((gle::SpotLight*)(*it))->getColor();
+          GLfloat* specularColor = ((gle::SpotLight*)(*it))->getSpecularColor();
+          GLfloat* attenuation = ((gle::SpotLight*)(*it))->getAttenuation();
+          _spotLightsPosition.push_back(position.x);
+          _spotLightsPosition.push_back(position.y);
+          _spotLightsPosition.push_back(position.z);
+          _spotLightsColor.push_back(color[0]);
+          _spotLightsColor.push_back(color[1]);
+          _spotLightsColor.push_back(color[2]);
+          _spotLightsSpecularColor.push_back(specularColor[0]);
+          _spotLightsSpecularColor.push_back(specularColor[1]);
+          _spotLightsSpecularColor.push_back(specularColor[2]);
+	  _spotLightsAttenuation.push_back(attenuation[0]);
+          _spotLightsAttenuation.push_back(attenuation[1]);
+          _spotLightsAttenuation.push_back(attenuation[2]);
+	  _spotLightsDirection.push_back(direction.x);
+          _spotLightsDirection.push_back(direction.y);
+          _spotLightsDirection.push_back(direction.z);
+          _spotLightsCosCutOff.push_back(((gle::SpotLight*)(*it))->getCosCutOff());
+	}
     }
   _directionalLightsSize = dSize;
   _pointLightsSize = pSize;
+  _spotLightsSize = sSize;
 }
 
 GLfloat* gle::Scene::getDirectionalLightsDirection() const
@@ -212,9 +253,44 @@ GLsizeiptr gle::Scene::getPointLightsSize() const
   return (_pointLightsSize);
 }
 
+GLfloat* gle::Scene::getSpotLightsPosition() const
+{
+  return ((GLfloat*)&_spotLightsPosition[0]);
+}
+
+GLfloat* gle::Scene::getSpotLightsColor() const
+{
+  return ((GLfloat*)&_spotLightsColor[0]);
+}
+
+GLfloat* gle::Scene::getSpotLightsSpecularColor() const
+{
+  return ((GLfloat*)&_spotLightsSpecularColor[0]);
+}
+
+GLfloat* gle::Scene::getSpotLightsAttenuation() const
+{
+  return ((GLfloat*)&_spotLightsAttenuation[0]);
+}
+
+GLfloat* gle::Scene::getSpotLightsDirection() const
+{
+  return ((GLfloat*)&_spotLightsDirection[0]);
+}
+
+GLfloat* gle::Scene::getSpotLightsCosCutOff() const
+{
+  return ((GLfloat*)&_spotLightsCosCutOff[0]);
+}
+
+GLsizeiptr gle::Scene::getSpotLightsSize() const
+{
+  return (_spotLightsSize);
+}
+
 bool gle::Scene::hasLights() const
 {
-  return (getDirectionalLightsSize() || getPointLightsSize());
+  return (getDirectionalLightsSize() || getPointLightsSize() || getSpotLightsSize());
 }
 
 void		gle::Scene::buildProgram()
@@ -248,7 +324,7 @@ void		gle::Scene::buildProgram()
   _program->getUniformLocation(gle::Program::FogColor);
   _program->getUniformLocation(gle::Program::HasColorMap);
   _program->getUniformLocation(gle::Program::ColorMap);
-  if (getDirectionalLightsSize() || getPointLightsSize())
+  if (getDirectionalLightsSize() || getPointLightsSize() || getSpotLightsSize())
     _program->getUniformLocation(gle::Program::NMatrix);
   /*_program->getUniformLocation(gle::Program::Shininess);
   _program->getUniformLocation(gle::Program::SpecularIntensity);
@@ -265,6 +341,15 @@ void		gle::Scene::buildProgram()
       _program->getUniformLocation(gle::Program::PointLightSpecularColor);
       _program->getUniformLocation(gle::Program::PointLightAttenuation);
     }
+  if (getSpotLightsSize())
+    {
+      _program->getUniformLocation(gle::Program::SpotLightPosition);
+      _program->getUniformLocation(gle::Program::SpotLightColor);
+      _program->getUniformLocation(gle::Program::SpotLightSpecularColor);
+      _program->getUniformLocation(gle::Program::SpotLightAttenuation);
+      _program->getUniformLocation(gle::Program::SpotLightDirection);
+      _program->getUniformLocation(gle::Program::SpotLightCosCutOff);
+    }
   _program->retreiveUniformBlockIndex(gle::Program::MaterialBlock, "materialBlock");
   delete vertexShader;
   delete fragmentShader;
@@ -277,6 +362,7 @@ gle::Shader* gle::Scene::_createVertexShader()
   shaderSource += gle::ShaderSource::VertexShader;
   shaderSource = _replace("%nb_directional_lights", getDirectionalLightsSize(), shaderSource);
   shaderSource = _replace("%nb_point_lights", getPointLightsSize(), shaderSource);
+  shaderSource = _replace("%nb_spot_lights", getSpotLightsSize(), shaderSource);
   gle::Shader *shader;
   try
     {
@@ -298,6 +384,7 @@ gle::Shader* gle::Scene::_createFragmentShader()
   shaderSource += gle::ShaderSource::FragmentShader;
   shaderSource = _replace("%nb_directional_lights", getDirectionalLightsSize(), shaderSource);
   shaderSource = _replace("%nb_point_lights", getPointLightsSize(), shaderSource);
+  shaderSource = _replace("%nb_spot_lights", getSpotLightsSize(), shaderSource);
   gle::Shader *shader;
   try
     {
