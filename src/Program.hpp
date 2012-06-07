@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Fri Feb 17 16:21:24 2012 gael jochaud-du-plessix
-// Last update Mon Jun  4 17:26:03 2012 loick michard
+// Last update Wed Jun  6 19:52:34 2012 loick michard
 //
 
 #ifndef _GLE_PROGRAM_HPP_
@@ -47,6 +47,12 @@ namespace gle {
       PointLightColor,
       PointLightSpecularColor,
       PointLightAttenuation,
+      SpotLightPosition,
+      SpotLightColor,
+      SpotLightSpecularColor,
+      SpotLightAttenuation,
+      SpotLightDirection,
+      SpotLightCosCutOff,
       Shininess,
       SpecularIntensity,
       DiffuseIntensity
@@ -115,8 +121,11 @@ namespace gle {
     void setUniform(Uniform uniformLocation, const Matrix3<GLfloat> & matrix);
 
     //! Set the value of a uniform array of vec3
-    void setUniform3v(Uniform uniformLocation, GLfloat* values,
-		      GLsizeiptr size);
+    void setUniform3(Uniform uniformLocation, GLfloat* values,
+		     GLsizeiptr size);
+
+    void setUniform1(Uniform uniformLocation, GLfloat* values,
+		     GLsizeiptr size);
 
     //! Set the value of a uniform color
 

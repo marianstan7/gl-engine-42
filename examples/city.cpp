@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Fri Mar  2 17:27:21 2012 gael jochaud-du-plessix
-// Last update Wed Jun  6 19:53:42 2012 gael jochaud-du-plessix
+// Last update Thu Jun  7 12:46:41 2012 loick michard
 //
 
 #include <iostream>
@@ -19,7 +19,7 @@
 #include <Renderer.hpp>
 #include <ObjLoader.hpp>
 #include <DirectionalLight.hpp>
-#include <PointLight.hpp>
+#include <SpotLight.hpp>
 
 #include "Example.hpp"
 #include "flycam.hpp"
@@ -95,12 +95,13 @@ public:
 
     materialLight->setDiffuseLightEnabled(true);
     materialLight->setSpecularLightEnabled(true);
-    gle::PointLight *light = new gle::PointLight(gle::Vector3<GLfloat>(0, 0, 0),
-						 gle::Color<GLfloat>(1.0, 1.0, 1.0));
-    light->setAttenuation(0, 0, 0.0006);
-    _camera->addChild(light);
+    _light = new gle::SpotLight(gle::Vector3<GLfloat>(0, 0, 0),
+				gle::Color<GLfloat>(0.0, 0.0, 1.0),
+				1.0);
+    //_light->setAttenuation(0, 0, 0.0006);
+    _camera->addChild(_light);
 
-    *_scene << _camera;
+    *_scene << _camera;// << _light;
 
     _scene->enableFrustumCulling();
     _scene->update();
@@ -108,11 +109,12 @@ public:
 
   void animate()
   {
-    
+    _light->setTarget(_camera->getTarget());
+    _scene->updateLights();
   }
 
 private:
-  
+  gle::SpotLight* _light;
 };
 
 int main(int ac, char **av)

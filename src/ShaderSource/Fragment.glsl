@@ -2,6 +2,7 @@
   
 #define GLE_OUT_FRAGMENT_COLOR_LOCATION 0 
 #define NB_POINT_LIGHTS %nb_point_lights  
+#define NB_SPOT_LIGHTS %nb_spot_lights 
   
 layout (location = GLE_OUT_FRAGMENT_COLOR_LOCATION) out vec4 gle_FragColor; 
 
@@ -15,6 +16,8 @@ layout(std140) uniform materialBlock
 	uniform float gle_diffuseIntensity;
 };
 
+uniform mat4 gle_MVMatrix; 
+
 uniform vec3 gle_fogColor;
 
 uniform sampler2D gle_colorMap;
@@ -24,26 +27,41 @@ uniform bool gle_hasColorMap;
 	uniform vec3 gle_pointLightColor[NB_POINT_LIGHTS];
 	uniform vec3 gle_pointLightSpecularColor[NB_POINT_LIGHTS];
 #endif
+#if NB_SPOT_LIGHTS > 0
+	uniform vec3 gle_spotLightColor[NB_SPOT_LIGHTS];
+	uniform vec3 gle_spotLightSpecularColor[NB_SPOT_LIGHTS];
+	uniform vec3 gle_spotLightDirection[NB_SPOT_LIGHTS];
+	uniform float gle_spotLightCosCutOff[NB_SPOT_LIGHTS];
+#endif
 
 in float gle_varying_fogFactor; 
 in vec3 gle_varying_vLightWeighting;
 in float gle_varying_vLightAttenuation;
 in vec2 gle_varying_vTextureCoord;
-#if NB_POINT_LIGHTS > 0
+#if NB_POINT_LIGHTS > 0 || NB_SPOT_LIGHTS > 0
 	in vec3 gle_varying_normal;
 	in vec3 gle_varying_eyeDirection;
+#endif
+#if NB_POINT_LIGHTS > 0
 	in vec3 gle_varying_pointLightDirection[NB_POINT_LIGHTS];
 	in float gle_varying_pointLightAttenuation[NB_POINT_LIGHTS];
+#endif
+#if NB_SPOT_LIGHTS > 0
+	in vec3 gle_varying_spotLightDirection[NB_SPOT_LIGHTS];
+	in float gle_varying_spotLightAttenuation[NB_SPOT_LIGHTS];
 #endif
 
 void main(void) { 
 	vec3 lightWeighting = gle_varying_vLightWeighting;
-	vec3 N = normalize(gle_varying_normal);
-	vec3 E = normalize(gle_varying_eyeDirection);
+	#if NB_POINT_LIGHTS > 0 || NB_SPOT_LIGHTS > 0
+		vec3 N = normalize(gle_varying_normal);
+		vec3 E = normalize(gle_varying_eyeDirection);
+	#endif
 	#if NB_POINT_LIGHTS > 0
 		for (int i = 0; i < NB_POINT_LIGHTS; ++i)
 		{
 			vec3 L = normalize(gle_varying_pointLightDirection[i]);
+
 			if (gle_diffuseIntensity > 0)
 			{
 				float pointLightWeighting = max(dot(N, L), 0.0);
@@ -56,6 +74,39 @@ void main(void) {
 				float pointLightSpecularWeighting = pow(max(dot(reflectionDirection, E), 0.0), gle_shininess);
 				lightWeighting += gle_pointLightSpecularColor[i] * gle_specularColor.rgb
 							* pointLightSpecularWeighting * gle_specularIntensity * gle_varying_pointLightAttenuation[i];
+			}
+		}
+	#endif
+	#if NB_SPOT_LIGHTS > 0
+		for (int i = 0; i < NB_SPOT_LIGHTS; ++i)
+		{
+			vec3 L = normalize(gle_varying_spotLightDirection[i]);
+			vec3 D = normalize(gle_spotLightDirection[i]);
+
+			// COMPUTE SPOT ANGLE
+			float cos_cur_angle = dot(-L, D);
+
+			float cos_inner_cone_angle = gle_spotLightCosCutOff[i];
+			float cos_outer_cone_angle = cos_inner_cone_angle * 0.95;
+
+			float cos_inner_minus_outer_angle = 
+				cos_inner_cone_angle - cos_outer_cone_angle;
+
+			float spot = clamp((cos_cur_angle - cos_outer_cone_angle) / 
+					cos_inner_minus_outer_angle, 0.0, 1.0);
+
+			if (gle_diffuseIntensity > 0)
+			{
+				float spotLightWeighting = max(dot(N, L), 0.0);
+				lightWeighting += gle_spotLightColor[i] * gle_diffuseColor.rgb * spotLightWeighting * gle_diffuseIntensity * 
+				gle_varying_spotLightAttenuation[i] * (spot);
+			}
+			if (gle_specularIntensity > 0)
+			{
+				vec3 reflectionDirection = reflect(-L, N);
+				float spotLightSpecularWeighting = pow(max(dot(reflectionDirection, E), 0.0), gle_shininess);
+				lightWeighting += gle_spotLightSpecularColor[i] * gle_specularColor.rgb
+							* spotLightSpecularWeighting * gle_specularIntensity * gle_varying_spotLightAttenuation[i] * spot;
 			}
 		}
 	#endif

@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Mon Feb 20 18:18:01 2012 gael jochaud-du-plessix
-// Last update Wed Jun  6 19:50:59 2012 gael jochaud-du-plessix
+// Last update Thu Jun  7 12:45:39 2012 loick michard
 //
 
 #ifndef _GLE_SCENE_HPP_
@@ -415,6 +415,29 @@ namespace gle {
 
     GLsizeiptr getPointLightsSize() const;
 
+    //! Get a GLfloat tab of all point lights direction
+
+    GLfloat* getSpotLightsPosition() const;
+
+    //! Get a GLfloat tab of all spot lights color
+
+    GLfloat* getSpotLightsColor() const;
+
+    //! Get a GLfloat tab of all spot lights specular color
+
+    GLfloat* getSpotLightsSpecularColor() const;
+
+    GLfloat* getSpotLightsAttenuation() const;
+
+    GLfloat* getSpotLightsDirection() const;
+
+    GLfloat* getSpotLightsCosCutOff() const;
+
+    //! Get number of spot lights in the scene
+
+    GLsizeiptr getSpotLightsSize() const;
+
+
     //! Return true if there are lights in the scene (point or directional)
 
     bool hasLights() const;
@@ -494,7 +517,15 @@ namespace gle {
     std::vector<GLfloat> _pointLightsColor;
     std::vector<GLfloat> _pointLightsSpecularColor;
     std::vector<GLfloat> _pointLightsAttenuation;
-    GLsizeiptr _pointLightsSize;    
+    GLsizeiptr _pointLightsSize;
+
+    std::vector<GLfloat> _spotLightsPosition;
+    std::vector<GLfloat> _spotLightsColor;
+    std::vector<GLfloat> _spotLightsSpecularColor;
+    std::vector<GLfloat> _spotLightsAttenuation;
+    std::vector<GLfloat> _spotLightsDirection;
+    std::vector<GLfloat> _spotLightsCosCutOff;
+    GLsizeiptr _spotLightsSize;
 
     Camera* _currentCamera;
     gle::Program* _program;

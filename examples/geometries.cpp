@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Fri Mar  2 17:27:21 2012 gael jochaud-du-plessix
-// Last update Wed Jun  6 20:01:33 2012 gael jochaud-du-plessix
+// Last update Thu Jun  7 12:46:53 2012 loick michard
 //
 
 #include <iostream>
@@ -98,8 +98,9 @@ public:
     *_scene << sphere << wiredSphere << pointSphere;
     *_scene << _plane << wiredPlane << pointPlane;
 
-    _light = new gle::PointLight(gle::Vector3f(0, 0, 0),
-				 gle::Colorf(1.0, 1.0, 1.0));
+    _light = new gle::SpotLight(gle::Vector3f(0, 0, 0),
+				gle::Colorf(1.0, 1.0, 1.0), 1.0);
+    //_light->setAttenuation(0, 0, 0.002);
     gle::Mesh* sp = gle::Geometries::Sphere(materialLight, 10, 50, 50);
     sp->setPosition(gle::Vector3f(0, 0, 0));
     
@@ -115,10 +116,7 @@ public:
 
     *_scene << screenPlane;
 
-    // gle::PointLight* _light2 = new gle::PointLight(gle::Vector3f(0, 200, 0),
-    // 						   gle::Colorf(1.0, 0.0, 0.0));
-
-    *_scene << _camera;// << _light2;// << sp;
+    *_scene << _camera;// << _light;// << _light2;// << sp;
     _camera->addChild(_light);
     _scene->update();
 
@@ -127,6 +125,7 @@ public:
 
   void animate()
   {
+    _light->setTarget(_camera->getTarget());
     _scene->updateLights();
     //_plane->setRotation(gle::Vector3<GLfloat>(1, 0, 0),
     //			-sf::Joystick::getAxisPosition(accelerometerId,
@@ -139,8 +138,18 @@ public:
     _renderer->render(_scene, gle::Rectf(0, 0, _winWidth, _winHeight));
   }
 
-private:
-  gle::PointLight*		_light;
+  void  catchEvent(sf::Event& event)
+  {
+    if (event.type == sf::Event::KeyPressed
+	&& event.key.code == sf::Keyboard::O)
+      _light->setCosCutOff(_light->getCosCutOff() + 0.02);
+    if (event.type == sf::Event::KeyPressed
+        && event.key.code == sf::Keyboard::P)
+      _light->setCosCutOff(_light->getCosCutOff() - 0.02);
+  }
+
+private	:
+  gle::SpotLight*		_light;
   gle::Mesh*			_plane;
   gle::Mesh*			_cube;
   gle::TextureFrameBuffer*	_framebuffer;

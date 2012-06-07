@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Fri May 25 12:25:22 2012 gael jochaud-du-plessix
-// Last update Thu May 31 19:50:35 2012 gael jochaud-du-plessix
+// Last update Thu Jun  7 12:09:53 2012 loick michard
 //
 
 #ifndef _EXAMPLE_HPP_
@@ -21,6 +21,7 @@
 # include <Material.hpp>
 # include <Renderer.hpp>
 # include <PointLight.hpp>
+# include <SpotLight.hpp>
 # include <Exception.hpp>
 
 class Example {
@@ -38,6 +39,7 @@ public:
   virtual void	initScene() = 0;
   virtual void	animate();
   virtual void	render();
+  virtual void  catchEvent(sf::Event& event);
 
   void printGPUMemInfo();
 

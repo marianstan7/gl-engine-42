@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Fri Feb 17 16:21:14 2012 gael jochaud-du-plessix
-// Last update Mon Jun  4 15:44:41 2012 loick michard
+// Last update Wed Jun  6 19:53:27 2012 loick michard
 //
 
 #include <Program.hpp>
@@ -35,6 +35,16 @@ gle::Program::Program() :
     "gle_pointLightSpecularColor";
   _uniformNames[gle::Program::PointLightAttenuation] =
     "gle_pointLightAttenuation";
+  _uniformNames[gle::Program::SpotLightPosition] = "gle_spotLightPosition";
+  _uniformNames[gle::Program::SpotLightColor] = "gle_spotLightColor";
+  _uniformNames[gle::Program::SpotLightSpecularColor] =
+    "gle_spotLightSpecularColor";
+  _uniformNames[gle::Program::SpotLightAttenuation] =
+    "gle_spotLightAttenuation";
+  _uniformNames[gle::Program::SpotLightDirection] =
+    "gle_spotLightDirection";
+  _uniformNames[gle::Program::SpotLightCosCutOff] =
+    "gle_spotLightCosCutOff";
   _uniformNames[gle::Program::Shininess] = "gle_shininess";
   _uniformNames[gle::Program::DiffuseIntensity] = "gle_diffuseIntensity";
   _uniformNames[gle::Program::SpecularIntensity] = "gle_specularIntensity";
@@ -137,10 +147,16 @@ void gle::Program::setUniform(Uniform uniform, const Matrix3<GLfloat> & matrix)
 		     (const GLfloat*)matrix);
 }
 
-void gle::Program::setUniform3v(Uniform uniform, GLfloat* values,
+void gle::Program::setUniform3(Uniform uniform, GLfloat* values,
 				GLsizeiptr size)
 {
   glUniform3fv(_uniformLocations[uniform], size, values);
+}
+
+void gle::Program::setUniform1(Uniform uniform, GLfloat* values,
+				GLsizeiptr size)
+{
+  glUniform1fv(_uniformLocations[uniform], size, values);
 }
 
 void gle::Program::setUniform(Uniform uniform,

@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Fri May 25 00:33:16 2012 gael jochaud-du-plessix
-// Last update Mon Jun  4 16:02:17 2012 gael jochaud-du-plessix
+// Last update Thu Jun  7 12:10:07 2012 loick michard
 //
 
 #include <algorithm>
@@ -111,6 +111,7 @@ int Example::run()
 	    flycam::event(event, *_window);
 	  if (_cameraType == Trackball)
 	    trackball::event(event, *_window);
+	  catchEvent(event);
         }
 
       if (!_window->isOpen())
@@ -174,4 +175,9 @@ void Example::printGPUMemInfo()
     std::cout << ", " << (_lastGPUMemUsed < usedGPUMem ? "+" : "") << (usedGPUMem - _lastGPUMemUsed) << "Mb";
   std::cout << std::endl;
   _lastGPUMemUsed = usedGPUMem;
+}
+
+void  Example::catchEvent(sf::Event& event)
+{
+
 }

@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Mon Feb 20 20:48:54 2012 gael jochaud-du-plessix
-// Last update Wed Jun  6 19:46:13 2012 gael jochaud-du-plessix
+// Last update Thu Jun  7 12:45:45 2012 loick michard
 //
 
 #include <Renderer.hpp>
@@ -187,28 +187,49 @@ void gle::Renderer::_setSceneUniforms(gle::Scene* scene, gle::Camera* camera)
   // Send light infos to the shader
   if (scene->getDirectionalLightsSize())
     {
-      _currentProgram->setUniform3v(gle::Program::
+      _currentProgram->setUniform3(gle::Program::
 				    DirectionalLightDirection,
 				    scene->getDirectionalLightsDirection(),
 				    scene->getDirectionalLightsSize());
-      _currentProgram->setUniform3v(gle::Program::DirectionalLightColor,
+      _currentProgram->setUniform3(gle::Program::DirectionalLightColor,
 				    scene->getDirectionalLightsColor(),
 				    scene->getDirectionalLightsSize());
     }
   if (scene->getPointLightsSize())
     {
-      _currentProgram->setUniform3v(gle::Program::PointLightPosition,
+      _currentProgram->setUniform3(gle::Program::PointLightPosition,
 				    scene->getPointLightsPosition(),
 				    scene->getPointLightsSize());
-      _currentProgram->setUniform3v(gle::Program::PointLightColor,
+      _currentProgram->setUniform3(gle::Program::PointLightColor,
 				    scene->getPointLightsColor(),
 				    scene->getPointLightsSize());
-      _currentProgram->setUniform3v(gle::Program::PointLightSpecularColor,
+      _currentProgram->setUniform3(gle::Program::PointLightSpecularColor,
 				    scene->getPointLightsSpecularColor(),
 				    scene->getPointLightsSize());
-      _currentProgram->setUniform3v(gle::Program::PointLightAttenuation,
+      _currentProgram->setUniform3(gle::Program::PointLightAttenuation,
 				    scene->getPointLightsAttenuation(),
 				    scene->getPointLightsSize());
+    }
+  if (scene->getSpotLightsSize())
+    {
+      _currentProgram->setUniform3(gle::Program::SpotLightPosition,
+				    scene->getSpotLightsPosition(),
+				    scene->getSpotLightsSize());
+      _currentProgram->setUniform3(gle::Program::SpotLightColor,
+				    scene->getSpotLightsColor(),
+				    scene->getSpotLightsSize());
+      _currentProgram->setUniform3(gle::Program::SpotLightSpecularColor,
+				    scene->getSpotLightsSpecularColor(),
+				    scene->getSpotLightsSize());
+      _currentProgram->setUniform3(gle::Program::SpotLightAttenuation,
+				    scene->getSpotLightsAttenuation(),
+				    scene->getSpotLightsSize());
+      _currentProgram->setUniform3(gle::Program::SpotLightDirection,
+				    scene->getSpotLightsDirection(),
+				    scene->getSpotLightsSize());
+      _currentProgram->setUniform1(gle::Program::SpotLightCosCutOff,
+				    scene->getSpotLightsCosCutOff(),
+				    scene->getSpotLightsSize());
     }
 }
 
@@ -223,7 +244,7 @@ void gle::Renderer::_setMeshUniforms(gle::Scene* scene, gle::Mesh* mesh)
   // Set modelview matrix
   _currentProgram->setUniform(gle::Program::MVMatrix, mvMatrix);
   // Set normals matrix
-  if (scene->getDirectionalLightsSize() || scene->getPointLightsSize())
+  if (scene->getDirectionalLightsSize() || scene->getPointLightsSize() || scene->getSpotLightsSize())
     _currentProgram->setUniform(gle::Program::NMatrix, normalMatrix);
   /*
   glUniformBlockBinding(_currentProgram->getId(), 
