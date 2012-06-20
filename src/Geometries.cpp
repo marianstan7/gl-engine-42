@@ -5,7 +5,7 @@
 // Login   <michar_l@epitech.net>
 // 
 // Started on  Mon Feb 20 22:34:18 2012 loick michard
-// Last update Thu May  3 14:32:25 2012 loick michard
+// Last update Fri Jun  8 17:16:10 2012 gael jochaud-du-plessix
 //
 
 #include <cmath>
@@ -63,7 +63,7 @@ gle::Mesh* gle::Geometries::Cuboid(gle::Material* material,
    -halfWidth, -halfHeight,  halfDepth,
    -halfWidth, halfHeight,  halfDepth,
   };
-  
+
   GLuint indexes[] = {
     0, 1, 2, 0, 2, 3, //! Front face
     4, 5, 6, 4, 6, 7, //! Back face

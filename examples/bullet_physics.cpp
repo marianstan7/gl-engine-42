@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Fri Mar  2 17:27:21 2012 gael jochaud-du-plessix
-// Last update Wed Jun  6 19:53:44 2012 gael jochaud-du-plessix
+// Last update Thu Jun  7 14:58:35 2012 gael jochaud-du-plessix
 //
 
 #include <iostream>
@@ -142,7 +142,7 @@ int glEngine(int ac, char **av)
 
   gle::Mesh* plane = gle::Geometries::Plane(&material, 800, 800);
 
-  GLfloat plane_angle = 15.0;
+  //GLfloat plane_angle = 15.0;
 
   scene << plane;
 
@@ -201,6 +201,7 @@ int glEngine(int ac, char **av)
 	  gle::Mesh* cuboid1 = gle::Geometries::Cuboid(&material, 3.0, 1.0, 15.0);
 	  PhysicMesh* physicCube1 = new PhysicMesh(btTransform(quat, btVector3(x+j*cos(angle), i+z, y+j*sin(angle))),
 						   cuboid1, new btBoxShape(btVector3(1.5, 0.5, 7.5)), dynamicsWorld, 10.0);
+	  (void)physicCube1;
 	  scene << cuboid1;
 	}
       }
@@ -212,12 +213,14 @@ int glEngine(int ac, char **av)
   gle::Mesh* cuboid1 = gle::Geometries::Cuboid(&material, 50.0, 1.0, 50.0);
   PhysicMesh* physicCube1 = new PhysicMesh(btTransform(quat, btVector3(0, z+22.7, 0)),
 					   cuboid1, new btBoxShape(btVector3(25.0, 0.5, 25.0)), dynamicsWorld, 100.0);
+  (void)physicCube1;
   scene << cuboid1;
     }
   
   float boxsize = 400;
   PhysicMesh* physicPlan = new PhysicMesh(btTransform(btQuaternion(btVector3(1,0,0), 0), btVector3(0,-1,0)),
 					  plane, new btBoxShape(btVector3(boxsize,1,boxsize)), dynamicsWorld, 0);
+  (void)physicPlan;
   /*PhysicMesh* physicPlan2 = new PhysicMesh(btTransform(btQuaternion(btVector3(1,0,0), 0 * plane_angle * M_PI / 180.0), btVector3(0,0,-(boxsize+1))),
 					   NULL, new btBoxShape(btVector3(boxsize,boxsize,0.99)), dynamicsWorld, 0);  
   PhysicMesh* physicPlan3 = new PhysicMesh(btTransform(btQuaternion(btVector3(1,0,0), 0 * plane_angle * M_PI / 180.0), btVector3(0,0,(boxsize+1))),
@@ -231,6 +234,7 @@ int glEngine(int ac, char **av)
   PhysicMesh* physicSphere = new PhysicMesh(btTransform(btQuaternion(0, 0, 0, 1),
 							btVector3(0, 150, 0)),
 					    sphere, new btSphereShape(2.5), dynamicsWorld, 10000);
+  (void)physicSphere;
   scene << sphere;
 
   scene.update();

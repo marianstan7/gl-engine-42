@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Fri Feb 17 16:21:24 2012 gael jochaud-du-plessix
-// Last update Wed Jun  6 19:52:34 2012 loick michard
+// Last update Thu Jun  7 21:46:22 2012 gael jochaud-du-plessix
 //
 
 #ifndef _GLE_PROGRAM_HPP_
@@ -33,6 +33,7 @@ namespace gle {
     enum Uniform {
       MVMatrix,
       PMatrix,
+      CameraMatrix,
       FogColor,
       FogDensity,
       ColorMap,
@@ -61,6 +62,7 @@ namespace gle {
     //! Uniform blocks that can be set in a program
     enum UniformBlock {
       MaterialBlock,
+      StaticMeshesBlock,
       NbUniformBlocks
     };
 

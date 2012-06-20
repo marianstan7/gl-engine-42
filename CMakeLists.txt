@@ -49,6 +49,11 @@ add_library(Examples STATIC
 		     examples/fps.cpp)
 
 add_executable (
+    examples/cubemap
+    examples/cubemap.cpp
+)
+
+add_executable (
     examples/objloader
     examples/objloader.cpp
 )
@@ -100,6 +105,14 @@ add_executable (
 
 target_link_libraries (
     examples/boundingvolume
+    ${SFML_LIBRARIES}
+    ${OPENGL_LIBRARIES}
+    glEngine
+    Examples
+)
+
+target_link_libraries (
+    examples/cubemap
     ${SFML_LIBRARIES}
     ${OPENGL_LIBRARIES}
     glEngine

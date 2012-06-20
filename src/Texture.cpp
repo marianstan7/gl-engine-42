@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Wed Feb 29 19:37:40 2012 gael jochaud-du-plessix
-// Last update Mon Jun  4 16:06:34 2012 gael jochaud-du-plessix
+// Last update Thu Jun  7 14:12:04 2012 gael jochaud-du-plessix
 //
 
 #include <Texture.hpp>
@@ -17,6 +17,7 @@ gle::Texture::Texture(std::string filename, Type type, InternalFormat internalFo
 {
   glGenTextures(1, &_id);
   setData(filename);
+  setUseMipmap(_useMipmap);
 }
 
 gle::Texture::Texture(GLuint width, GLuint height, Type type, InternalFormat internalFormat) :
@@ -26,6 +27,7 @@ gle::Texture::Texture(GLuint width, GLuint height, Type type, InternalFormat int
   glGenTextures(1, &_id);
   if (width != 0 && height != 0)
     setData(NULL, width, height);
+  setUseMipmap(_useMipmap);
 }
 
 gle::Texture::~Texture()
@@ -72,14 +74,6 @@ void gle::Texture::setData(const char* pixelsPtr, GLuint width, GLuint height)
 	       GL_RGBA, // Format of the pixel datas
 	       GL_UNSIGNED_BYTE, // Data type of the pixel datas
 	       pixelsPtr);
-  glTexParameteri(_type, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-  if (_useMipmap)
-    {
-      glTexParameteri(_type, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_LINEAR);
-      glGenerateMipmap(_type);
-    }
-  else
-    glTexParameteri(_type, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
   gle::Exception::CheckOpenGLError("Texture::setData()");
 }
 
@@ -111,7 +105,8 @@ void	gle::Texture::setUseMipmap(bool use)
       glGenerateMipmap(_type);
     }
   else
-    glTexParameteri(_type, GL_TEXTURE_MIN_FILTER, GL_LINEAR);    
+    glTexParameteri(_type, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+  glTexParameteri(_type, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 }
 
 gle::Rectf	gle::Texture::getSize() const

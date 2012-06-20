@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Mon Feb 20 22:50:35 2012 gael jochaud-du-plessix
-// Last update Thu May 31 00:00:21 2012 gael jochaud-du-plessix
+// Last update Wed Jun 20 15:58:57 2012 gael jochaud-du-plessix
 //
 
 #include <Material.hpp>
@@ -19,17 +19,22 @@ gle::Material::Material(std::string const & name) :
   _specularColor(1.0, 1.0, 1.0),
   _diffuseLightEnabled(true), _specularLightEnabled(true),
   _shininess(50), _diffuseIntensity(1), _specularIntensity(1),
-  _colorMapEnabled(false), _colorMap(NULL), _uniforms(NULL), _needUniformsUpdate(true)
+  _colorMapEnabled(false), _colorMap(NULL),
+  _uniforms(NULL), _uniformsBuffer(NULL),
+  _needUniformsUpdate(true), _needUniformsBufferUpdate(true)
 {
-  _uniforms = new gle::Buffer<GLfloat>(gle::Buffer<GLfloat>::UniformArray,
-                                       gle::Buffer<GLfloat>::StaticDraw);
-  _uniforms->resize(15);
+  _uniforms = new GLfloat[UniformSize];
+  _uniformsBuffer = new gle::Buffer<GLfloat>(gle::Buffer<GLfloat>::UniformArray,
+					     gle::Buffer<GLfloat>::StaticDraw);
+  _uniformsBuffer->resize(UniformSize);
 }
 
 gle::Material::~Material()
 {
   if (_uniforms)
-    delete _uniforms;
+    delete[] _uniforms;
+  if (_uniformsBuffer)
+    delete _uniformsBuffer;
 }
 
 void gle::Material::setName(std::string const & name)
@@ -159,30 +164,46 @@ void gle::Material::setColorMap(gle::Texture* colorMap)
   _needUniformsUpdate = true;
 }
 
-gle::Buffer<GLfloat>* gle::Material::getUniforms()
+gle::Buffer<GLfloat>* gle::Material::getUniformsBuffer() const
+{
+  if (_needUniformsUpdate || _needUniformsBufferUpdate)
+    {
+      _uniformsBuffer->setData(getUniforms());
+      _needUniformsBufferUpdate = false;
+    }
+  return (_uniformsBuffer);
+}
+
+const GLfloat* gle::Material::getUniforms() const
 {
   if (_needUniformsUpdate)
     {
-      GLfloat color[15];
-      for (int i = 0; i < 15; i++)
-	color[i] = 0;
-      color[0] = _ambientColor.r;
-      color[1] = _ambientColor.g;
-      color[2] = _ambientColor.b;
-      color[3] = 1.0;
-      color[4] = _diffuseColor.r;
-      color[5] = _diffuseColor.g;
-      color[6] = _diffuseColor.b;
-      color[7] = 1.0;
-      color[8] = _specularColor.r;
-      color[9] = _specularColor.g;
-      color[10] = _specularColor.b;
-      color[11] = 1.0;
-      color[12] = _shininess;
-      color[13] = getSpecularIntensity();
-      color[14] = getDiffuseIntensity();
-      _uniforms->setData((const GLfloat*)color);
+      for (int i = 0; i < UniformSize; i++)
+	_uniforms[i] = 0;
+      _uniforms[0] = _ambientColor.r;
+      _uniforms[1] = _ambientColor.g;
+      _uniforms[2] = _ambientColor.b;
+      _uniforms[3] = 1.0;
+      _uniforms[4] = _diffuseColor.r;
+      _uniforms[5] = _diffuseColor.g;
+      _uniforms[6] = _diffuseColor.b;
+      _uniforms[7] = 1.0;
+      _uniforms[8] = _specularColor.r;
+      _uniforms[9] = _specularColor.g;
+      _uniforms[10] = _specularColor.b;
+      _uniforms[11] = 1.0;
+      _uniforms[12] = _shininess;
+      _uniforms[13] = getSpecularIntensity();
+      _uniforms[14] = getDiffuseIntensity();
       _needUniformsUpdate = false;
     }
   return (_uniforms);
+}
+
+bool gle::Material::canBeRenderedWith(const gle::Material* other) const
+{
+   if (!_colorMapEnabled || !other->isColorMapEnabled()
+      || _colorMap == other->getColorMap())
+    return (true);
+  return (false);
 }

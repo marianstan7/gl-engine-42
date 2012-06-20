@@ -5,14 +5,16 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Mon Feb 20 18:18:01 2012 gael jochaud-du-plessix
-// Last update Thu Jun  7 12:45:39 2012 loick michard
+// Last update Tue Jun 19 19:44:39 2012 gael jochaud-du-plessix
 //
 
 #ifndef _GLE_SCENE_HPP_
 # define _GLE_SCENE_HPP_
 
 # include <vector>
+# include <list>
 # include <map>
+# include <utility>
 # include <Program.hpp>
 # include <Material.hpp>
 # include <Color.hpp>
@@ -286,6 +288,10 @@ namespace gle {
 
     };
 
+    //! Size of the datas used by one mesh in the uniform buffer
+    
+    static const GLsizeiptr MeshUniformSize = 16;
+
     //! Constructs a scene
     /*!
       Constructs an empty scene, ready to contain all types of scene nodes
@@ -368,6 +374,10 @@ namespace gle {
     //! Get a vector of all meshes which are to render in the scene
 
     const std::vector<Mesh*> & getMeshesToRender();
+
+    //! Process the frustum culling on the list of meshes to render
+
+    void processFrustumCulling();
 
     //! Get a vector of all meshes to render in the scene that are not managed by the frustum culling
 
@@ -491,51 +501,65 @@ namespace gle {
     
     void update(Node* node=NULL, int depth = 0);
 
+    //! Returns the uniform buffer containing static meshes matrices
+
+    const gle::Bufferf*   getStaticMeshesUniformsBuffer(GLuint bufferId) const;
+
+    //! Returns the uniform buffer containing static meshes materials
+
+    const gle::Bufferf*     getStaticMeshesMaterialsBuffer(GLuint bufferId) const;
+
   private:
-    gle::Shader* _createVertexShader();
-    gle::Shader* _createFragmentShader();
-    std::string _replace(std::string const& search,
-                         int number,
-                         std::string const& str);
+    gle::Shader*	_createVertexShader();
+    gle::Shader*	_createFragmentShader();
+    std::string		_replace(std::string const& search, int number,
+				 std::string const& str);
+
+    void		_buildMaterialBuffers(std::list<std::list<gle::Mesh*>>&, GLint);
+    void		_clearStaticMeshesBuffers();
 
     gle::Color<GLfloat>	_backgroundColor;
     gle::Color<GLfloat>	_fogColor;
     GLfloat		_fogDensity;
 
-    std::vector<Camera*> _cameras;
-    std::vector<Mesh*> _meshesToRender;
-    std::vector<Mesh*> _unboundingMeshesToRender;
+    std::vector<Camera*>	_cameras;
+    std::vector<Mesh*>		_meshesToRender;
+    std::vector<Mesh*>		_unboundingMeshesToRender;
+    std::vector<Mesh*>		_meshesInFrustum;
 
-    std::vector<Light*> _lights;
-    Node _root;
+    std::vector<Light*>	_lights;
+    gle::Scene::Node	_root;
 
-    std::vector<GLfloat> _directionalLightsDirection;
-    std::vector<GLfloat> _directionalLightsColor;
-    GLsizeiptr _directionalLightsSize;
+    std::vector<GLfloat>	_directionalLightsDirection;
+    std::vector<GLfloat>	_directionalLightsColor;
+    GLsizeiptr			_directionalLightsSize;
 
-    std::vector<GLfloat> _pointLightsPosition;
-    std::vector<GLfloat> _pointLightsColor;
-    std::vector<GLfloat> _pointLightsSpecularColor;
-    std::vector<GLfloat> _pointLightsAttenuation;
-    GLsizeiptr _pointLightsSize;
+    std::vector<GLfloat>	_pointLightsPosition;
+    std::vector<GLfloat>	_pointLightsColor;
+    std::vector<GLfloat>	_pointLightsSpecularColor;
+    std::vector<GLfloat>	_pointLightsAttenuation;
+    GLsizeiptr			_pointLightsSize;
 
-    std::vector<GLfloat> _spotLightsPosition;
-    std::vector<GLfloat> _spotLightsColor;
-    std::vector<GLfloat> _spotLightsSpecularColor;
-    std::vector<GLfloat> _spotLightsAttenuation;
-    std::vector<GLfloat> _spotLightsDirection;
-    std::vector<GLfloat> _spotLightsCosCutOff;
-    GLsizeiptr _spotLightsSize;
+    std::vector<GLfloat>	_spotLightsPosition;
+    std::vector<GLfloat>	_spotLightsColor;
+    std::vector<GLfloat>	_spotLightsSpecularColor;
+    std::vector<GLfloat>	_spotLightsAttenuation;
+    std::vector<GLfloat>	_spotLightsDirection;
+    std::vector<GLfloat>	_spotLightsCosCutOff;
+    GLsizeiptr			_spotLightsSize;
 
-    Camera* _currentCamera;
-    gle::Program* _program;
-    bool _needProgramCompilation;
+    gle::Camera*	_currentCamera;
 
-    bool _displayBoundingVolume;
+    gle::Program*	_program;
+    bool		_needProgramCompilation;
 
-    Octree _tree;
+    std::vector<gle::Bufferf*>	_staticMeshesUniformsBuffers;
+    std::vector<gle::Bufferf*>	_staticMeshesMaterialsBuffers;
+    std::map<gle::Material*, std::pair<GLuint, GLuint>> _staticMeshesMaterialsBuffersIds;
 
-    bool _frustumCulling;
+    bool	_displayBoundingVolume;
+    gle::Octree	_tree;
+    bool	_frustumCulling;
   };
 }
 

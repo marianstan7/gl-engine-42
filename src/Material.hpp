@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Mon Feb 20 22:30:11 2012 gael jochaud-du-plessix
-// Last update Wed May 30 16:56:37 2012 gael jochaud-du-plessix
+// Last update Wed Jun 20 18:18:35 2012 gael jochaud-du-plessix
 //
 
 #ifndef _GLE_MATERIAL_HPP_
@@ -30,6 +30,10 @@ namespace gle {
 
   class Material {
   public:
+
+    //! Size of the datas used by one material in a uniform buffer
+
+    static const GLsizeiptr UniformSize = 16;
 
     //! Create a material
     Material(std::string const & name="");
@@ -138,7 +142,16 @@ namespace gle {
       Build the buffer if necessary
      */
 
-    Buffer<GLfloat>* getUniforms();
+    Buffer<GLfloat>* getUniformsBuffer() const;
+
+    //! Returns the data of the material packed for storing in a uniform buffer
+    /*!
+      Build the datas if necessary
+     */
+
+    const GLfloat* getUniforms() const;
+
+    bool canBeRenderedWith(const gle::Material* other) const;
 
   private:
     std::string _name;
@@ -157,8 +170,10 @@ namespace gle {
     bool _colorMapEnabled;
     gle::Texture* _colorMap;
 
-    Buffer<GLfloat> *_uniforms;
-    bool _needUniformsUpdate;
+    GLfloat*		_uniforms;
+    Buffer<GLfloat>*	_uniformsBuffer;
+    mutable bool	_needUniformsUpdate;
+    mutable bool	_needUniformsBufferUpdate;
   };
 }
 

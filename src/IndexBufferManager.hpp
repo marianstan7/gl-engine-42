@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Fri Apr 13 17:10:24 2012 gael jochaud-du-plessix
-// Last update Wed May 30 16:47:13 2012 gael jochaud-du-plessix
+// Last update Thu Jun  7 14:52:08 2012 gael jochaud-du-plessix
 //
 
 #ifndef _INDEX_BUFFER_MANAGER_HPP_
@@ -25,8 +25,8 @@ namespace gle {
     IndexBufferManager()
       : BufferManager()
     {
-      setStorageBuffer(new fBuffer(fBuffer::ElementArray,
-                                   fBuffer::StaticDraw));
+      setStorageBuffer(new Bufferui(Bufferui::ElementArray,
+				    Bufferui::StaticDraw));
     }
     ~IndexBufferManager()
     {

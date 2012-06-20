@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Fri Mar  2 17:27:21 2012 gael jochaud-du-plessix
-// Last update Thu May 31 21:15:43 2012 gael jochaud-du-plessix
+// Last update Wed Jun 20 17:51:34 2012 gael jochaud-du-plessix
 //
 
 #include <iostream>
@@ -32,8 +32,8 @@ GLfloat trackball::zoom = -1;
 GLfloat trackball::rotationSpeedX = 0;
 GLfloat trackball::rotationSpeedY = 0;
 GLfloat trackball::zoomSpeed = 0;
-GLfloat trackball::rotationXDamping = 0.9;
-GLfloat trackball::rotationYDamping = 0.9;
+GLfloat trackball::rotationXDamping = 0.95;
+GLfloat trackball::rotationYDamping = 0.95;
 GLfloat trackball::zoomDamping = 0.9;
 GLfloat trackball::camSpeed = 5;
 GLfloat trackball::mouseX = 0;
