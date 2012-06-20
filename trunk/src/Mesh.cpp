@@ -5,12 +5,36 @@
 // Login   <michar_l@epitech.net>
 // 
 // Started on  Mon Feb 20 18:25:23 2012 loick michard
-// Last update Thu May 31 20:01:35 2012 gael jochaud-du-plessix
+// Last update Wed Jun 20 16:25:02 2012 gael jochaud-du-plessix
 //
 
 #include <Mesh.hpp>
 #include <BoundingBox.hpp>
-#include <BoundingBox.hpp>
+
+std::list<std::list<gle::Mesh*>> gle::Mesh::factorizeForDrawing(std::list<gle::Mesh*> meshes,
+								bool ignoreBufferId)
+{
+  std::list<std::list<gle::Mesh*>> lists;
+
+  while (meshes.size() > 0)
+    {
+      gle::Mesh* currentMesh = meshes.front();
+      meshes.pop_front();
+      std::list<gle::Mesh*> currentList = {currentMesh};
+      for (auto it = meshes.begin(); it != meshes.end();)
+	{
+	  if ((*it) == currentMesh || (*it)->canBeRenderedWith(currentMesh, ignoreBufferId))
+	    {
+	      currentList.push_front(*it);
+	      it = meshes.erase(it);
+	    }
+	  else
+	    ++it;
+	}
+      lists.push_front(currentList);
+    }
+  return (lists);
+}
 
 gle::Mesh::Mesh(Material* material)
   : gle::Scene::Node(gle::Scene::Node::Mesh),
@@ -22,7 +46,9 @@ gle::Mesh::Mesh(Material* material)
     _attributes(NULL),
     _nbIndexes(0),
     _nbVertexes(0),
-    _boundingVolume(NULL)
+    _boundingVolume(NULL),
+    _uniformBufferId(-1),
+    _materialBufferId(-1)
 {
   _indexes = new gle::Buffer<GLuint>(gle::Buffer<GLuint>::ElementArray,
 				     gle::Buffer<GLuint>::StaticDraw);
@@ -37,7 +63,10 @@ gle::Mesh::Mesh(gle::Mesh const & other)
     _indexes(NULL),
     _attributes(NULL),
     _nbIndexes(other._nbIndexes),
-    _nbVertexes(other._nbVertexes)
+    _nbVertexes(other._nbVertexes),
+    _boundingVolume(NULL),
+    _uniformBufferId(-1),
+    _materialBufferId(-1)
 {
   if (other._boundingVolume)
     _boundingVolume = other._boundingVolume->duplicate();
@@ -46,10 +75,21 @@ gle::Mesh::Mesh(gle::Mesh const & other)
   static int max = 0, nb = 0;
   max += _nbVertexes;
   nb++;
-  _indexes =  new gle::Buffer<GLuint>(*other._indexes);
-  _attributes = other._attributes;
-  if (_attributes)
-    _attributes->retain();
+  if (other._indexes)
+    _indexes =  new gle::Buffer<GLuint>(*other._indexes);
+  if (other._attributes)
+    _attributes = gle::MeshBufferManager::getInstance().duplicate(other._attributes);
+  if (other._indexes && other._attributes)
+    {
+      GLuint* indexes = _indexes->map();
+      GLuint oldOffset = other._attributes->getOffset() / VertexAttributesSize;
+      GLuint newOffset = _attributes->getOffset() / VertexAttributesSize;
+      for (GLuint i = 0; i < _indexes->getSize(); ++i)
+	indexes[i] = indexes[i] - oldOffset + newOffset;
+      _indexes->unmap();
+    }
+  // if (_attributes)
+  //   _attributes->retain();
 }
 
 gle::Mesh::~Mesh()
@@ -154,8 +194,9 @@ void gle::Mesh::setTextureCoords(const GLfloat* textureCoords, GLsizeiptr size)
   GLfloat* attributes = _attributes->map();
   for (GLsizeiptr i = 0; i < nbVertexes; ++i)
     for (GLuint j = 0; j < VertexAttributeSizeTextureCoords; ++j)
-      attributes[i * VertexAttributesSize + VertexAttributeSizeCoords +
-		 VertexAttributeSizeNormal + j] =
+      attributes[i * VertexAttributesSize
+		 + VertexAttributeSizeCoords
+		 + VertexAttributeSizeNormal + j] =
 	textureCoords[i * VertexAttributeSizeTextureCoords + j];
   _attributes->unmap();
 }
@@ -164,6 +205,7 @@ void gle::Mesh::setIndexes(const GLuint* indexes, GLsizeiptr size)
 {
   _nbIndexes = size;
   _indexes->resize(size, indexes);
+  makeAbsoluteIndexes();
 }
 
 void gle::Mesh::setVertexes(gle::Array<GLfloat> const &vertexes, bool boundingVolume)
@@ -226,6 +268,38 @@ void gle::Mesh::setIndexes(gle::Array<GLuint> const &indexes)
 {
   _nbIndexes = indexes.size();
   _indexes->resize(indexes.size(), (GLuint const *)indexes);
+  makeAbsoluteIndexes();
+}
+
+void gle::Mesh::setIdentifiers(GLuint meshId, GLuint materialId)
+{
+  if (_nbVertexes < 1)
+    return ;
+  if (!_attributes)
+    _attributes = MeshBufferManager::getInstance()
+      .store(NULL, _nbVertexes * VertexAttributesSize);
+  GLfloat* attributes = _attributes->map();
+
+  for (GLsizeiptr i = 0; i < _nbVertexes; ++i)
+    {
+      attributes[i * VertexAttributesSize
+		 + VertexAttributeSizeCoords
+		 + VertexAttributeSizeNormal
+		 + VertexAttributeSizeTextureCoords
+		 + 0] = isDynamic() ? 1.0 : 0.0;
+      attributes[i * VertexAttributesSize
+		 + VertexAttributeSizeCoords
+		 + VertexAttributeSizeNormal
+		 + VertexAttributeSizeTextureCoords
+		 + 1] = (GLfloat)meshId;
+      attributes[i * VertexAttributesSize
+		 + VertexAttributeSizeCoords
+		 + VertexAttributeSizeNormal
+		 + VertexAttributeSizeTextureCoords
+		 + 2] = (GLfloat)materialId;
+
+    }
+  _attributes->unmap();  
 }
 
 void gle::Mesh::setMaterial(gle::Material* material)
@@ -300,4 +374,43 @@ void gle::Mesh::update()
 {
   if (_boundingVolume)
     _boundingVolume->update(this);
+}
+
+void gle::Mesh::makeAbsoluteIndexes()
+{
+  if (!_attributes || !_indexes)
+    return ;
+  GLuint* indexes = _indexes->map();
+  GLuint offset = _attributes->getOffset() / VertexAttributesSize;
+  for (GLuint i = 0; i < _indexes->getSize(); ++i)
+    indexes[i] += offset;
+  _indexes->unmap();
+}
+
+bool gle::Mesh::canBeRenderedWith(const gle::Mesh* other, bool ignoreBufferId) const
+{
+  return ((_material == NULL
+	   || _material == other->getMaterial()
+	   || _material->canBeRenderedWith(other->getMaterial()))
+	  && (ignoreBufferId || _uniformBufferId == other->getUniformBufferId()));
+}
+
+void gle::Mesh::setUniformBufferId(GLint id)
+{
+  _uniformBufferId = id;
+}
+
+void gle::Mesh::setMaterialBufferId(GLint id)
+{
+  _materialBufferId = id;
+}
+
+GLint gle::Mesh::getUniformBufferId() const
+{
+  return (_uniformBufferId);
+}
+
+GLint gle::Mesh::getMaterialBufferId() const
+{
+  return (_materialBufferId);
 }

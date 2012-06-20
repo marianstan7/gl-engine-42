@@ -2,19 +2,34 @@
   
 #define GLE_OUT_FRAGMENT_COLOR_LOCATION 0 
 #define NB_POINT_LIGHTS %nb_point_lights  
-#define NB_SPOT_LIGHTS %nb_spot_lights 
-  
-layout (location = GLE_OUT_FRAGMENT_COLOR_LOCATION) out vec4 gle_FragColor; 
+#define NB_SPOT_LIGHTS %nb_spot_lights
+
+#define GLE_NB_MATERIALS %nb_materials
+
+layout (location = GLE_OUT_FRAGMENT_COLOR_LOCATION) out vec4 gle_FragColor;
+
+struct gle_MaterialStruct
+{
+	vec4 ambientColor;
+	vec4 diffuseColor;
+	vec4 specularColor;
+	float shininess;
+	float specularIntensity;
+	float diffuseIntensity;
+};
 
 layout(std140) uniform materialBlock
 {
-	uniform vec4 gle_ambientColor;
-	uniform vec4 gle_diffuseColor;
-	uniform vec4 gle_specularColor;
-	uniform float gle_shininess;
-	uniform float gle_specularIntensity;
-	uniform float gle_diffuseIntensity;
-};
+/*
+	vec4 ambientColor;
+	vec4 diffuseColor;
+	vec4 specularColor;
+	float shininess;
+	float specularIntensity;
+	float diffuseIntensity;
+*/
+	gle_MaterialStruct materials[GLE_NB_MATERIALS];
+} gle_material;
 
 uniform mat4 gle_MVMatrix; 
 
@@ -38,6 +53,8 @@ in float gle_varying_fogFactor;
 in vec3 gle_varying_vLightWeighting;
 in float gle_varying_vLightAttenuation;
 in vec2 gle_varying_vTextureCoord;
+flat in vec3 gle_varying_vMeshIdentifier;
+
 #if NB_POINT_LIGHTS > 0 || NB_SPOT_LIGHTS > 0
 	in vec3 gle_varying_normal;
 	in vec3 gle_varying_eyeDirection;
@@ -51,7 +68,15 @@ in vec2 gle_varying_vTextureCoord;
 	in float gle_varying_spotLightAttenuation[NB_SPOT_LIGHTS];
 #endif
 
-void main(void) { 
+void main(void) {
+
+	vec4 ambientColor = gle_material.materials[int(gle_varying_vMeshIdentifier.z)].ambientColor;
+	vec4 diffuseColor = gle_material.materials[int(gle_varying_vMeshIdentifier.z)].diffuseColor;
+	vec4 specularColor = gle_material.materials[int(gle_varying_vMeshIdentifier.z)].specularColor;
+	float shininess = gle_material.materials[int(gle_varying_vMeshIdentifier.z)].shininess;
+	float specularIntensity = gle_material.materials[int(gle_varying_vMeshIdentifier.z)].specularIntensity;
+	float diffuseIntensity = gle_material.materials[int(gle_varying_vMeshIdentifier.z)].diffuseIntensity;
+	
 	vec3 lightWeighting = gle_varying_vLightWeighting;
 	#if NB_POINT_LIGHTS > 0 || NB_SPOT_LIGHTS > 0
 		vec3 N = normalize(gle_varying_normal);
@@ -62,18 +87,18 @@ void main(void) {
 		{
 			vec3 L = normalize(gle_varying_pointLightDirection[i]);
 
-			if (gle_diffuseIntensity > 0)
+			if (diffuseIntensity > 0)
 			{
 				float pointLightWeighting = max(dot(N, L), 0.0);
-				lightWeighting += gle_pointLightColor[i] * gle_diffuseColor.rgb * pointLightWeighting * gle_diffuseIntensity * 
+				lightWeighting += gle_pointLightColor[i] * diffuseColor.rgb * pointLightWeighting * diffuseIntensity * 
 				gle_varying_pointLightAttenuation[i];
 			}
-			if (gle_specularIntensity > 0)
+			if (specularIntensity > 0)
 			{
 				vec3 reflectionDirection = reflect(-L, N);
-				float pointLightSpecularWeighting = pow(max(dot(reflectionDirection, E), 0.0), gle_shininess);
-				lightWeighting += gle_pointLightSpecularColor[i] * gle_specularColor.rgb
-							* pointLightSpecularWeighting * gle_specularIntensity * gle_varying_pointLightAttenuation[i];
+				float pointLightSpecularWeighting = pow(max(dot(reflectionDirection, E), 0.0), shininess);
+				lightWeighting += gle_pointLightSpecularColor[i] * specularColor.rgb
+							* pointLightSpecularWeighting * specularIntensity * gle_varying_pointLightAttenuation[i];
 			}
 		}
 	#endif
@@ -95,18 +120,18 @@ void main(void) {
 			float spot = clamp((cos_cur_angle - cos_outer_cone_angle) / 
 					cos_inner_minus_outer_angle, 0.0, 1.0);
 
-			if (gle_diffuseIntensity > 0)
+			if (diffuseIntensity > 0)
 			{
 				float spotLightWeighting = max(dot(N, L), 0.0);
-				lightWeighting += gle_spotLightColor[i] * gle_diffuseColor.rgb * spotLightWeighting * gle_diffuseIntensity * 
+				lightWeighting += gle_spotLightColor[i] * diffuseColor.rgb * spotLightWeighting * diffuseIntensity * 
 				gle_varying_spotLightAttenuation[i] * (spot);
 			}
-			if (gle_specularIntensity > 0)
+			if (specularIntensity > 0)
 			{
 				vec3 reflectionDirection = reflect(-L, N);
-				float spotLightSpecularWeighting = pow(max(dot(reflectionDirection, E), 0.0), gle_shininess);
-				lightWeighting += gle_spotLightSpecularColor[i] * gle_specularColor.rgb
-							* spotLightSpecularWeighting * gle_specularIntensity * gle_varying_spotLightAttenuation[i] * spot;
+				float spotLightSpecularWeighting = pow(max(dot(reflectionDirection, E), 0.0), shininess);
+				lightWeighting += gle_spotLightSpecularColor[i] * specularColor.rgb
+							* spotLightSpecularWeighting * specularIntensity * gle_varying_spotLightAttenuation[i] * spot;
 			}
 		}
 	#endif

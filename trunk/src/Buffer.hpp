@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Wed Feb 15 16:10:11 2012 gael jochaud-du-plessix
-// Last update Wed May 30 15:16:46 2012 gael jochaud-du-plessix
+// Last update Thu Jun  7 15:08:06 2012 gael jochaud-du-plessix
 //
 
 #ifndef _GLE_BUFFER_HPP_
@@ -36,10 +36,11 @@ namespace gle {
 
     enum Type {
       VertexArray = GL_ARRAY_BUFFER,
-      /*!< Vertex array buffer, to store an array of vertex attributes */
+      /*! Vertex array buffer, to store an array of vertex attributes */
       ElementArray = GL_ELEMENT_ARRAY_BUFFER,
-      /*!< Element array buffer, to store an array of vertex indices */
+      /*! Element array buffer, to store an array of vertex indices */
       UniformArray = GL_UNIFORM_BUFFER
+      /*! Uniform buffer, to store program uniforms */
     };
 
     //! Buffer usages
@@ -394,8 +395,8 @@ namespace gle {
     GLuint	_id;
   };
 
-  typedef Buffer<GLfloat> fBuffer;
-  typedef Buffer<GLuint> uiBuffer;
+  typedef Buffer<GLfloat> Bufferf;
+  typedef Buffer<GLuint> Bufferui;
 };
 
 #endif /* _GLE_BUFFER_HPP_ */

@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Fri Mar  2 17:27:21 2012 gael jochaud-du-plessix
-// Last update Thu Jun  7 12:46:53 2012 loick michard
+// Last update Wed Jun 20 16:23:20 2012 gael jochaud-du-plessix
 //
 
 #include <iostream>
@@ -47,17 +47,23 @@ public:
 
     materialLight->setDiffuseLightEnabled(true);
     materialLight->setSpecularLightEnabled(true);
+    materialLight->setDiffuseColor(gle::Colorf(0.0, 0.0, 1.0));
     
     gle::Material* material = new gle::Material();
     material->setDiffuseLightEnabled(true);
     material->setSpecularLightEnabled(true);
-    material->setColorMap(new gle::Texture("./examples/earth.jpg"));
+    material->setDiffuseColor(gle::Colorf(1.0, 0.0, 0.0));
+    //material->setColorMap(new gle::Texture("./examples/earth.jpg"));
 
     gle::Material* material2 = new gle::Material();
     material2->setDiffuseLightEnabled(true);
     material2->setSpecularLightEnabled(true);
+    material2->setDiffuseColor(gle::Colorf(0.0, 1.0, 0.0));
+
+    gle::Mesh* sphere = gle::Geometries::Sphere(material, 5, 30, 30);
+    sphere->setPosition(gle::Vector3f(8, 0, 8));
     
-    _cube = gle::Geometries::Cube(material, 10);
+    _cube = gle::Geometries::Cube(material2, 10);
     _cube->setPosition(gle::Vector3f(8, 0, -8));
     _cube->setRotation(gle::Vector3f(0, 1, 0), 45);
     
@@ -65,8 +71,6 @@ public:
     pointCube->setPosition(gle::Vector3f(-24, 0, -8));
     pointCube->setPrimitiveType(gle::Mesh::Points);
     pointCube->setPointSize(5);
-    gle::Mesh* sphere = gle::Geometries::Sphere(material, 5, 30, 30);
-    sphere->setPosition(gle::Vector3f(8, 0, 8));
     gle::Mesh* pointSphere = gle::Geometries::Sphere(material2, 5, 100, 100);
     pointSphere->setPosition(gle::Vector3f(-24, 0, 8));
     pointSphere->setPrimitiveType(gle::Mesh::Points);
@@ -94,19 +98,23 @@ public:
     wiredPlane->setRasterizationMode(gle::Mesh::Line);
     wiredPlane->setMaterial(material2);
 
-    *_scene << _cube << wiredCube << pointCube;
     *_scene << sphere << wiredSphere << pointSphere;
+    *_scene << _cube << wiredCube << pointCube;
     *_scene << _plane << wiredPlane << pointPlane;
 
     _light = new gle::SpotLight(gle::Vector3f(0, 0, 0),
 				gle::Colorf(1.0, 1.0, 1.0), 1.0);
+    // *_scene << new gle::SpotLight(gle::Vector3f(0, 10, 0),
+    // 				  gle::Colorf(1.0, 1.0, 1.0), 1.0);
+
+    _light->setCosCutOff(0);
     //_light->setAttenuation(0, 0, 0.002);
     gle::Mesh* sp = gle::Geometries::Sphere(materialLight, 10, 50, 50);
     sp->setPosition(gle::Vector3f(0, 0, 0));
     
     gle::Material* screenMaterial = new gle::Material();
     screenMaterial->setSpecularLightEnabled(false);
-    gle::Mesh* screenPlane = gle::Geometries::Plane(screenMaterial, 16*2, 9*2);
+    gle::Mesh* screenPlane = gle::Geometries::Plane(material, 16*2, 9*2);
     screenPlane->rotate(gle::Vector3f(1, 0, 0), 90);
     screenPlane->setPosition(gle::Vector3f(0, 20, -50));
 
@@ -134,7 +142,7 @@ public:
 
   void render()
   {
-    _renderer->render(_scene, _framebuffer->getRenderTexture()->getSize(), _framebuffer);
+    //_renderer->render(_scene, _framebuffer->getRenderTexture()->getSize(), _framebuffer);
     _renderer->render(_scene, gle::Rectf(0, 0, _winWidth, _winHeight));
   }
 

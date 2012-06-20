@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Fri Apr 13 12:43:29 2012 gael jochaud-du-plessix
-// Last update Wed May 30 16:19:50 2012 gael jochaud-du-plessix
+// Last update Thu Jun  7 19:40:27 2012 gael jochaud-du-plessix
 //
 
 #ifndef _GLE_BUFFER_MANAGER_HPP_
@@ -213,7 +213,6 @@ namespace gle {
     };
 
     //! Print informations about the BufferManager on standart output
-
     void print()
     {
       for (Chunk* &chunk : _chunks)
@@ -285,9 +284,30 @@ namespace gle {
       glBindBuffer(GL_COPY_WRITE_BUFFER, _buffer->getId());
       glBindBuffer(GL_COPY_READ_BUFFER, _buffer->getId());
       glCopyBufferSubData(GL_COPY_READ_BUFFER, GL_COPY_WRITE_BUFFER,
-			  chunk->getOffset(), newChunk->getOffset(),
-			  chunk->getSize());
+			  chunk->getOffset() * sizeof(T), newChunk->getOffset() * sizeof(T),
+			  chunk->getSize() * sizeof(T));
       free(chunk);
+      return (newChunk);
+    }
+
+    //! Duplicate a chunk of memory
+    /*!
+      The buffer manager creates a new Chunk of memory with the same
+      properties and data as the given Chunk.
+      \param chunk The chunk to duplicate
+      \return A new chunk representing the duplicated memory
+     */
+
+    Chunk* duplicate(Chunk *chunk)
+    {
+      if (!chunk)
+      	return (NULL);
+      Chunk* newChunk = store(NULL, chunk->getSize());
+      glBindBuffer(GL_COPY_WRITE_BUFFER, _buffer->getId());
+      glBindBuffer(GL_COPY_READ_BUFFER, _buffer->getId());
+      glCopyBufferSubData(GL_COPY_READ_BUFFER, GL_COPY_WRITE_BUFFER,
+			  chunk->getOffset() * sizeof(T), newChunk->getOffset() * sizeof(T),
+			  chunk->getSize() * sizeof(T));
       return (newChunk);
     }
 

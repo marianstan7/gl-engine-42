@@ -5,7 +5,7 @@
 // Login   <michar_l@epitech.net>
 // 
 // Started on  Tue May 15 19:32:41 2012 loick michard
-// Last update Thu Jun  7 12:45:54 2012 loick michard
+// Last update Fri Jun  8 01:31:15 2012 gael jochaud-du-plessix
 //
 
 #include <Scene.hpp>

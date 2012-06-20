@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Fri May 25 00:33:16 2012 gael jochaud-du-plessix
-// Last update Thu Jun  7 12:10:07 2012 loick michard
+// Last update Thu Jun  7 13:59:21 2012 gael jochaud-du-plessix
 //
 
 #include <algorithm>
@@ -179,5 +179,5 @@ void Example::printGPUMemInfo()
 
 void  Example::catchEvent(sf::Event& event)
 {
-
+  (void)event;
 }

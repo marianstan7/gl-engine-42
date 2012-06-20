@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Tue Feb 14 17:12:21 2012 gael jochaud-du-plessix
-// Last update Mon Jun  4 15:57:40 2012 gael jochaud-du-plessix
+// Last update Wed Jun 13 18:03:25 2012 gael jochaud-du-plessix
 //
 
 #ifndef _GLE_RENDERER_HPP_
@@ -44,16 +44,17 @@ namespace gle {
     void render(Scene* scene, const Rectf& size, FrameBuffer* customFramebuffer=NULL);
 
   private:
+    void _buildIndexesBuffer(const std::list<gle::Mesh*> & meshes);
     void _renderMesh(gle::Scene* scene, gle::Mesh* mesh);
+    void _renderMeshes(gle::Scene* scene, gle::Mesh* mesh);
     void _setCurrentProgram(gle::Scene* scene,
 			    gle::Camera* camera);
     void _setMaterialUniforms(gle::Material* material);
     void _setSceneUniforms(gle::Scene* scene, gle::Camera* camera);
     void _setMeshUniforms(gle::Scene* scene, gle::Mesh* mesh);
-    
-    
-    gle::Program* _currentProgram;
-    gle::Material* _currentMaterial;
+
+    gle::Program*	_currentProgram;
+    gle::Bufferui	_indexesBuffer;
   };
 
 };

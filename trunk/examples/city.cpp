@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Fri Mar  2 17:27:21 2012 gael jochaud-du-plessix
-// Last update Thu Jun  7 12:46:41 2012 loick michard
+// Last update Wed Jun 20 16:29:59 2012 gael jochaud-du-plessix
 //
 
 #include <iostream>
@@ -30,7 +30,7 @@
 #define W_HEIGHT 720
 #define W_FRAMERATE 3000
 
-#define NB_HOUSES 100
+#define NB_HOUSES 4
 
 class App : public Example {
 public:
@@ -80,6 +80,7 @@ public:
 
     for (int i = 0; i < NB_HOUSES; ++i)
       {
+	std::cout << "House " << i << "\n";
 	gle::Mesh* house = new gle::Mesh(*houseModel);
 	gle::Mesh* house2 = new gle::Mesh(*house2Model);
 	gle::Mesh* car = new gle::Mesh(*carModel);
@@ -96,7 +97,7 @@ public:
     materialLight->setDiffuseLightEnabled(true);
     materialLight->setSpecularLightEnabled(true);
     _light = new gle::SpotLight(gle::Vector3<GLfloat>(0, 0, 0),
-				gle::Color<GLfloat>(0.0, 0.0, 1.0),
+				gle::Color<GLfloat>(1.0, 1.0, 1.0),
 				1.0);
     //_light->setAttenuation(0, 0, 0.0006);
     _camera->addChild(_light);
@@ -104,6 +105,9 @@ public:
     *_scene << _camera;// << _light;
 
     _scene->enableFrustumCulling();
+
+    std::cout << "Scene generated\n";
+    
     _scene->update();
   }
 

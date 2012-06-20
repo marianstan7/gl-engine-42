@@ -5,7 +5,7 @@
 // Login   <michar_l@epitech.net>
 // 
 // Started on  Mon Feb 20 13:20:54 2012 loick michard
-// Last update Wed May 30 17:41:45 2012 gael jochaud-du-plessix
+// Last update Wed Jun 20 14:14:32 2012 gael jochaud-du-plessix
 //
 
 #ifndef _MESH_HPP_
@@ -13,6 +13,7 @@
 
 # include <string>
 # include <vector>
+# include <list>
 # include <gle/opengl.h>
 # include <Buffer.hpp>
 # include <Matrix4.hpp>
@@ -58,21 +59,30 @@ namespace gle {
       Point = GL_POINT
     };
 
-    //! Size of the vertex coords  attribute
+    //! Size of the vertex coords attribute
     static const GLsizeiptr VertexAttributeSizeCoords = 3;
 
-    //! Size of the vertex normal  attribute
+    //! Size of the vertex normal attribute
     static const GLsizeiptr VertexAttributeSizeNormal = 3;
 
-    //! Size of the vertex texture coords  attribute
+    //! Size of the vertex texture coords attribute
     static const GLsizeiptr VertexAttributeSizeTextureCoords = 2;
+
+    //! Size of the vertex mesh identifiers attribute
+    static const GLsizeiptr VertexAttributeMeshIdentifiers = 3;
 
     //! Size of a vertex packed attributes
 
     static const GLsizeiptr VertexAttributesSize =
       (VertexAttributeSizeCoords
        + VertexAttributeSizeNormal
-       + VertexAttributeSizeTextureCoords);
+       + VertexAttributeSizeTextureCoords
+       + VertexAttributeMeshIdentifiers);
+
+    //! Factorize a list of meshes using canBeRenderedWith comparator
+
+    static std::list<std::list<gle::Mesh*>> factorizeForDrawing(std::list<gle::Mesh*> meshes,
+								bool ignoreBufferId=false);
 
     //! Default constructor
 
@@ -146,6 +156,10 @@ namespace gle {
 
     void setIndexes(gle::Array<GLuint> const &vertexes);
 
+    //! Set the mesh identifiers
+
+    void setIdentifiers(GLuint meshId, GLuint materialId);
+
     //! Set the mesh material
 
     void setMaterial(Material* material);
@@ -206,22 +220,36 @@ namespace gle {
 
     virtual Node* duplicate() const;
 
-    //! Update the mesh
-
     virtual void update();
+
+    void makeAbsoluteIndexes();
+
+    bool canBeRenderedWith(const gle::Mesh* other,
+			   bool ignoreBufferId=false) const;
+
+    void setUniformBufferId(GLint index);
+
+    void setMaterialBufferId(GLint index);
+
+    GLint getUniformBufferId() const;
+
+    GLint getMaterialBufferId() const;
     
   private:
     PrimitiveType	_primitiveType;
     RasterizationMode	_rasterizationMode;
-    GLfloat	_pointSize;
+    GLfloat		_pointSize;
 
-    Material* _material;
-    Buffer<GLuint>* _indexes;
+    Material*			_material;
+    Buffer<GLuint>*		_indexes;
     MeshBufferManager::Chunk*	_attributes;
 
     GLsizeiptr		_nbIndexes;
     GLsizeiptr		_nbVertexes;
     BoundingVolume*	_boundingVolume;
+
+    GLint		_uniformBufferId;
+    GLint		_materialBufferId;
   };
 }
 
