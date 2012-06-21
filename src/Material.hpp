@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Mon Feb 20 22:30:11 2012 gael jochaud-du-plessix
-// Last update Thu Jun 21 02:24:10 2012 loick michard
+// Last update Thu Jun 21 20:57:57 2012 gael jochaud-du-plessix
 //
 
 #ifndef _GLE_MATERIAL_HPP_
@@ -17,10 +17,9 @@
 # include <Color.hpp>
 # include <Buffer.hpp>
 # include <EnvironmentMap.hpp>
+# include <Scene.hpp>
 
 namespace gle {
-
-  class Scene;
 
   //! Description of a material
   /*!
@@ -166,7 +165,7 @@ namespace gle {
 
     const GLfloat* getUniforms() const;
 
-    bool canBeRenderedWith(const gle::Material* other) const;
+    bool canBeRenderedWith(const gle::Scene::MeshGroup& group) const;
 
   private:
     std::string _name;

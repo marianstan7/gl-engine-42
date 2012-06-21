@@ -5,7 +5,7 @@
 // Login   <michar_l@epitech.net>
 // 
 // Started on  Thu Jun 21 20:39:52 2012 loick michard
-// Last update Thu Jun 21 20:39:53 2012 loick michard
+// Last update Thu Jun 21 21:11:30 2012 gael jochaud-du-plessix
 //
 
 #ifndef _MESH_HPP_
@@ -245,7 +245,7 @@ namespace gle {
 
     void makeAbsoluteIndexes();
 
-    bool canBeRenderedWith(const gle::Mesh* other,
+    bool canBeRenderedWith(const gle::Scene::MeshGroup& other,
 			   bool ignoreBufferId=false) const;
 
     void setUniformBufferId(GLint index);

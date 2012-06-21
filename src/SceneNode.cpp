@@ -5,9 +5,10 @@
 // Login   <michar_l@epitech.net>
 // 
 // Started on  Tue May 15 19:32:41 2012 loick michard
-// Last update Fri Jun  8 01:31:15 2012 gael jochaud-du-plessix
+// Last update Thu Jun 21 21:05:36 2012 gael jochaud-du-plessix
 //
 
+#include <algorithm>
 #include <Scene.hpp>
 
 gle::Scene::Node::Node(gle::Scene::Node::Type type) :
