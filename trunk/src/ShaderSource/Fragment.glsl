@@ -86,7 +86,7 @@ void main(void) {
 	float reflectionIntensity = gle_material.materials[int(gle_varying_vMeshIdentifier.z)].reflectionIntensity;
 	float envMapType = gle_material.materials[int(gle_varying_vMeshIdentifier.z)].envMapType;
 	float hasColorMap = gle_material.materials[int(gle_varying_vMeshIdentifier.z)].hasColorMap;
-	float hasNormalMap = gle_material.materials[0].hasNormalMap;
+	float hasNormalMap = gle_material.materials[int(gle_varying_vMeshIdentifier.z)].hasNormalMap;
 	
 	vec3 lightWeighting = gle_varying_vLightWeighting;
 	vec3 bump = vec3(0.0, 1.0, 0.0);
