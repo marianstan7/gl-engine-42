@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Mon Feb 20 19:12:49 2012 gael jochaud-du-plessix
-// Last update Wed Jun 20 18:32:19 2012 gael jochaud-du-plessix
+// Last update Thu Jun 21 01:15:31 2012 loick michard
 //
 
 #include <Scene.hpp>
@@ -17,6 +17,7 @@
 #include <SpotLight.hpp>
 #include <ShaderSource.hpp>
 #include <sstream>
+#include <Geometries.hpp>
 
 gle::Scene::Scene() :
   _backgroundColor(0.0, 0.0, 0.0, 0.0), _fogColor(0.0, 0.0, 0.0, 0.0), _fogDensity(0.0),
@@ -28,13 +29,18 @@ gle::Scene::Scene() :
   _currentCamera(NULL), _program(NULL), _needProgramCompilation(true),
   _staticMeshesUniformsBuffers(), _staticMeshesMaterialsBuffers(),
   _staticMeshesMaterialsBuffersIds(),
-  _displayBoundingVolume(false), _frustumCulling(false)
+  _displayBoundingVolume(false), _frustumCulling(false),
+  _envMap(NULL), _isEnvMapEnabled(false), _envMapProgram(NULL), _envMapMesh(NULL)
 {
   _root.setName("root");
 }
 
 gle::Scene::~Scene()
 {
+  if (_envMapProgram)
+    delete _envMapProgram;
+  if (_envMapMesh)
+    delete _envMapMesh;
   _clearStaticMeshesBuffers();
 }
 
@@ -153,6 +159,8 @@ void gle::Scene::updateLights()
 	{
 	  ++dSize;
 	  gle::Vector3<GLfloat> direction = ((gle::DirectionalLight*)(*it))->getDirection();
+	  if (!_currentCamera)
+	    throw (new gle::Exception::Exception("No camera for the scene..."));
 	  GLfloat* color = ((gle::DirectionalLight*)(*it))->getColor();
 	  _directionalLightsDirection.push_back(direction.x);
 	  _directionalLightsDirection.push_back(direction.y);
@@ -325,13 +333,18 @@ void		gle::Scene::buildProgram()
       throw e;
     }
 
-  _program->getUniformLocation(gle::Program::MVMatrix);
+  //_program->getUniformLocation(gle::Program::MVMatrix);
+  _program->getUniformLocation(gle::Program::ViewMatrix);
   _program->getUniformLocation(gle::Program::PMatrix);
+  _program->getUniformLocation(gle::Program::CameraPos);
   _program->getUniformLocation(gle::Program::FogDensity);
   _program->getUniformLocation(gle::Program::FogColor);
-  _program->getUniformLocation(gle::Program::HasColorMap);
   _program->getUniformLocation(gle::Program::ColorMap);
-
+  if (getDirectionalLightsSize() || getPointLightsSize() || getSpotLightsSize())
+    _program->getUniformLocation(gle::Program::NormalMap);
+  _program->getUniformLocation(gle::Program::CubeMap);
+  //if (getDirectionalLightsSize() || getPointLightsSize() || getSpotLightsSize())
+  //_program->getUniformLocation(gle::Program::NMatrix);
   if (getDirectionalLightsSize())
     {
       _program->getUniformLocation(gle::Program::DirectionalLightDirection);
@@ -560,6 +573,101 @@ void gle::Scene::updateStaticMeshes()
     }
 
   delete[] staticMeshesUniforms;
+}
+
+void gle::Scene::setEnvMap(EnvironmentMap* envMap)
+{
+  _envMap = envMap;
+  _isEnvMapEnabled = true;
+  if (!_envMapProgram)
+    {
+      _envMapProgram = new gle::Program();
+      
+      gle::Shader* vertexShader;
+      gle::Shader* fragmentShader;
+      try
+	{
+	  vertexShader = new gle::Shader(gle::Shader::Vertex, "#version 330 core\n"
+					 "#define GLE_IN_VERTEX_POSITION_LOCATION 0\n"
+					 "layout (location = GLE_IN_VERTEX_POSITION_LOCATION) in vec3 gle_vPosition;\n"
+					 "uniform mat4 gle_MVMatrix;\n"
+					 "uniform mat4 gle_PMatrix;\n"
+					 "uniform vec3 gle_CameraPos;\n"
+					 "out vec3 pos;\n"
+					 "void main(void) {\n"
+					 "vec4 gle_mvPosition = gle_MVMatrix * vec4(gle_vPosition + gle_CameraPos, 1);\n"
+					 "gl_Position = (gle_PMatrix * gle_mvPosition);\n"
+					 "pos = gle_vPosition;\n"
+					 "}\n");
+	}
+      catch (gle::Exception::CompilationError* e)
+	{
+	  e->setFilename("EnvMap Vertex Shader");
+	  throw e;
+	}
+      try
+	{
+	  fragmentShader = new gle::Shader(gle::Shader::Fragment, "#version 330 core\n"
+					   "#define GLE_OUT_FRAGMENT_COLOR_LOCATION 0\n"
+					   "layout (location = GLE_OUT_FRAGMENT_COLOR_LOCATION) out vec4 gle_FragColor;\n"
+					   "uniform samplerCube gle_cubeMap;"
+					   "in vec3 pos;\n"
+					   "void main(void) {\n"
+					   "gle_FragColor = vec4(texture(gle_cubeMap, pos).rgb, 1.0);"
+					   "}\n");
+	}
+      catch (gle::Exception::CompilationError* e)
+	{
+	  e->setFilename("EnvMap Fragment Shader");
+	  throw e;
+	}
+      
+      _envMapProgram->attach(*vertexShader);
+      _envMapProgram->attach(*fragmentShader);
+      
+      try {
+	_envMapProgram->link();
+      }
+      catch (std::exception *e)
+	{
+	  delete vertexShader;
+	  delete fragmentShader;
+	  throw e;
+	}
+      _envMapProgram->getUniformLocation(Program::CameraPos);
+      _envMapProgram->getUniformLocation(Program::MVMatrix);
+      _envMapProgram->getUniformLocation(Program::PMatrix);
+      _envMapProgram->getUniformLocation(Program::CubeMap);
+    }
+  if (!_envMapMesh)
+    {
+      _envMapMesh = Geometries::Cube(NULL, 1000);
+    }
+}
+
+void gle::Scene::setEnvMapEnabled(bool enabled)
+{
+  _isEnvMapEnabled = enabled;
+}
+
+gle::EnvironmentMap* gle::Scene::getEnvMap() const
+{
+  return (_envMap);
+}
+
+bool gle::Scene::isEnvMapEnabled() const
+{
+  return (_isEnvMapEnabled);
+}
+
+gle::Program* gle::Scene::getEnvMapProgram() const
+{
+  return (_envMapProgram);
+}
+
+gle::Mesh* gle::Scene::getEnvMapMesh() const
+{
+  return (_envMapMesh);
 }
 
 void	gle::Scene::_buildMaterialBuffers(std::list<std::list<gle::Mesh*>>& factorizedMeshes, GLint maxUniformBlockSize)

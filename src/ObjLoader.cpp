@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Wed Feb 22 23:17:47 2012 gael jochaud-du-plessix
-// Last update Tue May 29 21:51:45 2012 gael jochaud-du-plessix
+// Last update Tue Jun 12 16:17:20 2012 loick michard
 //
 
 #include <fstream>
@@ -31,7 +31,7 @@ gle::ObjLoader::~ObjLoader()
   
 }
 
-gle::Mesh* gle::ObjLoader::load(std::string const & file,
+gle::Scene::Node* gle::ObjLoader::load(std::string const & file,
 				gle::Material* defaultMaterial)
 {
   std::fstream fileStream(file.c_str());
@@ -444,7 +444,7 @@ gle::Texture* gle::ObjLoader::_getTexture(std::string const & path)
     return (texture);
   try
     {
-      texture = new gle::Texture(path);
+      texture = new gle::Texture(gle::Image(path));
     }
   catch (std::exception* e)
     {

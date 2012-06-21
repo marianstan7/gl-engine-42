@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Tue Feb 14 17:12:21 2012 gael jochaud-du-plessix
-// Last update Wed Jun 13 18:03:25 2012 gael jochaud-du-plessix
+// Last update Thu Jun 21 00:53:16 2012 loick michard
 //
 
 #ifndef _GLE_RENDERER_HPP_
@@ -45,6 +45,7 @@ namespace gle {
 
   private:
     void _buildIndexesBuffer(const std::list<gle::Mesh*> & meshes);
+    void _renderEnvMap(gle::Scene* scene);
     void _renderMesh(gle::Scene* scene, gle::Mesh* mesh);
     void _renderMeshes(gle::Scene* scene, gle::Mesh* mesh);
     void _setCurrentProgram(gle::Scene* scene,

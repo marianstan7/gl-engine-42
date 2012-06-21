@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Wed Feb 15 17:24:36 2012 gael jochaud-du-plessix
-// Last update Wed Jun  6 19:53:21 2012 gael jochaud-du-plessix
+// Last update Tue Jun 12 17:34:26 2012 loick michard
 //
 
 /*! \mainpage glEngine Reference documentation
@@ -62,7 +62,7 @@ public:
     material->setShininess(32);
 
     gle::ObjLoader loader;
-    gle::Mesh* model = loader.load(_argv[1], material);
+    gle::Scene::Node* model = loader.load(_argv[1], material);
 
     if (!model)
       throw new gle::Exception::Exception("Cannot load model " + _argv[1]);

@@ -5,13 +5,14 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Wed Feb 22 22:56:26 2012 gael jochaud-du-plessix
-// Last update Thu Mar  1 18:32:35 2012 gael jochaud-du-plessix
+// Last update Tue Jun 12 16:26:30 2012 loick michard
 //
 
 #ifndef _GLE_FILE_LOADER_HPP_
 # define _GLE_FILE_LOADER_HPP_
 
 # include <string>
+# include <Scene.hpp>
 # include <Mesh.hpp>
 
 namespace gle {
@@ -27,8 +28,8 @@ namespace gle {
     virtual ~FileLoader();
 
     //! Load a mesh from a file
-    virtual gle::Mesh* load(std::string const & file,
-			    gle::Material* defaultMaterial);
+    virtual gle::Scene::Node* load(std::string const & file,
+				   gle::Material* defaultMaterial);
   };
 
 }

@@ -5,7 +5,7 @@
 // Login   <michar_l@epitech.net>
 // 
 // Started on  Fri Feb 17 12:51:39 2012 loick michard
-// Last update Wed May 30 17:20:42 2012 gael jochaud-du-plessix
+// Last update Mon Jun 18 10:43:32 2012 loick michard
 //
 
 #ifndef _GLE_VECTOR3_HPP_

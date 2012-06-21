@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Wed Feb 22 23:03:27 2012 gael jochaud-du-plessix
-// Last update Fri Mar  2 15:43:26 2012 gael jochaud-du-plessix
+// Last update Tue Jun 12 16:17:55 2012 loick michard
 //
 
 #ifndef _GLE_OBJ_LOADER_HPP_
@@ -42,9 +42,9 @@ namespace gle {
       If the file cannot be opened, return NULL.
       If an error occur during the file parsing,
       a ParsingError exception can be thrown.
-     */
-    gle::Mesh* load(std::string const & file,
-		    gle::Material* defaultMaterial);
+    */
+    gle::Scene::Node* load(std::string const & file,
+			   gle::Material* defaultMaterial);
     
   private:
     void _parseLine(Mesh *parent, std::string const & line);

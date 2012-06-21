@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Fri Feb 17 16:21:14 2012 gael jochaud-du-plessix
-// Last update Thu Jun  7 21:46:00 2012 gael jochaud-du-plessix
+// Last update Wed Jun 20 23:32:37 2012 loick michard
 //
 
 #include <Program.hpp>
@@ -15,15 +15,18 @@ gle::Program::Program() :
   _id(0), _uniformLocations(32), _uniformNames(32)
 {
   _uniformNames[gle::Program::MVMatrix] = "gle_MVMatrix";
+  _uniformNames[gle::Program::MWMatrix] = "gle_MWMatrix";
   _uniformNames[gle::Program::PMatrix] = "gle_PMatrix";
-  _uniformNames[gle::Program::CameraMatrix] = "gle_CameraMatrix";
+  _uniformNames[gle::Program::CameraPos] = "gle_CameraPos";
+  _uniformNames[gle::Program::ViewMatrix] = "gle_ViewMatrix";
   _uniformNames[gle::Program::FogColor] = "gle_fogColor";
   _uniformNames[gle::Program::FogDensity] = "gle_fogDensity";
   _uniformNames[gle::Program::AmbientColor] = "gle_ambientColor";
   _uniformNames[gle::Program::DiffuseColor] = "gle_diffuseColor";
   _uniformNames[gle::Program::SpecularColor] = "gle_specularColor";
   _uniformNames[gle::Program::ColorMap] = "gle_colorMap";
-  _uniformNames[gle::Program::HasColorMap] = "gle_hasColorMap";
+  _uniformNames[gle::Program::NormalMap] = "gle_normalMap";
+  _uniformNames[gle::Program::CubeMap] = "gle_cubeMap";
   _uniformNames[gle::Program::NMatrix] = "gle_NMatrix";
   _uniformNames[gle::Program::AmbientColor] = "gle_ambientColor";
   _uniformNames[gle::Program::DirectionalLightDirection] =
@@ -179,6 +182,11 @@ void gle::Program::setUniform(Uniform uniform, TextureUnit texture)
 void gle::Program::setUniform(Uniform uniform, bool value)
 {
   glUniform1i(_uniformLocations[uniform], (value) ? 1 : 0);
+}
+
+void gle::Program::setUniform(Uniform uniform, const gle::Vector3f& value)
+{
+  glUniform3f(_uniformLocations[uniform], value.x, value.y, value.z);
 }
 
 void gle::Program::retreiveUniformBlockIndex(UniformBlock block, const std::string &name)

@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Mon Feb 20 18:18:01 2012 gael jochaud-du-plessix
-// Last update Tue Jun 19 19:44:39 2012 gael jochaud-du-plessix
+// Last update Wed Jun 20 23:36:38 2012 loick michard
 //
 
 #ifndef _GLE_SCENE_HPP_
@@ -20,6 +20,7 @@
 # include <Color.hpp>
 # include <Octree.hpp>
 # include <Quaternion.hpp>
+# include <EnvironmentMap.hpp>
 
 namespace gle {
 
@@ -501,6 +502,13 @@ namespace gle {
     
     void update(Node* node=NULL, int depth = 0);
 
+    void setEnvMap(EnvironmentMap* envMap);
+    void setEnvMapEnabled(bool enabled);
+    EnvironmentMap* getEnvMap() const;
+    bool isEnvMapEnabled() const;
+    Program* getEnvMapProgram() const;
+    Mesh* getEnvMapMesh() const;
+
     //! Returns the uniform buffer containing static meshes matrices
 
     const gle::Bufferf*   getStaticMeshesUniformsBuffer(GLuint bufferId) const;
@@ -553,13 +561,18 @@ namespace gle {
     gle::Program*	_program;
     bool		_needProgramCompilation;
 
-    std::vector<gle::Bufferf*>	_staticMeshesUniformsBuffers;
-    std::vector<gle::Bufferf*>	_staticMeshesMaterialsBuffers;
-    std::map<gle::Material*, std::pair<GLuint, GLuint>> _staticMeshesMaterialsBuffersIds;
+    std::vector<gle::Bufferf*>				_staticMeshesUniformsBuffers;
+    std::vector<gle::Bufferf*>				_staticMeshesMaterialsBuffers;
+    std::map<gle::Material*, std::pair<GLuint, GLuint>>	_staticMeshesMaterialsBuffersIds;
 
     bool	_displayBoundingVolume;
     gle::Octree	_tree;
     bool	_frustumCulling;
+
+    EnvironmentMap*	_envMap;
+    bool		_isEnvMapEnabled;
+    Program*		_envMapProgram;
+    Mesh*		_envMapMesh;
   };
 }
 

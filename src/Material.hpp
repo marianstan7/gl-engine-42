@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Mon Feb 20 22:30:11 2012 gael jochaud-du-plessix
-// Last update Wed Jun 20 18:18:35 2012 gael jochaud-du-plessix
+// Last update Thu Jun 21 02:24:10 2012 loick michard
 //
 
 #ifndef _GLE_MATERIAL_HPP_
@@ -16,6 +16,7 @@
 # include <Texture.hpp>
 # include <Color.hpp>
 # include <Buffer.hpp>
+# include <EnvironmentMap.hpp>
 
 namespace gle {
 
@@ -33,7 +34,7 @@ namespace gle {
 
     //! Size of the datas used by one material in a uniform buffer
 
-    static const GLsizeiptr UniformSize = 16;
+    static const GLsizeiptr UniformSize = 20;
 
     //! Create a material
     Material(std::string const & name="");
@@ -123,6 +124,10 @@ namespace gle {
 
     //! Return true if the color map is enabled
 
+    void setReflectionIntensity(GLfloat reflection);
+
+    GLfloat getReflectionIntensity() const;
+
     bool isColorMapEnabled() const;
 
     //! Enable or disable the color map
@@ -136,6 +141,16 @@ namespace gle {
     //! Set color map texture
 
     void setColorMap(gle::Texture* colorMap);
+
+    bool isNormalMapEnabled() const;
+    void setNormalMapEnabled(bool enabled);
+    gle::Texture* getNormalMap() const;
+    void setNormalMap(gle::Texture* normalMap);
+
+    bool isEnvMapEnabled() const;
+    void setEnvEnabled(bool enabled);
+    void setEnvMap(gle::EnvironmentMap* envMap);
+    gle::EnvironmentMap* getEnvMap() const;
 
     //! Returns the uniform buffer containing all datas for the material
     /*!
@@ -166,9 +181,16 @@ namespace gle {
     GLfloat _shininess;
     GLfloat _diffuseIntensity;
     GLfloat _specularIntensity;
+    GLfloat _reflectionIntensity;
 
-    bool _colorMapEnabled;
-    gle::Texture* _colorMap;
+    bool		_colorMapEnabled;
+    gle::Texture*	_colorMap;
+
+    bool		_normalMapEnabled;
+    gle::Texture*	_normalMap;
+
+    bool			_envMapEnabled;
+    gle::EnvironmentMap*	_envMap;
 
     GLfloat*		_uniforms;
     Buffer<GLfloat>*	_uniformsBuffer;
