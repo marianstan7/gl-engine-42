@@ -1,6 +1,6 @@
 mtllib cube_texture.mtl
 g cube
-usemtl blinn1SG
+usemtl cube
 
 v 0.0 0.0 0.0
 v 0.0 0.0 1.0

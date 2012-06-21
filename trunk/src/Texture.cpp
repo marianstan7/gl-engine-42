@@ -5,18 +5,20 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Wed Feb 29 19:37:40 2012 gael jochaud-du-plessix
-// Last update Thu Jun  7 14:12:04 2012 gael jochaud-du-plessix
+// Last update Thu Jun 21 00:10:27 2012 loick michard
 //
 
 #include <Texture.hpp>
 #include <Exception.hpp>
+#include <iostream>
 
-gle::Texture::Texture(std::string filename, Type type, InternalFormat internalFormat) :
+gle::Texture::Texture(const Image& image, Type type, InternalFormat internalFormat) :
   _id(0), _type(type), _internalFormat(internalFormat), _width(0), _height(0),
   _useMipmap(true)
 {
   glGenTextures(1, &_id);
-  setData(filename);
+  bind();
+  setData(image);
   setUseMipmap(_useMipmap);
 }
 
@@ -26,7 +28,10 @@ gle::Texture::Texture(GLuint width, GLuint height, Type type, InternalFormat int
 {
   glGenTextures(1, &_id);
   if (width != 0 && height != 0)
-    setData(NULL, width, height);
+    {
+      bind();
+      setData((const char*)NULL, (GLuint)width, (GLuint)height);
+    }
   setUseMipmap(_useMipmap);
 }
 
@@ -40,32 +45,19 @@ void gle::Texture::bind()
   glBindTexture(_type, _id);
 }
 
-void gle::Texture::setData(std::string filename)
+void gle::Texture::setData(const Image& image, Target target)
 {
-  sf::Image image;
-  image.loadFromFile(filename);
-  _width = image.getSize().x;
-  _height = image.getSize().y;
-  setData(image);
+  setData((const char*)image.getData(), image.getWidth(), image.getHeight(), target);
 }
 
-void gle::Texture::setData(sf::Image const &image)
+void gle::Texture::setData(const char* data, GLuint width, GLuint height, Target target)
 {
-  const sf::Uint8* pixelsPtr = image.getPixelsPtr();
-  if (pixelsPtr == NULL)
-    throw new gle::Exception::InvalidValue("Invalid texture image");
-  setData((const char*)pixelsPtr);
-}
-
-void gle::Texture::setData(const char* pixelsPtr, GLuint width, GLuint height)
-{
-  if (width != 0 && height != 0)
+  if (width && height)
     {
       _width = width;
-      _height = height;
+      _height = height;   
     }
-  bind();
-  glTexImage2D(GL_TEXTURE_2D, // Texture type
+  glTexImage2D(target, // Texture type
 	       0, // Level of detail (0 = max)
 	       _internalFormat, // Internal format
 	       _width, // Width
@@ -73,8 +65,8 @@ void gle::Texture::setData(const char* pixelsPtr, GLuint width, GLuint height)
 	       0, // This value must be 0
 	       GL_RGBA, // Format of the pixel datas
 	       GL_UNSIGNED_BYTE, // Data type of the pixel datas
-	       pixelsPtr);
-  gle::Exception::CheckOpenGLError("Texture::setData()");
+	       data);
+  generateMipmap();
 }
 
 void gle::Texture::generateMipmap()

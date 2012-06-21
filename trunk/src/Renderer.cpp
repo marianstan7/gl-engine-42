@@ -5,13 +5,14 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Mon Feb 20 20:48:54 2012 gael jochaud-du-plessix
-// Last update Wed Jun 20 17:09:32 2012 gael jochaud-du-plessix
+// Last update Thu Jun 21 02:23:24 2012 loick michard
 //
 
 #include <Renderer.hpp>
 #include <gle/opengl.h>
 #include <ShaderSource.hpp>
 #include <Exception.hpp>
+#include <EnvironmentMap.hpp>
 
 gle::Renderer::Renderer() :
   _currentProgram(NULL),
@@ -63,9 +64,12 @@ void gle::Renderer::render(Scene* scene, const Rectf& size, FrameBuffer* customF
 
   glClearColor(backgroundColor.r, backgroundColor.b, backgroundColor.a, 1.f);
   clear();
+  if (scene->isEnvMapEnabled())
+    _renderEnvMap(scene);
   _currentProgram = NULL;
   if (!camera)
     throw (new gle::Exception::Exception("No camera for the scene..."));
+
   _setCurrentProgram(scene, camera);
   const std::vector<gle::Mesh*> & meshesToRender = scene->getMeshesToRender();
 
@@ -74,6 +78,7 @@ void gle::Renderer::render(Scene* scene, const Rectf& size, FrameBuffer* customF
   // Enable vertex attributes commons to all meshes
   glEnableVertexAttribArray(gle::ShaderSource::Vertex::Default::PositionLocation);
   glEnableVertexAttribArray(gle::ShaderSource::Vertex::Default::NormalLocation);
+  glEnableVertexAttribArray(gle::ShaderSource::Vertex::Default::TangentLocation);
   glEnableVertexAttribArray(gle::ShaderSource::Vertex::Default::MeshIdentifierLocation);
 
   MeshBufferManager::getInstance().bind();
@@ -84,7 +89,7 @@ void gle::Renderer::render(Scene* scene, const Rectf& size, FrameBuffer* customF
   std::cout << "nb draw: " << factorizedMeshes.size() << " for "<< meshesToRender.size() << " meshes \n";
 
   for (std::list<gle::Mesh*> &meshes : factorizedMeshes)
-    {
+    {  
       _buildIndexesBuffer(meshes);
       _renderMeshes(scene, meshes.front());
     }
@@ -99,6 +104,7 @@ void gle::Renderer::_buildIndexesBuffer(const std::list<gle::Mesh*> & meshes)
     nbIndexes += mesh->getNbIndexes();
 
   _indexesBuffer.resize(nbIndexes);
+
   GLuint	i = 0;
   glBindBuffer(GL_COPY_WRITE_BUFFER, _indexesBuffer.getId());
   for (gle::Mesh* mesh : meshes)
@@ -126,9 +132,9 @@ void gle::Renderer::_renderMesh(gle::Scene* scene, gle::Mesh* mesh)
   if (indexesBuffer == NULL || material == NULL || mesh == NULL ||
       !_currentProgram)
     return ;
-
   _setMaterialUniforms(material);
-  _setMeshUniforms(scene, mesh);
+  _setMeshUniforms(scene, mesh); 
+
   scene->getStaticMeshesUniformsBuffer(mesh->getUniformBufferId())->bindBase(gle::Program::StaticMeshesBlock);
   // Set Position buffer
   glVertexAttribPointer(gle::ShaderSource::Vertex::Default::PositionLocation,
@@ -138,42 +144,77 @@ void gle::Renderer::_renderMesh(gle::Scene* scene, gle::Mesh* mesh)
 
   // Set Normal buffer
   glVertexAttribPointer(gle::ShaderSource::Vertex::Default::NormalLocation,
-			3, GL_FLOAT, GL_FALSE, gle::Mesh::VertexAttributesSize * sizeof(GLfloat),
+			3, GL_FLOAT, GL_FALSE,
+			gle::Mesh::VertexAttributesSize * sizeof(GLfloat),
 			(GLvoid*)((vertexAttributes->getOffset()
 				   + gle::Mesh::VertexAttributeSizeCoords)
 				  * sizeof(GLfloat)));
+  gle::Exception::CheckOpenGLError("glVertexAttribPointer NormalLocation");
+  glVertexAttribPointer(gle::ShaderSource::Vertex::Default::TangentLocation,
+			3, GL_FLOAT, GL_FALSE,
+			gle::Mesh::VertexAttributesSize * sizeof(GLfloat),
+			(GLvoid*)((vertexAttributes->getOffset()
+				   + gle::Mesh::VertexAttributeSizeCoords
+				   + gle::Mesh::VertexAttributeSizeNormal)
+				  * sizeof(GLfloat)));
+  gle::Exception::CheckOpenGLError("glVertexAttribPointer TangentLocation");
 
   // Set Mesh Identifier buffer
   glVertexAttribPointer(gle::ShaderSource::Vertex::Default::MeshIdentifierLocation,
-			2, GL_FLOAT, GL_FALSE, gle::Mesh::VertexAttributesSize * sizeof(GLfloat),
+			3, GL_FLOAT, GL_FALSE, gle::Mesh::VertexAttributesSize * sizeof(GLfloat),
 			(GLvoid*)((vertexAttributes->getOffset()
 				   + gle::Mesh::VertexAttributeSizeCoords
 				   + gle::Mesh::VertexAttributeSizeNormal
+				   + gle::Mesh::VertexAttributeSizeTangent
 				   + gle::Mesh::VertexAttributeSizeTextureCoords)
 				  * sizeof(GLfloat)));
 
   // Set up ColorMap
-  _currentProgram->setUniform(gle::Program::HasColorMap, material->isColorMapEnabled());
-  if (material->isColorMapEnabled())
+  if (material->isColorMapEnabled() || material->isNormalMapEnabled())
     {
       // Set texture coords attribute
-      glEnableVertexAttribArray(gle::ShaderSource::Vertex::
-                                ColorMap::TextureCoordLocation);
       //textureCoordsBuffer->bind();
       glVertexAttribPointer(gle::ShaderSource::Vertex::
                             ColorMap::TextureCoordLocation,
                             2, GL_FLOAT, GL_FALSE, gle::Mesh::VertexAttributesSize * sizeof(GLfloat),
 			    (GLvoid*)((vertexAttributes->getOffset()
 				       + gle::Mesh::VertexAttributeSizeCoords
-				       + gle::Mesh::VertexAttributeSizeNormal)
+				       + gle::Mesh::VertexAttributeSizeNormal
+				       + gle::Mesh::VertexAttributeSizeTangent)
 				      * sizeof(GLfloat)));
-
+    }
+  if (material->isColorMapEnabled())
+    {
       // Set texture to the shader
       gle::Texture* colorMap = material->getColorMap();
       glActiveTexture(gle::Program::ColorMapTexture);
       colorMap->bind();
       _currentProgram->setUniform(gle::Program::ColorMap,
       				  gle::Program::ColorMapTextureIndex);
+    }
+  gle::Exception::CheckOpenGLError("Set uniform Color map");
+  if (material->isNormalMapEnabled())
+    {
+      // Set texture to the shader
+      gle::Texture* normalMap = material->getNormalMap();
+      glActiveTexture(gle::Program::NormalMapTexture);
+      normalMap->bind();
+      _currentProgram->setUniform(gle::Program::NormalMap,
+      				  gle::Program::NormalMapTextureIndex);
+    }
+  gle::Exception::CheckOpenGLError("Set uniform Normal map");
+
+  // Set up EnvMap
+  if (material->isEnvMapEnabled())
+    {
+      gle::EnvironmentMap* envMap = material->getEnvMap();
+      if (envMap->getType() == EnvironmentMap::CubeMap)
+	{
+	  glActiveTexture(gle::Program::CubeMapTexture);
+	  envMap->bind();
+	  _currentProgram->setUniform(gle::Program::CubeMap,
+				      gle::Program::CubeMapTextureIndex);
+	}
     }
 
   // Draw the mesh elements
@@ -189,11 +230,44 @@ void gle::Renderer::_renderMesh(gle::Scene* scene, gle::Mesh* mesh)
       || mesh->getRasterizationMode() == gle::Mesh::Point)
     glPointSize(mesh->getPointSize());
   glPolygonMode(GL_FRONT_AND_BACK, mesh->getRasterizationMode());
+  gle::Exception::CheckOpenGLError("Before glDrawElements");
   glDrawElements(mesh->getPrimitiveType(), nbIndexes, GL_UNSIGNED_INT, 0);
-
+  gle::Exception::CheckOpenGLError("glDrawElements");
   if (material->isColorMapEnabled())
     glDisableVertexAttribArray(gle::ShaderSource::Vertex::
 			       ColorMap::TextureCoordLocation);
+
+}
+
+void gle::Renderer::_renderEnvMap(gle::Scene* scene)
+{
+  //std::cout << "EnvMap" << scene->getEnvMapProgram() << std::endl;
+  scene->getEnvMapProgram()->use();
+  _currentProgram = scene->getEnvMapProgram();
+  GLsizeiptr nbIndexes = scene->getEnvMapMesh()->getNbIndexes();
+  gle::MeshBufferManager::Chunk* vertexAttributes = scene->getEnvMapMesh()->getAttributes();
+  gle::Buffer<GLuint> * indexesBuffer = scene->getEnvMapMesh()->getIndexesBuffer();
+  glEnableVertexAttribArray(gle::ShaderSource::Vertex::Default::PositionLocation);
+  glVertexAttribPointer(gle::ShaderSource::Vertex::Default::PositionLocation,
+                        3, GL_FLOAT, GL_FALSE,
+                        gle::Mesh::VertexAttributesSize * sizeof(GLfloat),
+                        (GLvoid*)(vertexAttributes->getOffset() * sizeof(GLfloat)));
+  gle::EnvironmentMap* envMap = scene->getEnvMap();
+  if (envMap->getType() == EnvironmentMap::CubeMap)
+    {
+      glActiveTexture(gle::Program::CubeMapTexture);
+      envMap->bind();
+      _currentProgram->setUniform(gle::Program::CubeMap,
+				  gle::Program::CubeMapTextureIndex);
+    }
+  const gle::Matrix4<GLfloat>& mvMatrix = scene->getCurrentCamera()->getTransformationMatrix();
+  _currentProgram->setUniform(gle::Program::MVMatrix, mvMatrix);
+  _currentProgram->setUniform(gle::Program::PMatrix, scene->getCurrentCamera()->getProjectionMatrix());
+  _currentProgram->setUniform(gle::Program::CameraPos, scene->getCurrentCamera()->getPosition());
+  indexesBuffer->bind();
+  glPolygonMode(GL_FRONT_AND_BACK, scene->getEnvMapMesh()->getRasterizationMode());
+  glDrawElements(scene->getEnvMapMesh()->getPrimitiveType(), nbIndexes, GL_UNSIGNED_INT, 0);
+  glClear(GL_DEPTH_BUFFER_BIT);
 }
 
 void gle::Renderer::_renderMeshes(gle::Scene* scene, gle::Mesh* mesh)
@@ -203,6 +277,7 @@ void gle::Renderer::_renderMeshes(gle::Scene* scene, gle::Mesh* mesh)
   GLuint offset = 0;
 
   //_setMaterialUniforms(material);
+
   scene->getStaticMeshesUniformsBuffer(mesh->getUniformBufferId())->bindBase(gle::Program::StaticMeshesBlock);
   scene->getStaticMeshesMaterialsBuffer(mesh->getMaterialBufferId())->bindBase(gle::Program::MaterialBlock);
 
@@ -219,18 +294,25 @@ void gle::Renderer::_renderMeshes(gle::Scene* scene, gle::Mesh* mesh)
 				   + gle::Mesh::VertexAttributeSizeCoords)
 				  * sizeof(GLfloat)));
 
+  glVertexAttribPointer(gle::ShaderSource::Vertex::Default::TangentLocation,
+			3, GL_FLOAT, GL_FALSE, gle::Mesh::VertexAttributesSize * sizeof(GLfloat),
+			(GLvoid*)((offset
+				   + gle::Mesh::VertexAttributeSizeCoords
+				   + gle::Mesh::VertexAttributeSizeNormal)
+				  * sizeof(GLfloat)));
+
   // Set Mesh Identifier buffer
   glVertexAttribPointer(gle::ShaderSource::Vertex::Default::MeshIdentifierLocation,
 			3, GL_FLOAT, GL_FALSE, gle::Mesh::VertexAttributesSize * sizeof(GLfloat),
 			(GLvoid*)((offset
 				   + gle::Mesh::VertexAttributeSizeCoords
 				   + gle::Mesh::VertexAttributeSizeNormal
+				   + gle::Mesh::VertexAttributeSizeTangent
 				   + gle::Mesh::VertexAttributeSizeTextureCoords)
 				  * sizeof(GLfloat)));
 
   // Set up ColorMap
-  _currentProgram->setUniform(gle::Program::HasColorMap, material->isColorMapEnabled());
-  if (material->isColorMapEnabled())
+  if (material->isColorMapEnabled() || material->isNormalMapEnabled())
     {
       // Set texture coords attribute
       glEnableVertexAttribArray(gle::ShaderSource::Vertex::
@@ -241,9 +323,12 @@ void gle::Renderer::_renderMeshes(gle::Scene* scene, gle::Mesh* mesh)
                             2, GL_FLOAT, GL_FALSE, gle::Mesh::VertexAttributesSize * sizeof(GLfloat),
 			    (GLvoid*)((offset
 				       + gle::Mesh::VertexAttributeSizeCoords
-				       + gle::Mesh::VertexAttributeSizeNormal)
+				       + gle::Mesh::VertexAttributeSizeNormal
+				       + gle::Mesh::VertexAttributeSizeTangent)
 				      * sizeof(GLfloat)));
-
+    }
+  if (material->isColorMapEnabled())
+    {
       // Set texture to the shader
       gle::Texture* colorMap = material->getColorMap();
       glActiveTexture(gle::Program::ColorMapTexture);
@@ -251,12 +336,36 @@ void gle::Renderer::_renderMeshes(gle::Scene* scene, gle::Mesh* mesh)
       _currentProgram->setUniform(gle::Program::ColorMap,
       				  gle::Program::ColorMapTextureIndex);
     }
+  if (material->isNormalMapEnabled())
+    {
+      // Set texture to the shader
+      gle::Texture* normalMap = material->getNormalMap();
+      glActiveTexture(gle::Program::NormalMapTexture);
+      normalMap->bind();
+      _currentProgram->setUniform(gle::Program::NormalMap,
+      				  gle::Program::NormalMapTextureIndex);
+    }
+  gle::Exception::CheckOpenGLError("Set uniform Normal map");
+
+  // Set up EnvMap
+  if (material->isEnvMapEnabled())
+    {
+      gle::EnvironmentMap* envMap = material->getEnvMap();
+      if (envMap->getType() == EnvironmentMap::CubeMap)
+	{
+	  glActiveTexture(gle::Program::CubeMapTexture);
+	  envMap->bind();
+	  _currentProgram->setUniform(gle::Program::CubeMap,
+				      gle::Program::CubeMapTextureIndex);
+	}
+    }
 
   // Draw the mesh elements
   _indexesBuffer.bind();
 
   glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
   glDrawElements(GL_TRIANGLES, _indexesBuffer.getSize(), GL_UNSIGNED_INT, 0);
+  glDisableVertexAttribArray(gle::ShaderSource::Vertex::ColorMap::TextureCoordLocation);  
 }
 
 void gle::Renderer::_setCurrentProgram(gle::Scene* scene,
@@ -281,8 +390,9 @@ void gle::Renderer::_setSceneUniforms(gle::Scene* scene, gle::Camera* camera)
 {
   const gle::Matrix4<GLfloat> & projectionMatrix = camera->getProjectionMatrix();
 
-  _currentProgram->setUniform(gle::Program::CameraMatrix, camera->getTransformationMatrix());
+  _currentProgram->setUniform(gle::Program::ViewMatrix, camera->getTransformationMatrix());
   _currentProgram->setUniform(gle::Program::PMatrix, projectionMatrix);
+  _currentProgram->setUniform(gle::Program::CameraPos, camera->getAbsolutePosition());
   _currentProgram->setUniform(gle::Program::FogColor, scene->getFogColor());
   _currentProgram->setUniform(gle::Program::FogDensity, scene->getFogDensity());
   // Send light infos to the shader
@@ -299,17 +409,17 @@ void gle::Renderer::_setSceneUniforms(gle::Scene* scene, gle::Camera* camera)
   if (scene->getPointLightsSize())
     {
       _currentProgram->setUniform3(gle::Program::PointLightPosition,
-				    scene->getPointLightsPosition(),
-				    scene->getPointLightsSize());
+      			    scene->getPointLightsPosition(),
+      			    scene->getPointLightsSize());
       _currentProgram->setUniform3(gle::Program::PointLightColor,
-				    scene->getPointLightsColor(),
-				    scene->getPointLightsSize());
+      			    scene->getPointLightsColor(),
+      				    scene->getPointLightsSize());
       _currentProgram->setUniform3(gle::Program::PointLightSpecularColor,
-				    scene->getPointLightsSpecularColor(),
-				    scene->getPointLightsSize());
+      			    scene->getPointLightsSpecularColor(),
+      			    scene->getPointLightsSize());
       _currentProgram->setUniform3(gle::Program::PointLightAttenuation,
-				    scene->getPointLightsAttenuation(),
-				    scene->getPointLightsSize());
+      			    scene->getPointLightsAttenuation(),
+      			    scene->getPointLightsSize());
     }
   if (scene->getSpotLightsSize())
     {
@@ -340,5 +450,5 @@ void gle::Renderer::_setMeshUniforms(gle::Scene* scene, gle::Mesh* mesh)
   if (!mesh->isDynamic())
     return ;
 
-  _currentProgram->setUniform(gle::Program::MVMatrix, mesh->getTransformationMatrix());
+  //_currentProgram->setUniform(gle::Program::MWMatrix, mesh->getTransformationMatrix());
 }

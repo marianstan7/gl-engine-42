@@ -5,7 +5,7 @@
 // Login   <michar_l@epitech.net>
 // 
 // Started on  Mon Feb 20 18:25:23 2012 loick michard
-// Last update Wed Jun 20 16:25:02 2012 gael jochaud-du-plessix
+// Last update Thu Jun 21 00:21:39 2012 loick michard
 //
 
 #include <Mesh.hpp>
@@ -88,8 +88,6 @@ gle::Mesh::Mesh(gle::Mesh const & other)
 	indexes[i] = indexes[i] - oldOffset + newOffset;
       _indexes->unmap();
     }
-  // if (_attributes)
-  //   _attributes->retain();
 }
 
 gle::Mesh::~Mesh()
@@ -183,6 +181,22 @@ void gle::Mesh::setNormals(const GLfloat* normals, GLsizeiptr size)
   _attributes->unmap();
 }
 
+void gle::Mesh::setTangents(const GLfloat* tangents, GLsizeiptr size)
+{
+  GLsizeiptr nbVertexes = size / VertexAttributeSizeTangent;
+
+  _nbVertexes = nbVertexes;
+  if (!_attributes)
+    _attributes = MeshBufferManager::getInstance()
+      .store(NULL, nbVertexes * VertexAttributesSize);
+  GLfloat* attributes = _attributes->map();
+  for (GLsizeiptr i = 0; i < nbVertexes; ++i)
+    for (GLuint j = 0; j < VertexAttributeSizeTangent; ++j)
+      attributes[i * VertexAttributesSize + VertexAttributeSizeCoords + VertexAttributeSizeNormal + j] =
+	tangents[i * VertexAttributeSizeTangent + j];
+  _attributes->unmap();
+}
+
 void gle::Mesh::setTextureCoords(const GLfloat* textureCoords, GLsizeiptr size)
 {
   GLsizeiptr nbVertexes = size / VertexAttributeSizeTextureCoords;
@@ -194,9 +208,8 @@ void gle::Mesh::setTextureCoords(const GLfloat* textureCoords, GLsizeiptr size)
   GLfloat* attributes = _attributes->map();
   for (GLsizeiptr i = 0; i < nbVertexes; ++i)
     for (GLuint j = 0; j < VertexAttributeSizeTextureCoords; ++j)
-      attributes[i * VertexAttributesSize
-		 + VertexAttributeSizeCoords
-		 + VertexAttributeSizeNormal + j] =
+      attributes[i * VertexAttributesSize + VertexAttributeSizeCoords +
+		 VertexAttributeSizeNormal + VertexAttributeSizeTangent + j] =
 	textureCoords[i * VertexAttributeSizeTextureCoords + j];
   _attributes->unmap();
 }
@@ -247,6 +260,22 @@ void gle::Mesh::setNormals(gle::Array<GLfloat> const &normals)
   _attributes->unmap();
 }
 
+void gle::Mesh::setTangents(gle::Array<GLfloat> const &tangents)
+{
+  GLsizeiptr nbVertexes = tangents.size() / VertexAttributeSizeTangent;
+
+  _nbVertexes = nbVertexes;
+  if (!_attributes)
+    _attributes = MeshBufferManager::getInstance()
+      .store(NULL, nbVertexes * VertexAttributesSize);
+  GLfloat* attributes = _attributes->map();
+  for (GLsizeiptr i = 0; i < nbVertexes; ++i)
+    for (GLuint j = 0; j < VertexAttributeSizeTangent; ++j)
+      attributes[i * VertexAttributesSize + VertexAttributeSizeCoords + VertexAttributeSizeNormal + j] =
+	tangents[(GLuint)(i * VertexAttributeSizeTangent + j)];
+  _attributes->unmap();
+}
+
 void gle::Mesh::setTextureCoords(gle::Array<GLfloat> const &textureCoords)
 {
   GLsizeiptr nbVertexes = textureCoords.size() / VertexAttributeSizeTextureCoords;
@@ -259,7 +288,7 @@ void gle::Mesh::setTextureCoords(gle::Array<GLfloat> const &textureCoords)
   for (GLsizeiptr i = 0; i < nbVertexes; ++i)
     for (GLuint j = 0; j < VertexAttributeSizeTextureCoords; ++j)
       attributes[i * VertexAttributesSize + VertexAttributeSizeCoords +
-		 VertexAttributeSizeNormal + j] =
+		 VertexAttributeSizeNormal + VertexAttributeSizeTangent + j] =
 	textureCoords[(GLuint)(i * VertexAttributeSizeTextureCoords + j)];
   _attributes->unmap();
 }
@@ -285,16 +314,19 @@ void gle::Mesh::setIdentifiers(GLuint meshId, GLuint materialId)
       attributes[i * VertexAttributesSize
 		 + VertexAttributeSizeCoords
 		 + VertexAttributeSizeNormal
+		 + VertexAttributeSizeTangent
 		 + VertexAttributeSizeTextureCoords
 		 + 0] = isDynamic() ? 1.0 : 0.0;
       attributes[i * VertexAttributesSize
 		 + VertexAttributeSizeCoords
 		 + VertexAttributeSizeNormal
+		 + VertexAttributeSizeTangent
 		 + VertexAttributeSizeTextureCoords
 		 + 1] = (GLfloat)meshId;
       attributes[i * VertexAttributesSize
 		 + VertexAttributeSizeCoords
 		 + VertexAttributeSizeNormal
+		 + VertexAttributeSizeTangent
 		 + VertexAttributeSizeTextureCoords
 		 + 2] = (GLfloat)materialId;
 

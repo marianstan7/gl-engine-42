@@ -5,13 +5,14 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Fri Mar  2 17:27:21 2012 gael jochaud-du-plessix
-// Last update Wed Jun 20 16:23:20 2012 gael jochaud-du-plessix
+// Last update Thu Jun 21 00:50:14 2012 loick michard
 //
 
 #include <iostream>
 
 #include "TextureFrameBuffer.hpp"
 #include "Example.hpp"
+#include "CubeMap.hpp"
 
 #define W_WIDTH 1280
 #define W_HEIGHT 720
@@ -115,6 +116,7 @@ public:
     gle::Material* screenMaterial = new gle::Material();
     screenMaterial->setSpecularLightEnabled(false);
     gle::Mesh* screenPlane = gle::Geometries::Plane(material, 16*2, 9*2);
+
     screenPlane->rotate(gle::Vector3f(1, 0, 0), 90);
     screenPlane->setPosition(gle::Vector3f(0, 20, -50));
 
@@ -125,6 +127,7 @@ public:
     *_scene << screenPlane;
 
     *_scene << _camera;// << _light;// << _light2;// << sp;
+    
     _camera->addChild(_light);
     _scene->update();
 

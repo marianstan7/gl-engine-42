@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Mon Feb 20 22:50:35 2012 gael jochaud-du-plessix
-// Last update Wed Jun 20 15:58:57 2012 gael jochaud-du-plessix
+// Last update Thu Jun 21 00:55:07 2012 loick michard
 //
 
 #include <Material.hpp>
@@ -20,6 +20,8 @@ gle::Material::Material(std::string const & name) :
   _diffuseLightEnabled(true), _specularLightEnabled(true),
   _shininess(50), _diffuseIntensity(1), _specularIntensity(1),
   _colorMapEnabled(false), _colorMap(NULL),
+  _normalMapEnabled(false), _normalMap(NULL),
+  _envMapEnabled(false), _envMap(NULL),
   _uniforms(NULL), _uniformsBuffer(NULL),
   _needUniformsUpdate(true), _needUniformsBufferUpdate(true)
 {
@@ -141,6 +143,17 @@ GLfloat gle::Material::getSpecularIntensity() const
   return (_specularLightEnabled ? _specularIntensity : 0);
 }
 
+void gle::Material::setReflectionIntensity(GLfloat reflectionIntensity)
+{
+  _reflectionIntensity = reflectionIntensity;
+  _needUniformsUpdate = true;
+}
+
+GLfloat gle::Material::getReflectionIntensity() const
+{
+  return (_reflectionIntensity);
+}
+
 bool gle::Material::isColorMapEnabled() const
 {
   return (_colorMapEnabled);
@@ -162,6 +175,50 @@ void gle::Material::setColorMap(gle::Texture* colorMap)
   _colorMap = colorMap;
   _colorMapEnabled = colorMap != NULL ? true : false;
   _needUniformsUpdate = true;
+}
+
+bool gle::Material::isNormalMapEnabled() const
+{
+  return (_normalMapEnabled);
+}
+
+void gle::Material::setNormalMapEnabled(bool enabled)
+{
+  _normalMapEnabled = enabled;
+  _needUniformsUpdate = true;
+}
+
+gle::Texture* gle::Material::getNormalMap() const
+{
+  return (_normalMap);
+}
+
+void gle::Material::setNormalMap(gle::Texture* normalMap)
+{
+  _normalMap = normalMap;
+  _normalMapEnabled = normalMap != NULL ? true : false;
+  _needUniformsUpdate = true;
+}
+
+bool gle::Material::isEnvMapEnabled() const
+{
+  return (_envMapEnabled);
+}
+
+void gle::Material::setEnvEnabled(bool enabled)
+{
+  _envMapEnabled = enabled;
+}
+
+void gle::Material::setEnvMap(gle::EnvironmentMap* envMap)
+{
+  _envMap = envMap;
+  _envMapEnabled = true;
+}
+
+gle::EnvironmentMap* gle::Material::getEnvMap() const
+{
+  return (_envMap);
 }
 
 gle::Buffer<GLfloat>* gle::Material::getUniformsBuffer() const
@@ -195,6 +252,10 @@ const GLfloat* gle::Material::getUniforms() const
       _uniforms[12] = _shininess;
       _uniforms[13] = getSpecularIntensity();
       _uniforms[14] = getDiffuseIntensity();
+      _uniforms[15] = _reflectionIntensity;
+      _uniforms[16] = (_envMapEnabled && _envMap) ? _envMap->getType() : 0;
+      _uniforms[17] = (_colorMapEnabled && _colorMap) ? 1.0 : 0.0;
+      _uniforms[18] = (_normalMapEnabled && _normalMap) ? 1.0 : 0.0;
       _needUniformsUpdate = false;
     }
   return (_uniforms);
@@ -202,8 +263,12 @@ const GLfloat* gle::Material::getUniforms() const
 
 bool gle::Material::canBeRenderedWith(const gle::Material* other) const
 {
-   if (!_colorMapEnabled || !other->isColorMapEnabled()
-      || _colorMap == other->getColorMap())
+  if ((!_colorMapEnabled || !other->isColorMapEnabled()
+       || _colorMap == other->getColorMap()) &&
+      (!_normalMapEnabled || !other->isNormalMapEnabled()
+       || _normalMap == other->getNormalMap()) &&
+      (!_envMapEnabled || !other->isEnvMapEnabled()
+       || _envMap == other->getEnvMap()))
     return (true);
   return (false);
 }

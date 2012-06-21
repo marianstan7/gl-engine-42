@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Wed Feb 15 17:24:36 2012 gael jochaud-du-plessix
-// Last update Wed Jun  6 19:53:17 2012 gael jochaud-du-plessix
+// Last update Tue Jun 12 17:36:34 2012 loick michard
 //
 
 /*! 
@@ -74,11 +74,11 @@ int glEngine(int ac, char **av)
   material.setShininess(32);
 
   gle::ObjLoader loader;
-  gle::Mesh* model = loader.load("./models/WaltDisneyHeads.obj", &material);
+  gle::Scene::Node* model = loader.load("./models/WaltDisneyHeads.obj", &material);
 
   if (model)
     {
-      std::vector<gle::Mesh*> childs;
+      std::vector<gle::Scene::Node*> childs;
       model->getChildrenByName("DisneyHead_hires", childs);
       model->getChildrenByName("Disney_hires", childs);
       scene << childs;

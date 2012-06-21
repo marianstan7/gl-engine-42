@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Fri Feb 17 16:21:24 2012 gael jochaud-du-plessix
-// Last update Thu Jun  7 21:46:22 2012 gael jochaud-du-plessix
+// Last update Wed Jun 20 23:29:46 2012 loick michard
 //
 
 #ifndef _GLE_PROGRAM_HPP_
@@ -32,12 +32,15 @@ namespace gle {
     //! Uniforms that can be set in a program
     enum Uniform {
       MVMatrix,
+      MWMatrix,
       PMatrix,
-      CameraMatrix,
+      CameraPos,
+      ViewMatrix,
       FogColor,
       FogDensity,
       ColorMap,
-      HasColorMap,
+      NormalMap,
+      CubeMap,
       NMatrix,
       AmbientColor,
       DiffuseColor,
@@ -70,6 +73,10 @@ namespace gle {
     enum TextureUnit {
       ColorMapTexture = GL_TEXTURE0,
       ColorMapTextureIndex = 0,
+      NormalMapTexture = GL_TEXTURE1,
+      NormalMapTextureIndex = 1,
+      CubeMapTexture = GL_TEXTURE2,
+      CubeMapTextureIndex = 2,
     };
     
     //! Create a new OpenGL Program
@@ -141,6 +148,8 @@ namespace gle {
 
     //! Set a value of an uniform bool
     void setUniform(Uniform uniform, bool value);
+
+    void setUniform(Uniform uniform, const Vector3f& value);
 
     //! Return the OpenGL Program identifier
     GLuint getId() const;

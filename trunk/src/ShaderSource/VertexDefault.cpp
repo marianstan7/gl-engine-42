@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Tue Feb 21 15:47:17 2012 gael jochaud-du-plessix
-// Last update Thu Jun  7 16:43:36 2012 gael jochaud-du-plessix
+// Last update Thu Jun 21 00:14:15 2012 loick michard
 //
 
 #include <gle/opengl.h>
@@ -34,7 +34,8 @@ const char *gle::ShaderSource::Vertex::Default::UniformDeclarations =
 	
 GLuint gle::ShaderSource::Vertex::Default::PositionLocation = 0;
 GLuint gle::ShaderSource::Vertex::Default::NormalLocation = 1;
-GLuint gle::ShaderSource::Vertex::Default::MeshIdentifierLocation = 3;
+GLuint gle::ShaderSource::Vertex::Default::TangentLocation = 2;
+GLuint gle::ShaderSource::Vertex::Default::MeshIdentifierLocation = 4;
 
 const char * gle::ShaderSource::Vertex::Default::InputLocations =
   "#define GLE_IN_VERTEX_POSITION_LOCATION 0 \n"

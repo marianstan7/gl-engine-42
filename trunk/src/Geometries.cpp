@@ -5,7 +5,7 @@
 // Login   <michar_l@epitech.net>
 // 
 // Started on  Mon Feb 20 22:34:18 2012 loick michard
-// Last update Fri Jun  8 17:16:10 2012 gael jochaud-du-plessix
+// Last update Thu Jun 21 00:15:15 2012 loick michard
 //
 
 #include <cmath>
@@ -111,6 +111,44 @@ gle::Mesh* gle::Geometries::Cuboid(gle::Material* material,
     -1.0,  0.0,  0.0
   };
 
+  GLfloat tangents[] = {
+    //! Top face
+    0.0,  0.0,  1.0,
+    0.0,  0.0,  1.0,
+    0.0,  0.0,  1.0,
+    0.0,  0.0,  1.0,
+
+    //! Bottom face
+    0.0, 0.0,  -1.0,
+    0.0, 0.0,  -1.0,
+    0.0, 0.0,  -1.0,
+    0.0, 0.0,  -1.0,
+
+    //! Front face
+    1.0,  0.0,  0.0,
+    1.0,  0.0,  0.0,
+    1.0,  0.0,  0.0,
+    1.0,  0.0,  0.0,
+
+    //! Back face
+    -1.0,  0.0, 0.0,
+    -1.0,  0.0, 0.0,
+    -1.0,  0.0, 0.0,
+    -1.0,  0.0, 0.0,
+
+    //! Right face
+    0.0,  1.0,  0.0,
+    0.0,  1.0,  0.0,
+    0.0,  1.0,  0.0,
+    0.0,  1.0,  0.0,
+
+    //! Left face
+    0.0,  -1.0,  0.0,
+    0.0,  -1.0,  0.0,
+    0.0,  -1.0,  0.0,
+    0.0,  -1.0,  0.0
+  };
+
   GLfloat textureCoords[] = {
     // Front face
     0.0, 0.0,
@@ -125,33 +163,36 @@ gle::Mesh* gle::Geometries::Cuboid(gle::Material* material,
     0.0, 0.0,
 
     // Top face
-    0.0, 1.0,
-    0.0, 0.0,
-    1.0, 0.0,
+
     1.0, 1.0,
+    1.0, 0.0,
+    0.0, 0.0,   
+    0.0, 1.0,
 
     // Bottom face
-    1.0, 1.0,
-    0.0, 1.0,
     0.0, 0.0,
     1.0, 0.0,
+    1.0, 1.0,
+    0.0, 1.0,
+
 
     // Right face
     1.0, 0.0,
-    1.0, 1.0,
-    0.0, 1.0,
     0.0, 0.0,
+    0.0, 1.0,
+    1.0, 1.0,
 
     // Left face
+    0.0, 1.0,
     0.0, 0.0,
     1.0, 0.0,
-    1.0, 1.0,
-    0.0, 1.0
+    1.0, 1.0
   };
 
   gle::Mesh *cuboid = new gle::Mesh(material);
   cuboid->setVertexes(vertexes, sizeof(vertexes) / sizeof(GLfloat), boundingVolume);
   cuboid->setNormals(normals, sizeof(normals) / sizeof(GLfloat));
+  cuboid->setTangents(tangents, sizeof(tangents) / sizeof(GLfloat));
   cuboid->setTextureCoords(textureCoords,
 			   sizeof(textureCoords) / sizeof(GLfloat));
   cuboid->setIndexes(indexes, sizeof(indexes) / sizeof(GLuint));
@@ -164,6 +205,7 @@ gle::Mesh* gle::Geometries::Sphere(gle::Material* material,
 {
   gle::Array<GLfloat> vertexes;
   gle::Array<GLfloat> normals;
+  gle::Array<GLfloat> tangents;
   gle::Array<GLuint> indexes;
   gle::Array<GLfloat> uv;
 
@@ -183,6 +225,30 @@ gle::Mesh* gle::Geometries::Sphere(gle::Material* material,
 	  normals.push_back(x);
 	  normals.push_back(y);
 	  normals.push_back(z);
+	  gle::Vector3f normal(x, y, z);
+	  normal.normalize();
+	  for (int i = 1; i <= 4; i++)
+	    {
+	      if (i == 4)
+		{
+		  tangents.push_back(0);
+		  tangents.push_back(0);
+		  tangents.push_back(0);
+		  break;
+		}
+	      gle::Vector3f tangent;
+	      tangent.x = sin(theta + (i % 2) * (M_PI / 2.0)) * cos(phi + (i / 2) * (M_PI / 2.0));
+	      tangent.y = cos(theta + (i % 2) * (M_PI / 2.0));
+	      tangent.z = sin(theta + (i % 2) * (M_PI / 2.0)) * sin(phi + (i / 2) * (M_PI / 2.0));
+	      tangent.normalize();
+	      if (tangent * normal > -0.01 && tangent * normal < 0.01)
+		{
+		  tangents.push_back(tangent.x);
+		  tangents.push_back(tangent.y);
+		  tangents.push_back(tangent.z);
+		  break;
+		}
+	    }
 	  uv.push_back(1.0 - (st / stacks));
 	  uv.push_back(1.0 - sl / slices);
 	  if (sl != slices && st != stacks)
@@ -201,6 +267,7 @@ gle::Mesh* gle::Geometries::Sphere(gle::Material* material,
   gle::Mesh * mesh = new gle::Mesh(material);
   mesh->setVertexes(vertexes, boundingVolume);
   mesh->setNormals(normals);
+  mesh->setTangents(tangents);
   mesh->setTextureCoords(uv);
   mesh->setIndexes(indexes);
   return (mesh);
@@ -209,10 +276,12 @@ gle::Mesh* gle::Geometries::Sphere(gle::Material* material,
 
 gle::Mesh* gle::Geometries::Plane(gle::Material* material,
 				  GLfloat width, GLfloat height,
-				  GLint divisionsX, GLint divisionsY, bool boundingVolume)
+				  GLint divisionsX, GLint divisionsY,
+				  GLint textureX, GLint textureY, bool boundingVolume)
 {
   gle::Array<GLfloat> vertexes;
   gle::Array<GLfloat> normals;
+  gle::Array<GLfloat> tangents;
   gle::Array<GLuint> indexes;
   gle::Array<GLfloat> uv;
   
@@ -223,8 +292,9 @@ gle::Mesh* gle::Geometries::Plane(gle::Material* material,
 	  vertexes.push((-width / 2) + width * (x / divisionsX), 0,
 			(-height / 2) + height * (y / divisionsY));
 	  normals.push(0, 1, 0);
-	  uv.push(x / divisionsX);
-	  uv.push(y / divisionsY);
+	  tangents.push(1, 0, 0);
+	  uv.push(x / divisionsX * textureX);
+	  uv.push(y / divisionsY * textureY);
 	  if (x != divisionsX && y != divisionsY)
 	    {
 
@@ -241,6 +311,7 @@ gle::Mesh* gle::Geometries::Plane(gle::Material* material,
   gle::Mesh * mesh = new gle::Mesh(material);
   mesh->setVertexes(vertexes, boundingVolume);
   mesh->setNormals(normals);
+  mesh->setTangents(tangents);
   mesh->setTextureCoords(uv);
   mesh->setIndexes(indexes);
   return (mesh);

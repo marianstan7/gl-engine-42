@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Fri Mar  2 17:27:21 2012 gael jochaud-du-plessix
-// Last update Wed Jun 20 16:29:59 2012 gael jochaud-du-plessix
+// Last update Thu Jun 21 01:50:48 2012 loick michard
 //
 
 #include <iostream>
@@ -30,7 +30,7 @@
 #define W_HEIGHT 720
 #define W_FRAMERATE 3000
 
-#define NB_HOUSES 4
+#define NB_HOUSES 6
 
 class App : public Example {
 public:
@@ -60,15 +60,15 @@ public:
 
     sf::Clock modelTime;
 
-    gle::Mesh* houseModel = loader.load("./examples/city_resources/houseUK.obj",
-					NULL);
-    gle::Mesh* house2Model = new gle::Mesh(*houseModel);
+    gle::Scene::Node* houseModel = loader.load("./examples/city_resources/houseUK.obj",
+					       NULL);
+    gle::Scene::Node* house2Model = new gle::Scene::Node(*houseModel);
     house2Model->setScale(12, 10, -10);
-    gle::Mesh* carModelBase =
+    gle::Scene::Node* carModelBase =
       loader.load("./examples/city_resources/db9/db9.obj", NULL);  
     carModelBase->setScale(5, 5, 5);
     carModelBase->setRotation(gle::Vector3<GLfloat>(1, 0, 0), -90);
-    gle::Mesh* carModel = new gle::Mesh();
+    gle::Scene::Node* carModel = new gle::Scene::Node();
     carModel->addChild(carModelBase);
 
     std::cout << "Models loading: "
@@ -81,10 +81,11 @@ public:
     for (int i = 0; i < NB_HOUSES; ++i)
       {
 	std::cout << "House " << i << "\n";
-	gle::Mesh* house = new gle::Mesh(*houseModel);
-	gle::Mesh* house2 = new gle::Mesh(*house2Model);
-	gle::Mesh* car = new gle::Mesh(*carModel);
-	gle::Mesh* car2 = new gle::Mesh(*carModel);
+	gle::Scene::Node* house = new gle::Scene::Node(*houseModel);
+	gle::Scene::Node* house2 = new gle::Scene::Node(*house2Model);
+	gle::Scene::Node* car = new gle::Scene::Node(*carModel);
+	gle::Scene::Node* car2 = new gle::Scene::Node(*carModel);
+
 	car->setPosition(gle::Vector3<GLfloat>(-22 + i * 65, 0.6, 25));
 	house->setPosition(gle::Vector3<GLfloat>(i * 71, 0, 0));
 	house2->setPosition(gle::Vector3<GLfloat>(i * 71, -0.1, 150));

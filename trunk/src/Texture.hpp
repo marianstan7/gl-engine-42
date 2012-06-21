@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Wed Feb 29 19:37:51 2012 gael jochaud-du-plessix
-// Last update Mon Jun  4 16:06:00 2012 gael jochaud-du-plessix
+// Last update Sun Jun 17 20:48:28 2012 loick michard
 //
 
 #ifndef _GLE_TEXTURE_HPP_
@@ -15,13 +15,25 @@
 # include <string>
 # include <gle/opengl.h>
 # include <Rect.hpp>
+# include <Image.hpp>
 
 namespace gle {
 
   class Texture {
   public:
     enum Type {
-      Texture2D = GL_TEXTURE_2D
+      Texture2D = GL_TEXTURE_2D,
+      CubeMap = GL_TEXTURE_CUBE_MAP
+    };
+    
+    enum Target {
+      Tex2D = GL_TEXTURE_2D,
+      PosX = GL_TEXTURE_CUBE_MAP_POSITIVE_X,
+      NegX = GL_TEXTURE_CUBE_MAP_NEGATIVE_X,
+      PosY = GL_TEXTURE_CUBE_MAP_POSITIVE_Y,
+      NegY = GL_TEXTURE_CUBE_MAP_NEGATIVE_Y,
+      PosZ = GL_TEXTURE_CUBE_MAP_POSITIVE_Z,
+      NegZ = GL_TEXTURE_CUBE_MAP_NEGATIVE_Z
     };
 
     enum InternalFormat {
@@ -30,16 +42,15 @@ namespace gle {
       CompressedRGBA = GL_COMPRESSED_RGBA
     };
 
-    Texture(std::string filename, Type type=Texture2D, InternalFormat internalFormat=CompressedRGBA);
+    Texture(const Image& image, Type type=Texture2D, InternalFormat internalFormat=CompressedRGBA);
     Texture(GLuint width=0, GLuint height=0, Type type=Texture2D, InternalFormat internalFormat=CompressedRGBA);
 
     ~Texture();
 
     void bind();
     
-    void setData(std::string filename);
-    void setData(sf::Image const & image);
-    void setData(const char* pixelsPtr, GLuint width=0, GLuint height=0);
+    void setData(const Image& image, Target target=Tex2D);
+    void setData(const char* data, GLuint width, GLuint height, Target target=Tex2D);
 
     void generateMipmap();
 

@@ -5,13 +5,13 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Thu Mar  1 19:41:10 2012 gael jochaud-du-plessix
-// Last update Thu Mar  1 21:02:47 2012 gael jochaud-du-plessix
+// Last update Thu Jun 21 00:14:03 2012 loick michard
 //
 
 #include <gle/opengl.h>
 #include <ShaderSource.hpp>
 
-GLuint gle::ShaderSource::Vertex::ColorMap::TextureCoordLocation = 2;
+GLuint gle::ShaderSource::Vertex::ColorMap::TextureCoordLocation = 3;
 
 const char * gle::ShaderSource::Vertex::ColorMap::InputLocations =
   "#define GLE_IN_VERTEX_TEXTURE_COORD_LOCATION 2 \n"

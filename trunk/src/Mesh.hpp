@@ -5,7 +5,7 @@
 // Login   <michar_l@epitech.net>
 // 
 // Started on  Mon Feb 20 13:20:54 2012 loick michard
-// Last update Wed Jun 20 14:14:32 2012 gael jochaud-du-plessix
+// Last update Thu Jun 21 00:18:39 2012 loick michard
 //
 
 #ifndef _MESH_HPP_
@@ -65,6 +65,9 @@ namespace gle {
     //! Size of the vertex normal attribute
     static const GLsizeiptr VertexAttributeSizeNormal = 3;
 
+    //! Size of the vertex tangent attribute
+    static const GLsizeiptr VertexAttributeSizeTangent = 3;
+
     //! Size of the vertex texture coords attribute
     static const GLsizeiptr VertexAttributeSizeTextureCoords = 2;
 
@@ -76,6 +79,7 @@ namespace gle {
     static const GLsizeiptr VertexAttributesSize =
       (VertexAttributeSizeCoords
        + VertexAttributeSizeNormal
+       + VertexAttributeSizeTangent
        + VertexAttributeSizeTextureCoords
        + VertexAttributeMeshIdentifiers);
 
@@ -132,6 +136,8 @@ namespace gle {
 
     void setNormals(const GLfloat* normals, GLsizeiptr size);
 
+    void setTangents(const GLfloat* tangents, GLsizeiptr size);
+
     //! Set the mesh texture coords
 
     void setTextureCoords(const GLfloat* textureCoords, GLsizeiptr size);
@@ -147,6 +153,8 @@ namespace gle {
     //! Set the mesh normals
 
     void setNormals(gle::Array<GLfloat> const &vertexes);
+
+    void setTangents(gle::Array<GLfloat> const &tangents);
 
     //! Set the mesh texture coords
 

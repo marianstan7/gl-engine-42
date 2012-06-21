@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Fri May 25 12:25:22 2012 gael jochaud-du-plessix
-// Last update Thu Jun  7 12:09:53 2012 loick michard
+// Last update Mon Jun 18 22:52:44 2012 loick michard
 //
 
 #ifndef _EXAMPLE_HPP_
@@ -22,6 +22,7 @@
 # include <Renderer.hpp>
 # include <PointLight.hpp>
 # include <SpotLight.hpp>
+# include <DirectionalLight.hpp>
 # include <Exception.hpp>
 
 class Example {
