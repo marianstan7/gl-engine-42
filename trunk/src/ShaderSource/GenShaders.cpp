@@ -346,7 +346,7 @@ const char* gle::ShaderSource::FragmentShader =
 "	float reflectionIntensity = gle_material.materials[int(gle_varying_vMeshIdentifier.z)].reflectionIntensity;\n"
 "	float envMapType = gle_material.materials[int(gle_varying_vMeshIdentifier.z)].envMapType;\n"
 "	float hasColorMap = gle_material.materials[int(gle_varying_vMeshIdentifier.z)].hasColorMap;\n"
-"	float hasNormalMap = gle_material.materials[int(gle_varying_vMeshIdentifier.z)].hasNormalMap;\n"
+"	float hasNormalMap = gle_material.materials[0].hasNormalMap;\n"
 "	\n"
 "	vec3 lightWeighting = gle_varying_vLightWeighting;\n"
 "	vec3 bump = vec3(0.0, 1.0, 0.0);\n"
