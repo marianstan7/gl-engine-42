@@ -5,7 +5,7 @@
 // Login   <michar_l@epitech.net>
 // 
 // Started on  Fri Jun  8 01:53:33 2012 loick michard
-// Last update Sun Jun 17 22:11:25 2012 loick michard
+// Last update Thu Jun 21 17:06:57 2012 loick michard
 //
 
 #include <CubeMap.hpp>
@@ -29,12 +29,13 @@ gle::CubeMap::CubeMap(const Image& posx, const Image& negx, const Image& posy,
     throw new gle::Exception::InvalidValue("Invalid cube map texture size");
   _texture = new gle::Texture(0, 0, Texture::CubeMap);
   bind();
-  _texture->setData(posx, Texture::PosX);
-  _texture->setData(negx, Texture::NegX);
-  _texture->setData(posy, Texture::PosY);
-  _texture->setData(negy, Texture::NegY);
-  _texture->setData(posz, Texture::PosZ);
-  _texture->setData(negz, Texture::NegZ);
+  _texture->setData(posx, Texture::PosX, false);
+  _texture->setData(negx, Texture::NegX, false);
+  _texture->setData(posy, Texture::PosY, false);
+  _texture->setData(negy, Texture::NegY, false);
+  _texture->setData(posz, Texture::PosZ, false);
+  _texture->setData(negz, Texture::NegZ, false);
+  _texture->unbind();
 }
 
 gle::CubeMap::CubeMap(const std::string& folder, const std::string& extension) :

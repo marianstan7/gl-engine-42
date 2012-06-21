@@ -1,11 +1,11 @@
 //
-// Scene.cpp for  in /home/jochau_g//dev/opengl/glEngine/src
+// Scene.cpp for glEngine in /home/michar_l//gl-engine-42/src
 // 
-// Made by gael jochaud-du-plessix
-// Login   <jochau_g@epitech.net>
+// Made by loick michard
+// Login   <michar_l@epitech.net>
 // 
-// Started on  Mon Feb 20 19:12:49 2012 gael jochaud-du-plessix
-// Last update Thu Jun 21 15:15:21 2012 gael jochaud-du-plessix
+// Started on  Thu Jun 21 20:42:49 2012 loick michard
+// Last update Thu Jun 21 20:42:50 2012 loick michard
 //
 
 #include <Scene.hpp>
@@ -487,6 +487,9 @@ void		gle::Scene::update(gle::Scene::Node* node, int depth)
   Light*	light;
   Camera*	camera;
   bool		generate = false;
+  GLsizeiptr	directionalLightsSize = _directionalLightsSize;
+  GLsizeiptr	pointLightsSize = _pointLightsSize;
+  GLsizeiptr	spotLightsSize = _spotLightsSize;
 
   if (!node)
     {
@@ -501,7 +504,9 @@ void		gle::Scene::update(gle::Scene::Node* node, int depth)
   if (node->getType() == Node::Mesh && (mesh = dynamic_cast<Mesh*>(node)))
     {
       if (mesh->getBoundingVolume() && !mesh->isDynamic())
-	_meshesToRender.push_back(mesh);
+	{
+	  _meshesToRender.push_back(mesh);
+	}
       else
 	_unboundingMeshesToRender.push_back(mesh);
       if (_displayBoundingVolume && mesh->getBoundingVolume() &&
@@ -519,16 +524,19 @@ void		gle::Scene::update(gle::Scene::Node* node, int depth)
     generateTree();
   if (generate)
     {
-      _needProgramCompilation = true;
       updateLights();
       updateStaticMeshes();
+      if (directionalLightsSize != _directionalLightsSize ||
+	  pointLightsSize != _pointLightsSize ||
+	  spotLightsSize != _spotLightsSize)
+	_needProgramCompilation = true;
     }
 }
 
 void gle::Scene::updateStaticMeshes()
 {
   GLint	maxUniformBlockSize = -1, maxMeshByBuffer = 0;
-  
+ 
   glGetIntegerv(GL_MAX_UNIFORM_BLOCK_SIZE, &maxUniformBlockSize);
   maxMeshByBuffer = maxUniformBlockSize / (MeshUniformSize * sizeof(GLfloat));
 
@@ -641,7 +649,7 @@ void gle::Scene::setEnvMap(EnvironmentMap* envMap)
     }
   if (!_envMapMesh)
     {
-      _envMapMesh = Geometries::Cube(NULL, 1000);
+      _envMapMesh = Geometries::Cube(NULL, 1000, true);
     }
 }
 

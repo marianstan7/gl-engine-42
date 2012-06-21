@@ -5,7 +5,7 @@
 // Login   <michar_l@epitech.net>
 // 
 // Started on  Mon Feb 20 18:25:23 2012 loick michard
-// Last update Thu Jun 21 16:21:20 2012 gael jochaud-du-plessix
+// Last update Thu Jun 21 20:42:22 2012 loick michard
 //
 
 #include <Mesh.hpp>
@@ -56,7 +56,7 @@ std::list<gle::Scene::MeshGroup> gle::Mesh::factorizeForDrawing(std::list<gle::M
   return (groups);
 }
 
-gle::Mesh::Mesh(Material* material)
+gle::Mesh::Mesh(Material* material, bool absolute)
   : gle::Scene::Node(gle::Scene::Node::Mesh),
     _primitiveType(Triangles),
     _rasterizationMode(Fill),
@@ -68,7 +68,8 @@ gle::Mesh::Mesh(Material* material)
     _nbVertexes(0),
     _boundingVolume(NULL),
     _uniformBufferId(-1),
-    _materialBufferId(-1)
+    _materialBufferId(-1),
+    _absolute(absolute)
 {
   _indexes = new gle::Buffer<GLuint>(gle::Buffer<GLuint>::ElementArray,
 				     gle::Buffer<GLuint>::StaticDraw);
@@ -86,7 +87,8 @@ gle::Mesh::Mesh(gle::Mesh const & other)
     _nbVertexes(other._nbVertexes),
     _boundingVolume(NULL),
     _uniformBufferId(-1),
-    _materialBufferId(-1)
+    _materialBufferId(-1),
+    _absolute(other._absolute)
 {
   if (other._boundingVolume)
     _boundingVolume = other._boundingVolume->duplicate();
@@ -159,6 +161,7 @@ void gle::Mesh::setVertexAttributes(const GLfloat* attributes, GLsizeiptr nbVert
     _attributes = MeshBufferManager::getInstance()
       .resize(_attributes, nbVertexes * VertexAttributesSize, attributes);
   _nbVertexes = nbVertexes;
+  createBoundingVolume(attributes, 0, VertexAttributesSize, nbVertexes);
 }
 
 void gle::Mesh::setVertexes(const GLfloat* vertexes, GLsizeiptr size, bool boundingVolume)
@@ -177,12 +180,7 @@ void gle::Mesh::setVertexes(const GLfloat* vertexes, GLsizeiptr size, bool bound
   attributes[0] = vertexes[0];
   _attributes->unmap();
   if (boundingVolume)
-    {
-      if (_boundingVolume)
-	delete _boundingVolume;
-      _boundingVolume = new BoundingBox();
-      _boundingVolume->setBestFit(vertexes, size);
-    }
+    createBoundingVolume(attributes, 0, VertexAttributeSizeCoords, nbVertexes);
 }
 
 void gle::Mesh::setNormals(const GLfloat* normals, GLsizeiptr size)
@@ -238,7 +236,8 @@ void gle::Mesh::setIndexes(const GLuint* indexes, GLsizeiptr size)
 {
   _nbIndexes = size;
   _indexes->resize(size, indexes);
-  makeAbsoluteIndexes();
+  if (!_absolute)
+    makeAbsoluteIndexes();
 }
 
 void gle::Mesh::setVertexes(gle::Array<GLfloat> const &vertexes, bool boundingVolume)
@@ -256,12 +255,7 @@ void gle::Mesh::setVertexes(gle::Array<GLfloat> const &vertexes, bool boundingVo
 	vertexes[(GLuint)(i * VertexAttributeSizeCoords + j)];
   _attributes->unmap();
   if (boundingVolume)
-    {
-      if (_boundingVolume)
-	delete _boundingVolume;
-      _boundingVolume = new BoundingBox();
-      _boundingVolume->setBestFit(vertexes, vertexes.size());
-    }
+    createBoundingVolume((const GLfloat*)vertexes, 0, VertexAttributeSizeCoords, nbVertexes);
 }
 
 void gle::Mesh::setNormals(gle::Array<GLfloat> const &normals)
@@ -317,7 +311,8 @@ void gle::Mesh::setIndexes(gle::Array<GLuint> const &indexes)
 {
   _nbIndexes = indexes.size();
   _indexes->resize(indexes.size(), (GLuint const *)indexes);
-  makeAbsoluteIndexes();
+  if (!_absolute)
+    makeAbsoluteIndexes();
 }
 
 void gle::Mesh::setIdentifiers(GLuint meshId, GLuint materialId)
@@ -382,6 +377,14 @@ GLsizeiptr gle::Mesh::getNbIndexes() const
 GLsizeiptr gle::Mesh::getNbVertexes() const
 {
   return (_nbVertexes);
+}
+
+void gle::Mesh::createBoundingVolume(const GLfloat* datas, GLsizeiptr offset, GLsizeiptr attributeSize, GLsizeiptr nbVertexes)
+{
+  if (_boundingVolume)
+    delete _boundingVolume;
+  _boundingVolume = new BoundingBox();
+  _boundingVolume->setBestFit(datas, offset, attributeSize, nbVertexes);
 }
 
 gle::BoundingVolume* gle::Mesh::getBoundingVolume() const

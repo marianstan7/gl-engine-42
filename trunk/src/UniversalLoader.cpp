@@ -5,7 +5,7 @@
 // Login   <michar_l@epitech.net>
 // 
 // Started on  Tue Jun 12 16:10:58 2012 loick michard
-// Last update Mon Jun 18 21:03:14 2012 loick michard
+// Last update Thu Jun 21 20:44:11 2012 loick michard
 //
 
 #include <UniversalLoader.hpp>
@@ -60,7 +60,7 @@ gle::Material* gle::UniversalLoader::_loadAssimpMaterial(const std::string& file
     gleMaterial->setDiffuseColor(gle::Colorf(color.r, color.g, color.b, color.a));
   if (material->Get<aiColor4D>(AI_MATKEY_COLOR_SPECULAR, color) == AI_SUCCESS)
     gleMaterial->setSpecularColor(gle::Colorf(color.r, color.g, color.b, color.a));
-  
+		    
   float shininess, strength;
   if (material->Get<float>(AI_MATKEY_SHININESS, shininess) == AI_SUCCESS
       && material->Get<float>(AI_MATKEY_SHININESS_STRENGTH, strength) == AI_SUCCESS)
@@ -113,7 +113,8 @@ gle::Material* gle::UniversalLoader::_loadAssimpMaterial(const std::string& file
 	  try
 	    {
 	      std::cout << texture << std::endl;
-	      gleMaterial->setColorMap(new gle::Texture(texture));
+	      gle::Texture* tex = new gle::Texture(texture);
+	      gleMaterial->setColorMap(tex);
 	    }
 	  catch (std::exception* e)
 	    {
@@ -148,14 +149,16 @@ void gle::UniversalLoader::_loadAssimpNode(const aiScene* scene, aiNode* node)
 	      vertexAttributes[v * gle::Mesh::VertexAttributesSize + 2] = mesh->mVertices[v].z;
  	      if (mesh->mNormals)
 		{
-		  vertexAttributes[v * gle::Mesh::VertexAttributesSize + 3] = mesh->mNormals[v].x;
-		  vertexAttributes[v * gle::Mesh::VertexAttributesSize + 4] = mesh->mNormals[v].y;
-		  vertexAttributes[v * gle::Mesh::VertexAttributesSize + 5] = mesh->mNormals[v].z;
+		  vertexAttributes[v * gle::Mesh::VertexAttributesSize + gle::Mesh::VertexAttributeSizeCoords + 0] = mesh->mNormals[v].x;
+		  vertexAttributes[v * gle::Mesh::VertexAttributesSize + gle::Mesh::VertexAttributeSizeCoords + 1] = mesh->mNormals[v].y;
+		  vertexAttributes[v * gle::Mesh::VertexAttributesSize + gle::Mesh::VertexAttributeSizeCoords + 2] = mesh->mNormals[v].z;
 		}
 	      if (mesh->mTextureCoords[0])
 		{
-		  vertexAttributes[v * gle::Mesh::VertexAttributesSize + 8] = mesh->mTextureCoords[0][v].x;
-		  vertexAttributes[v * gle::Mesh::VertexAttributesSize + 9] = mesh->mTextureCoords[0][v].y;
+		  vertexAttributes[v * gle::Mesh::VertexAttributesSize + gle::Mesh::VertexAttributeSizeCoords +
+				   gle::Mesh::VertexAttributeSizeNormal + gle::Mesh::VertexAttributeSizeTangent + 0] = mesh->mTextureCoords[0][v].x;
+		  vertexAttributes[v * gle::Mesh::VertexAttributesSize + gle::Mesh::VertexAttributeSizeCoords +
+				   gle::Mesh::VertexAttributeSizeNormal + gle::Mesh::VertexAttributeSizeTangent + 1] = mesh->mTextureCoords[0][v].y;
 		}
 	    }
 	  gleMesh->setVertexAttributes(vertexAttributes, mesh->mNumVertices);

@@ -5,7 +5,7 @@
 // Login   <michar_l@epitech.net>
 // 
 // Started on  Wed May  2 16:41:28 2012 loick michard
-// Last update Wed May 23 10:58:03 2012 loick michard
+// Last update Thu Jun 21 20:17:08 2012 loick michard
 //
 
 #include <BoundingBox.hpp>
@@ -79,6 +79,44 @@ void gle::BoundingBox::setBestFit(const GLfloat* vertexes, GLsizeiptr size)
   _points[6] = Vector3<GLfloat> (_min.x, _min.y, _min.z);
   _points[7] = Vector3<GLfloat> (_max.x, _min.y, _min.z);
 }
+
+void gle::BoundingBox::setBestFit(const GLfloat* datas, GLsizeiptr offset, GLsizeiptr attributeSize, GLsizeiptr nbVertexes)
+{
+  for (GLsizeiptr i = 0; i < nbVertexes; ++i)
+    {
+      if (i == 0 || datas[offset + i * attributeSize + 0] < _min.x)
+	_min.x = datas[offset + i * attributeSize + 0];
+      if (i == 0 || datas[offset + i * attributeSize + 0] > _max.x)
+	_max.x = datas[offset + i * attributeSize + 0];
+      if (i == 0 || datas[offset + i * attributeSize + 1] < _min.y)
+	_min.y = datas[offset + i * attributeSize + 1];
+      if (i == 0 || datas[offset + i * attributeSize + 1] > _max.y)
+	_max.y = datas[offset + i * attributeSize + 1];
+      if (i == 0 || datas[offset + i * attributeSize + 2] < _min.z)
+	_min.z = datas[offset + i * attributeSize + 2];
+      if (i == 0 || datas[offset + i * attributeSize + 2] > _max.z)
+	_max.z = datas[offset + i * attributeSize + 2];
+    }
+  _center = (_max + _min);
+  _center /= 2.0;
+  /*  if (!_mesh)
+    _mesh = gle::Geometries::Cuboid(&_material,
+				    (_max.x - _min.x > 0) ? _max.x - _min.x : _min.x - _max.x,
+				    (_max.y - _min.y > 0) ? _max.y - _min.y : _min.y - _max.y,
+				    (_max.z - _min.z > 0) ? _max.z - _min.z : _min.z - _max.z, false); 
+  _mesh->setPosition(_center);
+  _mesh->setRasterizationMode(gle::Mesh::Line);*/
+  _points[0] = Vector3<GLfloat> (_max.x, _max.y, _max.z);
+  _points[1] = Vector3<GLfloat> (_min.x, _max.y, _max.z);
+  _points[2] = Vector3<GLfloat> (_min.x, _min.y, _max.z);
+  _points[3] = Vector3<GLfloat> (_max.x, _min.y, _max.z);
+  _points[4] = Vector3<GLfloat> (_max.x, _max.y, _min.z);
+  _points[5] = Vector3<GLfloat> (_min.x, _max.y, _min.z);
+  _points[6] = Vector3<GLfloat> (_min.x, _min.y, _min.z);
+  _points[7] = Vector3<GLfloat> (_max.x, _min.y, _min.z);
+}
+
+
 
 gle::Mesh* gle::BoundingBox::getMesh() const
 {

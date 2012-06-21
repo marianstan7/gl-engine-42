@@ -5,7 +5,7 @@
 // Login   <michar_l@epitech.net>
 // 
 // Started on  Wed May  2 16:41:28 2012 loick michard
-// Last update Wed May 30 14:19:04 2012 gael jochaud-du-plessix
+// Last update Thu Jun 21 20:19:53 2012 loick michard
 //
 
 #include <BoundingSphere.hpp>
@@ -63,6 +63,37 @@ void gle::BoundingSphere::setBestFit(const GLfloat* vertexes, GLsizeiptr size)
       GLfloat distance = (_center.x - vertexes[i * 3]) * (_center.x - vertexes[i * 3]) +
 	(_center.y - vertexes[i * 3 + 1]) * (_center.y - vertexes[i * 3 + 1]) +
 	(_center.z - vertexes[i * 3 + 2]) * (_center.z - vertexes[i * 3 + 2]);
+      if (_radius == -1 || distance > _radius)
+	_radius = distance;
+    }
+  _radius = sqrt(_radius);
+  /*  if (!_mesh)
+    _mesh = gle::Geometries::Sphere(&_material, _radius, 15, 15, false); 
+  _mesh->setPosition(_center);
+  _mesh->setRasterizationMode(gle::Mesh::Line);*/
+  _min = _center;
+  _min -= _radius;
+  _max = _center;
+  _max += _radius;
+}
+
+void gle::BoundingSphere::setBestFit(const GLfloat* datas, GLsizeiptr offset, GLsizeiptr attributeSize, GLsizeiptr nbVertexes)
+{
+  _center.x = 0;
+  _center.y = 0;
+  _center.z = 0;
+  _radius = -1;
+  for (GLsizeiptr i = 0; i < nbVertexes; ++i)
+    {
+      _center.x += datas[offset + i * attributeSize] / nbVertexes;
+      _center.y += datas[offset + i * attributeSize + 1] / nbVertexes;
+      _center.z += datas[offset + i * attributeSize + 2] / nbVertexes;
+    }
+  for (GLsizeiptr i = 0; i < nbVertexes; ++i)
+    {
+      GLfloat distance = (_center.x - datas[offset + i * attributeSize]) * (_center.x - datas[offset + i * attributeSize]) +
+	(_center.y - datas[offset + i * attributeSize + 1]) * (_center.y - datas[offset + i * attributeSize + 1]) +
+	(_center.z - datas[offset + i * attributeSize + 2]) * (_center.z - datas[offset + i * attributeSize + 2]);
       if (_radius == -1 || distance > _radius)
 	_radius = distance;
     }
