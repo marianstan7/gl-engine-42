@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Mon Feb 20 18:18:01 2012 gael jochaud-du-plessix
-// Last update Thu Jun 21 23:13:36 2012 gael jochaud-du-plessix
+// Last update Fri Jun 22 00:30:47 2012 gael jochaud-du-plessix
 //
 
 #ifndef _GLE_SCENE_HPP_
@@ -476,6 +476,13 @@ namespace gle {
     */
 
     void updateLights();
+
+    //! Update dynamic meshes
+    /*
+      This function has to be called when dynamic meshes are aded or removed form the scene.
+     */
+
+    void updateDynamicMeshes();
 
     //! Update static meshes
     /*!
