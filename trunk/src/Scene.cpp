@@ -5,7 +5,7 @@
 // Login   <michar_l@epitech.net>
 // 
 // Started on  Thu Jun 21 20:42:49 2012 loick michard
-// Last update Thu Jun 21 22:59:07 2012 gael jochaud-du-plessix
+// Last update Fri Jun 22 00:27:56 2012 gael jochaud-du-plessix
 //
 
 #include <Scene.hpp>
@@ -333,7 +333,7 @@ void		gle::Scene::buildProgram()
       throw e;
     }
 
-  //_program->getUniformLocation(gle::Program::MVMatrix);
+  _program->getUniformLocation(gle::Program::MWMatrix);
   _program->getUniformLocation(gle::Program::ViewMatrix);
   _program->getUniformLocation(gle::Program::PMatrix);
   _program->getUniformLocation(gle::Program::CameraPos);
@@ -522,12 +522,19 @@ void		gle::Scene::update(gle::Scene::Node* node, int depth)
   if (generate)
     {
       updateLights();
+      updateDynamicMeshes();
       updateStaticMeshes();
       if (directionalLightsSize != _directionalLightsSize ||
 	  pointLightsSize != _pointLightsSize ||
 	  spotLightsSize != _spotLightsSize)
 	_needProgramCompilation = true;
     }
+}
+
+void gle::Scene::updateDynamicMeshes()
+{
+  for (gle::Mesh* mesh : _dynamicMeshes)
+    mesh->setIdentifiers(0, 0);
 }
 
 void gle::Scene::updateStaticMeshes()

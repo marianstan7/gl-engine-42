@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Fri Mar  2 17:27:21 2012 gael jochaud-du-plessix
-// Last update Thu Jun 21 16:25:00 2012 gael jochaud-du-plessix
+// Last update Fri Jun 22 00:42:33 2012 gael jochaud-du-plessix
 //
 
 #include <iostream>
@@ -30,7 +30,7 @@
 #define W_HEIGHT 720
 #define W_FRAMERATE 3000
 
-#define NB_HOUSES 10
+#define NB_HOUSES 5
 
 class App : public Example {
 public:

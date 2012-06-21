@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Fri Mar  2 17:27:21 2012 gael jochaud-du-plessix
-// Last update Thu Jun 21 23:24:31 2012 gael jochaud-du-plessix
+// Last update Fri Jun 22 00:36:06 2012 gael jochaud-du-plessix
 //
 
 #include <iostream>
@@ -67,7 +67,7 @@ public:
     _cube = gle::Geometries::Cube(material2, 10, true);
     _cube->setPosition(gle::Vector3f(8, 0, -8));
     _cube->setRotation(gle::Vector3f(0, 1, 0), 45);
-    
+ 
     gle::Mesh* pointCube = gle::Geometries::Cube(material2, 10);
     pointCube->setPosition(gle::Vector3f(-24, 0, -8));
     pointCube->setPrimitiveType(gle::Mesh::Points);
@@ -137,6 +137,7 @@ public:
   void animate()
   {
     _light->setTarget(_camera->getTarget());
+    _cube->setTarget(_camera->getPosition());
     _scene->updateLights();
     //_plane->setRotation(gle::Vector3<GLfloat>(1, 0, 0),
     //			-sf::Joystick::getAxisPosition(accelerometerId,

@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Mon Feb 20 20:48:54 2012 gael jochaud-du-plessix
-// Last update Thu Jun 21 23:35:07 2012 gael jochaud-du-plessix
+// Last update Fri Jun 22 00:01:55 2012 gael jochaud-du-plessix
 //
 
 #include <Renderer.hpp>
@@ -216,9 +216,9 @@ void gle::Renderer::_renderMesh(gle::Scene* scene, gle::Mesh* mesh)
   if (indexesBuffer == NULL || material == NULL || mesh == NULL ||
       !_currentProgram)
     return ;
-
-  _setMaterialUniforms(material);
-  _setMeshUniforms(scene, mesh); 
+  
+  material->getUniformsBuffer()->bindBase(gle::Program::MaterialBlock);
+  _currentProgram->setUniform(gle::Program::MWMatrix, mesh->getTransformationMatrix());
 
   _setVertexAttributes(vertexAttributes->getOffset());
 
@@ -328,11 +328,6 @@ void gle::Renderer::_setCurrentProgram(gle::Scene* scene,
   _setSceneUniforms(scene, camera);
 }
 
-void gle::Renderer::_setMaterialUniforms(gle::Material* material)
-{  
-  material->getUniformsBuffer()->bindBase(gle::Program::MaterialBlock);
-}
-
 void gle::Renderer::_setSceneUniforms(gle::Scene* scene, gle::Camera* camera)
 {
   const gle::Matrix4<GLfloat> & projectionMatrix = camera->getProjectionMatrix();
@@ -389,13 +384,4 @@ void gle::Renderer::_setSceneUniforms(gle::Scene* scene, gle::Camera* camera)
 				    scene->getSpotLightsCosCutOff(),
 				    scene->getSpotLightsSize());
     }
-}
-
-void gle::Renderer::_setMeshUniforms(gle::Scene* scene, gle::Mesh* mesh)
-{
-  (void)scene;
-  if (!mesh->isDynamic())
-    return ;
-
-  //_currentProgram->setUniform(gle::Program::MWMatrix, mesh->getTransformationMatrix());
 }

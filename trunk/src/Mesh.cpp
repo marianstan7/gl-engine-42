@@ -5,7 +5,7 @@
 // Login   <michar_l@epitech.net>
 // 
 // Started on  Mon Feb 20 18:25:23 2012 loick michard
-// Last update Thu Jun 21 22:47:09 2012 gael jochaud-du-plessix
+// Last update Fri Jun 22 00:20:57 2012 gael jochaud-du-plessix
 //
 
 #include <Mesh.hpp>

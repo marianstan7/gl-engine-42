@@ -117,19 +117,16 @@ void main(void) {
 	
 	gle_varying_vMeshIdentifier = gle_vMeshIdentifier;
 
-	mat4 mvMatrix, mwMatrix;
+	mat4 mwMatrix;
 	#if GLE_NB_STATIC_MESHES > 0
 		if (!bool(gle_vMeshIdentifier.x))
-		{
-			mvMatrix = gle_ViewMatrix * gle_staticMeshes.meshes[int(gle_vMeshIdentifier.y)].MWMatrix;
 			mwMatrix = gle_staticMeshes.meshes[int(gle_vMeshIdentifier.y)].MWMatrix;
-		}
 		else
 	#endif
-		{
-			mvMatrix = gle_ViewMatrix * gle_MWMatrix;
 			mwMatrix = gle_MWMatrix;
-		}
+	
+	mat4 mvMatrix = gle_ViewMatrix * mwMatrix;
+		
 	vec4 gle_mvPosition = mvMatrix * vec4(gle_vPosition, 1);
 	mat3 nMatrix = transpose(mat3(inverse(mvMatrix)));
 	gl_Position = gle_PMatrix * gle_mvPosition; 
