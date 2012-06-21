@@ -110,10 +110,10 @@ void main(void) {
 	float shininess = gle_material.materials[int(gle_vMeshIdentifier.z)].shininess;
 	float specularIntensity = gle_material.materials[int(gle_vMeshIdentifier.z)].specularIntensity;
 	float diffuseIntensity = gle_material.materials[int(gle_vMeshIdentifier.z)].diffuseIntensity;
-	float reflectionIntensity = gle_material.materials[int(gle_varying_vMeshIdentifier.z)].reflectionIntensity;
-	float envMapType = gle_material.materials[int(gle_varying_vMeshIdentifier.z)].envMapType;
-	float hasColorMap = gle_material.materials[int(gle_varying_vMeshIdentifier.z)].hasColorMap;
-	float hasNormalMap = gle_material.materials[int(gle_varying_vMeshIdentifier.z)].hasNormalMap;
+	float reflectionIntensity = gle_material.materials[int(gle_vMeshIdentifier.z)].reflectionIntensity;
+	float envMapType = gle_material.materials[int(gle_vMeshIdentifier.z)].envMapType;
+	float hasColorMap = gle_material.materials[int(gle_vMeshIdentifier.z)].hasColorMap;
+	float hasNormalMap = gle_material.materials[int(gle_vMeshIdentifier.z)].hasNormalMap;
 	
 	gle_varying_vMeshIdentifier = gle_vMeshIdentifier;
 
