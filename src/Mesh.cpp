@@ -5,7 +5,7 @@
 // Login   <michar_l@epitech.net>
 // 
 // Started on  Mon Feb 20 18:25:23 2012 loick michard
-// Last update Thu Jun 21 00:21:39 2012 loick michard
+// Last update Thu Jun 21 12:47:52 2012 loick michard
 //
 
 #include <Mesh.hpp>
@@ -329,7 +329,7 @@ void gle::Mesh::setIdentifiers(GLuint meshId, GLuint materialId)
 		 + VertexAttributeSizeTangent
 		 + VertexAttributeSizeTextureCoords
 		 + 2] = (GLfloat)materialId;
-
+      
     }
   _attributes->unmap();  
 }

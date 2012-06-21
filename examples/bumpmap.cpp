@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Fri Mar  2 17:27:21 2012 gael jochaud-du-plessix
-// Last update Thu Jun 21 01:54:20 2012 loick michard
+// Last update Thu Jun 21 14:11:42 2012 loick michard
 //
 
 #include <iostream>
@@ -45,9 +45,9 @@ public:
     _mat = new gle::Material();
     _mat2 = new gle::Material();
     _mat2->setColorMap(new gle::Texture("./examples/textures/color_map.jpg"));
-    //_mat2->setNormalMap(new gle::Texture("./examples/textures/normal_map.jpg"));
+    _mat2->setNormalMap(new gle::Texture("./examples/textures/normal_map.jpg"));
     _mat->setColorMap(new gle::Texture("./examples/earth.png"));
-    //_mat->setNormalMap(new gle::Texture("./examples/textures/earthNormalMap.png"));
+    _mat->setNormalMap(new gle::Texture("./examples/textures/earthNormalMap.png"));
     _cube = gle::Geometries::Sphere(_mat, 5, 200, 200);
     _cube->setPosition(gle::Vector3f(10.0, 0.0, 0.0));
     gle::Mesh* cube = gle::Geometries::Cube(_mat2, 5);
@@ -68,7 +68,7 @@ public:
     _camera->addChild(light);
     gle::Material* ll = new gle::Material();
     ll->setAmbientColor(gle::Color<GLfloat>(1.0, 1.0, 1.0));
-    //_light->addChild(gle::Geometries::Sphere(ll, 0.2, 50, 50));
+    _light->addChild(gle::Geometries::Sphere(ll, 0.2, 50, 50));
     _scene->update();
 
   }
@@ -92,6 +92,7 @@ public:
 	_mat->setNormalMapEnabled(!_mat->isNormalMapEnabled());
 	_mat2->setNormalMapEnabled(!_mat2->isNormalMapEnabled());
 	_mat3->setNormalMapEnabled(!_mat3->isNormalMapEnabled());
+	_scene->update();
       }
   }
 
