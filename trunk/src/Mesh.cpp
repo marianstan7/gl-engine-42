@@ -5,7 +5,7 @@
 // Login   <michar_l@epitech.net>
 // 
 // Started on  Mon Feb 20 18:25:23 2012 loick michard
-// Last update Thu Jun 21 20:42:22 2012 loick michard
+// Last update Thu Jun 21 21:09:52 2012 gael jochaud-du-plessix
 //
 
 #include <Mesh.hpp>
@@ -33,7 +33,7 @@ std::list<gle::Scene::MeshGroup> gle::Mesh::factorizeForDrawing(std::list<gle::M
       };
       for (auto it = meshes.begin(); it != meshes.end();)
 	{
-	  if ((*it) == currentMesh || (*it)->canBeRenderedWith(currentMesh, ignoreBufferId))
+	  if ((*it) == currentMesh || (*it)->canBeRenderedWith(currentGroup, ignoreBufferId))
 	    {
 	      gle::Material* material = (*it)->getMaterial();
 	      if (material)
@@ -442,12 +442,13 @@ void gle::Mesh::makeAbsoluteIndexes()
   _indexes->unmap();
 }
 
-bool gle::Mesh::canBeRenderedWith(const gle::Mesh* other, bool ignoreBufferId) const
+bool gle::Mesh::canBeRenderedWith(const gle::Scene::MeshGroup& group, bool ignoreBufferId) const
 {
   return ((_material == NULL
-	   || _material == other->getMaterial()
-	   || _material->canBeRenderedWith(other->getMaterial()))
-	  && (ignoreBufferId || _uniformBufferId == other->getUniformBufferId()));
+	   || _material->canBeRenderedWith(group))
+	  && (ignoreBufferId
+	      || (_uniformBufferId == group.uniformBufferId
+		  && _materialBufferId == group.materialBufferId)));
 }
 
 void gle::Mesh::setUniformBufferId(GLint id)

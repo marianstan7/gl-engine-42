@@ -5,13 +5,13 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Mon Feb 20 22:50:35 2012 gael jochaud-du-plessix
-// Last update Thu Jun 21 20:48:08 2012 loick michard
+// Last update Thu Jun 21 21:10:04 2012 gael jochaud-du-plessix
 //
 
+#include <sstream>
 #include <Material.hpp>
 #include <Scene.hpp>
 #include <ShaderSource.hpp>
-#include <sstream>
 
 gle::Material::Material(std::string const & name) :
   _name(name),
@@ -261,14 +261,14 @@ const GLfloat* gle::Material::getUniforms() const
   return (_uniforms);
 }
 
-bool gle::Material::canBeRenderedWith(const gle::Material* other) const
+bool gle::Material::canBeRenderedWith(const gle::Scene::MeshGroup& group) const
 {
-  if ((!_colorMapEnabled || !other->isColorMapEnabled()
-       || _colorMap == other->getColorMap()) &&
-      (!_normalMapEnabled || !other->isNormalMapEnabled()
-       || _normalMap == other->getNormalMap()) &&
-      (!_envMapEnabled || !other->isEnvMapEnabled()
-       || _envMap == other->getEnvMap()))
+  if ((!_colorMapEnabled || !group.colorMap
+       || _colorMap == group.colorMap) &&
+      (!_normalMapEnabled || !group.normalMap
+       || _normalMap == group.normalMap) &&
+      (!_envMapEnabled || !group.envMap
+       || _envMap == group.envMap))
     return (true);
   return (false);
 }

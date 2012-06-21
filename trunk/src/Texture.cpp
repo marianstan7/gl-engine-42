@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Wed Feb 29 19:37:40 2012 gael jochaud-du-plessix
-// Last update Thu Jun 21 17:06:45 2012 loick michard
+// Last update Thu Jun 21 21:12:09 2012 gael jochaud-du-plessix
 //
 
 #include <Texture.hpp>
@@ -43,7 +43,7 @@ void gle::Texture::bind()
 
 void gle::Texture::unbind()
 {
-  glBindTexture(_type, NULL);
+  glBindTexture(_type, 0);
 }
 
 void gle::Texture::setData(const Image& image, Target target, bool bindTexture)

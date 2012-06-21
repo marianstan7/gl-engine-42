@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Mon Feb 20 18:18:01 2012 gael jochaud-du-plessix
-// Last update Thu Jun 21 16:12:43 2012 gael jochaud-du-plessix
+// Last update Thu Jun 21 21:03:24 2012 gael jochaud-du-plessix
 //
 
 #ifndef _GLE_SCENE_HPP_
@@ -16,17 +16,18 @@
 # include <map>
 # include <utility>
 # include <Program.hpp>
-# include <Material.hpp>
 # include <Color.hpp>
 # include <Octree.hpp>
 # include <Quaternion.hpp>
 # include <EnvironmentMap.hpp>
+# include <Buffer.hpp>
 
 namespace gle {
 
   class Camera;
   class Light;
   class Mesh;
+  class Texture;
 
   //! Describe a 3D scene
   /*!
