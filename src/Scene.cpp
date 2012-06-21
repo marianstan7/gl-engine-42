@@ -5,7 +5,7 @@
 // Login   <michar_l@epitech.net>
 // 
 // Started on  Thu Jun 21 20:42:49 2012 loick michard
-// Last update Thu Jun 21 20:42:50 2012 loick michard
+// Last update Thu Jun 21 22:59:07 2012 gael jochaud-du-plessix
 //
 
 #include <Scene.hpp>
@@ -21,7 +21,7 @@
 
 gle::Scene::Scene() :
   _backgroundColor(0.0, 0.0, 0.0, 0.0), _fogColor(0.0, 0.0, 0.0, 0.0), _fogDensity(0.0),
-  _cameras(), _meshesToRender(), _unboundingMeshesToRender(),
+  _cameras(), _staticMeshes(), _dynamicMeshes(),
   _lights(), _directionalLightsDirection(),
   _directionalLightsColor(), _directionalLightsSize(0),
   _pointLightsPosition(),
@@ -98,11 +98,16 @@ gle::Scene::Node & gle::Scene::getRootNode()
   return (_root);
 }
 
-const std::vector<gle::Mesh*> & gle::Scene::getMeshesToRender()
+const std::vector<gle::Mesh*> & gle::Scene::getStaticMeshes()
 {
   if (_frustumCulling)
     return (_meshesInFrustum);
-  return (_meshesToRender);
+  return (_staticMeshes);
+}
+
+const std::vector<gle::Mesh*> & gle::Scene::getDynamicMeshes()
+{
+  return (_dynamicMeshes);
 }
 
 void gle::Scene::processFrustumCulling()
@@ -111,11 +116,6 @@ void gle::Scene::processFrustumCulling()
     _meshesInFrustum = reinterpret_cast<const std::vector<gle::Mesh*>&>
       (_tree.getElementsInFrustum(_currentCamera->getProjectionMatrix(),
 				  _currentCamera->getTransformationMatrix()));
-}
-
-const std::vector<gle::Mesh*> & gle::Scene::getUnboundingMeshesToRender()
-{
-  return (_unboundingMeshesToRender);
 }
 
 std::vector<gle::Camera*> & gle::Scene::getCameras()
@@ -462,7 +462,7 @@ void		gle::Scene::displayBoundingVolume()
 void		gle::Scene::generateTree()
 {
   std::cout << "Starting octree generation..." << std::endl;
-  _tree.generateTree(reinterpret_cast<std::vector<gle::Octree::Element*>&>(_meshesToRender));
+  _tree.generateTree(reinterpret_cast<std::vector<gle::Octree::Element*>&>(_staticMeshes));
   std::cout << "End of octree generation" << std::endl;
 }
 
@@ -493,10 +493,9 @@ void		gle::Scene::update(gle::Scene::Node* node, int depth)
 
   if (!node)
     {
-      _meshesToRender.clear();
+      _staticMeshes.clear();
       _lights.clear();
       _cameras.clear();
-      _unboundingMeshesToRender.clear();
       node = &_root;
       generate = true;
       _root.updateMatrix();
@@ -504,14 +503,12 @@ void		gle::Scene::update(gle::Scene::Node* node, int depth)
   if (node->getType() == Node::Mesh && (mesh = dynamic_cast<Mesh*>(node)))
     {
       if (mesh->getBoundingVolume() && !mesh->isDynamic())
-	{
-	  _meshesToRender.push_back(mesh);
-	}
+	_staticMeshes.push_back(mesh);
       else
-	_unboundingMeshesToRender.push_back(mesh);
-      if (_displayBoundingVolume && mesh->getBoundingVolume() &&
-	  mesh->getBoundingVolume()->getMesh())
-	_unboundingMeshesToRender.push_back(mesh->getBoundingVolume()->getMesh());
+	_dynamicMeshes.push_back(mesh);
+      // if (_displayBoundingVolume && mesh->getBoundingVolume() &&
+      // 	  mesh->getBoundingVolume()->getMesh())
+      // 	_dynamicMeshes.push_back(mesh->getBoundingVolume()->getMesh());
     }
   else if (node->getType() == Node::Light && (light = dynamic_cast<Light*>(node)))
     _lights.push_back(light);
@@ -541,12 +538,12 @@ void gle::Scene::updateStaticMeshes()
   maxMeshByBuffer = maxUniformBlockSize / (MeshUniformSize * sizeof(GLfloat));
 
   _clearStaticMeshesBuffers();
-  _staticMeshesUniformsBuffers.reserve(_meshesToRender.size() / maxMeshByBuffer);
+  _staticMeshesUniformsBuffers.reserve(_staticMeshes.size() / maxMeshByBuffer);
 
   GLfloat* staticMeshesUniforms = new GLfloat[MeshUniformSize * maxMeshByBuffer];
 
   std::list<MeshGroup> factorizedMeshes =
-    gle::Mesh::factorizeForDrawing(std::list<gle::Mesh*>(_meshesToRender.begin(), _meshesToRender.end()),
+    gle::Mesh::factorizeForDrawing(std::list<gle::Mesh*>(_staticMeshes.begin(), _staticMeshes.end()),
 				   true);
 
   _buildMaterialBuffers(factorizedMeshes, maxUniformBlockSize);
@@ -648,9 +645,7 @@ void gle::Scene::setEnvMap(EnvironmentMap* envMap)
       _envMapProgram->getUniformLocation(Program::CubeMap);
     }
   if (!_envMapMesh)
-    {
-      _envMapMesh = Geometries::Cube(NULL, 1000, true);
-    }
+    _envMapMesh = Geometries::Cube(NULL, 100, true);
 }
 
 void gle::Scene::setEnvMapEnabled(bool enabled)

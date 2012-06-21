@@ -5,7 +5,7 @@
 // Login   <michar_l@epitech.net>
 // 
 // Started on  Thu Jun 21 20:39:52 2012 loick michard
-// Last update Thu Jun 21 21:11:30 2012 gael jochaud-du-plessix
+// Last update Thu Jun 21 22:49:48 2012 gael jochaud-du-plessix
 //
 
 #ifndef _MESH_HPP_
@@ -101,7 +101,7 @@ namespace gle {
 
     //! Default constructor
 
-    Mesh(Material* material=NULL, bool absolute=false);
+    Mesh(Material* material=NULL, bool isDynamic=false);
 
     //! Copy constructor
 

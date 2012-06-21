@@ -5,7 +5,7 @@
 // Login   <michar_l@epitech.net>
 // 
 // Started on  Mon Feb 20 18:25:23 2012 loick michard
-// Last update Thu Jun 21 21:09:52 2012 gael jochaud-du-plessix
+// Last update Thu Jun 21 22:47:09 2012 gael jochaud-du-plessix
 //
 
 #include <Mesh.hpp>
@@ -56,7 +56,7 @@ std::list<gle::Scene::MeshGroup> gle::Mesh::factorizeForDrawing(std::list<gle::M
   return (groups);
 }
 
-gle::Mesh::Mesh(Material* material, bool absolute)
+gle::Mesh::Mesh(Material* material, bool isDynamic)
   : gle::Scene::Node(gle::Scene::Node::Mesh),
     _primitiveType(Triangles),
     _rasterizationMode(Fill),
@@ -68,9 +68,9 @@ gle::Mesh::Mesh(Material* material, bool absolute)
     _nbVertexes(0),
     _boundingVolume(NULL),
     _uniformBufferId(-1),
-    _materialBufferId(-1),
-    _absolute(absolute)
+    _materialBufferId(-1)
 {
+  _isDynamic = isDynamic;
   _indexes = new gle::Buffer<GLuint>(gle::Buffer<GLuint>::ElementArray,
 				     gle::Buffer<GLuint>::StaticDraw);
 }
@@ -87,8 +87,7 @@ gle::Mesh::Mesh(gle::Mesh const & other)
     _nbVertexes(other._nbVertexes),
     _boundingVolume(NULL),
     _uniformBufferId(-1),
-    _materialBufferId(-1),
-    _absolute(other._absolute)
+    _materialBufferId(-1)
 {
   if (other._boundingVolume)
     _boundingVolume = other._boundingVolume->duplicate();
@@ -236,7 +235,7 @@ void gle::Mesh::setIndexes(const GLuint* indexes, GLsizeiptr size)
 {
   _nbIndexes = size;
   _indexes->resize(size, indexes);
-  if (!_absolute)
+  if (!_isDynamic)
     makeAbsoluteIndexes();
 }
 
@@ -311,7 +310,7 @@ void gle::Mesh::setIndexes(gle::Array<GLuint> const &indexes)
 {
   _nbIndexes = indexes.size();
   _indexes->resize(indexes.size(), (GLuint const *)indexes);
-  if (!_absolute)
+  if (!_isDynamic)
     makeAbsoluteIndexes();
 }
 
