@@ -5,7 +5,7 @@
 // Login   <michar_l@epitech.net>
 // 
 // Started on  Sat May  5 10:59:21 2012 loick michard
-// Last update Wed May 30 15:04:45 2012 gael jochaud-du-plessix
+// Last update Thu Jun 21 22:41:16 2012 gael jochaud-du-plessix
 //
 
 #include <Octree.hpp>
@@ -41,17 +41,17 @@ void gle::Octree::Node::addMesh(gle::Scene &scene)
       _material->setSpecularLightEnabled(false);
       _material->setDiffuseColor(gle::Color<GLfloat>(0, 255, 0));
     }
-  if (!_mesh)
-    {
-      _mesh = gle::Geometries::Cuboid(_material,
-				      (_max.x - _min.x > 0) ? _max.x - _min.x : _min.x - _max.x,
-				      (_max.y - _min.y > 0) ? _max.y - _min.y : _min.y - _max.y,
-				      (_max.z - _min.z > 0) ? _max.z - _min.z : _min.z - _max.z, false);
-      Vector3<GLfloat> _center = (_max + _min);
-      _center /= 2.0;
-      _mesh->setPosition(_center);
-      _mesh->setRasterizationMode(gle::Mesh::Line);
-    }
+  // if (!_mesh)
+  //   {
+  //     _mesh = gle::Geometries::Cuboid(_material,
+  // 				      (_max.x - _min.x > 0) ? _max.x - _min.x : _min.x - _max.x,
+  // 				      (_max.y - _min.y > 0) ? _max.y - _min.y : _min.y - _max.y,
+  // 				      (_max.z - _min.z > 0) ? _max.z - _min.z : _min.z - _max.z);
+  //     Vector3<GLfloat> _center = (_max + _min);
+  //     _center /= 2.0;
+  //     _mesh->setPosition(_center);
+  //     _mesh->setRasterizationMode(gle::Mesh::Line);
+  //   }
   //scene.add(_material);
   scene.add(_mesh);
   for (int i = 0; i < 8; ++i)

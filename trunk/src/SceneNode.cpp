@@ -5,7 +5,7 @@
 // Login   <michar_l@epitech.net>
 // 
 // Started on  Tue May 15 19:32:41 2012 loick michard
-// Last update Thu Jun 21 21:05:36 2012 gael jochaud-du-plessix
+// Last update Thu Jun 21 23:19:01 2012 gael jochaud-du-plessix
 //
 
 #include <algorithm>
@@ -214,12 +214,15 @@ const gle::Vector3<GLfloat>& gle::Scene::Node::getAbsolutePosition() const
 
 bool      gle::Scene::Node::isDynamic() const
 {
-  return (_isDynamic);
+  return (!(!_isDynamic && (!_parent || !_parent->isDynamic())));
 }
 
-void      gle::Scene::Node::setDynamic(bool dynamic)
+void      gle::Scene::Node::setDynamic(bool dynamic, bool deep)
 {
   _isDynamic = dynamic;
+  if (deep)
+    for (gle::Scene::Node* child : _children)
+      child->setDynamic(dynamic, true);
 }
 
 const gle::Vector3<GLfloat>& gle::Scene::Node::getTarget() const

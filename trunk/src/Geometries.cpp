@@ -5,7 +5,7 @@
 // Login   <michar_l@epitech.net>
 // 
 // Started on  Mon Feb 20 22:34:18 2012 loick michard
-// Last update Thu Jun 21 17:42:14 2012 loick michard
+// Last update Thu Jun 21 22:45:56 2012 gael jochaud-du-plessix
 //
 
 #include <cmath>
@@ -13,14 +13,14 @@
 #include <Array.hpp>
 #include <vector>
 
-gle::Mesh* gle::Geometries::Cube(gle::Material* material, GLfloat size, bool absolute)
+gle::Mesh* gle::Geometries::Cube(gle::Material* material, GLfloat size, bool isDynamic)
 {
-  return (Cuboid(material, size, size, size, absolute));
+  return (Cuboid(material, size, size, size, isDynamic));
 }
 
 gle::Mesh* gle::Geometries::Cuboid(gle::Material* material, 
 				   GLfloat width, GLfloat height,
-				   GLfloat depth, bool absolute)
+				   GLfloat depth, bool isDynamic)
 {
   GLfloat halfWidth = width / 2;
   GLfloat halfHeight = height / 2;
@@ -189,7 +189,7 @@ gle::Mesh* gle::Geometries::Cuboid(gle::Material* material,
     1.0, 1.0
   };
 
-  gle::Mesh *cuboid = new gle::Mesh(material, absolute);
+  gle::Mesh *cuboid = new gle::Mesh(material, isDynamic);
   cuboid->setVertexes(vertexes, sizeof(vertexes) / sizeof(GLfloat));
   cuboid->setNormals(normals, sizeof(normals) / sizeof(GLfloat));
   cuboid->setTangents(tangents, sizeof(tangents) / sizeof(GLfloat));
@@ -201,7 +201,7 @@ gle::Mesh* gle::Geometries::Cuboid(gle::Material* material,
 
 gle::Mesh* gle::Geometries::Sphere(gle::Material* material,
 				   GLfloat radius,
-				   GLint slices, GLint stacks, bool absolute)
+				   GLint slices, GLint stacks, bool isDynamic)
 {
   gle::Array<GLfloat> vertexes;
   gle::Array<GLfloat> normals;
@@ -264,7 +264,7 @@ gle::Mesh* gle::Geometries::Sphere(gle::Material* material,
 	    }
 	}
     }
-  gle::Mesh * mesh = new gle::Mesh(material, absolute);
+  gle::Mesh * mesh = new gle::Mesh(material, isDynamic);
   mesh->setVertexes(vertexes);
   mesh->setNormals(normals);
   mesh->setTangents(tangents);
@@ -277,7 +277,7 @@ gle::Mesh* gle::Geometries::Sphere(gle::Material* material,
 gle::Mesh* gle::Geometries::Plane(gle::Material* material,
 				  GLfloat width, GLfloat height,
 				  GLint divisionsX, GLint divisionsY,
-				  GLint textureX, GLint textureY, bool absolute)
+				  GLint textureX, GLint textureY, bool isDynamic)
 {
   gle::Array<GLfloat> vertexes;
   gle::Array<GLfloat> normals;
@@ -308,7 +308,7 @@ gle::Mesh* gle::Geometries::Plane(gle::Material* material,
 	}
     }
 
-  gle::Mesh * mesh = new gle::Mesh(material, absolute);
+  gle::Mesh * mesh = new gle::Mesh(material, isDynamic);
   mesh->setVertexes(vertexes);
   mesh->setNormals(normals);
   mesh->setTangents(tangents);

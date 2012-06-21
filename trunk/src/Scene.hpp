@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Mon Feb 20 18:18:01 2012 gael jochaud-du-plessix
-// Last update Thu Jun 21 21:03:24 2012 gael jochaud-du-plessix
+// Last update Thu Jun 21 23:13:36 2012 gael jochaud-du-plessix
 //
 
 #ifndef _GLE_SCENE_HPP_
@@ -203,7 +203,7 @@ namespace gle {
 
       //! Set if the node is dynamic or not
 
-      void	setDynamic(bool dynamic);
+      void	setDynamic(bool dynamic, bool deep=true);
 
       //! Get the target of the node if it is looking at something
 
@@ -291,7 +291,8 @@ namespace gle {
 
     };
 
-    //! Symbolize a group of meshes for rendering                                                                                                            
+    //! Symbolize a group of meshes for rendering
+
     struct MeshGroup {
       std::list<Mesh*>          meshes;
       GLint			uniformBufferId;
@@ -384,17 +385,21 @@ namespace gle {
       return (*this);
     }
 
-    //! Get a vector of all meshes which are to render in the scene
+    //! Get a vector of all static meshes
+    /*
+      If frustum culling is enabled, the vector only contains meshes
+      that are in the frustum of the current camera.
+     */
 
-    const std::vector<Mesh*> & getMeshesToRender();
+    const std::vector<Mesh*> & getStaticMeshes();
+
+    //! Get a vector of all dynamic meshes
+
+    const std::vector<Mesh*> & getDynamicMeshes();
 
     //! Process the frustum culling on the list of meshes to render
 
     void processFrustumCulling();
-
-    //! Get a vector of all meshes to render in the scene that are not managed by the frustum culling
-
-    const std::vector<Mesh*> & getUnboundingMeshesToRender();
 
     //! Get a vector of all cameras which are in the scene
 
@@ -543,8 +548,8 @@ namespace gle {
     GLfloat		_fogDensity;
 
     std::vector<Camera*>	_cameras;
-    std::vector<Mesh*>		_meshesToRender;
-    std::vector<Mesh*>		_unboundingMeshesToRender;
+    std::vector<Mesh*>		_staticMeshes;
+    std::vector<Mesh*>		_dynamicMeshes;
     std::vector<Mesh*>		_meshesInFrustum;
 
     std::vector<Light*>	_lights;

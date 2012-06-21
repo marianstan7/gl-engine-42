@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Fri Mar  2 17:27:21 2012 gael jochaud-du-plessix
-// Last update Thu Jun 21 00:50:14 2012 loick michard
+// Last update Thu Jun 21 23:24:31 2012 gael jochaud-du-plessix
 //
 
 #include <iostream>
@@ -40,7 +40,7 @@ public:
 					 45, (GLfloat)_winWidth/_winHeight, 1, 10000);
     _renderer = new gle::Renderer();
     
-    //_scene->setBackgroundColor(gle::Colorf(1, 1, 1));
+    _scene->setBackgroundColor(gle::Colorf(1, 1, 1));
     _scene->setFogColor(gle::Colorf(0, 0, 0));
     _scene->setFogDensity(0.005);
 
@@ -64,7 +64,7 @@ public:
     gle::Mesh* sphere = gle::Geometries::Sphere(material, 5, 30, 30);
     sphere->setPosition(gle::Vector3f(8, 0, 8));
     
-    _cube = gle::Geometries::Cube(material2, 10);
+    _cube = gle::Geometries::Cube(material2, 10, true);
     _cube->setPosition(gle::Vector3f(8, 0, -8));
     _cube->setRotation(gle::Vector3f(0, 1, 0), 45);
     
@@ -115,7 +115,7 @@ public:
     
     gle::Material* screenMaterial = new gle::Material();
     screenMaterial->setSpecularLightEnabled(false);
-    gle::Mesh* screenPlane = gle::Geometries::Plane(material, 16*2, 9*2);
+    gle::Mesh* screenPlane = gle::Geometries::Plane(screenMaterial, 16*2, 9*2);
 
     screenPlane->rotate(gle::Vector3f(1, 0, 0), 90);
     screenPlane->setPosition(gle::Vector3f(0, 20, -50));
@@ -145,7 +145,7 @@ public:
 
   void render()
   {
-    //_renderer->render(_scene, _framebuffer->getRenderTexture()->getSize(), _framebuffer);
+    _renderer->render(_scene, _framebuffer->getRenderTexture()->getSize(), _framebuffer);
     _renderer->render(_scene, gle::Rectf(0, 0, _winWidth, _winHeight));
   }
 
