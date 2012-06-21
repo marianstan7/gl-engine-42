@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Mon Feb 20 18:18:01 2012 gael jochaud-du-plessix
-// Last update Wed Jun 20 23:36:38 2012 loick michard
+// Last update Thu Jun 21 16:12:43 2012 gael jochaud-du-plessix
 //
 
 #ifndef _GLE_SCENE_HPP_
@@ -26,6 +26,7 @@ namespace gle {
 
   class Camera;
   class Light;
+  class Mesh;
 
   //! Describe a 3D scene
   /*!
@@ -289,6 +290,16 @@ namespace gle {
 
     };
 
+    //! Symbolize a group of meshes for rendering                                                                                                            
+    struct MeshGroup {
+      std::list<Mesh*>          meshes;
+      GLint			uniformBufferId;
+      GLint			materialBufferId;
+      gle::Texture*             colorMap;
+      gle::Texture*             normalMap;
+      gle::EnvironmentMap*      envMap;
+    };
+
     //! Size of the datas used by one mesh in the uniform buffer
     
     static const GLsizeiptr MeshUniformSize = 16;
@@ -523,7 +534,7 @@ namespace gle {
     std::string		_replace(std::string const& search, int number,
 				 std::string const& str);
 
-    void		_buildMaterialBuffers(std::list<std::list<gle::Mesh*>>&, GLint);
+    void		_buildMaterialBuffers(std::list<MeshGroup>&, GLint);
     void		_clearStaticMeshesBuffers();
 
     gle::Color<GLfloat>	_backgroundColor;
