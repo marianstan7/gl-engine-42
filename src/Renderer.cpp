@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Mon Feb 20 20:48:54 2012 gael jochaud-du-plessix
-// Last update Thu Jun 21 16:22:05 2012 gael jochaud-du-plessix
+// Last update Thu Jun 21 20:39:28 2012 loick michard
 //
 
 #include <Renderer.hpp>
@@ -71,6 +71,7 @@ void gle::Renderer::render(Scene* scene, const Rectf& size, FrameBuffer* customF
     throw (new gle::Exception::Exception("No camera for the scene..."));
 
   _setCurrentProgram(scene, camera);
+
   const std::vector<gle::Mesh*> & meshesToRender = scene->getMeshesToRender();
 
   //const std::vector<gle::Mesh*> & unboundingMeshes = scene->getUnboundingMeshesToRender();
@@ -82,18 +83,17 @@ void gle::Renderer::render(Scene* scene, const Rectf& size, FrameBuffer* customF
   glEnableVertexAttribArray(gle::ShaderSource::Vertex::Default::MeshIdentifierLocation);
 
   MeshBufferManager::getInstance().bind();
-
+  
   std::list<gle::Scene::MeshGroup> factorizedMeshes =
     gle::Mesh::factorizeForDrawing(std::list<gle::Mesh*>(meshesToRender.begin(), meshesToRender.end()));
 
-  std::cout << "nb draw: " << factorizedMeshes.size() << " for "<< meshesToRender.size() << " meshes \n";
+  //std::cout << "nb draw: " << factorizedMeshes.size() << " for "<< meshesToRender.size() << " meshes \n";
 
   for (gle::Scene::MeshGroup &group : factorizedMeshes)
     {        
       _buildIndexesBuffer(group.meshes);
       _renderMeshes(scene, group);
     }
-
   framebuffer.update();
 }
 
@@ -236,7 +236,6 @@ void gle::Renderer::_renderMesh(gle::Scene* scene, gle::Mesh* mesh)
   if (material->isColorMapEnabled())
     glDisableVertexAttribArray(gle::ShaderSource::Vertex::
 			       ColorMap::TextureCoordLocation);
-
 }
 
 void gle::Renderer::_renderEnvMap(gle::Scene* scene)
@@ -273,7 +272,6 @@ void gle::Renderer::_renderEnvMap(gle::Scene* scene)
 void gle::Renderer::_renderMeshes(gle::Scene* scene, gle::Scene::MeshGroup& group)
 {
   GLuint offset = 0;
-
   //_setMaterialUniforms(material);
 
   scene->getStaticMeshesUniformsBuffer(group.uniformBufferId)->bindBase(gle::Program::StaticMeshesBlock);
@@ -359,13 +357,15 @@ void gle::Renderer::_renderMeshes(gle::Scene* scene, gle::Scene::MeshGroup& grou
   _indexesBuffer.bind();
 
   glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+  gle::Exception::CheckOpenGLError("Before glDrawElements");
   glDrawElements(GL_TRIANGLES, _indexesBuffer.getSize(), GL_UNSIGNED_INT, 0);
+  gle::Exception::CheckOpenGLError("glDrawElements");
   glDisableVertexAttribArray(gle::ShaderSource::Vertex::ColorMap::TextureCoordLocation);  
 }
 
 void gle::Renderer::_setCurrentProgram(gle::Scene* scene,
 				       gle::Camera* camera)
-{
+{ 
   gle::Program* program = scene->getProgram();
 
   if (!program)

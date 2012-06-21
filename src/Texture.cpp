@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Wed Feb 29 19:37:40 2012 gael jochaud-du-plessix
-// Last update Thu Jun 21 00:10:27 2012 loick michard
+// Last update Thu Jun 21 17:06:45 2012 loick michard
 //
 
 #include <Texture.hpp>
@@ -17,7 +17,6 @@ gle::Texture::Texture(const Image& image, Type type, InternalFormat internalForm
   _useMipmap(true)
 {
   glGenTextures(1, &_id);
-  bind();
   setData(image);
   setUseMipmap(_useMipmap);
 }
@@ -28,10 +27,7 @@ gle::Texture::Texture(GLuint width, GLuint height, Type type, InternalFormat int
 {
   glGenTextures(1, &_id);
   if (width != 0 && height != 0)
-    {
-      bind();
-      setData((const char*)NULL, (GLuint)width, (GLuint)height);
-    }
+    setData((const char*)NULL, (GLuint)width, (GLuint)height);
   setUseMipmap(_useMipmap);
 }
 
@@ -45,13 +41,20 @@ void gle::Texture::bind()
   glBindTexture(_type, _id);
 }
 
-void gle::Texture::setData(const Image& image, Target target)
+void gle::Texture::unbind()
 {
-  setData((const char*)image.getData(), image.getWidth(), image.getHeight(), target);
+  glBindTexture(_type, NULL);
 }
 
-void gle::Texture::setData(const char* data, GLuint width, GLuint height, Target target)
+void gle::Texture::setData(const Image& image, Target target, bool bindTexture)
 {
+  setData((const char*)image.getData(), image.getWidth(), image.getHeight(), target, bindTexture);
+}
+
+void gle::Texture::setData(const char* data, GLuint width, GLuint height, Target target, bool bindTexture)
+{
+  if (bindTexture)
+    bind();
   if (width && height)
     {
       _width = width;
@@ -67,6 +70,8 @@ void gle::Texture::setData(const char* data, GLuint width, GLuint height, Target
 	       GL_UNSIGNED_BYTE, // Data type of the pixel datas
 	       data);
   generateMipmap();
+  if (bindTexture)
+    unbind();
 }
 
 void gle::Texture::generateMipmap()

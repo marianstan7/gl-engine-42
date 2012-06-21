@@ -5,7 +5,7 @@
 // Login   <michar_l@epitech.net>
 // 
 // Started on  Mon Feb 20 22:34:18 2012 loick michard
-// Last update Thu Jun 21 00:15:15 2012 loick michard
+// Last update Thu Jun 21 17:42:14 2012 loick michard
 //
 
 #include <cmath>
@@ -13,14 +13,14 @@
 #include <Array.hpp>
 #include <vector>
 
-gle::Mesh* gle::Geometries::Cube(gle::Material* material, GLfloat size, bool boundingVolume)
+gle::Mesh* gle::Geometries::Cube(gle::Material* material, GLfloat size, bool absolute)
 {
-  return (Cuboid(material, size, size, size, boundingVolume));
+  return (Cuboid(material, size, size, size, absolute));
 }
 
 gle::Mesh* gle::Geometries::Cuboid(gle::Material* material, 
 				   GLfloat width, GLfloat height,
-				   GLfloat depth, bool boundingVolume)
+				   GLfloat depth, bool absolute)
 {
   GLfloat halfWidth = width / 2;
   GLfloat halfHeight = height / 2;
@@ -189,8 +189,8 @@ gle::Mesh* gle::Geometries::Cuboid(gle::Material* material,
     1.0, 1.0
   };
 
-  gle::Mesh *cuboid = new gle::Mesh(material);
-  cuboid->setVertexes(vertexes, sizeof(vertexes) / sizeof(GLfloat), boundingVolume);
+  gle::Mesh *cuboid = new gle::Mesh(material, absolute);
+  cuboid->setVertexes(vertexes, sizeof(vertexes) / sizeof(GLfloat));
   cuboid->setNormals(normals, sizeof(normals) / sizeof(GLfloat));
   cuboid->setTangents(tangents, sizeof(tangents) / sizeof(GLfloat));
   cuboid->setTextureCoords(textureCoords,
@@ -201,7 +201,7 @@ gle::Mesh* gle::Geometries::Cuboid(gle::Material* material,
 
 gle::Mesh* gle::Geometries::Sphere(gle::Material* material,
 				   GLfloat radius,
-				   GLint slices, GLint stacks, bool boundingVolume)
+				   GLint slices, GLint stacks, bool absolute)
 {
   gle::Array<GLfloat> vertexes;
   gle::Array<GLfloat> normals;
@@ -264,8 +264,8 @@ gle::Mesh* gle::Geometries::Sphere(gle::Material* material,
 	    }
 	}
     }
-  gle::Mesh * mesh = new gle::Mesh(material);
-  mesh->setVertexes(vertexes, boundingVolume);
+  gle::Mesh * mesh = new gle::Mesh(material, absolute);
+  mesh->setVertexes(vertexes);
   mesh->setNormals(normals);
   mesh->setTangents(tangents);
   mesh->setTextureCoords(uv);
@@ -277,7 +277,7 @@ gle::Mesh* gle::Geometries::Sphere(gle::Material* material,
 gle::Mesh* gle::Geometries::Plane(gle::Material* material,
 				  GLfloat width, GLfloat height,
 				  GLint divisionsX, GLint divisionsY,
-				  GLint textureX, GLint textureY, bool boundingVolume)
+				  GLint textureX, GLint textureY, bool absolute)
 {
   gle::Array<GLfloat> vertexes;
   gle::Array<GLfloat> normals;
@@ -308,8 +308,8 @@ gle::Mesh* gle::Geometries::Plane(gle::Material* material,
 	}
     }
 
-  gle::Mesh * mesh = new gle::Mesh(material);
-  mesh->setVertexes(vertexes, boundingVolume);
+  gle::Mesh * mesh = new gle::Mesh(material, absolute);
+  mesh->setVertexes(vertexes);
   mesh->setNormals(normals);
   mesh->setTangents(tangents);
   mesh->setTextureCoords(uv);

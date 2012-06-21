@@ -5,7 +5,7 @@
 // Login   <michar_l@epitech.net>
 // 
 // Started on  Wed May  2 16:06:37 2012 loick michard
-// Last update Mon May  7 15:53:33 2012 loick michard
+// Last update Thu Jun 21 20:14:24 2012 loick michard
 //
 
 #ifndef _BOUNDING_BOX_HPP
@@ -24,6 +24,7 @@ namespace gle
     
     virtual BoundingVolume* duplicate() const;
     virtual void setBestFit(const GLfloat* vertexes, GLsizeiptr size);
+    virtual void setBestFit(const GLfloat* datas, GLsizeiptr offset, GLsizeiptr attributeSize, GLsizeiptr nbVertexes);
     virtual Mesh* getMesh() const;
     virtual void update(Mesh* mesh);
 

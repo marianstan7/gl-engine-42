@@ -1,11 +1,11 @@
 //
-// Mesh.hpp for gle in /home/michar_l//glEngine
+// Mesh.hpp for glEngine in /home/michar_l//gl-engine-42/src
 // 
 // Made by loick michard
 // Login   <michar_l@epitech.net>
 // 
-// Started on  Mon Feb 20 13:20:54 2012 loick michard
-// Last update Thu Jun 21 15:11:49 2012 gael jochaud-du-plessix
+// Started on  Thu Jun 21 20:39:52 2012 loick michard
+// Last update Thu Jun 21 20:39:53 2012 loick michard
 //
 
 #ifndef _MESH_HPP_
@@ -101,7 +101,7 @@ namespace gle {
 
     //! Default constructor
 
-    Mesh(Material* material=NULL);
+    Mesh(Material* material=NULL, bool absolute=false);
 
     //! Copy constructor
 
@@ -215,6 +215,8 @@ namespace gle {
 
     gle::MeshBufferManager::Chunk* getAttributes() const;
 
+    void createBoundingVolume(const GLfloat* datas, GLsizeiptr offset, GLsizeiptr attributeSize, GLsizeiptr nbVertexes);
+
     //! Get the bounding volume of the mesh
 
     BoundingVolume* getBoundingVolume() const;
@@ -269,6 +271,8 @@ namespace gle {
 
     GLint		_uniformBufferId;
     GLint		_materialBufferId;
+
+    bool		_absolute;
   };
 }
 

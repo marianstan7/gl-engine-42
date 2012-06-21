@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Wed Feb 29 19:37:51 2012 gael jochaud-du-plessix
-// Last update Sun Jun 17 20:48:28 2012 loick michard
+// Last update Thu Jun 21 17:06:34 2012 loick michard
 //
 
 #ifndef _GLE_TEXTURE_HPP_
@@ -48,9 +48,10 @@ namespace gle {
     ~Texture();
 
     void bind();
+    void unbind();
     
-    void setData(const Image& image, Target target=Tex2D);
-    void setData(const char* data, GLuint width, GLuint height, Target target=Tex2D);
+    void setData(const Image& image, Target target=Tex2D, bool bindTexture = true);
+    void setData(const char* data, GLuint width, GLuint height, Target target=Tex2D, bool bindTexture = true);
 
     void generateMipmap();
 
