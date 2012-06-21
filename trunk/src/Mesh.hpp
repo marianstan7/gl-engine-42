@@ -5,7 +5,7 @@
 // Login   <michar_l@epitech.net>
 // 
 // Started on  Mon Feb 20 13:20:54 2012 loick michard
-// Last update Thu Jun 21 00:18:39 2012 loick michard
+// Last update Thu Jun 21 15:11:49 2012 gael jochaud-du-plessix
 //
 
 #ifndef _MESH_HPP_
@@ -26,6 +26,8 @@
 # include <BoundingVolume.hpp>
 # include <Octree.hpp>
 # include <Scene.hpp>
+# include <Texture.hpp>
+# include <EnvironmentMap.hpp>
 
 namespace gle {
   
@@ -83,9 +85,18 @@ namespace gle {
        + VertexAttributeSizeTextureCoords
        + VertexAttributeMeshIdentifiers);
 
+    //! Symbolize a group of meshes for rendering
+
+    struct Group {
+      std::list<Mesh*>		meshes;
+      gle::Texture*		colorMap;
+      gle::Texture*		normalMap;
+      gle::EnvironmentMap*	envMap;
+    };
+
     //! Factorize a list of meshes using canBeRenderedWith comparator
 
-    static std::list<std::list<gle::Mesh*>> factorizeForDrawing(std::list<gle::Mesh*> meshes,
+    static std::list<gle::Scene::MeshGroup> factorizeForDrawing(std::list<gle::Mesh*> meshes,
 								bool ignoreBufferId=false);
 
     //! Default constructor

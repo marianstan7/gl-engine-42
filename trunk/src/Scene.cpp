@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Mon Feb 20 19:12:49 2012 gael jochaud-du-plessix
-// Last update Thu Jun 21 01:15:31 2012 loick michard
+// Last update Thu Jun 21 15:15:21 2012 gael jochaud-du-plessix
 //
 
 #include <Scene.hpp>
@@ -537,7 +537,7 @@ void gle::Scene::updateStaticMeshes()
 
   GLfloat* staticMeshesUniforms = new GLfloat[MeshUniformSize * maxMeshByBuffer];
 
-  std::list<std::list<gle::Mesh*>> factorizedMeshes =
+  std::list<MeshGroup> factorizedMeshes =
     gle::Mesh::factorizeForDrawing(std::list<gle::Mesh*>(_meshesToRender.begin(), _meshesToRender.end()),
 				   true);
 
@@ -545,18 +545,18 @@ void gle::Scene::updateStaticMeshes()
 
   int bufferId = 0;
 
-  for (std::list<gle::Mesh*> &meshes : factorizedMeshes)
+  for (MeshGroup &group : factorizedMeshes)
     {
-      while (meshes.size() > 0)
+      while (group.meshes.size() > 0)
 	{
 	  gle::Bufferf* buffer = new gle::Bufferf(gle::Bufferf::UniformArray);
-	  int nbMeshes = meshes.size();
+	  int nbMeshes = group.meshes.size();
 	  if (nbMeshes > maxMeshByBuffer)
 	    nbMeshes = maxMeshByBuffer;
 	  for (int i = 0; i < nbMeshes; ++i)
 	    {
-	      gle::Mesh* mesh = meshes.front();
-	      meshes.pop_front();
+	      gle::Mesh* mesh = group.meshes.front();
+	      group.meshes.pop_front();
 	      mesh->setUniformBufferId(bufferId);
 	      mesh->setMaterialBufferId(_staticMeshesMaterialsBuffersIds[mesh->getMaterial()].first);
 	      mesh->setIdentifiers(i, _staticMeshesMaterialsBuffersIds[mesh->getMaterial()].second);
@@ -670,7 +670,7 @@ gle::Mesh* gle::Scene::getEnvMapMesh() const
   return (_envMapMesh);
 }
 
-void	gle::Scene::_buildMaterialBuffers(std::list<std::list<gle::Mesh*>>& factorizedMeshes, GLint maxUniformBlockSize)
+void	gle::Scene::_buildMaterialBuffers(std::list<MeshGroup>& factorizedMeshes, GLint maxUniformBlockSize)
 {
   GLint	maxMaterialByBuffer = 0;
 
@@ -679,10 +679,10 @@ void	gle::Scene::_buildMaterialBuffers(std::list<std::list<gle::Mesh*>>& factori
   GLfloat* staticMeshesMaterials = new GLfloat[gle::Material::UniformSize * maxMaterialByBuffer];
   int bufferId = 0;
 
-  for (std::list<gle::Mesh*> &meshes : factorizedMeshes)
+  for (MeshGroup &group : factorizedMeshes)
     {
       std::list<gle::Material*> materials;
-      for (gle::Mesh* mesh : meshes)
+      for (gle::Mesh* mesh : group.meshes)
 	{
 	  gle::Material* material = mesh->getMaterial();
 	  if (find(materials.begin(), materials.end(), material) == materials.end())

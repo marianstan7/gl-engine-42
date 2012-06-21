@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Mon Feb 20 20:48:54 2012 gael jochaud-du-plessix
-// Last update Thu Jun 21 11:59:24 2012 loick michard
+// Last update Thu Jun 21 16:22:05 2012 gael jochaud-du-plessix
 //
 
 #include <Renderer.hpp>
@@ -83,15 +83,15 @@ void gle::Renderer::render(Scene* scene, const Rectf& size, FrameBuffer* customF
 
   MeshBufferManager::getInstance().bind();
 
-  std::list<std::list<gle::Mesh*>> factorizedMeshes =
+  std::list<gle::Scene::MeshGroup> factorizedMeshes =
     gle::Mesh::factorizeForDrawing(std::list<gle::Mesh*>(meshesToRender.begin(), meshesToRender.end()));
 
   std::cout << "nb draw: " << factorizedMeshes.size() << " for "<< meshesToRender.size() << " meshes \n";
 
-  for (std::list<gle::Mesh*> &meshes : factorizedMeshes)
-    {  
-      _buildIndexesBuffer(meshes);
-      _renderMeshes(scene, meshes.front());
+  for (gle::Scene::MeshGroup &group : factorizedMeshes)
+    {        
+      _buildIndexesBuffer(group.meshes);
+      _renderMeshes(scene, group);
     }
 
   framebuffer.update();
@@ -270,16 +270,14 @@ void gle::Renderer::_renderEnvMap(gle::Scene* scene)
   glClear(GL_DEPTH_BUFFER_BIT);
 }
 
-void gle::Renderer::_renderMeshes(gle::Scene* scene, gle::Mesh* mesh)
+void gle::Renderer::_renderMeshes(gle::Scene* scene, gle::Scene::MeshGroup& group)
 {
-  gle::Material* material = mesh->getMaterial();
-
   GLuint offset = 0;
 
   //_setMaterialUniforms(material);
 
-  scene->getStaticMeshesUniformsBuffer(mesh->getUniformBufferId())->bindBase(gle::Program::StaticMeshesBlock);
-  scene->getStaticMeshesMaterialsBuffer(mesh->getMaterialBufferId())->bindBase(gle::Program::MaterialBlock);
+  scene->getStaticMeshesUniformsBuffer(group.uniformBufferId)->bindBase(gle::Program::StaticMeshesBlock);
+  scene->getStaticMeshesMaterialsBuffer(group.materialBufferId)->bindBase(gle::Program::MaterialBlock);
 
   // Set Position buffer
   glVertexAttribPointer(gle::ShaderSource::Vertex::Default::PositionLocation,
@@ -312,7 +310,7 @@ void gle::Renderer::_renderMeshes(gle::Scene* scene, gle::Mesh* mesh)
 				  * sizeof(GLfloat)));
 
   // Set up ColorMap
-  if (material->isColorMapEnabled() || material->isNormalMapEnabled())
+  if (group.colorMap || group.normalMap)
     {
       // Set texture coords attribute
       glEnableVertexAttribArray(gle::ShaderSource::Vertex::
@@ -327,34 +325,31 @@ void gle::Renderer::_renderMeshes(gle::Scene* scene, gle::Mesh* mesh)
 				       + gle::Mesh::VertexAttributeSizeTangent)
 				      * sizeof(GLfloat)));
     }
-  if (material->isColorMapEnabled())
+  if (group.colorMap)
     {
       // Set texture to the shader
-      gle::Texture* colorMap = material->getColorMap();
       glActiveTexture(gle::Program::ColorMapTexture);
-      colorMap->bind();
+      group.colorMap->bind();
       _currentProgram->setUniform(gle::Program::ColorMap,
       				  gle::Program::ColorMapTextureIndex);
     }
-  if (material->isNormalMapEnabled())
+  if (group.normalMap)
     {
       // Set texture to the shader
-      gle::Texture* normalMap = material->getNormalMap();
       glActiveTexture(gle::Program::NormalMapTexture);
-      normalMap->bind();
+      group.normalMap->bind();
       _currentProgram->setUniform(gle::Program::NormalMap,
       				  gle::Program::NormalMapTextureIndex);
     }
   gle::Exception::CheckOpenGLError("Set uniform Normal map");
 
   // Set up EnvMap
-  if (material->isEnvMapEnabled())
+  if (group.envMap)
     {
-      gle::EnvironmentMap* envMap = material->getEnvMap();
-      if (envMap->getType() == EnvironmentMap::CubeMap)
+      if (group.envMap->getType() == EnvironmentMap::CubeMap)
 	{
 	  glActiveTexture(gle::Program::CubeMapTexture);
-	  envMap->bind();
+	  group.envMap->bind();
 	  _currentProgram->setUniform(gle::Program::CubeMap,
 				      gle::Program::CubeMapTextureIndex);
 	}

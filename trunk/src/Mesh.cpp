@@ -5,35 +5,55 @@
 // Login   <michar_l@epitech.net>
 // 
 // Started on  Mon Feb 20 18:25:23 2012 loick michard
-// Last update Thu Jun 21 12:47:52 2012 loick michard
+// Last update Thu Jun 21 16:21:20 2012 gael jochaud-du-plessix
 //
 
 #include <Mesh.hpp>
 #include <BoundingBox.hpp>
 
-std::list<std::list<gle::Mesh*>> gle::Mesh::factorizeForDrawing(std::list<gle::Mesh*> meshes,
+std::list<gle::Scene::MeshGroup> gle::Mesh::factorizeForDrawing(std::list<gle::Mesh*> meshes,
 								bool ignoreBufferId)
 {
-  std::list<std::list<gle::Mesh*>> lists;
+  std::list<gle::Scene::MeshGroup> groups;
 
   while (meshes.size() > 0)
     {
       gle::Mesh* currentMesh = meshes.front();
       meshes.pop_front();
-      std::list<gle::Mesh*> currentList = {currentMesh};
+      Scene::MeshGroup currentGroup = {
+	.meshes = {currentMesh},
+	.uniformBufferId = currentMesh->getUniformBufferId(),
+	.materialBufferId = currentMesh->getMaterialBufferId(),
+	.colorMap = (currentMesh->getMaterial() && currentMesh->getMaterial()->isColorMapEnabled())
+	? currentMesh->getMaterial()->getColorMap() : NULL,
+	.normalMap = (currentMesh->getMaterial() && currentMesh->getMaterial()->isNormalMapEnabled())
+	? currentMesh->getMaterial()->getNormalMap() : NULL,
+	.envMap = (currentMesh->getMaterial() && currentMesh->getMaterial()->isEnvMapEnabled())
+	? currentMesh->getMaterial()->getEnvMap() : NULL
+      };
       for (auto it = meshes.begin(); it != meshes.end();)
 	{
 	  if ((*it) == currentMesh || (*it)->canBeRenderedWith(currentMesh, ignoreBufferId))
 	    {
-	      currentList.push_front(*it);
+	      gle::Material* material = (*it)->getMaterial();
+	      if (material)
+	      	{
+	      	  if (material->isColorMapEnabled())
+	      	    currentGroup.colorMap = material->getColorMap();
+	      	  if (material->isNormalMapEnabled())
+	      	    currentGroup.normalMap = material->getNormalMap();
+	      	  if (material->isEnvMapEnabled())
+	      	    currentGroup.envMap = material->getEnvMap();
+	      	}
+	      currentGroup.meshes.push_front(*it);
 	      it = meshes.erase(it);
 	    }
 	  else
 	    ++it;
 	}
-      lists.push_front(currentList);
+      groups.push_front(currentGroup);
     }
-  return (lists);
+  return (groups);
 }
 
 gle::Mesh::Mesh(Material* material)
