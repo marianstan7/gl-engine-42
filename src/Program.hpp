@@ -5,14 +5,16 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Fri Feb 17 16:21:24 2012 gael jochaud-du-plessix
-// Last update Wed Jun 20 23:29:46 2012 loick michard
+// Last update Fri Jun 22 02:00:21 2012 loick michard
 //
 
 #ifndef _GLE_PROGRAM_HPP_
 # define _GLE_PROGRAM_HPP_
 
+# include <gle/opengl.h>
 # include <string>
 # include <vector>
+# include <map>
 # include <Shader.hpp>
 # include <Matrix4.hpp>
 # include <Matrix3.hpp>
@@ -28,39 +30,6 @@ namespace gle {
 
   class Program {
   public:
-
-    //! Uniforms that can be set in a program
-    enum Uniform {
-      MVMatrix,
-      MWMatrix,
-      PMatrix,
-      CameraPos,
-      ViewMatrix,
-      FogColor,
-      FogDensity,
-      ColorMap,
-      NormalMap,
-      CubeMap,
-      NMatrix,
-      AmbientColor,
-      DiffuseColor,
-      SpecularColor,
-      DirectionalLightDirection,
-      DirectionalLightColor,
-      PointLightPosition,
-      PointLightColor,
-      PointLightSpecularColor,
-      PointLightAttenuation,
-      SpotLightPosition,
-      SpotLightColor,
-      SpotLightSpecularColor,
-      SpotLightAttenuation,
-      SpotLightDirection,
-      SpotLightCosCutOff,
-      Shininess,
-      SpecularIntensity,
-      DiffuseIntensity
-    };
 
     //! Uniform blocks that can be set in a program
     enum UniformBlock {
@@ -115,41 +84,38 @@ namespace gle {
     void use() const;
 
     //! Return the location of a uniform variable from its name
-    GLint getUniformLocation(const GLchar *name) const;
-
-    //! Return the location of a uniform variable
-    GLint getUniformLocation(Uniform uniform);
+    GLint getUniformLocation(const GLchar *name);
 
     //! Return the saved location of a uniform variable
-    GLint getSavedUniformLocation(Uniform uniform) const;
+    GLint getSavedUniformLocation(const GLchar *name);
 
     //! Set the value of a uniform matrix
-    void setUniform(Uniform uniformLocation, const Matrix4<GLfloat> & matrix);
+    void setUniform(const GLchar* uniformLocation, const Matrix4<GLfloat> & matrix);
 
     //! Set the value of a uniform matrix3
-    void setUniform(Uniform uniformLocation, const Matrix3<GLfloat> & matrix);
+    void setUniform(const GLchar* uniformLocation, const Matrix3<GLfloat> & matrix);
 
     //! Set the value of a uniform array of vec3
-    void setUniform3(Uniform uniformLocation, GLfloat* values,
+    void setUniform3(const GLchar* uniformLocation, GLfloat* values,
 		     GLsizeiptr size);
 
-    void setUniform1(Uniform uniformLocation, GLfloat* values,
+    void setUniform1(const GLchar* uniformLocation, GLfloat* values,
 		     GLsizeiptr size);
 
     //! Set the value of a uniform color
 
-    void setUniform(Uniform uniform, gle::Color<GLfloat> const & color);
+    void setUniform(const GLchar* uniform, gle::Color<GLfloat> const & color);
 
     //! Set a value of an uniform GLfloat
-    void setUniform(Uniform uniform, GLfloat value);
+    void setUniform(const GLchar* uniform, GLfloat value);
 
     //! Set a value of an uniform texture
-    void setUniform(Uniform uniform, TextureUnit texture);
+    void setUniform(const GLchar* uniform, TextureUnit texture);
 
     //! Set a value of an uniform bool
-    void setUniform(Uniform uniform, bool value);
+    void setUniform(const GLchar* uniform, bool value);
 
-    void setUniform(Uniform uniform, const Vector3f& value);
+    void setUniform(const GLchar* uniform, const Vector3f& value);
 
     //! Return the OpenGL Program identifier
     GLuint getId() const;
@@ -167,8 +133,7 @@ namespace gle {
 
     GLuint _uniformBlockIndexes[NbUniformBlocks];
 
-    std::vector<GLint> _uniformLocations;
-    std::vector<std::string> _uniformNames;
+    std::map<std::string, GLint> _uniformLocations;
   };
 
 }
