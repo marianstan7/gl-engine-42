@@ -1,0 +1,10 @@
+newmtl Body
+Kd 4.0 2.0 0.5
+Ir 0.75
+
+refl -type cube_top Camaro/posy.jpg
+refl -type cube_bottom Camaro/negy.jpg
+refl -type cube_front Camaro/posz.jpg
+refl -type cube_back Camaro/negz.jpg
+refl -type cube_left Camaro/posx.jpg
+refl -type cube_right Camaro/negx.jpg
