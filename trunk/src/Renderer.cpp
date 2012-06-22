@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Mon Feb 20 20:48:54 2012 gael jochaud-du-plessix
-// Last update Fri Jun 22 00:01:55 2012 gael jochaud-du-plessix
+// Last update Fri Jun 22 02:31:12 2012 loick michard
 //
 
 #include <Renderer.hpp>
@@ -76,10 +76,10 @@ void gle::Renderer::render(Scene* scene, const Rectf& size, FrameBuffer* customF
   const std::vector<gle::Mesh*> & dynamicMeshes = scene->getDynamicMeshes();
 
   // Enable vertex attributes commons to all draws
-  glEnableVertexAttribArray(gle::ShaderSource::Vertex::Default::PositionLocation);
-  glEnableVertexAttribArray(gle::ShaderSource::Vertex::Default::NormalLocation);
-  glEnableVertexAttribArray(gle::ShaderSource::Vertex::Default::TangentLocation);
-  glEnableVertexAttribArray(gle::ShaderSource::Vertex::Default::MeshIdentifierLocation);
+  glEnableVertexAttribArray(gle::ShaderSource::PositionLocation);
+  glEnableVertexAttribArray(gle::ShaderSource::NormalLocation);
+  glEnableVertexAttribArray(gle::ShaderSource::TangentLocation);
+  glEnableVertexAttribArray(gle::ShaderSource::MeshIdentifierLocation);
 
   MeshBufferManager::getInstance().bind();
   
@@ -127,8 +127,8 @@ void gle::Renderer::_renderEnvMap(gle::Scene* scene)
   GLsizeiptr nbIndexes = scene->getEnvMapMesh()->getNbIndexes();
   gle::MeshBufferManager::Chunk* vertexAttributes = scene->getEnvMapMesh()->getAttributes();
   gle::Buffer<GLuint> * indexesBuffer = scene->getEnvMapMesh()->getIndexesBuffer();
-  glEnableVertexAttribArray(gle::ShaderSource::Vertex::Default::PositionLocation);
-  glVertexAttribPointer(gle::ShaderSource::Vertex::Default::PositionLocation,
+  glEnableVertexAttribArray(gle::ShaderSource::PositionLocation);
+  glVertexAttribPointer(gle::ShaderSource::PositionLocation,
                         3, GL_FLOAT, GL_FALSE,
                         gle::Mesh::VertexAttributesSize * sizeof(GLfloat),
                         (GLvoid*)(vertexAttributes->getOffset() * sizeof(GLfloat)));
@@ -137,13 +137,13 @@ void gle::Renderer::_renderEnvMap(gle::Scene* scene)
     {
       glActiveTexture(gle::Program::CubeMapTexture);
       envMap->bind();
-      _currentProgram->setUniform(gle::Program::CubeMap,
+      _currentProgram->setUniform("gle_cubeMap",
 				  gle::Program::CubeMapTextureIndex);
     }
   const gle::Matrix4<GLfloat>& mvMatrix = scene->getCurrentCamera()->getTransformationMatrix();
-  _currentProgram->setUniform(gle::Program::MVMatrix, mvMatrix);
-  _currentProgram->setUniform(gle::Program::PMatrix, scene->getCurrentCamera()->getProjectionMatrix());
-  _currentProgram->setUniform(gle::Program::CameraPos, scene->getCurrentCamera()->getPosition());
+  _currentProgram->setUniform("gle_MVMatrix", mvMatrix);
+  _currentProgram->setUniform("gle_PMatrix", scene->getCurrentCamera()->getProjectionMatrix());
+  _currentProgram->setUniform("gle_CameraPos", scene->getCurrentCamera()->getPosition());
   indexesBuffer->bind();
   glPolygonMode(GL_FRONT_AND_BACK, scene->getEnvMapMesh()->getRasterizationMode());
   glDrawElements(scene->getEnvMapMesh()->getPrimitiveType(), nbIndexes, GL_UNSIGNED_INT, 0);
@@ -159,13 +159,13 @@ void gle::Renderer::_renderMeshes(gle::Scene* scene, gle::Scene::MeshGroup& grou
   
   // Set up ColorMap
   if (group.colorMap || group.normalMap)
-    glEnableVertexAttribArray(gle::ShaderSource::Vertex::ColorMap::TextureCoordLocation);
+    glEnableVertexAttribArray(gle::ShaderSource::TextureCoordLocation);
   if (group.colorMap)
     {
       // Set texture to the shader
       glActiveTexture(gle::Program::ColorMapTexture);
       group.colorMap->bind();
-      _currentProgram->setUniform(gle::Program::ColorMap,
+      _currentProgram->setUniform("gle_colorMap",
       				  gle::Program::ColorMapTextureIndex);
     }
   if (group.normalMap)
@@ -173,7 +173,7 @@ void gle::Renderer::_renderMeshes(gle::Scene* scene, gle::Scene::MeshGroup& grou
       // Set texture to the shader
       glActiveTexture(gle::Program::NormalMapTexture);
       group.normalMap->bind();
-      _currentProgram->setUniform(gle::Program::NormalMap,
+      _currentProgram->setUniform("gle_normalMap",
       				  gle::Program::NormalMapTextureIndex);
     }
   gle::Exception::CheckOpenGLError("Set uniform Normal map");
@@ -185,7 +185,7 @@ void gle::Renderer::_renderMeshes(gle::Scene* scene, gle::Scene::MeshGroup& grou
 	{
 	  glActiveTexture(gle::Program::CubeMapTexture);
 	  group.envMap->bind();
-	  _currentProgram->setUniform(gle::Program::CubeMap,
+	  _currentProgram->setUniform("gle_cubeMap",
 				      gle::Program::CubeMapTextureIndex);
 	}
     }
@@ -198,7 +198,7 @@ void gle::Renderer::_renderMeshes(gle::Scene* scene, gle::Scene::MeshGroup& grou
   glDrawElements(GL_TRIANGLES, _indexesBuffer.getSize(), GL_UNSIGNED_INT, 0);
   gle::Exception::CheckOpenGLError("glDrawElements");
 
-  glDisableVertexAttribArray(gle::ShaderSource::Vertex::ColorMap::TextureCoordLocation);  
+  glDisableVertexAttribArray(gle::ShaderSource::TextureCoordLocation);  
 }
 
 void gle::Renderer::_renderMesh(gle::Scene* scene, gle::Mesh* mesh)
@@ -218,20 +218,21 @@ void gle::Renderer::_renderMesh(gle::Scene* scene, gle::Mesh* mesh)
     return ;
   
   material->getUniformsBuffer()->bindBase(gle::Program::MaterialBlock);
-  _currentProgram->setUniform(gle::Program::MWMatrix, mesh->getTransformationMatrix());
+  _currentProgram->setUniform("gle_MWMatrix", mesh->getTransformationMatrix());
 
   _setVertexAttributes(vertexAttributes->getOffset());
 
   // Set up ColorMap
   if (material->isColorMapEnabled() || material->isNormalMapEnabled())
-    glEnableVertexAttribArray(gle::ShaderSource::Vertex::ColorMap::TextureCoordLocation);
+    glEnableVertexAttribArray(gle::ShaderSource::TextureCoordLocation);
+
   if (material->isColorMapEnabled())
     {
       // Set texture to the shader
       gle::Texture* colorMap = material->getColorMap();
       glActiveTexture(gle::Program::ColorMapTexture);
       colorMap->bind();
-      _currentProgram->setUniform(gle::Program::ColorMap,
+      _currentProgram->setUniform("gle_colorMap",
       				  gle::Program::ColorMapTextureIndex);
     }
   gle::Exception::CheckOpenGLError("Set uniform Color map");
@@ -241,7 +242,7 @@ void gle::Renderer::_renderMesh(gle::Scene* scene, gle::Mesh* mesh)
       gle::Texture* normalMap = material->getNormalMap();
       glActiveTexture(gle::Program::NormalMapTexture);
       normalMap->bind();
-      _currentProgram->setUniform(gle::Program::NormalMap,
+      _currentProgram->setUniform("gle_normalMap",
       				  gle::Program::NormalMapTextureIndex);
     }
   gle::Exception::CheckOpenGLError("Set uniform Normal map");
@@ -254,7 +255,7 @@ void gle::Renderer::_renderMesh(gle::Scene* scene, gle::Mesh* mesh)
 	{
 	  glActiveTexture(gle::Program::CubeMapTexture);
 	  envMap->bind();
-	  _currentProgram->setUniform(gle::Program::CubeMap,
+	  _currentProgram->setUniform("gle_cubeMap",
 				      gle::Program::CubeMapTextureIndex);
 	}
     }
@@ -276,28 +277,27 @@ void gle::Renderer::_renderMesh(gle::Scene* scene, gle::Mesh* mesh)
   glDrawElements(mesh->getPrimitiveType(), nbIndexes, GL_UNSIGNED_INT, 0);
   gle::Exception::CheckOpenGLError("glDrawElements");
   if (material->isColorMapEnabled())
-    glDisableVertexAttribArray(gle::ShaderSource::Vertex::
-			       ColorMap::TextureCoordLocation);
+    glDisableVertexAttribArray(gle::ShaderSource::TextureCoordLocation);
 }
 
 void gle::Renderer::_setVertexAttributes(GLuint offset)
 {
-  glVertexAttribPointer(gle::ShaderSource::Vertex::Default::PositionLocation,
+  glVertexAttribPointer(gle::ShaderSource::PositionLocation,
 			3, GL_FLOAT, GL_FALSE,
 			gle::Mesh::VertexAttributesSize * sizeof(GLfloat),
 			(GLvoid*)(offset * sizeof(GLfloat)));
-  glVertexAttribPointer(gle::ShaderSource::Vertex::Default::NormalLocation,
+  glVertexAttribPointer(gle::ShaderSource::NormalLocation,
 			3, GL_FLOAT, GL_FALSE, gle::Mesh::VertexAttributesSize * sizeof(GLfloat),
 			(GLvoid*)((offset
 				   + gle::Mesh::VertexAttributeSizeCoords)
 				  * sizeof(GLfloat)));
-  glVertexAttribPointer(gle::ShaderSource::Vertex::Default::TangentLocation,
+  glVertexAttribPointer(gle::ShaderSource::TangentLocation,
 			3, GL_FLOAT, GL_FALSE, gle::Mesh::VertexAttributesSize * sizeof(GLfloat),
 			(GLvoid*)((offset
 				   + gle::Mesh::VertexAttributeSizeCoords
 				   + gle::Mesh::VertexAttributeSizeNormal)
 				  * sizeof(GLfloat)));
-  glVertexAttribPointer(gle::ShaderSource::Vertex::Default::MeshIdentifierLocation,
+  glVertexAttribPointer(gle::ShaderSource::MeshIdentifierLocation,
 			3, GL_FLOAT, GL_FALSE, gle::Mesh::VertexAttributesSize * sizeof(GLfloat),
 			(GLvoid*)((offset
 				   + gle::Mesh::VertexAttributeSizeCoords
@@ -305,8 +305,7 @@ void gle::Renderer::_setVertexAttributes(GLuint offset)
 				   + gle::Mesh::VertexAttributeSizeTangent
 				   + gle::Mesh::VertexAttributeSizeTextureCoords)
 				  * sizeof(GLfloat)));
-  glVertexAttribPointer(gle::ShaderSource::Vertex::
-			ColorMap::TextureCoordLocation,
+  glVertexAttribPointer(gle::ShaderSource::TextureCoordLocation,
 			2, GL_FLOAT, GL_FALSE, gle::Mesh::VertexAttributesSize * sizeof(GLfloat),
 			(GLvoid*)((offset
 				   + gle::Mesh::VertexAttributeSizeCoords
@@ -332,55 +331,54 @@ void gle::Renderer::_setSceneUniforms(gle::Scene* scene, gle::Camera* camera)
 {
   const gle::Matrix4<GLfloat> & projectionMatrix = camera->getProjectionMatrix();
 
-  _currentProgram->setUniform(gle::Program::ViewMatrix, camera->getTransformationMatrix());
-  _currentProgram->setUniform(gle::Program::PMatrix, projectionMatrix);
-  _currentProgram->setUniform(gle::Program::CameraPos, camera->getAbsolutePosition());
-  _currentProgram->setUniform(gle::Program::FogColor, scene->getFogColor());
-  _currentProgram->setUniform(gle::Program::FogDensity, scene->getFogDensity());
+  _currentProgram->setUniform("gle_ViewMatrix", camera->getTransformationMatrix());
+  _currentProgram->setUniform("gle_PMatrix", projectionMatrix);
+  _currentProgram->setUniform("gle_CameraPos", camera->getAbsolutePosition());
+  _currentProgram->setUniform("gle_fogColor", scene->getFogColor());
+  _currentProgram->setUniform("gle_fogDensity", scene->getFogDensity());
   // Send light infos to the shader
   if (scene->getDirectionalLightsSize())
     {
-      _currentProgram->setUniform3(gle::Program::
-				    DirectionalLightDirection,
+      _currentProgram->setUniform3("gle_directionalLightDirection",
 				    scene->getDirectionalLightsDirection(),
 				    scene->getDirectionalLightsSize());
-      _currentProgram->setUniform3(gle::Program::DirectionalLightColor,
+      _currentProgram->setUniform3("gle_directionalLightColor",
 				    scene->getDirectionalLightsColor(),
 				    scene->getDirectionalLightsSize());
     }
   if (scene->getPointLightsSize())
     {
-      _currentProgram->setUniform3(gle::Program::PointLightPosition,
+      _currentProgram->setUniform3("gle_pointLightPosition",
       			    scene->getPointLightsPosition(),
       			    scene->getPointLightsSize());
-      _currentProgram->setUniform3(gle::Program::PointLightColor,
+      _currentProgram->setUniform3("gle_pointLightColor",
       			    scene->getPointLightsColor(),
       				    scene->getPointLightsSize());
-      _currentProgram->setUniform3(gle::Program::PointLightSpecularColor,
+      _currentProgram->setUniform3("gle_pointLightSpecularColor",
       			    scene->getPointLightsSpecularColor(),
       			    scene->getPointLightsSize());
-      _currentProgram->setUniform3(gle::Program::PointLightAttenuation,
+      _currentProgram->setUniform3("gle_pointLightAttenuation",
       			    scene->getPointLightsAttenuation(),
       			    scene->getPointLightsSize());
     }
   if (scene->getSpotLightsSize())
     {
-      _currentProgram->setUniform3(gle::Program::SpotLightPosition,
+      _currentProgram->setUniform3("gle_spotLightPosition",
 				    scene->getSpotLightsPosition(),
 				    scene->getSpotLightsSize());
-      _currentProgram->setUniform3(gle::Program::SpotLightColor,
+      _currentProgram->setUniform3("gle_spotLightColor",
 				    scene->getSpotLightsColor(),
 				    scene->getSpotLightsSize());
-      _currentProgram->setUniform3(gle::Program::SpotLightSpecularColor,
+      _currentProgram->setUniform3("gle_spotLightSpecularColor",
 				    scene->getSpotLightsSpecularColor(),
 				    scene->getSpotLightsSize());
-      _currentProgram->setUniform3(gle::Program::SpotLightAttenuation,
+      _currentProgram->setUniform3("gle_spotLightAttenuation",
 				    scene->getSpotLightsAttenuation(),
 				    scene->getSpotLightsSize());
-      _currentProgram->setUniform3(gle::Program::SpotLightDirection,
+      _currentProgram->setUniform3("gle_spotLightDirection",
 				    scene->getSpotLightsDirection(),
 				    scene->getSpotLightsSize());
-      _currentProgram->setUniform1(gle::Program::SpotLightCosCutOff,
+      _currentProgram->setUniform1("gle_spotLightCosCutOff",
 				    scene->getSpotLightsCosCutOff(),
 				    scene->getSpotLightsSize());
     }

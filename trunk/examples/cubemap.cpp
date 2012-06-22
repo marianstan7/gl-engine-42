@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Fri Mar  2 17:27:21 2012 gael jochaud-du-plessix
-// Last update Thu Jun 21 23:00:26 2012 gael jochaud-du-plessix
+// Last update Thu Jun 21 23:38:18 2012 loick michard
 //
 
 #include <iostream>
@@ -124,10 +124,11 @@ public:
     //mat->setEnvMap(_cubeMap);
     //gle::Mesh* dd = gle::Geometries::Sphere(new gle::Material(), 5.0, 2, 2);
     //*_scene << dd;
-    //_loadCamaro();
+    _loadCamaro();
     _loader = new gle::UniversalLoader();
-    _loader->setTexturesPath("./models/mustang/");
-    gle::Scene::Node* model = _loader->load("./models/mustang/Ford Mustang GT Concept.lwo", NULL);
+    //_loader->setTexturesPath("./models/mustang/");
+    gle::Scene::Node* model = _loader->load("./models/Camaro.obj", NULL);
+    //gle::Scene::Node* model = _loader->load("./models/mustang/Ford Mustang GT Concept.lwo", NULL);
     //gle::Scene::Node* model = _loader->load("./models/textured_cube.obj", new gle::Material());
     //gle::Texture* tex2 = new gle::Texture("./examples/cubemaps/opensea/posy.png");
     //gle::Texture* tex3 = new gle::Texture("./examples/cubemaps/opensea/posz.png");
@@ -139,7 +140,7 @@ public:
     //mat->setEnvMap(_cubeMap);
     //gle::Mesh* cube = gle::Geometries::Cube(mat, 5.0);
     //*_scene << cube << light;
-    *_scene << model;
+    //*_scene << model;
     
 
     _scene->setEnvMap(_cubeMap);

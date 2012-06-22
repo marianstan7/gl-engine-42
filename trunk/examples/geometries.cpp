@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Fri Mar  2 17:27:21 2012 gael jochaud-du-plessix
-// Last update Fri Jun 22 00:36:06 2012 gael jochaud-du-plessix
+// Last update Fri Jun 22 02:36:00 2012 loick michard
 //
 
 #include <iostream>
@@ -64,7 +64,7 @@ public:
     gle::Mesh* sphere = gle::Geometries::Sphere(material, 5, 30, 30);
     sphere->setPosition(gle::Vector3f(8, 0, 8));
     
-    _cube = gle::Geometries::Cube(material2, 10, true);
+    _cube = gle::Geometries::Cube(material2, 10);
     _cube->setPosition(gle::Vector3f(8, 0, -8));
     _cube->setRotation(gle::Vector3f(0, 1, 0), 45);
  
@@ -88,6 +88,7 @@ public:
     wiredSphere->setPosition(gle::Vector3f(-8, 0, 8));
     wiredSphere->setRasterizationMode(gle::Mesh::Line);
     wiredSphere->setMaterial(material2);
+    //wiredSphere->setDynamic(true);
 
     gle::Mesh* wiredCube = new gle::Mesh(*_cube);
     wiredCube->setPosition(gle::Vector3f(-8, 0, -8));

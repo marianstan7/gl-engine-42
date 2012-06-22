@@ -5,7 +5,7 @@
 // Login   <michar_l@epitech.net>
 // 
 // Started on  Thu Jun 21 20:42:49 2012 loick michard
-// Last update Fri Jun 22 00:27:56 2012 gael jochaud-du-plessix
+// Last update Fri Jun 22 02:03:26 2012 loick michard
 //
 
 #include <Scene.hpp>
@@ -333,38 +333,38 @@ void		gle::Scene::buildProgram()
       throw e;
     }
 
-  _program->getUniformLocation(gle::Program::MWMatrix);
-  _program->getUniformLocation(gle::Program::ViewMatrix);
-  _program->getUniformLocation(gle::Program::PMatrix);
-  _program->getUniformLocation(gle::Program::CameraPos);
-  _program->getUniformLocation(gle::Program::FogDensity);
-  _program->getUniformLocation(gle::Program::FogColor);
-  _program->getUniformLocation(gle::Program::ColorMap);
+  _program->getUniformLocation("gle_MWMatrix");
+  _program->getUniformLocation("gle_ViewMatrix");
+  _program->getUniformLocation("gle_PMatrix");
+  _program->getUniformLocation("gle_CameraPos");
+  _program->getUniformLocation("gle_fogDensity");
+  _program->getUniformLocation("gle_fogColor");
+  _program->getUniformLocation("gle_colorMap");
   if (getDirectionalLightsSize() || getPointLightsSize() || getSpotLightsSize())
-    _program->getUniformLocation(gle::Program::NormalMap);
-  _program->getUniformLocation(gle::Program::CubeMap);
+    _program->getUniformLocation("gle_normalMap");
+  _program->getUniformLocation("gle_cubeMap");
   //if (getDirectionalLightsSize() || getPointLightsSize() || getSpotLightsSize())
   //_program->getUniformLocation(gle::Program::NMatrix);
   if (getDirectionalLightsSize())
     {
-      _program->getUniformLocation(gle::Program::DirectionalLightDirection);
-      _program->getUniformLocation(gle::Program::DirectionalLightColor);
+      _program->getUniformLocation("gle_directionalLightDirection");
+      _program->getUniformLocation("gle_directionalLightColor");
     }
   if (getPointLightsSize())
     {
-      _program->getUniformLocation(gle::Program::PointLightPosition);
-      _program->getUniformLocation(gle::Program::PointLightColor);
-      _program->getUniformLocation(gle::Program::PointLightSpecularColor);
-      _program->getUniformLocation(gle::Program::PointLightAttenuation);
+      _program->getUniformLocation("gle_pointLightPosition");
+      _program->getUniformLocation("gle_pointLightColor");
+      _program->getUniformLocation("gle_pointLightSpecularColor");
+      _program->getUniformLocation("gle_pointLightAttenuation");
     }
   if (getSpotLightsSize())
     {
-      _program->getUniformLocation(gle::Program::SpotLightPosition);
-      _program->getUniformLocation(gle::Program::SpotLightColor);
-      _program->getUniformLocation(gle::Program::SpotLightSpecularColor);
-      _program->getUniformLocation(gle::Program::SpotLightAttenuation);
-      _program->getUniformLocation(gle::Program::SpotLightDirection);
-      _program->getUniformLocation(gle::Program::SpotLightCosCutOff);
+      _program->getUniformLocation("gle_spotLightPosition");
+      _program->getUniformLocation("gle_spotLightColor");
+      _program->getUniformLocation("gle_spotLightSpecularColor");
+      _program->getUniformLocation("gle_spotLightAttenuation");
+      _program->getUniformLocation("gle_spotLightDirection");
+      _program->getUniformLocation("gle_spotLightCosCutOff");
     }
   _program->retreiveUniformBlockIndex(gle::Program::MaterialBlock, "materialBlock");
   _program->retreiveUniformBlockIndex(gle::Program::StaticMeshesBlock, "staticMeshesBlock");
@@ -599,18 +599,7 @@ void gle::Scene::setEnvMap(EnvironmentMap* envMap)
       gle::Shader* fragmentShader;
       try
 	{
-	  vertexShader = new gle::Shader(gle::Shader::Vertex, "#version 330 core\n"
-					 "#define GLE_IN_VERTEX_POSITION_LOCATION 0\n"
-					 "layout (location = GLE_IN_VERTEX_POSITION_LOCATION) in vec3 gle_vPosition;\n"
-					 "uniform mat4 gle_MVMatrix;\n"
-					 "uniform mat4 gle_PMatrix;\n"
-					 "uniform vec3 gle_CameraPos;\n"
-					 "out vec3 pos;\n"
-					 "void main(void) {\n"
-					 "vec4 gle_mvPosition = gle_MVMatrix * vec4(gle_vPosition + gle_CameraPos, 1);\n"
-					 "gl_Position = (gle_PMatrix * gle_mvPosition);\n"
-					 "pos = gle_vPosition;\n"
-					 "}\n");
+	  vertexShader = new gle::Shader(gle::Shader::Vertex, gle::ShaderSource::CubeMapVertexShader);
 	}
       catch (gle::Exception::CompilationError* e)
 	{
@@ -619,14 +608,7 @@ void gle::Scene::setEnvMap(EnvironmentMap* envMap)
 	}
       try
 	{
-	  fragmentShader = new gle::Shader(gle::Shader::Fragment, "#version 330 core\n"
-					   "#define GLE_OUT_FRAGMENT_COLOR_LOCATION 0\n"
-					   "layout (location = GLE_OUT_FRAGMENT_COLOR_LOCATION) out vec4 gle_FragColor;\n"
-					   "uniform samplerCube gle_cubeMap;"
-					   "in vec3 pos;\n"
-					   "void main(void) {\n"
-					   "gle_FragColor = vec4(texture(gle_cubeMap, pos).rgb, 1.0);"
-					   "}\n");
+	  fragmentShader = new gle::Shader(gle::Shader::Fragment, gle::ShaderSource::CubeMapFragmentShader);
 	}
       catch (gle::Exception::CompilationError* e)
 	{
@@ -646,10 +628,10 @@ void gle::Scene::setEnvMap(EnvironmentMap* envMap)
 	  delete fragmentShader;
 	  throw e;
 	}
-      _envMapProgram->getUniformLocation(Program::CameraPos);
-      _envMapProgram->getUniformLocation(Program::MVMatrix);
-      _envMapProgram->getUniformLocation(Program::PMatrix);
-      _envMapProgram->getUniformLocation(Program::CubeMap);
+      _envMapProgram->getUniformLocation("gle_CameraPos");
+      _envMapProgram->getUniformLocation("gle_MVMatrix");
+      _envMapProgram->getUniformLocation("gle_PMatrix");
+      _envMapProgram->getUniformLocation("gle_cubeMap");
     }
   if (!_envMapMesh)
     _envMapMesh = Geometries::Cube(NULL, 100, true);

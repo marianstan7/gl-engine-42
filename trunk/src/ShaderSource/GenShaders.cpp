@@ -465,3 +465,43 @@ const char* gle::ShaderSource::FragmentShader =
 "\n"
 ;
 
+const char* gle::ShaderSource::CubeMapVertexShader = 
+"#version 330 core\n"
+"\n"
+"#define GLE_IN_VERTEX_POSITION_LOCATION 0\n"
+"\n"
+"layout (location = GLE_IN_VERTEX_POSITION_LOCATION) in vec3 gle_vPosition;\n"
+"\n"
+"uniform	   mat4 gle_MVMatrix;\n"
+"uniform mat4 gle_PMatrix;\n"
+"uniform vec3 gle_CameraPos;\n"
+"\n"
+"out vec3 pos;\n"
+"\n"
+"void main(void) {\n"
+"\n"
+"vec4 gle_mvPosition	= gle_MVMatrix * vec4(gle_vPosition + gle_CameraPos, 1);\n"
+"gl_Position		= (gle_PMatrix * gle_mvPosition);\n"
+"pos			= gle_vPosition;\n"
+"\n"
+"}\n"
+"\n"
+;
+
+const char* gle::ShaderSource::CubeMapFragmentShader = 
+"#version 330 core\n"
+"#define GLE_OUT_FRAGMENT_COLOR_LOCATION 0\n"
+"\n"
+"layout (location = GLE_OUT_FRAGMENT_COLOR_LOCATION) out vec4 gle_FragColor;\n"
+"\n"
+"uniform samplerCube gle_cubeMap;\n"
+"\n"
+"in vec3 pos;\n"
+"\n"
+"void main(void) {\n"
+"\n"
+"gle_FragColor = vec4(texture(gle_cubeMap, pos).rgb, 1.0);\n"
+"\n"
+"}\n"
+;
+
