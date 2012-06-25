@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Fri Apr 13 12:43:29 2012 gael jochaud-du-plessix
-// Last update Thu Jun  7 19:40:27 2012 gael jochaud-du-plessix
+// Last update Mon Jun 25 20:17:26 2012 gael jochaud-du-plessix
 //
 
 #ifndef _GLE_BUFFER_MANAGER_HPP_
@@ -79,7 +79,7 @@ namespace gle {
 
       //! Minimum size that has to be allocated for the data of a chunk
 
-      static const GLsizeiptr MinSize = 4;
+      static const GLsizeiptr MinSize = 0;
 
       //! Constructs a chunk
       /*!
@@ -324,7 +324,7 @@ namespace gle {
       Chunk* bestChunk = NULL;
       typename std::list<Chunk*>::iterator bestChunkIt;
 
-      for (typename std::list<Chunk*>::iterator it = _freeChunks.begin(),
+      for (auto it = _freeChunks.begin(),
 	     end = _freeChunks.end(); it != end; ++it)
 	{
 	  Chunk* chunk = *it;
@@ -340,7 +340,7 @@ namespace gle {
 	  Chunk* newChunk = new Chunk(0, 0);
 	  if (_chunks.size() > 0)
 	    {
-	      typename std::list<Chunk*>::iterator last = --(_chunks.end());
+	      auto last = --(_chunks.end());
 	      if ((*last)->isFree())
 		{
 		  delete newChunk;

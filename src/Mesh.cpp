@@ -5,7 +5,7 @@
 // Login   <michar_l@epitech.net>
 // 
 // Started on  Mon Feb 20 18:25:23 2012 loick michard
-// Last update Sat Jun 23 14:55:47 2012 loick michard
+// Last update Mon Jun 25 20:28:23 2012 gael jochaud-du-plessix
 //
 
 #include <Mesh.hpp>
@@ -14,7 +14,7 @@
 
 std::list<gle::Scene::MeshGroup> gle::Mesh::factorizeForDrawing(std::list<gle::Mesh*> meshes,
 								bool ignoreBufferId)
-{
+{  
   std::list<gle::Scene::MeshGroup> groups;
 
   while (meshes.size() > 0)
@@ -101,7 +101,7 @@ gle::Mesh::Mesh(gle::Mesh const & other)
     _indexes =  new gle::Buffer<GLuint>(*other._indexes);
   if (other._attributes)
     _attributes = gle::MeshBufferManager::getInstance().duplicate(other._attributes);
-  if (other._indexes && other._attributes)
+  if (other._indexes && other._attributes && !_isDynamic)
     {
       GLuint* indexes = _indexes->map();
       GLuint oldOffset = other._attributes->getOffset() / VertexAttributesSize;
@@ -252,7 +252,7 @@ void gle::Mesh::setVertexes(gle::Array<GLfloat> const &vertexes, bool boundingVo
   for (GLsizeiptr i = 0; i < nbVertexes; ++i)
     for (GLsizeiptr j = 0; j < VertexAttributeSizeCoords; ++j)
       attributes[i * VertexAttributesSize + j] =
-	vertexes[(GLuint)(i * VertexAttributeSizeCoords + j)];
+  	vertexes[(GLuint)(i * VertexAttributeSizeCoords + j)];
   _attributes->unmap();
   if (boundingVolume)
     createBoundingVolume((const GLfloat*)vertexes, 0, VertexAttributeSizeCoords, nbVertexes);
