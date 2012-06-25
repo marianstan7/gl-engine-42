@@ -4,7 +4,9 @@ $shaders = array(
 		 'gle::ShaderSource::VertexShader' => 'Vertex.glsl',
 		 'gle::ShaderSource::FragmentShader' => 'Fragment.glsl',
 		 'gle::ShaderSource::CubeMapVertexShader' => 'CubeMapVertex.glsl',
-		 'gle::ShaderSource::CubeMapFragmentShader' => 'CubeMapFragment.glsl'
+		 'gle::ShaderSource::CubeMapFragmentShader' => 'CubeMapFragment.glsl',
+		 'gle::ShaderSource::DebugVertexShader' => 'DebugVertex.glsl',
+		 'gle::ShaderSource::DebugFragmentShader' => 'DebugFragment.glsl'
 		 );
 
 $path = realpath(dirname(__FILE__));

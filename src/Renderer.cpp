@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Mon Feb 20 20:48:54 2012 gael jochaud-du-plessix
-// Last update Fri Jun 22 02:31:12 2012 loick michard
+// Last update Sat Jun 23 12:34:26 2012 loick michard
 //
 
 #include <Renderer.hpp>
@@ -17,7 +17,8 @@
 gle::Renderer::Renderer() :
   _currentProgram(NULL),
   _indexesBuffer(gle::Bufferui::ElementArray,
-		 gle::Bufferui::StaticDraw)
+		 gle::Bufferui::StaticDraw),
+  _debugMode(0), _debugProgram(NULL)
 {
   // Set color and depth clear value
   glClearColor(0.f, 0.f, 0.f, 1.f);
@@ -96,6 +97,14 @@ void gle::Renderer::render(Scene* scene, const Rectf& size, FrameBuffer* customF
   for (gle::Mesh* mesh : dynamicMeshes)
     _renderMesh(scene, mesh);
 
+  glDisableVertexAttribArray(gle::ShaderSource::PositionLocation);
+  glDisableVertexAttribArray(gle::ShaderSource::NormalLocation);
+  glDisableVertexAttribArray(gle::ShaderSource::TangentLocation);
+  glDisableVertexAttribArray(gle::ShaderSource::MeshIdentifierLocation);
+  glDisableVertexAttribArray(gle::ShaderSource::TextureCoordLocation);
+
+  if (_debugMode)
+    _renderDebugMeshes(scene);
   framebuffer.update();
 }
 
@@ -382,4 +391,62 @@ void gle::Renderer::_setSceneUniforms(gle::Scene* scene, gle::Camera* camera)
 				    scene->getSpotLightsCosCutOff(),
 				    scene->getSpotLightsSize());
     }
+}
+
+void gle::Renderer::setDebugMode(int mode)
+{
+  _debugMode = mode;
+}
+
+void gle::Renderer::_renderDebugMeshes(gle::Scene* scene)
+{  
+  glClear(GL_DEPTH_BUFFER_BIT);
+  if (!_debugProgram)
+    {
+      _debugProgram = new gle::Program();
+      gle::Shader* vertexShader;
+      gle::Shader* fragmentShader;
+      vertexShader = new gle::Shader(gle::Shader::Vertex, gle::ShaderSource::DebugVertexShader);
+      fragmentShader = new gle::Shader(gle::Shader::Fragment, gle::ShaderSource::DebugFragmentShader);
+      _debugProgram->attach(*vertexShader);
+      _debugProgram->attach(*fragmentShader);
+      try {
+        _debugProgram->link();
+      }
+      catch (std::exception *e)
+        {
+          delete vertexShader;
+          delete fragmentShader;
+          throw e;
+        }
+      _debugProgram->getUniformLocation("gle_MVMatrix");
+      _debugProgram->getUniformLocation("gle_PMatrix");
+      _debugProgram->getUniformLocation("gle_color");
+    }
+  _currentProgram = _debugProgram;
+  _currentProgram->use();
+  const std::vector<Scene::Node*>& debugNodes = scene->getDebugNodes(_debugMode);
+  for (Scene::Node* const &debugNode : debugNodes)
+  {
+    Mesh* debugMesh = dynamic_cast<Mesh*>(debugNode);
+    if (debugMesh)
+      {
+	GLsizeiptr nbIndexes = debugMesh->getNbIndexes();
+	MeshBufferManager::Chunk* vertexAttributes = debugMesh->getAttributes();
+	Buffer<GLuint> * indexesBuffer = debugMesh->getIndexesBuffer();
+	glEnableVertexAttribArray(ShaderSource::PositionLocation);
+	glVertexAttribPointer(ShaderSource::PositionLocation,
+			      3, GL_FLOAT, GL_FALSE,
+			      Mesh::VertexAttributesSize * sizeof(GLfloat),
+			      (GLvoid*)(vertexAttributes->getOffset() * sizeof(GLfloat)));
+	const Matrix4<GLfloat>& mvMatrix =  
+	  scene->getCurrentCamera()->getTransformationMatrix() * debugMesh->getTransformationMatrix();
+	_currentProgram->setUniform("gle_MVMatrix", mvMatrix);
+	_currentProgram->setUniform("gle_PMatrix", scene->getCurrentCamera()->getProjectionMatrix());
+	_currentProgram->setUniform("gle_color", debugMesh->getMaterial()->getAmbientColor());
+	indexesBuffer->bind();
+	glPolygonMode(GL_FRONT_AND_BACK, debugMesh->getRasterizationMode());
+	glDrawElements(debugMesh->getPrimitiveType(), nbIndexes, GL_UNSIGNED_INT, 0);
+      }
+  }
 }

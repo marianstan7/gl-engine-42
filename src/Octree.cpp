@@ -5,7 +5,7 @@
 // Login   <michar_l@epitech.net>
 // 
 // Started on  Sat May  5 10:59:21 2012 loick michard
-// Last update Thu Jun 21 22:41:16 2012 gael jochaud-du-plessix
+// Last update Sun Jun 24 12:48:24 2012 loick michard
 //
 
 #include <Octree.hpp>
@@ -18,7 +18,7 @@ gle::Octree::Node::Node(const Vector3<GLfloat>& min,
 			const std::vector<Element*> &elements,
 			const std::vector<Element*> &partialsElements) :
   _elements(elements), _partialsElements(partialsElements),
-  _material(NULL), _mesh(NULL), _leaf(true)
+  _debugMaterial(NULL), _debugMesh(NULL), _leaf(true)
 {
   for (int i = 0; i < 8; ++i)
     _children[i] = NULL;
@@ -28,35 +28,29 @@ gle::Octree::Node::Node(const Vector3<GLfloat>& min,
 
 gle::Octree::Node::~Node()
 {
-  delete _mesh;
-  delete _material;
+  delete _debugMesh;
+  delete _debugMaterial;
 }
 
-void gle::Octree::Node::addMesh(gle::Scene &scene)
+gle::Mesh* gle::Octree::Node::getDebugMesh()
 {
-  if (!_material)
+  if (!_debugMaterial)
     {
-      _material = new Material();
-      _material->setDiffuseLightEnabled(true);
-      _material->setSpecularLightEnabled(false);
-      _material->setDiffuseColor(gle::Color<GLfloat>(0, 255, 0));
+      _debugMaterial = new Material();
+      _debugMaterial->setAmbientColor(gle::Color<GLfloat>(0, 1.0, 0));
     }
-  // if (!_mesh)
-  //   {
-  //     _mesh = gle::Geometries::Cuboid(_material,
-  // 				      (_max.x - _min.x > 0) ? _max.x - _min.x : _min.x - _max.x,
-  // 				      (_max.y - _min.y > 0) ? _max.y - _min.y : _min.y - _max.y,
-  // 				      (_max.z - _min.z > 0) ? _max.z - _min.z : _min.z - _max.z);
-  //     Vector3<GLfloat> _center = (_max + _min);
-  //     _center /= 2.0;
-  //     _mesh->setPosition(_center);
-  //     _mesh->setRasterizationMode(gle::Mesh::Line);
-  //   }
-  //scene.add(_material);
-  scene.add(_mesh);
-  for (int i = 0; i < 8; ++i)
-    if (_children[i])
-      _children[i]->addMesh(scene);
+  if (!_debugMesh)
+    {
+      _debugMesh = gle::Geometries::Cuboid(_debugMaterial,
+					   (_max.x - _min.x > 0) ? _max.x - _min.x : _min.x - _max.x,
+					   (_max.y - _min.y > 0) ? _max.y - _min.y : _min.y - _max.y,
+					   (_max.z - _min.z > 0) ? _max.z - _min.z : _min.z - _max.z, true);
+      Vector3<GLfloat> _center = (_max + _min);
+      _center /= 2.0;
+      _debugMesh->setPosition(_center);
+      _debugMesh->setRasterizationMode(gle::Mesh::Line);
+    }
+  return (_debugMesh);
 }
 
 gle::Octree::Octree() : _root(NULL)
@@ -214,10 +208,21 @@ void gle::Octree::Node::splitNode(bool thread, std::atomic<int> *nbThreads, int 
     (*nbThreads)--;
 }
 
-void gle::Octree::addMeshes(gle::Scene &scene)
+void gle::Octree::_addDebugNode(gle::Octree::Node* node)
 {
-  if (_root)
-    _root->addMesh(scene);
+  if (node)
+    {
+      _debugNodes.push_back(node->getDebugMesh());
+      for (int i = 0; i < 8; ++i)
+	_addDebugNode(node->_children[i]);
+    }
+}
+
+std::vector<gle::Mesh*>& gle::Octree::getDebugNodes()
+{
+  _debugNodes.clear();
+  _addDebugNode(_root);
+  return (_debugNodes);
 }
 
 std::vector<gle::Octree::Element*> &gle::Octree::getElementsInFrustum(const gle::Matrix4<GLfloat>& projection,

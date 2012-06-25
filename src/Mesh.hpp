@@ -5,7 +5,7 @@
 // Login   <michar_l@epitech.net>
 // 
 // Started on  Thu Jun 21 20:39:52 2012 loick michard
-// Last update Thu Jun 21 22:49:48 2012 gael jochaud-du-plessix
+// Last update Sat Jun 23 13:04:12 2012 loick michard
 //
 
 #ifndef _MESH_HPP_
@@ -255,6 +255,8 @@ namespace gle {
     GLint getUniformBufferId() const;
 
     GLint getMaterialBufferId() const;
+
+    virtual std::vector<Scene::Node*>& getDebugNodes(int mode);
     
   private:
     PrimitiveType	_primitiveType;
