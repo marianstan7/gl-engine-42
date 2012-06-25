@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Fri Apr 13 12:43:29 2012 gael jochaud-du-plessix
-// Last update Mon Jun 25 20:17:26 2012 gael jochaud-du-plessix
+// Last update Mon Jun 25 22:06:21 2012 gael jochaud-du-plessix
 //
 
 #ifndef _GLE_BUFFER_MANAGER_HPP_
@@ -63,7 +63,7 @@ namespace gle {
     
     //! Size of pages for allocations on the gpu
 
-    static const GLsizeiptr PageSize = 4096;
+    static const GLsizeiptr PageSize = 1048576;
 
     //! Class representing a chunk of memory in a BufferManager
     /*!
