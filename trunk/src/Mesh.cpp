@@ -5,7 +5,7 @@
 // Login   <michar_l@epitech.net>
 // 
 // Started on  Mon Feb 20 18:25:23 2012 loick michard
-// Last update Mon Jun 25 20:28:23 2012 gael jochaud-du-plessix
+// Last update Mon Jun 25 21:45:50 2012 gael jochaud-du-plessix
 //
 
 #include <Mesh.hpp>
@@ -107,7 +107,7 @@ gle::Mesh::Mesh(gle::Mesh const & other)
       GLuint oldOffset = other._attributes->getOffset() / VertexAttributesSize;
       GLuint newOffset = _attributes->getOffset() / VertexAttributesSize;
       for (GLuint i = 0; i < _indexes->getSize(); ++i)
-	indexes[i] = indexes[i] - oldOffset + newOffset;
+  	indexes[i] = indexes[i] - oldOffset + newOffset;
       _indexes->unmap();
     }
 }
