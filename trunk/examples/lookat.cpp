@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Fri Mar  2 17:27:21 2012 gael jochaud-du-plessix
-// Last update Wed Jun 20 18:09:59 2012 gael jochaud-du-plessix
+// Last update Mon Jun 25 20:26:20 2012 gael jochaud-du-plessix
 //
 
 #include <iomanip>
@@ -48,6 +48,7 @@ public:
   void initScene()
   {
     _scene = new gle::Scene();
+    //_scene->setBackgroundColor(gle::Colorf(1.0, 1.0, 1.0));
     _camera = new gle::PerspectiveCamera(gle::Vector3f(0, 0, 200),
 					 gle::Vector3f(0, 0, 0),
 					 45, (GLfloat)_winWidth/_winHeight, 1, 10000);
@@ -65,17 +66,19 @@ public:
     materialLight->setDiffuseColor(gle::Color<GLfloat>(1, 1, 1));
 
     _light = new gle::PointLight(gle::Vector3f(0, 0, 0),
-				 gle::Colorf(1.0, 1.0, 1.0));
+    				 gle::Colorf(1.0, 1.0, 1.0));
     _cameraLight = new gle::PointLight(gle::Vector3f(0, 0, 0),
 				       gle::Colorf(0.4, 0.4, 0.4));
-    sp = gle::Geometries::Sphere(materialLight, 5, 100, 100);
-    sp->setPosition(gle::Vector3f(0, 0, 0));
-    sp->addChild(_light);
+
+    _sp = gle::Geometries::Sphere(materialLight, 5, 10, 10, true);
+    _sp->setPosition(gle::Vector3f(0, 0, 0));
+    _sp->addChild(_light);
+
     _camera->addChild(_cameraLight);
 
-    *_scene << _camera << sp;// << _cameraLight;
+    *_scene << _camera << _sp << _cameraLight;
     
-    for (GLfloat i = -700.0; i <= 70.0; i += 15.0)
+    for (GLfloat i = -70.0; i <= 70.0; i += 15.0)
       for (GLfloat j = -70.0; j <= 70.0; j += 15.0)
 	for (GLfloat k = -70.0; k <= 70.0; k += 15.0)
 	  {
@@ -85,7 +88,7 @@ public:
 	    materialTriangle->setDiffuseColor(gle::Color<GLfloat>((float)rand() / float(RAND_MAX),
 								  (float)rand() / float(RAND_MAX),
 								  (float)rand() / float(RAND_MAX)));
-	    gle::Mesh* triangle = gle::Geometries::Cuboid(materialTriangle, 3, 3, 11);
+	    gle::Mesh* triangle = gle::Geometries::Cuboid(materialTriangle, 3, 3, 11, true);
 	    triangle->setPosition(gle::Vector3f(i, j, k));
 	    *_scene << triangle;
 	    _triangles.push_back(triangle);
@@ -97,22 +100,22 @@ public:
   void animate()
   {
     static double t = 0.0;
-    sp->setPosition(gle::Vector3f(sin(t * 0.7) * 70,
-				  cos(t * 0.5) * 70,
-				  cos(t * 0.3) * 70));
+    _sp->setPosition(gle::Vector3f(sin(t * 0.7) * 70,
+    				  cos(t * 0.5) * 70,
+    				  cos(t * 0.3) * 70));
     for (gle::Mesh* &triangle : _triangles)
-      triangle->setTarget(sp->getAbsolutePosition());
-    //_cameraLight->setPosition(_camera->getAbsolutePosition());
+      triangle->setTarget(_sp->getAbsolutePosition());
+    _cameraLight->setPosition(_camera->getAbsolutePosition());
     _scene->updateLights();
-    _camera->setTarget(sp->getAbsolutePosition());
+    _camera->setTarget(_sp->getAbsolutePosition());
     t += 0.01;
   }
 
 private:
-  gle::PointLight*	_light;
-  gle::PointLight*	_cameraLight;
-  std::vector<gle::Mesh*> _triangles;
-  gle::Mesh*		sp;
+  gle::PointLight*		_light;
+  gle::PointLight*		_cameraLight;
+  std::vector<gle::Mesh*>	_triangles;
+  gle::Mesh*			_sp;
 };
 
 int main(int ac, char **av)

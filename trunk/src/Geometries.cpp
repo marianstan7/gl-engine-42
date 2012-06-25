@@ -5,7 +5,7 @@
 // Login   <michar_l@epitech.net>
 // 
 // Started on  Mon Feb 20 22:34:18 2012 loick michard
-// Last update Thu Jun 21 22:45:56 2012 gael jochaud-du-plessix
+// Last update Mon Jun 25 18:35:55 2012 gael jochaud-du-plessix
 //
 
 #include <cmath>
@@ -264,6 +264,7 @@ gle::Mesh* gle::Geometries::Sphere(gle::Material* material,
 	    }
 	}
     }
+
   gle::Mesh * mesh = new gle::Mesh(material, isDynamic);
   mesh->setVertexes(vertexes);
   mesh->setNormals(normals);

@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Fri Mar  2 17:27:21 2012 gael jochaud-du-plessix
-// Last update Sat Jun 23 16:48:46 2012 loick michard
+// Last update Mon Jun 25 20:29:21 2012 gael jochaud-du-plessix
 //
 
 #include <iostream>
@@ -41,7 +41,7 @@ public:
 					 gle::Vector3f(0, 0, 0),
 					 45, (GLfloat)_winWidth/_winHeight, 1, 10000);
     _renderer = new gle::Renderer();
-    _renderer->setDebugMode(gle::Renderer::Octree | gle::Renderer::BoundingVolume);
+    //_renderer->setDebugMode(gle::Renderer::Octree | gle::Renderer::BoundingVolume);
     _scene->setBackgroundColor(gle::Colorf(1, 1, 1));
     _scene->setFogColor(gle::Colorf(0, 0, 0));
     _scene->setFogDensity(0.005);
@@ -66,7 +66,7 @@ public:
     gle::Mesh* sphere = gle::Geometries::Sphere(material, 5, 30, 30);
     sphere->setPosition(gle::Vector3f(8, 0, 8));
     
-    _cube = gle::Geometries::Cube(material2, 10);
+    _cube = gle::Geometries::Cube(material2, 10, true);
     _cube->setPosition(gle::Vector3f(8, 0, -8));
     _cube->setRotation(gle::Vector3f(0, 1, 0), 45);
  
@@ -129,7 +129,7 @@ public:
 
     *_scene << screenPlane;
 
-    *_scene << _camera;// << _light;// << _light2;// << sp;
+    *_scene << _camera;//_light;// << _light2;// << sp;
     
     _camera->addChild(_light);
     _scene->update();

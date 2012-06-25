@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Mon Feb 20 20:48:54 2012 gael jochaud-du-plessix
-// Last update Sat Jun 23 12:34:26 2012 loick michard
+// Last update Mon Jun 25 20:31:07 2012 gael jochaud-du-plessix
 //
 
 #include <Renderer.hpp>
@@ -87,6 +87,9 @@ void gle::Renderer::render(Scene* scene, const Rectf& size, FrameBuffer* customF
   //Draw static meshes
   std::list<gle::Scene::MeshGroup> factorizedStaticMeshes =
     gle::Mesh::factorizeForDrawing(std::list<gle::Mesh*>(staticMeshes.begin(), staticMeshes.end()));
+
+  //std::cout << "nb draw calls: " << factorizedStaticMeshes.size() << " for " << staticMeshes.size() << " meshes\n";
+
   for (gle::Scene::MeshGroup &group : factorizedStaticMeshes)
     {
       _buildIndexesBuffer(group.meshes);

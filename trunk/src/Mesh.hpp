@@ -5,7 +5,7 @@
 // Login   <michar_l@epitech.net>
 // 
 // Started on  Thu Jun 21 20:39:52 2012 loick michard
-// Last update Sat Jun 23 13:04:12 2012 loick michard
+// Last update Mon Jun 25 19:57:15 2012 gael jochaud-du-plessix
 //
 
 #ifndef _MESH_HPP_
@@ -78,12 +78,13 @@ namespace gle {
 
     //! Size of a vertex packed attributes
 
-    static const GLsizeiptr VertexAttributesSize =
+    static const GLsizeiptr VertexAttributesSize = 
       (VertexAttributeSizeCoords
        + VertexAttributeSizeNormal
        + VertexAttributeSizeTangent
        + VertexAttributeSizeTextureCoords
-       + VertexAttributeMeshIdentifiers);
+       + VertexAttributeMeshIdentifiers)
+      ;
 
     //! Symbolize a group of meshes for rendering
 
