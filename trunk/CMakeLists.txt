@@ -69,6 +69,11 @@ add_executable (
 )
 
 add_executable (
+    examples/bones
+    examples/bones.cpp
+)
+
+add_executable (
     examples/cubemap
     examples/cubemap.cpp
 )
@@ -147,6 +152,14 @@ target_link_libraries (
 
 target_link_libraries (
     examples/geometries
+    ${SFML_LIBRARIES}
+    ${OPENGL_LIBRARIES}
+    glEngine
+    Examples
+)
+
+target_link_libraries (
+    examples/bones
     ${SFML_LIBRARIES}
     ${OPENGL_LIBRARIES}
     glEngine

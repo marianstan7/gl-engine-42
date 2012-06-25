@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Fri Mar  2 17:27:21 2012 gael jochaud-du-plessix
-// Last update Fri Jun 22 02:36:00 2012 loick michard
+// Last update Sat Jun 23 16:48:46 2012 loick michard
 //
 
 #include <iostream>
@@ -35,11 +35,13 @@ public:
   void initScene()
   {
     _scene = new gle::Scene();
+    _scene->generateTree();
+    _scene->enableFrustumCulling();
     _camera = new gle::PerspectiveCamera(gle::Vector3f(-20, 10, 0),
 					 gle::Vector3f(0, 0, 0),
 					 45, (GLfloat)_winWidth/_winHeight, 1, 10000);
     _renderer = new gle::Renderer();
-    
+    _renderer->setDebugMode(gle::Renderer::Octree | gle::Renderer::BoundingVolume);
     _scene->setBackgroundColor(gle::Colorf(1, 1, 1));
     _scene->setFogColor(gle::Colorf(0, 0, 0));
     _scene->setFogDensity(0.005);
@@ -118,8 +120,8 @@ public:
     screenMaterial->setSpecularLightEnabled(false);
     gle::Mesh* screenPlane = gle::Geometries::Plane(screenMaterial, 16*2, 9*2);
 
-    screenPlane->rotate(gle::Vector3f(1, 0, 0), 90);
     screenPlane->setPosition(gle::Vector3f(0, 20, -50));
+    screenPlane->rotate(gle::Vector3f(1, 0, 0), 90);
 
     _framebuffer = new gle::TextureFrameBuffer(500, 500);
     screenMaterial->setColorMap(_framebuffer->getRenderTexture());

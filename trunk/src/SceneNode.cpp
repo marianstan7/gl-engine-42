@@ -5,7 +5,7 @@
 // Login   <michar_l@epitech.net>
 // 
 // Started on  Tue May 15 19:32:41 2012 loick michard
-// Last update Thu Jun 21 23:19:01 2012 gael jochaud-du-plessix
+// Last update Sun Jun 24 17:23:56 2012 loick michard
 //
 
 #include <algorithm>
@@ -251,4 +251,9 @@ gle::Scene::Node* gle::Scene::Node::duplicate() const
 void gle::Scene::Node::update()
 {
 
+}
+
+std::vector<gle::Scene::Node*>& gle::Scene::Node::getDebugNodes(int mode)
+{
+  return (_debugNodes);
 }

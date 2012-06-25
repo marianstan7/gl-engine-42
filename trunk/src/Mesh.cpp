@@ -5,11 +5,12 @@
 // Login   <michar_l@epitech.net>
 // 
 // Started on  Mon Feb 20 18:25:23 2012 loick michard
-// Last update Fri Jun 22 00:20:57 2012 gael jochaud-du-plessix
+// Last update Sat Jun 23 14:55:47 2012 loick michard
 //
 
 #include <Mesh.hpp>
 #include <BoundingBox.hpp>
+#include <Renderer.hpp>
 
 std::list<gle::Scene::MeshGroup> gle::Mesh::factorizeForDrawing(std::list<gle::Mesh*> meshes,
 								bool ignoreBufferId)
@@ -179,7 +180,7 @@ void gle::Mesh::setVertexes(const GLfloat* vertexes, GLsizeiptr size, bool bound
   attributes[0] = vertexes[0];
   _attributes->unmap();
   if (boundingVolume)
-    createBoundingVolume(attributes, 0, VertexAttributeSizeCoords, nbVertexes);
+    createBoundingVolume(vertexes, 0, VertexAttributeSizeCoords, nbVertexes);
 }
 
 void gle::Mesh::setNormals(const GLfloat* normals, GLsizeiptr size)
@@ -468,4 +469,12 @@ GLint gle::Mesh::getUniformBufferId() const
 GLint gle::Mesh::getMaterialBufferId() const
 {
   return (_materialBufferId);
+}
+
+std::vector<gle::Scene::Node*>& gle::Mesh::getDebugNodes(int mode)
+{
+  _debugNodes.clear();
+  if (_boundingVolume && (mode & Renderer::BoundingVolume))
+    _debugNodes.push_back(_boundingVolume->getDebugMesh(this));
+  return (_debugNodes);
 }

@@ -5,7 +5,7 @@
 // Login   <michar_l@epitech.net>
 // 
 // Started on  Wed May  2 16:41:28 2012 loick michard
-// Last update Thu Jun 21 20:19:53 2012 loick michard
+// Last update Sat Jun 23 15:05:40 2012 loick michard
 //
 
 #include <BoundingSphere.hpp>
@@ -13,16 +13,14 @@
 
 gle::BoundingSphere::BoundingSphere() :
   _center(0, 0, 0), _absoluteRadius(0),
-  _material(), _mesh(NULL)
+  _debugMaterial(NULL), _debugMesh(NULL)
 {
-  _material.setDiffuseLightEnabled(true);
-  _material.setSpecularLightEnabled(true);
-  _material.setDiffuseColor(gle::Color<GLfloat>(255, 0, 0));
 }
 
 gle::BoundingSphere::~BoundingSphere()
 {
-  delete _mesh;
+  delete _debugMaterial;
+  delete _debugMesh;
 }
 
 
@@ -30,15 +28,15 @@ gle::BoundingVolume* gle::BoundingSphere::duplicate() const
 {
   gle::BoundingSphere* sphere = new gle::BoundingSphere();
 
-  sphere->_material = _material;
+  sphere->_debugMaterial = _debugMaterial;
   sphere->_center = _center;
   sphere->_absoluteCenter = _absoluteCenter;
   sphere->_radius = _radius;
   sphere->_absoluteRadius = _absoluteRadius;
-  if (_mesh)
-    sphere->_mesh = new Mesh(*_mesh);
+  if (_debugMesh)
+    sphere->_debugMesh = new Mesh(*_debugMesh);
   else
-    sphere->_mesh = NULL;
+    sphere->_debugMesh = NULL;
   sphere->_min = _min;
   sphere->_max = _max;
   return (sphere);
@@ -67,10 +65,6 @@ void gle::BoundingSphere::setBestFit(const GLfloat* vertexes, GLsizeiptr size)
 	_radius = distance;
     }
   _radius = sqrt(_radius);
-  /*  if (!_mesh)
-    _mesh = gle::Geometries::Sphere(&_material, _radius, 15, 15, false); 
-  _mesh->setPosition(_center);
-  _mesh->setRasterizationMode(gle::Mesh::Line);*/
   _min = _center;
   _min -= _radius;
   _max = _center;
@@ -98,19 +92,34 @@ void gle::BoundingSphere::setBestFit(const GLfloat* datas, GLsizeiptr offset, GL
 	_radius = distance;
     }
   _radius = sqrt(_radius);
-  /*  if (!_mesh)
-    _mesh = gle::Geometries::Sphere(&_material, _radius, 15, 15, false); 
-  _mesh->setPosition(_center);
-  _mesh->setRasterizationMode(gle::Mesh::Line);*/
   _min = _center;
   _min -= _radius;
   _max = _center;
   _max += _radius;
 }
 
-gle::Mesh* gle::BoundingSphere::getMesh() const
+gle::Mesh* gle::BoundingSphere::getDebugMesh(gle::Mesh* mesh)
 {
-  return (_mesh);
+  if (!_debugMaterial)
+    _debugMaterial->setAmbientColor(gle::Color<GLfloat>(1.0, 0, 0));
+  if (!_debugMesh)
+    {
+      _debugMesh = gle::Geometries::Sphere(_debugMaterial, _radius, 15, 15, true); 
+      _debugMesh->setPosition(_center);
+      _debugMesh->setRasterizationMode(gle::Mesh::Line);
+      
+      Matrix4<GLfloat> mvMatrix = mesh->getTransformationMatrix();
+      Matrix3<GLfloat> normalMatrix;
+
+      mvMatrix.translate(_center);
+      Matrix4<GLfloat> inverse(mvMatrix);
+      inverse.inverse();
+      normalMatrix = inverse;
+      normalMatrix.transpose();
+      _debugMesh->setMatrices(mvMatrix, normalMatrix);
+      _debugMesh->setRasterizationMode(gle::Mesh::Line);
+    }
+  return (_debugMesh);
 }
 
 void	gle::BoundingSphere::update(Mesh* mesh)
@@ -123,7 +132,7 @@ void	gle::BoundingSphere::update(Mesh* mesh)
   _absoluteRadius = sqrt((point.x - _absoluteCenter.x) * (point.x - _absoluteCenter.x) +
 		 (point.y - _absoluteCenter.y) * (point.y - _absoluteCenter.y) +
 		 (point.z - _absoluteCenter.z) * (point.z - _absoluteCenter.z));
-  if (_mesh)
+  if (_debugMesh)
     {
       Matrix4<GLfloat> mvMatrix = mesh->getTransformationMatrix();
       Matrix3<GLfloat> normalMatrix;
@@ -133,8 +142,8 @@ void	gle::BoundingSphere::update(Mesh* mesh)
       inverse.inverse();
       normalMatrix = inverse;
       normalMatrix.transpose();
-      _mesh->setMatrices(mvMatrix, normalMatrix);
-      _mesh->setRasterizationMode(gle::Mesh::Line);
+      _debugMesh->setMatrices(mvMatrix, normalMatrix);
+      _debugMesh->setRasterizationMode(gle::Mesh::Line);
     }
   _min = _absoluteCenter;
   _min -= _absoluteRadius;

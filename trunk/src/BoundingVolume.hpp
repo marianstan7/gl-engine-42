@@ -5,7 +5,7 @@
 // Login   <michar_l@epitech.net>
 // 
 // Started on  Wed May  2 13:48:38 2012 loick michard
-// Last update Thu Jun 21 20:14:40 2012 loick michard
+// Last update Sat Jun 23 14:52:51 2012 loick michard
 //
 
 #ifndef _BOUNDING_VOLUME_HPP_
@@ -22,7 +22,7 @@ namespace gle {
     virtual BoundingVolume* duplicate() const = 0;
     virtual void setBestFit(const GLfloat* vertexes, GLsizeiptr size) = 0;
     virtual void setBestFit(const GLfloat* datas, GLsizeiptr offset, GLsizeiptr attributeSize, GLsizeiptr nbVertexes) = 0;
-    virtual class Mesh* getMesh() const = 0;
+    virtual class Mesh* getDebugMesh(class Mesh* mesh) = 0;
     virtual void update(class Mesh* mesh) = 0;
 
     virtual const gle::Vector3<float>& getMaxPoint() const = 0;

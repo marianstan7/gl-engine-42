@@ -5,7 +5,7 @@
 // Login   <michar_l@epitech.net>
 // 
 // Started on  Thu Jun 21 20:42:49 2012 loick michard
-// Last update Fri Jun 22 02:03:26 2012 loick michard
+// Last update Sat Jun 23 16:38:13 2012 loick michard
 //
 
 #include <Scene.hpp>
@@ -18,6 +18,7 @@
 #include <ShaderSource.hpp>
 #include <sstream>
 #include <Geometries.hpp>
+#include <Renderer.hpp>
 
 gle::Scene::Scene() :
   _backgroundColor(0.0, 0.0, 0.0, 0.0), _fogColor(0.0, 0.0, 0.0, 0.0), _fogDensity(0.0),
@@ -26,10 +27,11 @@ gle::Scene::Scene() :
   _directionalLightsColor(), _directionalLightsSize(0),
   _pointLightsPosition(),
   _pointLightsColor(), _pointLightsSize(0),
+  _spotLightsSize(0),
   _currentCamera(NULL), _program(NULL), _needProgramCompilation(true),
   _staticMeshesUniformsBuffers(), _staticMeshesMaterialsBuffers(),
   _staticMeshesMaterialsBuffersIds(),
-  _displayBoundingVolume(false), _frustumCulling(false),
+  _frustumCulling(false),
   _envMap(NULL), _isEnvMapEnabled(false), _envMapProgram(NULL), _envMapMesh(NULL)
 {
   _root.setName("root");
@@ -454,21 +456,11 @@ gle::Program*	gle::Scene::getProgram()
   return (_program);
 }
 
-void		gle::Scene::displayBoundingVolume()
-{
-  _displayBoundingVolume = true;
-}
-
 void		gle::Scene::generateTree()
 {
   std::cout << "Starting octree generation..." << std::endl;
   _tree.generateTree(reinterpret_cast<std::vector<gle::Octree::Element*>&>(_staticMeshes));
   std::cout << "End of octree generation" << std::endl;
-}
-
-void		gle::Scene::displayTree()
-{
-  _tree.addMeshes(*this);
 }
 
 void		gle::Scene::enableFrustumCulling(bool enable)
@@ -506,9 +498,6 @@ void		gle::Scene::update(gle::Scene::Node* node, int depth)
 	_staticMeshes.push_back(mesh);
       else
 	_dynamicMeshes.push_back(mesh);
-      // if (_displayBoundingVolume && mesh->getBoundingVolume() &&
-      // 	  mesh->getBoundingVolume()->getMesh())
-      // 	_dynamicMeshes.push_back(mesh->getBoundingVolume()->getMesh());
     }
   else if (node->getType() == Node::Light && (light = dynamic_cast<Light*>(node)))
     _lights.push_back(light);
@@ -725,4 +714,30 @@ const gle::Bufferf*	gle::Scene::getStaticMeshesUniformsBuffer(GLuint bufferId) c
 const gle::Bufferf*	gle::Scene::getStaticMeshesMaterialsBuffer(GLuint bufferId) const
 {
   return (_staticMeshesMaterialsBuffers[bufferId]);
+}
+
+std::vector<gle::Scene::Node*>& gle::Scene::getDebugNodes(int mode)
+{
+  _debugNodes.clear();
+  _addDebugNodes(&_root, mode);
+  if (mode & Renderer::Octree)
+    {
+      const std::vector<Mesh*>& debugMeshes = _tree.getDebugNodes();
+      for (Mesh* const& debugMesh : debugMeshes)
+	_debugNodes.push_back(debugMesh);
+    }
+  return (_debugNodes);
+}
+
+void gle::Scene::_addDebugNodes(Scene::Node* node, int mode)
+{
+  if (node)
+    {
+      const std::vector<Scene::Node*>& debugNodes = node->getDebugNodes(mode);
+      for (Scene::Node* const &debugNode : debugNodes)
+	_debugNodes.push_back(debugNode);
+      const std::vector<Node*>& children = node->getChildren();
+      for (Node* const &child : children)
+	_addDebugNodes(child, mode);
+    }
 }

@@ -5,22 +5,21 @@
 // Login   <michar_l@epitech.net>
 // 
 // Started on  Wed May  2 16:41:28 2012 loick michard
-// Last update Thu Jun 21 20:17:08 2012 loick michard
+// Last update Sat Jun 23 15:12:47 2012 loick michard
 //
 
 #include <BoundingBox.hpp>
 #include <Geometries.hpp>
 
-gle::BoundingBox::BoundingBox() : _material(), _mesh(NULL)
+gle::BoundingBox::BoundingBox() : _debugMaterial(NULL), _debugMesh(NULL)
 {
-  _material.setDiffuseLightEnabled(true);
-  _material.setSpecularLightEnabled(false);
-  _material.setDiffuseColor(gle::Color<GLfloat>(255, 255, 0));
+
 }
 
 gle::BoundingBox::~BoundingBox()
 {
-  delete _mesh;
+  delete _debugMaterial;
+  delete _debugMesh;
 }
 
 
@@ -28,16 +27,16 @@ gle::BoundingVolume* gle::BoundingBox::duplicate() const
 {
   gle::BoundingBox* box = new gle::BoundingBox();
 
-  box->_material = _material;
+  box->_debugMaterial = _debugMaterial;
   for (unsigned int i = 0; i < 8; ++i)
     {
       box->_points[i] = _points[i];
       box->_absolutePoints[i] = _absolutePoints[i];
     }
-  if (_mesh)
-    box->_mesh = new Mesh(*_mesh);
+  if (_debugMesh)
+    box->_debugMesh = new Mesh(*_debugMesh);
   else
-    box->_mesh = NULL;
+    box->_debugMesh = NULL;
   box->_center = _center;
   return (box);
 }
@@ -63,13 +62,6 @@ void gle::BoundingBox::setBestFit(const GLfloat* vertexes, GLsizeiptr size)
     }
   _center = (_max + _min);
   _center /= 2.0;
-  /*  if (!_mesh)
-    _mesh = gle::Geometries::Cuboid(&_material,
-				    (_max.x - _min.x > 0) ? _max.x - _min.x : _min.x - _max.x,
-				    (_max.y - _min.y > 0) ? _max.y - _min.y : _min.y - _max.y,
-				    (_max.z - _min.z > 0) ? _max.z - _min.z : _min.z - _max.z, false); 
-  _mesh->setPosition(_center);
-  _mesh->setRasterizationMode(gle::Mesh::Line);*/
   _points[0] = Vector3<GLfloat> (_max.x, _max.y, _max.z);
   _points[1] = Vector3<GLfloat> (_min.x, _max.y, _max.z);
   _points[2] = Vector3<GLfloat> (_min.x, _min.y, _max.z);
@@ -99,13 +91,6 @@ void gle::BoundingBox::setBestFit(const GLfloat* datas, GLsizeiptr offset, GLsiz
     }
   _center = (_max + _min);
   _center /= 2.0;
-  /*  if (!_mesh)
-    _mesh = gle::Geometries::Cuboid(&_material,
-				    (_max.x - _min.x > 0) ? _max.x - _min.x : _min.x - _max.x,
-				    (_max.y - _min.y > 0) ? _max.y - _min.y : _min.y - _max.y,
-				    (_max.z - _min.z > 0) ? _max.z - _min.z : _min.z - _max.z, false); 
-  _mesh->setPosition(_center);
-  _mesh->setRasterizationMode(gle::Mesh::Line);*/
   _points[0] = Vector3<GLfloat> (_max.x, _max.y, _max.z);
   _points[1] = Vector3<GLfloat> (_min.x, _max.y, _max.z);
   _points[2] = Vector3<GLfloat> (_min.x, _min.y, _max.z);
@@ -118,9 +103,33 @@ void gle::BoundingBox::setBestFit(const GLfloat* datas, GLsizeiptr offset, GLsiz
 
 
 
-gle::Mesh* gle::BoundingBox::getMesh() const
+gle::Mesh* gle::BoundingBox::getDebugMesh(gle::Mesh* mesh)
 {
-  return (_mesh);
+  if (!_debugMaterial)
+    {
+      _debugMaterial = new Material();
+      _debugMaterial->setAmbientColor(Color<GLfloat>(1.0, 1.0, 0));
+    }
+  if (!_debugMesh)
+    {
+      _debugMesh = Geometries::Cuboid(_debugMaterial,
+				      (_max.x - _min.x > 0) ? _max.x - _min.x : _min.x - _max.x,
+				      (_max.y - _min.y > 0) ? _max.y - _min.y : _min.y - _max.y,
+				      (_max.z - _min.z > 0) ? _max.z - _min.z : _min.z - _max.z, true);
+      _debugMesh->setPosition(_center);
+      _debugMesh->setRasterizationMode(Mesh::Line);
+
+      Matrix4<GLfloat> mvMatrix = mesh->getTransformationMatrix();
+      Matrix3<GLfloat> normalMatrix;
+
+      mvMatrix.translate(_center);
+      Matrix4<GLfloat> inverse(mvMatrix);
+      inverse.inverse();
+      normalMatrix = inverse;
+      normalMatrix.transpose();
+      _debugMesh->setMatrices(mvMatrix, normalMatrix);
+    }
+  return (_debugMesh);
 }
 
 void	gle::BoundingBox::update(Mesh* mesh)
@@ -144,7 +153,7 @@ void	gle::BoundingBox::update(Mesh* mesh)
     }
   _absoluteCenter = (_max + _min);
   _absoluteCenter /= 2.0;
-  if (_mesh)
+  if (_debugMesh)
     {
       Matrix4<GLfloat> mvMatrix = mesh->getTransformationMatrix();
       Matrix3<GLfloat> normalMatrix;
@@ -154,8 +163,8 @@ void	gle::BoundingBox::update(Mesh* mesh)
       inverse.inverse();
       normalMatrix = inverse;
       normalMatrix.transpose();
-      _mesh->setMatrices(mvMatrix, normalMatrix);
-      _mesh->setRasterizationMode(gle::Mesh::Line);
+      _debugMesh->setMatrices(mvMatrix, normalMatrix);
+      _debugMesh->setRasterizationMode(gle::Mesh::Line);
     }
 }
 

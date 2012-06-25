@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Mon Feb 20 18:18:01 2012 gael jochaud-du-plessix
-// Last update Fri Jun 22 00:30:47 2012 gael jochaud-du-plessix
+// Last update Sat Jun 23 16:26:19 2012 loick michard
 //
 
 #ifndef _GLE_SCENE_HPP_
@@ -17,10 +17,10 @@
 # include <utility>
 # include <Program.hpp>
 # include <Color.hpp>
-# include <Octree.hpp>
 # include <Quaternion.hpp>
 # include <EnvironmentMap.hpp>
 # include <Buffer.hpp>
+# include <Octree.hpp>
 
 namespace gle {
 
@@ -28,6 +28,7 @@ namespace gle {
   class Light;
   class Mesh;
   class Texture;
+  class Material;
 
   //! Describe a 3D scene
   /*!
@@ -245,6 +246,8 @@ namespace gle {
 
       virtual void update();
 
+      virtual std::vector<Node*>& getDebugNodes(int mode);
+
     protected:
 
       //! Type of the node
@@ -289,6 +292,7 @@ namespace gle {
       //! Normal matrix
       Matrix3<GLfloat>		_normalMatrix;
 
+      std::vector<Node*>	_debugNodes;
     };
 
     //! Symbolize a group of meshes for rendering
@@ -510,10 +514,6 @@ namespace gle {
 
     void generateTree();
 
-    //! Display the spatial partitionning tree of the scene
-
-    void displayTree();
-
     //! Enable or disable the frustum culling in the scene
 
     void enableFrustumCulling(bool enable = true);
@@ -540,6 +540,8 @@ namespace gle {
     //! Returns the uniform buffer containing static meshes materials
 
     const gle::Bufferf*     getStaticMeshesMaterialsBuffer(GLuint bufferId) const;
+
+    std::vector<Node*>& getDebugNodes(int mode);
 
   private:
     gle::Shader*	_createVertexShader();
@@ -589,14 +591,17 @@ namespace gle {
     std::vector<gle::Bufferf*>				_staticMeshesMaterialsBuffers;
     std::map<gle::Material*, std::pair<GLuint, GLuint>>	_staticMeshesMaterialsBuffersIds;
 
-    bool	_displayBoundingVolume;
-    gle::Octree	_tree;
+    Octree	_tree;
     bool	_frustumCulling;
 
     EnvironmentMap*	_envMap;
     bool		_isEnvMapEnabled;
     Program*		_envMapProgram;
     Mesh*		_envMapMesh;
+
+    std::vector<Node*> _debugNodes;
+
+    void		_addDebugNodes(Scene::Node* node, int mode);
   };
 }
 

@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Tue Feb 21 15:47:17 2012 gael jochaud-du-plessix
-// Last update Fri Jun 22 00:18:20 2012 loick michard
+// Last update Fri Jun 22 18:21:41 2012 loick michard
 //
 
 #ifndef _GLE_SHADER_SOURCE_HPP_
@@ -21,6 +21,8 @@ namespace gle {
     extern const char *FragmentShader;
     extern const char *CubeMapVertexShader;
     extern const char *CubeMapFragmentShader;
+    extern const char *DebugVertexShader;
+    extern const char *DebugFragmentShader;
     
     extern GLuint PositionLocation;
     extern GLuint NormalLocation;
