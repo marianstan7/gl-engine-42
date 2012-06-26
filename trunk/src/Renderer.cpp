@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Mon Feb 20 20:48:54 2012 gael jochaud-du-plessix
-// Last update Mon Jun 25 20:31:07 2012 gael jochaud-du-plessix
+// Last update Tue Jun 26 12:14:00 2012 loick michard
 //
 
 #include <Renderer.hpp>
@@ -13,6 +13,7 @@
 #include <ShaderSource.hpp>
 #include <Exception.hpp>
 #include <EnvironmentMap.hpp>
+#include <Camera.hpp>
 
 gle::Renderer::Renderer() :
   _currentProgram(NULL),
@@ -60,7 +61,7 @@ void gle::Renderer::render(Scene* scene, const Rectf& size, FrameBuffer* customF
 
   scene->processFrustumCulling();
 
-  Camera*			camera = scene->getCurrentCamera();
+  gle::Camera*			camera = scene->getCurrentCamera();
   gle::Color<GLfloat> const &	backgroundColor = scene->getBackgroundColor();
 
   glClearColor(backgroundColor.r, backgroundColor.b, backgroundColor.a, 1.f);
@@ -315,7 +316,8 @@ void gle::Renderer::_setVertexAttributes(GLuint offset)
 				   + gle::Mesh::VertexAttributeSizeCoords
 				   + gle::Mesh::VertexAttributeSizeNormal
 				   + gle::Mesh::VertexAttributeSizeTangent
-				   + gle::Mesh::VertexAttributeSizeTextureCoords)
+				   + gle::Mesh::VertexAttributeSizeTextureCoords
+				   + gle::Mesh::VertexAttributeSizeBone)
 				  * sizeof(GLfloat)));
   glVertexAttribPointer(gle::ShaderSource::TextureCoordLocation,
 			2, GL_FLOAT, GL_FALSE, gle::Mesh::VertexAttributesSize * sizeof(GLfloat),

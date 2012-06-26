@@ -5,7 +5,7 @@
 // Login   <michar_l@epitech.net>
 // 
 // Started on  Thu Jun 21 20:39:52 2012 loick michard
-// Last update Mon Jun 25 19:57:15 2012 gael jochaud-du-plessix
+// Last update Tue Jun 26 10:48:16 2012 loick michard
 //
 
 #ifndef _MESH_HPP_
@@ -73,6 +73,8 @@ namespace gle {
     //! Size of the vertex texture coords attribute
     static const GLsizeiptr VertexAttributeSizeTextureCoords = 2;
 
+    static const GLsizeiptr VertexAttributeSizeBone = 4;
+
     //! Size of the vertex mesh identifiers attribute
     static const GLsizeiptr VertexAttributeMeshIdentifiers = 3;
 
@@ -83,8 +85,13 @@ namespace gle {
        + VertexAttributeSizeNormal
        + VertexAttributeSizeTangent
        + VertexAttributeSizeTextureCoords
+       + VertexAttributeSizeBone
        + VertexAttributeMeshIdentifiers)
       ;
+
+    //! Size of the datas used by one mesh in the uniform buffer                                                                                             
+    static const GLsizeiptr UniformSize = 20;
+
 
     //! Symbolize a group of meshes for rendering
 
@@ -258,6 +265,10 @@ namespace gle {
     GLint getMaterialBufferId() const;
 
     virtual std::vector<Scene::Node*>& getDebugNodes(int mode);
+
+    virtual void      updateMatrix();
+
+    const GLfloat* getUniforms();
     
   private:
     PrimitiveType	_primitiveType;
@@ -276,6 +287,9 @@ namespace gle {
     GLint		_materialBufferId;
 
     bool		_absolute;
+
+    bool		_needUniformsUpdate;
+    GLfloat*		_uniforms;
   };
 }
 

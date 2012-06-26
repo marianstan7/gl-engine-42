@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Tue Feb 14 17:12:21 2012 gael jochaud-du-plessix
-// Last update Sun Jun 24 14:44:45 2012 loick michard
+// Last update Tue Jun 26 12:10:47 2012 loick michard
 //
 
 #ifndef _GLE_RENDERER_HPP_
@@ -33,7 +33,8 @@ namespace gle {
     enum DebugMode {
       BoundingVolume = 1 << 0,
       Octree = 1 << 1,
-      Bone = 1 << 2
+      Bone = 1 << 2,
+      Camera = 1 << 3
     };
     
     //! Construct a new renderer

@@ -5,7 +5,7 @@
 // Login   <michar_l@epitech.net>
 // 
 // Started on  Tue May 15 19:32:41 2012 loick michard
-// Last update Sun Jun 24 17:23:56 2012 loick michard
+// Last update Tue Jun 26 14:49:03 2012 loick michard
 //
 
 #include <algorithm>
@@ -119,10 +119,9 @@ void gle::Scene::Node::updateMatrix()
 
   _cameraTransformationMatrix = _transformationMatrix;
   _transformationMatrix.translate(_position);
-  if (_hasTarget && _type != Camera)
-    _transformationMatrix.lookAt(_position,
-				 _target,
-				 Vector3<GLfloat>(0, 1, 0));
+  _transformationMatrix.lookAt(_position,
+			       _target,
+			       Vector3<GLfloat>(0, 1, 0));
   _transformationMatrix *= _rotationMatrix;
   _transformationMatrix *= _scaleMatrix;
 
@@ -255,5 +254,6 @@ void gle::Scene::Node::update()
 
 std::vector<gle::Scene::Node*>& gle::Scene::Node::getDebugNodes(int mode)
 {
+  (void)mode;
   return (_debugNodes);
 }

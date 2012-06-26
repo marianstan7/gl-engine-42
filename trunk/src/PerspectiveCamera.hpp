@@ -5,13 +5,14 @@
 // Login   <michar_l@epitech.net>
 // 
 // Started on  Sat Feb 18 12:43:33 2012 loick michard
-// Last update Fri May 25 19:47:50 2012 loick michard
+// Last update Tue Jun 26 14:39:42 2012 loick michard
 //
 
 #ifndef _PERSPECTIVE_CAMERA_HPP_
 # define _PERSPECTIVE_CAMERA_HPP_
 
 #include <Camera.hpp>
+#include <Mesh.hpp>
 
 namespace gle {
   
@@ -50,14 +51,19 @@ namespace gle {
 
     //! Default destructor
 
-    ~PerspectiveCamera(){}
+    ~PerspectiveCamera();
 
     virtual void updateProjectionMatrix();
+
+    virtual void update();
+
+    virtual std::vector<Scene::Node*>& getDebugNodes(int mode);
   private:
-    GLfloat _fovy;
-    GLfloat _aspect;
-    GLfloat _near;
-    GLfloat _far;
+    GLfloat	_fovy;
+    GLfloat	_aspect;
+    GLfloat	_near;
+    GLfloat	_far;
+    gle::Mesh*	_debugMesh[2];
   };
 }
 
