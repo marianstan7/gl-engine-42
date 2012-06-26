@@ -5,11 +5,12 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Fri Mar  2 17:27:21 2012 gael jochaud-du-plessix
-// Last update Sun Jun 24 22:32:30 2012 loick michard
+// Last update Tue Jun 26 14:52:30 2012 loick michard
 //
 
 #include <iostream>
 #include <Bone.hpp>
+#include <Skeleton.hpp>
 #include "TextureFrameBuffer.hpp"
 #include "Example.hpp"
 #include "CubeMap.hpp"
@@ -24,7 +25,7 @@ int accelerometerId = 0;
 class App : public Example {
 public:
   App(int ac, char** av) :
-    Example(ac, av, W_WIDTH, W_HEIGHT, W_FRAMERATE, "glEngine : Geometries")
+    Example(ac, av, W_WIDTH, W_HEIGHT, W_FRAMERATE, "glEngine : Bones")
   {
     //printGPUMemInfo();
     _cameraType = Trackball;
@@ -34,13 +35,15 @@ public:
   void initScene()
   {
     _scene = new gle::Scene();
+    //_scene->setBackgroundColor(gle::Colorf(1.0, 1.0, 1.0));
     _camera = new gle::PerspectiveCamera(gle::Vector3f(-20, 10, 0),
 					 gle::Vector3f(0, 0, 0),
-					 45, (GLfloat)_winWidth/_winHeight, 1, 10000);
+					 45, (GLfloat)_winWidth/_winHeight, 1, 1000);
     _renderer = new gle::Renderer();
     _renderer->setDebugMode(gle::Renderer::Octree |
 			    gle::Renderer::BoundingVolume |
-			    gle::Renderer::Bone);
+			    //gle::Renderer::Bone |
+			    gle::Renderer::Camera);
 
     gle::Material* material = new gle::Material();
     material->setDiffuseColor(gle::Colorf(1.0, 0.0, 0.0));
@@ -58,11 +61,14 @@ public:
     _bone2 = new gle::Bone(gle::Vector3f(6.0, 6.0, 0.0));
     _bone2->setPosition(gle::Vector3f(0.0, 10.0, 0.0));
     _bone->addChild(_bone2);
+    _skeleton = new gle::Skeleton();
+    _skeleton->addChild(_bone);
 
-    std::cout << _bone << std::endl;
-    std::cout << _bone2 << std::endl;
+    *_scene << _skeleton;
 
-    *_scene << _bone;
+    *_scene << new gle::PerspectiveCamera(gle::Vector3f(0, 0, 0),
+					 gle::Vector3f(0, 10, 0),
+					 45, (GLfloat)_winWidth/_winHeight, 1, 4);
 
     _camera->addChild(_light);
     _scene->update();
@@ -114,6 +120,7 @@ private	:
   gle::PointLight*		_light;
   gle::Bone*			_bone;
   gle::Bone*			_bone2;
+  gle::Skeleton*		_skeleton;
 };
 
 int main(int ac, char **av)

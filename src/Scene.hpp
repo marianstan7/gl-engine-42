@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Mon Feb 20 18:18:01 2012 gael jochaud-du-plessix
-// Last update Sat Jun 23 16:26:19 2012 loick michard
+// Last update Tue Jun 26 14:51:07 2012 loick michard
 //
 
 #ifndef _GLE_SCENE_HPP_
@@ -29,6 +29,7 @@ namespace gle {
   class Mesh;
   class Texture;
   class Material;
+  class Bone;
 
   //! Describe a 3D scene
   /*!
@@ -60,7 +61,11 @@ namespace gle {
 	//! Node representing a camera
 	Camera,
 	//! Node representing a light
-	Light
+	Light,
+	//! Node representing a bone
+	Bone,
+	//! Node representing a skeleton
+        Skeleton
       };
 
       //! Constructs a node with its type
@@ -167,7 +172,7 @@ namespace gle {
 
       //! Update the matrices of the node
 
-      void	updateMatrix();
+      virtual void	updateMatrix();
 
       //! Set the position of the node, relative to its parent
 
@@ -305,10 +310,6 @@ namespace gle {
       gle::Texture*             normalMap;
       gle::EnvironmentMap*      envMap;
     };
-
-    //! Size of the datas used by one mesh in the uniform buffer
-    
-    static const GLsizeiptr MeshUniformSize = 16;
 
     //! Constructs a scene
     /*!
@@ -481,6 +482,8 @@ namespace gle {
 
     void updateLights();
 
+    void updateBones();
+
     //! Update dynamic meshes
     /*
       This function has to be called when dynamic meshes are aded or removed form the scene.
@@ -600,8 +603,10 @@ namespace gle {
     Mesh*		_envMapMesh;
 
     std::vector<Node*> _debugNodes;
-
     void		_addDebugNodes(Scene::Node* node, int mode);
+
+    std::vector<Bone*>		_bones;
+    std::vector<GLfloat>	_bonesMatrices;
   };
 }
 

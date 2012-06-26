@@ -4,7 +4,8 @@
 #define GLE_IN_VERTEX_NORMAL_LOCATION 1
 #define GLE_IN_VERTEX_TANGENT_LOCATION 2
 #define GLE_IN_VERTEX_TEXTURE_COORD_LOCATION 3
-#define GLE_IN_VERTEX_MESH_ID_LOCATION 4
+#define GLE_IN_VERTEX_BONES_LOCATION 4
+#define GLE_IN_VERTEX_MESH_ID_LOCATION 5
 
 #define GLE_LIGHT_ENABLED 1
 
@@ -13,6 +14,7 @@
 #define GLE_NB_SPOT_LIGHTS %nb_spot_lights
 #define GLE_NB_STATIC_MESHES %nb_static_meshes
 #define GLE_NB_MATERIALS %nb_materials
+#define GLE_NB_BONES %nb_bones
 
 #define GLE_CUBE_MAP 1
 
@@ -29,6 +31,9 @@ uniform float gle_fogDensity;
 	uniform vec3 gle_spotLightPosition[GLE_NB_SPOT_LIGHTS];
 	uniform vec3 gle_spotLightAttenuation[GLE_NB_SPOT_LIGHTS];
 #endif
+#if GLE_NB_BONES > 0
+	uniform mat4 gle_bonesMatrix[GLE_NB_BONES];
+#endif
 
 uniform mat4 gle_MWMatrix;
 
@@ -42,6 +47,7 @@ uniform mat4 gle_PMatrix;
 
 struct gle_StaticMesh {
 	mat4	MWMatrix;
+	float	skeletonIndex;
 };
 
 layout(std140) uniform staticMeshesBlock
@@ -77,6 +83,7 @@ layout (location = GLE_IN_VERTEX_POSITION_LOCATION) in vec3 gle_vPosition;
 layout (location = GLE_IN_VERTEX_NORMAL_LOCATION) in vec3 gle_vNormal;
 layout (location = GLE_IN_VERTEX_TANGENT_LOCATION) in vec3 gle_vTangent; 
 layout (location = GLE_IN_VERTEX_TEXTURE_COORD_LOCATION) in vec2 gle_vTextureCoord;
+layout (location = GLE_IN_VERTEX_BONES_LOCATION) in vec4 gle_vBones;
 layout (location = GLE_IN_VERTEX_MESH_ID_LOCATION) in vec3 gle_vMeshIdentifier;
 
 out float gle_varying_fogFactor; 

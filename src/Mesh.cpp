@@ -5,7 +5,7 @@
 // Login   <michar_l@epitech.net>
 // 
 // Started on  Mon Feb 20 18:25:23 2012 loick michard
-// Last update Mon Jun 25 21:45:50 2012 gael jochaud-du-plessix
+// Last update Tue Jun 26 10:58:30 2012 loick michard
 //
 
 #include <Mesh.hpp>
@@ -69,7 +69,9 @@ gle::Mesh::Mesh(Material* material, bool isDynamic)
     _nbVertexes(0),
     _boundingVolume(NULL),
     _uniformBufferId(-1),
-    _materialBufferId(-1)
+    _materialBufferId(-1),
+    _needUniformsUpdate(true),
+    _uniforms(NULL)
 {
   _isDynamic = isDynamic;
   _indexes = new gle::Buffer<GLuint>(gle::Buffer<GLuint>::ElementArray,
@@ -88,7 +90,9 @@ gle::Mesh::Mesh(gle::Mesh const & other)
     _nbVertexes(other._nbVertexes),
     _boundingVolume(NULL),
     _uniformBufferId(-1),
-    _materialBufferId(-1)
+    _materialBufferId(-1),
+    _needUniformsUpdate(true),
+    _uniforms(NULL)
 {
   if (other._boundingVolume)
     _boundingVolume = other._boundingVolume->duplicate();
@@ -120,6 +124,8 @@ gle::Mesh::~Mesh()
     _attributes->release();
   if (_boundingVolume)
     delete _boundingVolume;
+  if (_uniforms)
+    delete [] _uniforms;
 }
 
 void gle::Mesh::setPrimitiveType(PrimitiveType type)
@@ -331,18 +337,21 @@ void gle::Mesh::setIdentifiers(GLuint meshId, GLuint materialId)
 		 + VertexAttributeSizeNormal
 		 + VertexAttributeSizeTangent
 		 + VertexAttributeSizeTextureCoords
+		 + VertexAttributeSizeBone
 		 + 0] = isDynamic() ? 1.0 : 0.0;
       attributes[i * VertexAttributesSize
 		 + VertexAttributeSizeCoords
 		 + VertexAttributeSizeNormal
 		 + VertexAttributeSizeTangent
 		 + VertexAttributeSizeTextureCoords
+		 + VertexAttributeSizeBone
 		 + 1] = (GLfloat)meshId;
       attributes[i * VertexAttributesSize
 		 + VertexAttributeSizeCoords
 		 + VertexAttributeSizeNormal
 		 + VertexAttributeSizeTangent
 		 + VertexAttributeSizeTextureCoords
+		 + VertexAttributeSizeBone
 		 + 2] = (GLfloat)materialId;
       
     }
@@ -477,4 +486,27 @@ std::vector<gle::Scene::Node*>& gle::Mesh::getDebugNodes(int mode)
   if (_boundingVolume && (mode & Renderer::BoundingVolume))
     _debugNodes.push_back(_boundingVolume->getDebugMesh(this));
   return (_debugNodes);
+}
+
+void gle::Mesh::updateMatrix()
+{
+  _needUniformsUpdate = true;
+  Scene::Node::updateMatrix();
+}
+
+const GLfloat* gle::Mesh::getUniforms()
+{
+  if (_needUniformsUpdate)
+    {
+      if (!_uniforms)
+	_uniforms = new GLfloat[UniformSize];
+      for (int i = 0; i < UniformSize; ++i)
+	_uniforms[i] = 0;
+      Matrix4<GLfloat> matrix = getTransformationMatrix();
+      GLfloat* floatMatrix = (GLfloat*)matrix;
+      for (int i = 0; i < 16; ++i)
+	_uniforms[i] = floatMatrix[i];
+      _needUniformsUpdate = false;
+    }
+  return (_uniforms);
 }

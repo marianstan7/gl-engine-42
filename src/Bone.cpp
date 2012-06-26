@@ -5,7 +5,7 @@
 // Login   <michar_l@epitech.net>
 // 
 // Started on  Sun Jun 24 12:43:55 2012 loick michard
-// Last update Sun Jun 24 17:24:38 2012 loick michard
+// Last update Tue Jun 26 14:23:00 2012 loick michard
 //
 
 #include <Bone.hpp>
@@ -14,7 +14,7 @@
 #include <Mesh.hpp>
 
 gle::Bone::Bone() :
-  _to(0, 0, 0)
+  gle::Scene::Node(gle::Scene::Node::Bone), _to(0, 0, 0)
 {
 
 }

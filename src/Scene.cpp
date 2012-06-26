@@ -5,7 +5,7 @@
 // Login   <michar_l@epitech.net>
 // 
 // Started on  Thu Jun 21 20:42:49 2012 loick michard
-// Last update Sat Jun 23 16:38:13 2012 loick michard
+// Last update Tue Jun 26 10:48:02 2012 loick michard
 //
 
 #include <Scene.hpp>
@@ -19,6 +19,7 @@
 #include <sstream>
 #include <Geometries.hpp>
 #include <Renderer.hpp>
+#include <Bone.hpp>
 
 gle::Scene::Scene() :
   _backgroundColor(0.0, 0.0, 0.0, 0.0), _fogColor(0.0, 0.0, 0.0, 0.0), _fogDensity(0.0),
@@ -32,7 +33,8 @@ gle::Scene::Scene() :
   _staticMeshesUniformsBuffers(), _staticMeshesMaterialsBuffers(),
   _staticMeshesMaterialsBuffersIds(),
   _frustumCulling(false),
-  _envMap(NULL), _isEnvMapEnabled(false), _envMapProgram(NULL), _envMapMesh(NULL)
+  _envMap(NULL), _isEnvMapEnabled(false), _envMapProgram(NULL), _envMapMesh(NULL),
+  _bones()
 {
   _root.setName("root");
 }
@@ -231,6 +233,18 @@ void gle::Scene::updateLights()
   _spotLightsSize = sSize;
 }
 
+void gle::Scene::updateBones()
+{
+  _bonesMatrices.clear();
+  for (Bone* &bone : _bones)
+    {
+      Matrix4<GLfloat> matrix = bone->getTransformationMatrix();
+      GLfloat* floatMatrix = (GLfloat*)matrix;
+      for (int i = 0; i < 16; ++i)
+	_bonesMatrices[i] = floatMatrix[i];
+    }
+}
+
 GLfloat* gle::Scene::getDirectionalLightsDirection() const
 {
   return ((GLfloat*)&_directionalLightsDirection[0]);
@@ -380,7 +394,7 @@ gle::Shader* gle::Scene::_createVertexShader()
   GLint	maxUniformBlockSize = -1, maxMeshByBuffer = 0, maxMaterialByBuffer = 0;
   
   glGetIntegerv(GL_MAX_UNIFORM_BLOCK_SIZE, &maxUniformBlockSize);
-  maxMeshByBuffer = maxUniformBlockSize / (MeshUniformSize * sizeof(GLfloat));
+  maxMeshByBuffer = maxUniformBlockSize / (Mesh::UniformSize * sizeof(GLfloat));
   maxMaterialByBuffer = maxUniformBlockSize / (gle::Material::UniformSize * sizeof(GLfloat));
 
   shaderSource += gle::ShaderSource::VertexShader;
@@ -389,6 +403,7 @@ gle::Shader* gle::Scene::_createVertexShader()
   shaderSource = _replace("%nb_spot_lights", getSpotLightsSize(), shaderSource);
   shaderSource = _replace("%nb_static_meshes", maxMeshByBuffer, shaderSource);
   shaderSource = _replace("%nb_materials", maxMaterialByBuffer, shaderSource);
+  shaderSource = _replace("%nb_bones", _bones.size(), shaderSource);
 
   gle::Shader *shader;
   try
@@ -411,7 +426,7 @@ gle::Shader* gle::Scene::_createFragmentShader()
   GLint	maxUniformBlockSize = -1, maxMeshByBuffer = 0, maxMaterialByBuffer = 0;
   
   glGetIntegerv(GL_MAX_UNIFORM_BLOCK_SIZE, &maxUniformBlockSize);
-  maxMeshByBuffer = maxUniformBlockSize / (MeshUniformSize * sizeof(GLfloat));
+  maxMeshByBuffer = maxUniformBlockSize / (Mesh::UniformSize * sizeof(GLfloat));
   maxMaterialByBuffer = maxUniformBlockSize / (gle::Material::UniformSize * sizeof(GLfloat));
 
   shaderSource += gle::ShaderSource::FragmentShader;
@@ -420,6 +435,7 @@ gle::Shader* gle::Scene::_createFragmentShader()
   shaderSource = _replace("%nb_spot_lights", getSpotLightsSize(), shaderSource);
   shaderSource = _replace("%nb_static_meshes", maxMeshByBuffer, shaderSource);
   shaderSource = _replace("%nb_materials", maxMaterialByBuffer, shaderSource);
+  shaderSource = _replace("%nb_bones", _bones.size(), shaderSource);
 
   gle::Shader *shader;
   try
@@ -482,6 +498,7 @@ void		gle::Scene::update(gle::Scene::Node* node, int depth)
   GLsizeiptr	directionalLightsSize = _directionalLightsSize;
   GLsizeiptr	pointLightsSize = _pointLightsSize;
   GLsizeiptr	spotLightsSize = _spotLightsSize;
+  uint		bonesSize = _bones.size();
 
   if (!node)
     {
@@ -492,7 +509,9 @@ void		gle::Scene::update(gle::Scene::Node* node, int depth)
       generate = true;
       _root.updateMatrix();
     }
-  if (node->getType() == Node::Mesh && (mesh = dynamic_cast<Mesh*>(node)))
+  if (node->getType() == Node::Bone)
+    _bones.push_back(dynamic_cast<Bone*>(node));
+  else if (node->getType() == Node::Mesh && (mesh = dynamic_cast<Mesh*>(node)))
     {
       if (mesh->getBoundingVolume() && !mesh->isDynamic())
 	_staticMeshes.push_back(mesh);
@@ -511,11 +530,13 @@ void		gle::Scene::update(gle::Scene::Node* node, int depth)
   if (generate)
     {
       updateLights();
+      updateBones();
       updateDynamicMeshes();
       updateStaticMeshes();
       if (directionalLightsSize != _directionalLightsSize ||
 	  pointLightsSize != _pointLightsSize ||
-	  spotLightsSize != _spotLightsSize)
+	  spotLightsSize != _spotLightsSize ||
+	  bonesSize != _bones.size())
 	_needProgramCompilation = true;
     }
 }
@@ -531,12 +552,12 @@ void gle::Scene::updateStaticMeshes()
   GLint	maxUniformBlockSize = -1, maxMeshByBuffer = 0;
  
   glGetIntegerv(GL_MAX_UNIFORM_BLOCK_SIZE, &maxUniformBlockSize);
-  maxMeshByBuffer = maxUniformBlockSize / (MeshUniformSize * sizeof(GLfloat));
+  maxMeshByBuffer = maxUniformBlockSize / (Mesh::UniformSize * sizeof(GLfloat));
 
   _clearStaticMeshesBuffers();
   _staticMeshesUniformsBuffers.reserve(_staticMeshes.size() / maxMeshByBuffer);
 
-  GLfloat* staticMeshesUniforms = new GLfloat[MeshUniformSize * maxMeshByBuffer];
+  GLfloat* staticMeshesUniforms = new GLfloat[Mesh::UniformSize * maxMeshByBuffer];
 
   std::list<MeshGroup> factorizedMeshes =
     gle::Mesh::factorizeForDrawing(std::list<gle::Mesh*>(_staticMeshes.begin(), _staticMeshes.end()),
@@ -561,12 +582,12 @@ void gle::Scene::updateStaticMeshes()
 	      mesh->setUniformBufferId(bufferId);
 	      mesh->setMaterialBufferId(_staticMeshesMaterialsBuffersIds[mesh->getMaterial()].first);
 	      mesh->setIdentifiers(i, _staticMeshesMaterialsBuffersIds[mesh->getMaterial()].second);
-	      const gle::Matrix4<GLfloat>& mvMatrix = mesh->getTransformationMatrix();
+	      const GLfloat* buffer = mesh->getUniforms();
 
-	      for (int j = 0; j < MeshUniformSize; ++j)
-		staticMeshesUniforms[MeshUniformSize * i + j] = ((const GLfloat*)mvMatrix)[j];
+	      for (int j = 0; j < Mesh::UniformSize; ++j)
+		staticMeshesUniforms[Mesh::UniformSize * i + j] = buffer[j];
 	    }
-	  buffer->resize(nbMeshes * MeshUniformSize, staticMeshesUniforms);
+	  buffer->resize(nbMeshes * Mesh::UniformSize, staticMeshesUniforms);
 	  _staticMeshesUniformsBuffers.resize(bufferId + 1, NULL);
 	  _staticMeshesUniformsBuffers[bufferId] = buffer;
 	  ++bufferId;
@@ -574,6 +595,71 @@ void gle::Scene::updateStaticMeshes()
     }
 
   delete[] staticMeshesUniforms;
+}
+
+void	gle::Scene::_buildMaterialBuffers(std::list<MeshGroup>& factorizedMeshes, GLint maxUniformBlockSize)
+{
+  GLint	maxMaterialByBuffer = 0;
+
+  maxMaterialByBuffer = maxUniformBlockSize / (gle::Material::UniformSize * sizeof(GLfloat));
+
+  GLfloat* staticMeshesMaterials = new GLfloat[gle::Material::UniformSize * maxMaterialByBuffer];
+  int bufferId = 0;
+
+  for (MeshGroup &group : factorizedMeshes)
+    {
+      std::list<gle::Material*> materials;
+      for (gle::Mesh* mesh : group.meshes)
+	{
+	  gle::Material* material = mesh->getMaterial();
+	  if (find(materials.begin(), materials.end(), material) == materials.end())
+	    materials.push_front(material);
+	}
+
+      while (materials.size() > 0)
+      	{
+      	  gle::Bufferf* buffer = new gle::Bufferf(gle::Bufferf::UniformArray);
+	  int nbMaterials = materials.size();
+	  if (nbMaterials > maxMaterialByBuffer)
+	    nbMaterials = maxMaterialByBuffer;
+	  for (int i = 0; i < nbMaterials; ++i)
+	    {
+	      gle::Material* material = materials.front();
+	      materials.pop_front();
+	      _staticMeshesMaterialsBuffersIds[material] = {bufferId, i};
+	      const GLfloat* materialData = material->getUniforms();
+	      for (int j = 0; j < gle::Material::UniformSize; ++j)
+	      	staticMeshesMaterials[gle::Material::UniformSize * i + j] = materialData[j];
+	    }
+	  buffer->resize(nbMaterials * gle::Material::UniformSize, staticMeshesMaterials);
+	  _staticMeshesMaterialsBuffers.resize(bufferId + 1, NULL);
+	  _staticMeshesMaterialsBuffers[bufferId] = buffer;
+	  ++bufferId;
+      	}
+    }
+
+  delete[] staticMeshesMaterials;
+}
+
+void	gle::Scene::_clearStaticMeshesBuffers()
+{
+  for (gle::Bufferf* buffer : _staticMeshesUniformsBuffers)
+    delete buffer;
+  for (gle::Bufferf* buffer : _staticMeshesMaterialsBuffers)
+    delete buffer;
+  _staticMeshesUniformsBuffers.clear();
+  _staticMeshesMaterialsBuffers.clear();
+  _staticMeshesMaterialsBuffersIds.clear();
+}
+
+const gle::Bufferf*	gle::Scene::getStaticMeshesUniformsBuffer(GLuint bufferId) const
+{
+  return (_staticMeshesUniformsBuffers[bufferId]);
+}
+
+const gle::Bufferf*	gle::Scene::getStaticMeshesMaterialsBuffer(GLuint bufferId) const
+{
+  return (_staticMeshesMaterialsBuffers[bufferId]);
 }
 
 void gle::Scene::setEnvMap(EnvironmentMap* envMap)
@@ -649,71 +735,6 @@ gle::Program* gle::Scene::getEnvMapProgram() const
 gle::Mesh* gle::Scene::getEnvMapMesh() const
 {
   return (_envMapMesh);
-}
-
-void	gle::Scene::_buildMaterialBuffers(std::list<MeshGroup>& factorizedMeshes, GLint maxUniformBlockSize)
-{
-  GLint	maxMaterialByBuffer = 0;
-
-  maxMaterialByBuffer = maxUniformBlockSize / (gle::Material::UniformSize * sizeof(GLfloat));
-
-  GLfloat* staticMeshesMaterials = new GLfloat[gle::Material::UniformSize * maxMaterialByBuffer];
-  int bufferId = 0;
-
-  for (MeshGroup &group : factorizedMeshes)
-    {
-      std::list<gle::Material*> materials;
-      for (gle::Mesh* mesh : group.meshes)
-	{
-	  gle::Material* material = mesh->getMaterial();
-	  if (find(materials.begin(), materials.end(), material) == materials.end())
-	    materials.push_front(material);
-	}
-
-      while (materials.size() > 0)
-      	{
-      	  gle::Bufferf* buffer = new gle::Bufferf(gle::Bufferf::UniformArray);
-	  int nbMaterials = materials.size();
-	  if (nbMaterials > maxMaterialByBuffer)
-	    nbMaterials = maxMaterialByBuffer;
-	  for (int i = 0; i < nbMaterials; ++i)
-	    {
-	      gle::Material* material = materials.front();
-	      materials.pop_front();
-	      _staticMeshesMaterialsBuffersIds[material] = {bufferId, i};
-	      const GLfloat* materialData = material->getUniforms();
-	      for (int j = 0; j < gle::Material::UniformSize; ++j)
-	      	staticMeshesMaterials[gle::Material::UniformSize * i + j] = materialData[j];
-	    }
-	  buffer->resize(nbMaterials * gle::Material::UniformSize, staticMeshesMaterials);
-	  _staticMeshesMaterialsBuffers.resize(bufferId + 1, NULL);
-	  _staticMeshesMaterialsBuffers[bufferId] = buffer;
-	  ++bufferId;
-      	}
-    }
-
-  delete[] staticMeshesMaterials;
-}
-
-void	gle::Scene::_clearStaticMeshesBuffers()
-{
-  for (gle::Bufferf* buffer : _staticMeshesUniformsBuffers)
-    delete buffer;
-  for (gle::Bufferf* buffer : _staticMeshesMaterialsBuffers)
-    delete buffer;
-  _staticMeshesUniformsBuffers.clear();
-  _staticMeshesMaterialsBuffers.clear();
-  _staticMeshesMaterialsBuffersIds.clear();
-}
-
-const gle::Bufferf*	gle::Scene::getStaticMeshesUniformsBuffer(GLuint bufferId) const
-{
-  return (_staticMeshesUniformsBuffers[bufferId]);
-}
-
-const gle::Bufferf*	gle::Scene::getStaticMeshesMaterialsBuffer(GLuint bufferId) const
-{
-  return (_staticMeshesMaterialsBuffers[bufferId]);
 }
 
 std::vector<gle::Scene::Node*>& gle::Scene::getDebugNodes(int mode)
