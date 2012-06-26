@@ -5,7 +5,7 @@
 // Login   <michar_l@epitech.net>
 // 
 // Started on  Tue May 15 19:32:41 2012 loick michard
-// Last update Tue Jun 26 14:49:03 2012 loick michard
+// Last update Tue Jun 26 15:21:21 2012 loick michard
 //
 
 #include <algorithm>
@@ -119,9 +119,10 @@ void gle::Scene::Node::updateMatrix()
 
   _cameraTransformationMatrix = _transformationMatrix;
   _transformationMatrix.translate(_position);
-  _transformationMatrix.lookAt(_position,
-			       _target,
-			       Vector3<GLfloat>(0, 1, 0));
+  if (_hasTarget)
+    _transformationMatrix.lookAt(_position,
+				 _target,
+				 Vector3<GLfloat>(0, 1, 0));
   _transformationMatrix *= _rotationMatrix;
   _transformationMatrix *= _scaleMatrix;
 
