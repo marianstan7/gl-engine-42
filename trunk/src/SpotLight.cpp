@@ -5,7 +5,7 @@
 // Login   <michar_l@epitech.net>
 // 
 // Started on  Thu Feb 23 17:55:31 2012 loick michard
-// Last update Mon Jul  2 16:36:14 2012 gael jochaud-du-plessix
+// Last update Mon Jul  2 22:46:30 2012 gael jochaud-du-plessix
 //
 
 #include <SpotLight.hpp>
