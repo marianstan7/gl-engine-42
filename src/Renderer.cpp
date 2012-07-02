@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Mon Feb 20 20:48:54 2012 gael jochaud-du-plessix
-// Last update Mon Jul  2 18:06:02 2012 gael jochaud-du-plessix
+// Last update Mon Jul  2 22:11:04 2012 loick michard
 //
 
 #include <Renderer.hpp>
@@ -90,6 +90,8 @@ void gle::Renderer::render(Scene* scene, const Rectf& size, FrameBuffer* customF
   glEnableVertexAttribArray(gle::ShaderSource::NormalLocation);
   glEnableVertexAttribArray(gle::ShaderSource::TangentLocation);
   glEnableVertexAttribArray(gle::ShaderSource::MeshIdentifierLocation);
+  if (scene->getBones().size())
+    glEnableVertexAttribArray(gle::ShaderSource::BonesLocation);
 
   MeshBufferManager::getInstance().bind();
   
@@ -112,6 +114,7 @@ void gle::Renderer::render(Scene* scene, const Rectf& size, FrameBuffer* customF
   glDisableVertexAttribArray(gle::ShaderSource::PositionLocation);
   glDisableVertexAttribArray(gle::ShaderSource::NormalLocation);
   glDisableVertexAttribArray(gle::ShaderSource::TangentLocation);
+  glDisableVertexAttribArray(gle::ShaderSource::BonesLocation);
   glDisableVertexAttribArray(gle::ShaderSource::MeshIdentifierLocation);
   glDisableVertexAttribArray(gle::ShaderSource::TextureCoordLocation);
 
@@ -442,6 +445,21 @@ void gle::Renderer::_setVertexAttributes(GLuint offset)
 				   + gle::Mesh::VertexAttributeSizeCoords
 				   + gle::Mesh::VertexAttributeSizeNormal)
 				  * sizeof(GLfloat)));
+  glVertexAttribPointer(gle::ShaderSource::TextureCoordLocation,
+			2, GL_FLOAT, GL_FALSE, gle::Mesh::VertexAttributesSize * sizeof(GLfloat),
+			(GLvoid*)((offset
+				   + gle::Mesh::VertexAttributeSizeCoords
+				   + gle::Mesh::VertexAttributeSizeNormal
+				   + gle::Mesh::VertexAttributeSizeTangent)
+				  * sizeof(GLfloat)));
+  glVertexAttribPointer(gle::ShaderSource::BonesLocation,
+			4, GL_FLOAT, GL_FALSE, gle::Mesh::VertexAttributesSize * sizeof(GLfloat),
+			(GLvoid*)((offset
+				   + gle::Mesh::VertexAttributeSizeCoords
+				   + gle::Mesh::VertexAttributeSizeNormal
+				   + gle::Mesh::VertexAttributeSizeTangent
+				   + gle::Mesh::VertexAttributeSizeTextureCoords)
+				   * sizeof(GLfloat)));
   glVertexAttribPointer(gle::ShaderSource::MeshIdentifierLocation,
 			3, GL_FLOAT, GL_FALSE, gle::Mesh::VertexAttributesSize * sizeof(GLfloat),
 			(GLvoid*)((offset
@@ -450,13 +468,6 @@ void gle::Renderer::_setVertexAttributes(GLuint offset)
 				   + gle::Mesh::VertexAttributeSizeTangent
 				   + gle::Mesh::VertexAttributeSizeTextureCoords
 				   + gle::Mesh::VertexAttributeSizeBone)
-				  * sizeof(GLfloat)));
-  glVertexAttribPointer(gle::ShaderSource::TextureCoordLocation,
-			2, GL_FLOAT, GL_FALSE, gle::Mesh::VertexAttributesSize * sizeof(GLfloat),
-			(GLvoid*)((offset
-				   + gle::Mesh::VertexAttributeSizeCoords
-				   + gle::Mesh::VertexAttributeSizeNormal
-				   + gle::Mesh::VertexAttributeSizeTangent)
 				  * sizeof(GLfloat)));
 }
 
@@ -480,6 +491,10 @@ void gle::Renderer::_setSceneUniforms(gle::Scene* scene, gle::Camera* camera)
   _currentProgram->setUniform("gle_CameraPos", camera->getAbsolutePosition());
   _currentProgram->setUniform("gle_fogColor", scene->getFogColor());
   _currentProgram->setUniform("gle_fogDensity", scene->getFogDensity());
+
+  std::vector<GLfloat>& bones = scene->getBones();
+  if (bones.size())
+      _currentProgram->setUniformMatrix4("gle_bonesMatrix", (GLfloat*)&bones[0], bones.size());
 
   // Send light infos to the shader
   GLint currentTexture = gle::Program::ShadowMapsTextures;

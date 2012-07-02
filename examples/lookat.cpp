@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Fri Mar  2 17:27:21 2012 gael jochaud-du-plessix
-// Last update Mon Jun 25 20:26:20 2012 gael jochaud-du-plessix
+// Last update Wed Jun 27 10:05:33 2012 loick michard
 //
 
 #include <iomanip>
@@ -43,6 +43,7 @@ public:
     _light()
   {
     _cameraType = Trackball;
+    _recordVideo = true;
   }
 
   void initScene()

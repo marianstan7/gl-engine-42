@@ -5,7 +5,7 @@
 // Login   <michar_l@epitech.net>
 // 
 // Started on  Thu Jun 21 20:42:49 2012 loick michard
-// Last update Mon Jul  2 17:36:50 2012 gael jochaud-du-plessix
+// Last update Mon Jul  2 22:11:10 2012 loick michard
 //
 
 #include <Scene.hpp>
@@ -20,6 +20,7 @@
 #include <Geometries.hpp>
 #include <Renderer.hpp>
 #include <Bone.hpp>
+#include <Skeleton.hpp>
 
 gle::Scene::Scene() :
   _backgroundColor(0.0, 0.0, 0.0, 0.0), _fogColor(0.0, 0.0, 0.0, 0.0), _fogDensity(0.0),
@@ -33,8 +34,7 @@ gle::Scene::Scene() :
   _staticMeshesUniformsBuffers(), _staticMeshesMaterialsBuffers(),
   _staticMeshesMaterialsBuffersIds(),
   _frustumCulling(false),
-  _envMap(NULL), _isEnvMapEnabled(false), _envMapProgram(NULL), _envMapMesh(NULL),
-  _bones()
+  _envMap(NULL), _isEnvMapEnabled(false), _envMapProgram(NULL), _envMapMesh(NULL)
 {
   _root.setName("root");
 }
@@ -306,17 +306,32 @@ void gle::Scene::updateLights()
   _spotLightsSize = sSize;
 }
 
-void gle::Scene::updateBones()
+void gle::Scene::updateSkeletons()
 {
   _bonesMatrices.clear();
-  for (Bone* &bone : _bones)
+  for (Skeleton* &skeleton : _skeletons)
     {
-      Matrix4<GLfloat> matrix = bone->getTransformationMatrix();
+      skeleton->setId(_bonesMatrices.size() / 16);
+      updateSkeleton(skeleton);
+    }
+} 
+
+void gle::Scene::updateSkeleton(Scene::Node* node)
+{
+  if (!node)
+    return;
+  if (node->getType() == Node::Bone)
+    {
+      Matrix4<GLfloat> matrix = node->getTransformationMatrix();
       GLfloat* floatMatrix = (GLfloat*)matrix;
       for (int i = 0; i < 16; ++i)
-	_bonesMatrices[i] = floatMatrix[i];
+        _bonesMatrices.push_back(floatMatrix[i]);
     }
+  const std::vector<Node*>& children = node->getChildren();
+  for (Node* const &child : children)
+    updateSkeleton(child);
 }
+
 
 GLfloat* gle::Scene::getDirectionalLightsDirection() const
 {
@@ -449,6 +464,8 @@ void		gle::Scene::buildProgram()
   _program->getUniformLocation("gle_cubeMap");
   //if (getDirectionalLightsSize() || getPointLightsSize() || getSpotLightsSize())
   //_program->getUniformLocation(gle::Program::NMatrix);
+  if (_bonesMatrices.size())
+    _program->getUniformLocation("gle_bonesMatrix");
   if (getDirectionalLightsSize())
     {
       _program->getUniformLocation("gle_directionalLightDirection");
@@ -493,7 +510,7 @@ void	gle::Scene::setShaderSourceConstants(std::string& shaderSource)
   shaderSource = _replace("%nb_spot_lights", getSpotLightsSize(), shaderSource);
   shaderSource = _replace("%nb_static_meshes", maxMeshByBuffer, shaderSource);
   shaderSource = _replace("%nb_materials", maxMaterialByBuffer, shaderSource);
-  shaderSource = _replace("%nb_bones", _bones.size(), shaderSource);
+  shaderSource = _replace("%nb_bones", _bonesMatrices.size() / 16, shaderSource);
 }
 
 gle::Shader* gle::Scene::_createVertexShader()
@@ -585,7 +602,7 @@ void		gle::Scene::update(gle::Scene::Node* node, int depth)
   GLsizeiptr	directionalLightsSize = _directionalLightsSize;
   GLsizeiptr	pointLightsSize = _pointLightsSize;
   GLsizeiptr	spotLightsSize = _spotLightsSize;
-  uint		bonesSize = _bones.size();
+  uint		bonesSize = _bonesMatrices.size() / 16;
 
   if (!node)
     {
@@ -596,8 +613,8 @@ void		gle::Scene::update(gle::Scene::Node* node, int depth)
       generate = true;
       _root.updateMatrix();
     }
-  if (node->getType() == Node::Bone)
-    _bones.push_back(dynamic_cast<Bone*>(node));
+  if (node->getType() == Node::Skeleton)
+    _skeletons.push_back(dynamic_cast<gle::Skeleton*>(node));
   else if (node->getType() == Node::Mesh && (mesh = dynamic_cast<Mesh*>(node)))
     {
       if (mesh->getBoundingVolume() && !mesh->isDynamic())
@@ -617,13 +634,13 @@ void		gle::Scene::update(gle::Scene::Node* node, int depth)
   if (generate)
     {
       updateLights();
-      updateBones();
+      updateSkeletons();
       updateDynamicMeshes();
       updateStaticMeshes();
       if (directionalLightsSize != _directionalLightsSize ||
 	  pointLightsSize != _pointLightsSize ||
 	  spotLightsSize != _spotLightsSize ||
-	  bonesSize != _bones.size())
+	  bonesSize != _bonesMatrices.size() / 16)
 	_needProgramCompilation = true;
     }
 }
@@ -847,4 +864,9 @@ void gle::Scene::_addDebugNodes(Scene::Node* node, int mode)
       for (Node* const &child : children)
 	_addDebugNodes(child, mode);
     }
+}
+
+std::vector<GLfloat>& gle::Scene::getBones()
+{
+  return (_bonesMatrices);
 }

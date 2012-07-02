@@ -5,7 +5,7 @@
 // Login   <michar_l@epitech.net>
 // 
 // Started on  Tue Jun 26 11:20:15 2012 loick michard
-// Last update Tue Jun 26 11:50:48 2012 loick michard
+// Last update Tue Jun 26 15:44:33 2012 loick michard
 //
 
 #ifndef _SKELETON_HPP_
@@ -15,7 +15,7 @@
 
 namespace gle {
 
-  class Skeleton : public Scene::Node  {
+  class Skeleton : public Scene::Node {
   public:
     Skeleton();
     ~Skeleton();

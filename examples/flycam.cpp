@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Fri Mar  2 17:27:21 2012 gael jochaud-du-plessix
-// Last update Fri May 25 12:25:49 2012 gael jochaud-du-plessix
+// Last update Wed Jun 27 10:02:24 2012 loick michard
 //
 
 #include <iostream>
@@ -32,7 +32,7 @@ GLfloat flycam::mouseX = 0.0;
 GLfloat flycam::mouseY = 0.0;
 GLfloat flycam::moveUp = 0.0;
 GLfloat flycam::mouseSensibility = 3;
-GLfloat flycam::camSpeed = 80;
+GLfloat flycam::camSpeed = 40;
 
 void flycam::flycam(gle::Camera* camera)
 {

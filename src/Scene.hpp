@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Mon Feb 20 18:18:01 2012 gael jochaud-du-plessix
-// Last update Mon Jul  2 17:15:20 2012 gael jochaud-du-plessix
+// Last update Mon Jul  2 22:11:14 2012 loick michard
 //
 
 #ifndef _GLE_SCENE_HPP_
@@ -30,6 +30,7 @@ namespace gle {
   class Texture;
   class Material;
   class Bone;
+  class Skeleton;
   class Renderer;
 
   //! Describe a 3D scene
@@ -511,7 +512,8 @@ namespace gle {
 
     void updateLights();
 
-    void updateBones();
+    void updateSkeletons();
+    void updateSkeleton(Node* node);
 
     //! Update dynamic meshes
     /*!
@@ -577,6 +579,8 @@ namespace gle {
 
     std::vector<Node*>& getDebugNodes(int mode);
 
+    std::vector<GLfloat>& getBones();
+
   private:
     gle::Shader*	_createVertexShader();
     gle::Shader*	_createFragmentShader();
@@ -639,7 +643,7 @@ namespace gle {
     std::vector<Node*> _debugNodes;
     void		_addDebugNodes(Scene::Node* node, int mode);
 
-    std::vector<Bone*>		_bones;
+    std::vector<gle::Skeleton*>	_skeletons;
     std::vector<GLfloat>	_bonesMatrices;
   };
 }

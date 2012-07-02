@@ -5,7 +5,7 @@
 // Login   <michar_l@epitech.net>
 // 
 // Started on  Sun Jun 24 12:43:55 2012 loick michard
-// Last update Tue Jun 26 14:23:00 2012 loick michard
+// Last update Tue Jun 26 20:32:58 2012 loick michard
 //
 
 #include <Bone.hpp>
@@ -14,13 +14,13 @@
 #include <Mesh.hpp>
 
 gle::Bone::Bone() :
-  gle::Scene::Node(gle::Scene::Node::Bone), _to(0, 0, 0)
+  gle::Scene::Node(gle::Scene::Node::Bone), _size(0)
 {
 
 }
 
-gle::Bone::Bone(const gle::Vector3f& to) :
-  _to(to), _debugMaterial(NULL)
+gle::Bone::Bone(GLfloat size) :
+  gle::Scene::Node(gle::Scene::Node::Bone), _size(size), _debugMaterial(NULL)
 {
 
 }
@@ -37,6 +37,7 @@ void gle::Bone::update()
       Matrix4<GLfloat> mvMatrix = getTransformationMatrix();
       Matrix3<GLfloat> normalMatrix;
       {
+	mvMatrix.translate(Vector3f(0, 0, 0));
 	Matrix4<GLfloat> inverse(mvMatrix);
 	inverse.inverse();
 	normalMatrix = inverse;
@@ -44,8 +45,9 @@ void gle::Bone::update()
 	_debugMeshes[0]->setMatrices(mvMatrix, normalMatrix);
 	_debugMeshes[2]->setMatrices(mvMatrix, normalMatrix);
       }
+      mvMatrix = getTransformationMatrix();
       {
-	mvMatrix.translate(_to);
+	mvMatrix.translate(Vector3f(0, _size, 0));
 	Matrix4<GLfloat> inverse(mvMatrix);
 	inverse.inverse();
 	normalMatrix = inverse;
@@ -66,14 +68,13 @@ std::vector<gle::Scene::Node*>& gle::Bone::getDebugNodes(int mode)
 	}
       if (_debugMeshes.size() == 0)
 	{
-	  GLfloat size = sqrt(_to.x * _to.x + _to.y * _to.y + _to.z * _to.z);
-	  if (size)
+	  if (_size)
 	    {
-	      Scene::Node* mesh = Geometries::Sphere(_debugMaterial, size / 40, 30, 30, true);
-	      Scene::Node* mesh2 = Geometries::Sphere(_debugMaterial, size / 40, 30, 30, true);
+	      Scene::Node* mesh = Geometries::Sphere(_debugMaterial, _size / 40, 30, 30, true);
+	      Scene::Node* mesh2 = Geometries::Sphere(_debugMaterial, _size / 40, 30, 30, true);
 	      gle::Mesh* link = new gle::Mesh(_debugMaterial, true);
 	      link->setRasterizationMode(Mesh::Line);
-	      GLfloat vtx[] = {0, 0, 0, _to.x, _to.y, _to.z, 0, 0, 0};
+	      GLfloat vtx[] = {0, 0, 0, 0, _size, 0, 0, 0, 0};
 	      GLuint idx[] = {0, 1, 2};
 	      link->setVertexes(vtx, 9);
 	      link->setIndexes(idx, 3);
@@ -81,6 +82,7 @@ std::vector<gle::Scene::Node*>& gle::Bone::getDebugNodes(int mode)
 	      Matrix4<GLfloat> mvMatrix = getTransformationMatrix();
 	      Matrix3<GLfloat> normalMatrix;
 	      {
+		mvMatrix.translate(Vector3f(0, 0, 0));
 		Matrix4<GLfloat> inverse(mvMatrix);
 		inverse.inverse();
 		normalMatrix = inverse;
@@ -88,8 +90,9 @@ std::vector<gle::Scene::Node*>& gle::Bone::getDebugNodes(int mode)
 		mesh->setMatrices(mvMatrix, normalMatrix);
 		link->setMatrices(mvMatrix, normalMatrix);
 	      }
+	      mvMatrix = getTransformationMatrix();
 	      {
-		mvMatrix.translate(_to);
+		mvMatrix.translate(Vector3f(0, _size, 0));
 		Matrix4<GLfloat> inverse(mvMatrix);
 		inverse.inverse();
 		normalMatrix = inverse;
