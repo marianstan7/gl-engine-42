@@ -5,7 +5,7 @@
 // Login   <michar_l@epitech.net>
 // 
 // Started on  Thu Jun 21 20:42:49 2012 loick michard
-// Last update Mon Jul  2 22:11:10 2012 loick michard
+// Last update Mon Jul  2 23:02:52 2012 gael jochaud-du-plessix
 //
 
 #include <Scene.hpp>
@@ -607,8 +607,10 @@ void		gle::Scene::update(gle::Scene::Node* node, int depth)
   if (!node)
     {
       _staticMeshes.clear();
+      _dynamicMeshes.clear();
       _lights.clear();
       _cameras.clear();
+      _skeletons.clear();
       node = &_root;
       generate = true;
       _root.updateMatrix();
@@ -638,10 +640,10 @@ void		gle::Scene::update(gle::Scene::Node* node, int depth)
       updateDynamicMeshes();
       updateStaticMeshes();
       if (directionalLightsSize != _directionalLightsSize ||
-	  pointLightsSize != _pointLightsSize ||
-	  spotLightsSize != _spotLightsSize ||
-	  bonesSize != _bonesMatrices.size() / 16)
-	_needProgramCompilation = true;
+      	  pointLightsSize != _pointLightsSize ||
+      	  spotLightsSize != _spotLightsSize ||
+      	  bonesSize != _bonesMatrices.size() / 16)
+      	_needProgramCompilation = true;
     }
 }
 

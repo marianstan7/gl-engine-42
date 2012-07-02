@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Fri Mar  2 17:27:21 2012 gael jochaud-du-plessix
-// Last update Wed Jun 27 10:05:33 2012 loick michard
+// Last update Mon Jul  2 22:59:26 2012 gael jochaud-du-plessix
 //
 
 #include <iomanip>
@@ -43,7 +43,7 @@ public:
     _light()
   {
     _cameraType = Trackball;
-    _recordVideo = true;
+    //_recordVideo = true;
   }
 
   void initScene()
@@ -110,6 +110,7 @@ public:
     _scene->updateLights();
     _camera->setTarget(_sp->getAbsolutePosition());
     t += 0.01;
+    _scene->update();
   }
 
 private:
