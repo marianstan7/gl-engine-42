@@ -5,7 +5,7 @@
 // Login   <michar_l@epitech.net>
 // 
 // Started on  Sat May  5 10:59:21 2012 loick michard
-// Last update Sun Jun 24 12:48:24 2012 loick michard
+// Last update Tue Jun 26 18:58:16 2012 gael jochaud-du-plessix
 //
 
 #include <Octree.hpp>
@@ -15,8 +15,8 @@
 
 gle::Octree::Node::Node(const Vector3<GLfloat>& min,
 			const Vector3<GLfloat>& max,
-			const std::vector<Element*> &elements,
-			const std::vector<Element*> &partialsElements) :
+			const std::list<Element*> &elements,
+			const std::list<Element*> &partialsElements) :
   _elements(elements), _partialsElements(partialsElements),
   _debugMaterial(NULL), _debugMesh(NULL), _leaf(true)
 {
@@ -63,7 +63,7 @@ gle::Octree::~Octree()
 
 }
 
-void gle::Octree::generateTree(std::vector<Element*> &elements)
+void gle::Octree::generateTree(std::list<Element*> &elements)
 {
   Vector3<GLfloat>	_min;
   Vector3<GLfloat>	_max;
@@ -102,8 +102,8 @@ void gle::Octree::Node::splitNode(bool thread, std::atomic<int> *nbThreads, int 
   struct subdivision {
     gle::Vector3<GLfloat> min;
     gle::Vector3<GLfloat> max;
-    std::vector<gle::Octree::Element*> elements;
-    std::vector<gle::Octree::Element*> partialsElements;
+    std::list<gle::Octree::Element*> elements;
+    std::list<gle::Octree::Element*> partialsElements;
   };
 
   if (_elements.size() <= 8)
@@ -225,8 +225,8 @@ std::vector<gle::Mesh*>& gle::Octree::getDebugNodes()
   return (_debugNodes);
 }
 
-std::vector<gle::Octree::Element*> &gle::Octree::getElementsInFrustum(const gle::Matrix4<GLfloat>& projection,
-								      const gle::Matrix4<GLfloat>& modelview)
+std::list<gle::Octree::Element*> &gle::Octree::getElementsInFrustum(const gle::Matrix4<GLfloat>& projection,
+								    const gle::Matrix4<GLfloat>& modelview)
 {
   _elementsInFrustum.clear();
   gle::Matrix4<GLfloat> clip = projection * modelview;
@@ -292,7 +292,7 @@ std::vector<gle::Octree::Element*> &gle::Octree::getElementsInFrustum(const gle:
 }
 
 void gle::Octree::Node::addToFrustum(const GLfloat frustum[6][4],
-				     std::vector<Element*>& elementsInFrustum,
+				     std::list<Element*>& elementsInFrustum,
 				     std::map<Element*, bool>* alreadyDone)
 {
   for(int i = 0; i < 6; i++)

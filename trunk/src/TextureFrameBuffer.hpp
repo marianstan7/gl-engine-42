@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Mon Jun  4 14:50:07 2012 gael jochaud-du-plessix
-// Last update Mon Jun  4 15:13:11 2012 gael jochaud-du-plessix
+// Last update Tue Jun 26 14:35:53 2012 gael jochaud-du-plessix
 //
 
 #ifndef _GLE_TEXTURE_FRAME_BUFFER_HPP_

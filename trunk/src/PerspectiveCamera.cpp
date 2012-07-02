@@ -5,7 +5,7 @@
 // Login   <michar_l@epitech.net>
 // 
 // Started on  Sat Feb 18 12:53:42 2012 loick michard
-// Last update Tue Jun 26 15:05:14 2012 loick michard
+// Last update Tue Jun 26 15:12:57 2012 gael jochaud-du-plessix
 //
 
 #include <PerspectiveCamera.hpp>
@@ -51,6 +51,13 @@ gle::PerspectiveCamera::~PerspectiveCamera()
       delete _debugMesh[1]->getMaterial();
       delete _debugMesh[1];
     }
+}
+
+
+void gle::PerspectiveCamera::setFovy(GLfloat fovy)
+{
+  _fovy = fovy;
+  updateProjectionMatrix();
 }
 
 void gle::PerspectiveCamera::updateProjectionMatrix()

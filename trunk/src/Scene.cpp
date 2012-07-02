@@ -5,7 +5,7 @@
 // Login   <michar_l@epitech.net>
 // 
 // Started on  Thu Jun 21 20:42:49 2012 loick michard
-// Last update Tue Jun 26 10:48:02 2012 loick michard
+// Last update Mon Jul  2 17:36:50 2012 gael jochaud-du-plessix
 //
 
 #include <Scene.hpp>
@@ -102,14 +102,14 @@ gle::Scene::Node & gle::Scene::getRootNode()
   return (_root);
 }
 
-const std::vector<gle::Mesh*> & gle::Scene::getStaticMeshes()
+const std::list<gle::Mesh*> & gle::Scene::getStaticMeshes()
 {
   if (_frustumCulling)
     return (_meshesInFrustum);
   return (_staticMeshes);
 }
 
-const std::vector<gle::Mesh*> & gle::Scene::getDynamicMeshes()
+const std::list<gle::Mesh*> & gle::Scene::getDynamicMeshes()
 {
   return (_dynamicMeshes);
 }
@@ -117,7 +117,7 @@ const std::vector<gle::Mesh*> & gle::Scene::getDynamicMeshes()
 void gle::Scene::processFrustumCulling()
 {
   if (_frustumCulling)
-    _meshesInFrustum = reinterpret_cast<const std::vector<gle::Mesh*>&>
+    _meshesInFrustum = reinterpret_cast<const std::list<gle::Mesh*>&>
       (_tree.getElementsInFrustum(_currentCamera->getProjectionMatrix(),
 				  _currentCamera->getTransformationMatrix()));
 }
@@ -137,6 +137,43 @@ gle::Camera* gle::Scene::getCurrentCamera()
   return (_currentCamera);
 }
 
+void gle::Scene::updateShadowMaps(gle::Renderer* renderer)
+{
+  for (gle::Light* light : _lights)
+    updateShadowMap(renderer, light);
+}
+
+void gle::Scene::updateShadowMap(gle::Renderer* renderer, gle::Light* light)
+{
+  gle::Texture*		shadowMap;
+  gle::FrameBuffer*	frameBuffer;
+  gle::Camera*		lightCamera;
+  if (!light->projectShadow()
+      || !(lightCamera = light->getShadowMapCamera())
+      || !(shadowMap = light->getShadowMap())
+      || !(frameBuffer = light->getShadowMapFrameBuffer()))
+    return ;
+  std::list<gle::Mesh*> meshesInFrustum = reinterpret_cast<const std::list<gle::Mesh*>&>
+    (_tree.getElementsInFrustum(lightCamera->getProjectionMatrix(),
+				lightCamera->getTransformationMatrix()));
+  for (auto it = meshesInFrustum.begin(); it != meshesInFrustum.end();)
+    {
+      if (!(*it)->projectShadow())
+	it = meshesInFrustum.erase(it);
+      else
+	++it;
+    }
+  std::list<gle::Mesh*> dynamicMeshes = getDynamicMeshes();
+  for (auto it = dynamicMeshes.begin(); it != dynamicMeshes.end();)
+    {
+      if (!(*it)->projectShadow())
+	it = dynamicMeshes.erase(it);
+      else
+	++it;
+    }
+  renderer->renderShadowMap(this, meshesInFrustum, dynamicMeshes, light);
+}
+
 void gle::Scene::updateLights()
 {
   _directionalLightsDirection.resize(0);
@@ -153,6 +190,18 @@ void gle::Scene::updateLights()
   _spotLightsAttenuation.resize(0);
   _spotLightsDirection.resize(0);
   _spotLightsCosCutOff.resize(0);
+  _spotLightsHasShadowMap.resize(0);
+  _spotLightsShadowMapMatrix.resize(0);
+  _spotLightsShadowMap.resize(0);
+
+  gle::Matrix4f
+    shadowMapBiasMatrix(
+			0.5, 0.0, 0.0, 0.5,
+			0.0, 0.5, 0.0, 0.5,
+			0.0, 0.0, 0.5, 0.5,
+			0.0, 0.0, 0.0, 1.0
+			);
+
   unsigned int dSize = 0;
   unsigned int pSize = 0;
   unsigned int sSize = 0;
@@ -199,17 +248,19 @@ void gle::Scene::updateLights()
       else if ((*it)->getLightType() == gle::Light::SPOT)
 	{
 	  ++sSize;
-	  gle::Vector3<GLfloat> position = ((gle::SpotLight*)(*it))->getAbsolutePosition();
+	  gle::SpotLight* light = dynamic_cast<gle::SpotLight*>(*it);
+
+	  gle::Vector3<GLfloat> position = light->getAbsolutePosition();
 
 	  if (!_currentCamera)
 	    throw (new gle::Exception::Exception("No camera for the scene..."));
-	  Vector3f direction = ((gle::SpotLight*)(*it))->getTarget();
+	  Vector3f direction = light->getTarget();
 	  direction *= _currentCamera->getTransformationMatrix();
 	  position *= _currentCamera->getTransformationMatrix();
 	  direction -= position;
-          GLfloat* color = ((gle::SpotLight*)(*it))->getColor();
-          GLfloat* specularColor = ((gle::SpotLight*)(*it))->getSpecularColor();
-          GLfloat* attenuation = ((gle::SpotLight*)(*it))->getAttenuation();
+          GLfloat* color = light->getColor();
+          GLfloat* specularColor = light->getSpecularColor();
+          GLfloat* attenuation = light->getAttenuation();
           _spotLightsPosition.push_back(position.x);
           _spotLightsPosition.push_back(position.y);
           _spotLightsPosition.push_back(position.z);
@@ -225,7 +276,29 @@ void gle::Scene::updateLights()
 	  _spotLightsDirection.push_back(direction.x);
           _spotLightsDirection.push_back(direction.y);
           _spotLightsDirection.push_back(direction.z);
-          _spotLightsCosCutOff.push_back(((gle::SpotLight*)(*it))->getCosCutOff());
+          _spotLightsCosCutOff.push_back(light->getCosCutOff());
+
+	  if (light->projectShadow()
+	      && light->getShadowMapCamera()
+	      && light->getShadowMap())
+	    {
+	      _spotLightsHasShadowMap.push_back(true);
+	      gle::Matrix4f VPMatrix =
+		shadowMapBiasMatrix
+		* light->getShadowMapCamera()->getProjectionMatrix()
+		* light->getShadowMapCamera()->getTransformationMatrix();
+	      GLfloat* VPMatrixf = (GLfloat*)VPMatrix;
+	      for (int i = 0; i < 16; ++i)
+		_spotLightsShadowMapMatrix.push_back(VPMatrixf[i]);
+	      _spotLightsShadowMap.push_back(light->getShadowMap());
+	    }
+	  else
+	    {
+	      _spotLightsHasShadowMap.push_back(false);
+	      for (int i = 0; i < 16; ++i)
+		_spotLightsShadowMapMatrix.push_back(0);
+	      _spotLightsShadowMap.push_back(NULL);
+	    }
 	}
     }
   _directionalLightsSize = dSize;
@@ -315,6 +388,21 @@ GLfloat* gle::Scene::getSpotLightsCosCutOff() const
   return ((GLfloat*)&_spotLightsCosCutOff[0]);
 }
 
+GLint*	gle::Scene::getSpotLightsHasShadowMap() const
+{
+  return ((GLint*)&_spotLightsHasShadowMap[0]);
+}
+
+GLfloat* gle::Scene::getSpotLightsShadowMapMatrix() const
+{
+  return ((GLfloat*)&_spotLightsShadowMapMatrix[0]);
+}
+
+const std::vector<gle::Texture*>& gle::Scene::getSpotLightsShadowMap() const
+{
+  return (_spotLightsShadowMap);
+}
+
 GLsizeiptr gle::Scene::getSpotLightsSize() const
 {
   return (_spotLightsSize);
@@ -381,29 +469,39 @@ void		gle::Scene::buildProgram()
       _program->getUniformLocation("gle_spotLightAttenuation");
       _program->getUniformLocation("gle_spotLightDirection");
       _program->getUniformLocation("gle_spotLightCosCutOff");
+      _program->getUniformLocation("gle_spotLightHasShadowMap");
+      _program->getUniformLocation("gle_spotLightShadowMapMatrix");
+      _program->getUniformLocation("gle_spotLightShadowMap");
     }
-  _program->retreiveUniformBlockIndex(gle::Program::MaterialBlock, "materialBlock");
-  _program->retreiveUniformBlockIndex(gle::Program::StaticMeshesBlock, "staticMeshesBlock");
+  _program->retreiveUniformBlockIndex("gle_materialBlock");
+  _program->retreiveUniformBlockIndex("gle_staticMeshesBlock");
   delete vertexShader;
   delete fragmentShader;
 }
 
-gle::Shader* gle::Scene::_createVertexShader()
+void	gle::Scene::setShaderSourceConstants(std::string& shaderSource)
 {
-  std::string shaderSource;
+
   GLint	maxUniformBlockSize = -1, maxMeshByBuffer = 0, maxMaterialByBuffer = 0;
   
   glGetIntegerv(GL_MAX_UNIFORM_BLOCK_SIZE, &maxUniformBlockSize);
   maxMeshByBuffer = maxUniformBlockSize / (Mesh::UniformSize * sizeof(GLfloat));
   maxMaterialByBuffer = maxUniformBlockSize / (gle::Material::UniformSize * sizeof(GLfloat));
 
-  shaderSource += gle::ShaderSource::VertexShader;
   shaderSource = _replace("%nb_directional_lights", getDirectionalLightsSize(), shaderSource);
   shaderSource = _replace("%nb_point_lights", getPointLightsSize(), shaderSource);
   shaderSource = _replace("%nb_spot_lights", getSpotLightsSize(), shaderSource);
   shaderSource = _replace("%nb_static_meshes", maxMeshByBuffer, shaderSource);
   shaderSource = _replace("%nb_materials", maxMaterialByBuffer, shaderSource);
   shaderSource = _replace("%nb_bones", _bones.size(), shaderSource);
+}
+
+gle::Shader* gle::Scene::_createVertexShader()
+{
+  std::string shaderSource;
+
+  shaderSource += gle::ShaderSource::VertexShader;
+  setShaderSourceConstants(shaderSource);
 
   gle::Shader *shader;
   try
@@ -423,19 +521,8 @@ gle::Shader* gle::Scene::_createFragmentShader()
 {
   std::string shaderSource;
 
-  GLint	maxUniformBlockSize = -1, maxMeshByBuffer = 0, maxMaterialByBuffer = 0;
-  
-  glGetIntegerv(GL_MAX_UNIFORM_BLOCK_SIZE, &maxUniformBlockSize);
-  maxMeshByBuffer = maxUniformBlockSize / (Mesh::UniformSize * sizeof(GLfloat));
-  maxMaterialByBuffer = maxUniformBlockSize / (gle::Material::UniformSize * sizeof(GLfloat));
-
   shaderSource += gle::ShaderSource::FragmentShader;
-  shaderSource = _replace("%nb_directional_lights", getDirectionalLightsSize(), shaderSource);
-  shaderSource = _replace("%nb_point_lights", getPointLightsSize(), shaderSource);
-  shaderSource = _replace("%nb_spot_lights", getSpotLightsSize(), shaderSource);
-  shaderSource = _replace("%nb_static_meshes", maxMeshByBuffer, shaderSource);
-  shaderSource = _replace("%nb_materials", maxMaterialByBuffer, shaderSource);
-  shaderSource = _replace("%nb_bones", _bones.size(), shaderSource);
+  setShaderSourceConstants(shaderSource);
 
   gle::Shader *shader;
   try
@@ -475,7 +562,7 @@ gle::Program*	gle::Scene::getProgram()
 void		gle::Scene::generateTree()
 {
   std::cout << "Starting octree generation..." << std::endl;
-  _tree.generateTree(reinterpret_cast<std::vector<gle::Octree::Element*>&>(_staticMeshes));
+  _tree.generateTree(reinterpret_cast<std::list<gle::Octree::Element*>&>(_staticMeshes));
   std::cout << "End of octree generation" << std::endl;
 }
 
@@ -484,7 +571,7 @@ void		gle::Scene::enableFrustumCulling(bool enable)
   _frustumCulling = enable;
 }
 
-void		gle::Scene::setCamera(gle::Camera* camera)
+void		gle::Scene::setCurrentCamera(gle::Camera* camera)
 {
   _currentCamera = camera;
 }
@@ -560,8 +647,7 @@ void gle::Scene::updateStaticMeshes()
   GLfloat* staticMeshesUniforms = new GLfloat[Mesh::UniformSize * maxMeshByBuffer];
 
   std::list<MeshGroup> factorizedMeshes =
-    gle::Mesh::factorizeForDrawing(std::list<gle::Mesh*>(_staticMeshes.begin(), _staticMeshes.end()),
-				   true);
+    gle::Mesh::factorizeForDrawing(_staticMeshes, true);
 
   _buildMaterialBuffers(factorizedMeshes, maxUniformBlockSize);
 

@@ -5,7 +5,7 @@
 // Login   <michar_l@epitech.net>
 // 
 // Started on  Mon Feb 20 18:25:23 2012 loick michard
-// Last update Tue Jun 26 10:58:30 2012 loick michard
+// Last update Mon Jul  2 17:24:17 2012 gael jochaud-du-plessix
 //
 
 #include <Mesh.hpp>
@@ -13,7 +13,8 @@
 #include <Renderer.hpp>
 
 std::list<gle::Scene::MeshGroup> gle::Mesh::factorizeForDrawing(std::list<gle::Mesh*> meshes,
-								bool ignoreBufferId)
+								bool ignoreBufferId,
+								bool ignoreMaterial)
 {  
   std::list<gle::Scene::MeshGroup> groups;
 
@@ -25,6 +26,7 @@ std::list<gle::Scene::MeshGroup> gle::Mesh::factorizeForDrawing(std::list<gle::M
 	.meshes = {currentMesh},
 	.uniformBufferId = currentMesh->getUniformBufferId(),
 	.materialBufferId = currentMesh->getMaterialBufferId(),
+	.rasterizationMode = static_cast<GLint>(currentMesh->getRasterizationMode()),
 	.colorMap = (currentMesh->getMaterial() && currentMesh->getMaterial()->isColorMapEnabled())
 	? currentMesh->getMaterial()->getColorMap() : NULL,
 	.normalMap = (currentMesh->getMaterial() && currentMesh->getMaterial()->isNormalMapEnabled())
@@ -34,7 +36,7 @@ std::list<gle::Scene::MeshGroup> gle::Mesh::factorizeForDrawing(std::list<gle::M
       };
       for (auto it = meshes.begin(); it != meshes.end();)
 	{
-	  if ((*it) == currentMesh || (*it)->canBeRenderedWith(currentGroup, ignoreBufferId))
+	  if ((*it) == currentMesh || (*it)->canBeRenderedWith(currentGroup, ignoreBufferId, ignoreMaterial))
 	    {
 	      gle::Material* material = (*it)->getMaterial();
 	      if (material)
@@ -70,6 +72,7 @@ gle::Mesh::Mesh(Material* material, bool isDynamic)
     _boundingVolume(NULL),
     _uniformBufferId(-1),
     _materialBufferId(-1),
+    _absoluteIndexes(false),
     _needUniformsUpdate(true),
     _uniforms(NULL)
 {
@@ -91,6 +94,7 @@ gle::Mesh::Mesh(gle::Mesh const & other)
     _boundingVolume(NULL),
     _uniformBufferId(-1),
     _materialBufferId(-1),
+    _absoluteIndexes(other._absoluteIndexes),
     _needUniformsUpdate(true),
     _uniforms(NULL)
 {
@@ -440,21 +444,36 @@ void gle::Mesh::update()
     _boundingVolume->update(this);
 }
 
-void gle::Mesh::makeAbsoluteIndexes()
+void gle::Mesh::setDynamic(bool dynamic, bool deep)
 {
-  if (!_attributes || !_indexes)
+  if (dynamic && !_isDynamic)
+    makeAbsoluteIndexes(false);
+  else if (!dynamic && _isDynamic)
+    makeAbsoluteIndexes(true);
+  gle::Scene::Node::setDynamic(dynamic, deep);
+}
+
+void gle::Mesh::makeAbsoluteIndexes(bool absolute)
+{
+  if (!_attributes || !_indexes || _absoluteIndexes == absolute)
     return ;
+  _absoluteIndexes = absolute;
   GLuint* indexes = _indexes->map();
   GLuint offset = _attributes->getOffset() / VertexAttributesSize;
   for (GLuint i = 0; i < _indexes->getSize(); ++i)
-    indexes[i] += offset;
+    if (absolute)
+      indexes[i] += offset;
+    else
+      indexes[i] -= offset;
   _indexes->unmap();
 }
 
-bool gle::Mesh::canBeRenderedWith(const gle::Scene::MeshGroup& group, bool ignoreBufferId) const
+bool gle::Mesh::canBeRenderedWith(const gle::Scene::MeshGroup& group, bool ignoreBufferId, bool ignoreMaterial) const
 {
-  return ((_material == NULL
-	   || _material->canBeRenderedWith(group))
+  return ((_rasterizationMode == group.rasterizationMode)
+	  && (ignoreMaterial
+	      || _material == NULL
+	      || _material->canBeRenderedWith(group))
 	  && (ignoreBufferId
 	      || (_uniformBufferId == group.uniformBufferId
 		  && _materialBufferId == group.materialBufferId)));

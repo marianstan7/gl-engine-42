@@ -5,7 +5,7 @@
 // Login   <michar_l@epitech.net>
 // 
 // Started on  Thu Jun 21 20:39:52 2012 loick michard
-// Last update Tue Jun 26 10:48:16 2012 loick michard
+// Last update Mon Jul  2 17:24:01 2012 gael jochaud-du-plessix
 //
 
 #ifndef _MESH_HPP_
@@ -73,6 +73,8 @@ namespace gle {
     //! Size of the vertex texture coords attribute
     static const GLsizeiptr VertexAttributeSizeTextureCoords = 2;
 
+    //! Size of the vertex bones infos attribute
+
     static const GLsizeiptr VertexAttributeSizeBone = 4;
 
     //! Size of the vertex mesh identifiers attribute
@@ -105,7 +107,8 @@ namespace gle {
     //! Factorize a list of meshes using canBeRenderedWith comparator
 
     static std::list<gle::Scene::MeshGroup> factorizeForDrawing(std::list<gle::Mesh*> meshes,
-								bool ignoreBufferId=false);
+								bool ignoreBufferId=false,
+								bool ignoreMaterial=false);
 
     //! Default constructor
 
@@ -251,10 +254,12 @@ namespace gle {
 
     virtual void update();
 
-    void makeAbsoluteIndexes();
+    virtual void setDynamic(bool dynamic, bool deep=true);
+
+    void makeAbsoluteIndexes(bool absolute=true);
 
     bool canBeRenderedWith(const gle::Scene::MeshGroup& other,
-			   bool ignoreBufferId=false) const;
+			   bool ignoreBufferId=false, bool ignoreMaterial=false) const;
 
     void setUniformBufferId(GLint index);
 
@@ -286,7 +291,7 @@ namespace gle {
     GLint		_uniformBufferId;
     GLint		_materialBufferId;
 
-    bool		_absolute;
+    bool		_absoluteIndexes;
 
     bool		_needUniformsUpdate;
     GLfloat*		_uniforms;

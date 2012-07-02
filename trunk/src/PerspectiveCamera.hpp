@@ -5,7 +5,7 @@
 // Login   <michar_l@epitech.net>
 // 
 // Started on  Sat Feb 18 12:43:33 2012 loick michard
-// Last update Tue Jun 26 14:39:42 2012 loick michard
+// Last update Tue Jun 26 15:12:55 2012 gael jochaud-du-plessix
 //
 
 #ifndef _PERSPECTIVE_CAMERA_HPP_
@@ -52,6 +52,8 @@ namespace gle {
     //! Default destructor
 
     ~PerspectiveCamera();
+
+    void setFovy(GLfloat fovy);
 
     virtual void updateProjectionMatrix();
 

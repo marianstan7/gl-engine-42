@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Mon Feb 20 18:18:01 2012 gael jochaud-du-plessix
-// Last update Tue Jun 26 14:51:07 2012 loick michard
+// Last update Mon Jul  2 17:15:20 2012 gael jochaud-du-plessix
 //
 
 #ifndef _GLE_SCENE_HPP_
@@ -30,6 +30,7 @@ namespace gle {
   class Texture;
   class Material;
   class Bone;
+  class Renderer;
 
   //! Describe a 3D scene
   /*!
@@ -209,7 +210,7 @@ namespace gle {
 
       //! Set if the node is dynamic or not
 
-      void	setDynamic(bool dynamic, bool deep=true);
+      virtual void	setDynamic(bool dynamic, bool deep=true);
 
       //! Get the target of the node if it is looking at something
 
@@ -253,6 +254,11 @@ namespace gle {
 
       virtual std::vector<Node*>& getDebugNodes(int mode);
 
+      bool projectShadow() const;
+
+      void setProjectShadow(bool projectShadow);
+
+
     protected:
 
       //! Type of the node
@@ -275,6 +281,14 @@ namespace gle {
 
       //! Define if the node is dynamic or not
       bool			_isDynamic;
+
+      //! Define wether the node project a shadow or not
+      /*!
+	For a light, it enable its shadow map.
+	For a mesh, it is rendered while rendering the shadow maps
+       */
+
+      bool			_projectShadow;
 
       //! Target of the node
       Vector3<GLfloat>		_target;
@@ -306,6 +320,7 @@ namespace gle {
       std::list<Mesh*>          meshes;
       GLint			uniformBufferId;
       GLint			materialBufferId;
+      GLint			rasterizationMode;
       gle::Texture*             colorMap;
       gle::Texture*             normalMap;
       gle::EnvironmentMap*      envMap;
@@ -396,11 +411,11 @@ namespace gle {
       that are in the frustum of the current camera.
      */
 
-    const std::vector<Mesh*> & getStaticMeshes();
+    const std::list<Mesh*> & getStaticMeshes();
 
     //! Get a vector of all dynamic meshes
 
-    const std::vector<Mesh*> & getDynamicMeshes();
+    const std::list<Mesh*> & getDynamicMeshes();
 
     //! Process the frustum culling on the list of meshes to render
 
@@ -466,6 +481,12 @@ namespace gle {
 
     GLfloat* getSpotLightsCosCutOff() const;
 
+    GLint* getSpotLightsHasShadowMap() const;
+
+    GLfloat* getSpotLightsShadowMapMatrix() const;
+
+    const std::vector<gle::Texture*>& getSpotLightsShadowMap() const;
+
     //! Get number of spot lights in the scene
 
     GLsizeiptr getSpotLightsSize() const;
@@ -474,6 +495,14 @@ namespace gle {
     //! Return true if there are lights in the scene (point or directional)
 
     bool hasLights() const;
+
+    //! Update the shadow maps for all the lights with shadows enabled
+
+    void updateShadowMaps(gle::Renderer* renderer);
+
+    //! Render the shadow map for the given light
+
+    void updateShadowMap(gle::Renderer* renderer, gle::Light* light);
 
     //! Update lights
     /*!
@@ -485,7 +514,7 @@ namespace gle {
     void updateBones();
 
     //! Update dynamic meshes
-    /*
+    /*!
       This function has to be called when dynamic meshes are aded or removed form the scene.
      */
 
@@ -505,6 +534,8 @@ namespace gle {
 
     void buildProgram();
 
+    void setShaderSourceConstants(std::string& shaderSource);
+
     //! Returns the shader program for the
 
     gle::Program* getProgram();
@@ -521,9 +552,9 @@ namespace gle {
 
     void enableFrustumCulling(bool enable = true);
 
-    //! Set the camera used to render the scene. By default, use the first camera added.
+    //! Set the camera used to render the scene. By default, use the last camera added.
 
-    void setCamera(Camera* camera);
+    void setCurrentCamera(Camera* camera);
 
     //! Update the scene. Must be called after any modification to the scene graph.
     
@@ -560,9 +591,9 @@ namespace gle {
     GLfloat		_fogDensity;
 
     std::vector<Camera*>	_cameras;
-    std::vector<Mesh*>		_staticMeshes;
-    std::vector<Mesh*>		_dynamicMeshes;
-    std::vector<Mesh*>		_meshesInFrustum;
+    std::list<Mesh*>		_staticMeshes;
+    std::list<Mesh*>		_dynamicMeshes;
+    std::list<Mesh*>		_meshesInFrustum;
 
     std::vector<Light*>	_lights;
     gle::Scene::Node	_root;
@@ -583,6 +614,9 @@ namespace gle {
     std::vector<GLfloat>	_spotLightsAttenuation;
     std::vector<GLfloat>	_spotLightsDirection;
     std::vector<GLfloat>	_spotLightsCosCutOff;
+    std::vector<GLint>		_spotLightsHasShadowMap;
+    std::vector<GLfloat>	_spotLightsShadowMapMatrix;
+    std::vector<gle::Texture*>	_spotLightsShadowMap;
     GLsizeiptr			_spotLightsSize;
 
     gle::Camera*	_currentCamera;

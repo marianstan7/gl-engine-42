@@ -30,6 +30,9 @@ uniform float gle_fogDensity;
 #if GLE_NB_SPOT_LIGHTS > 0
 	uniform vec3 gle_spotLightPosition[GLE_NB_SPOT_LIGHTS];
 	uniform vec3 gle_spotLightAttenuation[GLE_NB_SPOT_LIGHTS];
+	
+	uniform bool gle_spotLightHasShadowMap[GLE_NB_SPOT_LIGHTS];
+	uniform mat4 gle_spotLightShadowMapMatrix[GLE_NB_SPOT_LIGHTS];
 #endif
 #if GLE_NB_BONES > 0
 	uniform mat4 gle_bonesMatrix[GLE_NB_BONES];
@@ -50,7 +53,7 @@ struct gle_StaticMesh {
 	float	skeletonIndex;
 };
 
-layout(std140) uniform staticMeshesBlock
+layout(std140) uniform gle_staticMeshesBlock
 {
 	gle_StaticMesh meshes[GLE_NB_STATIC_MESHES];
 } gle_staticMeshes;
@@ -74,7 +77,7 @@ struct gle_MaterialStruct
 	float hasNormalMap;
 };
 
-layout(std140) uniform materialBlock
+layout(std140) uniform gle_materialBlock
 {
 	gle_MaterialStruct materials[GLE_NB_MATERIALS];
 } gle_material;
@@ -86,10 +89,12 @@ layout (location = GLE_IN_VERTEX_TEXTURE_COORD_LOCATION) in vec2 gle_vTextureCoo
 layout (location = GLE_IN_VERTEX_BONES_LOCATION) in vec4 gle_vBones;
 layout (location = GLE_IN_VERTEX_MESH_ID_LOCATION) in vec3 gle_vMeshIdentifier;
 
+out vec3 gle_varying_vPosition;
 out float gle_varying_fogFactor; 
 out vec3 gle_varying_vLightWeighting;
 out vec2 gle_varying_vTextureCoord;
 out vec3 gle_varying_envMapVector;
+
 flat out vec3 gle_varying_vMeshIdentifier;
 
 #if GLE_NB_DIRECTIONAL_LIGHTS > 0 || GLE_NB_POINT_LIGHTS > 0 || GLE_NB_SPOT_LIGHTS > 0
@@ -107,6 +112,7 @@ flat out vec3 gle_varying_vMeshIdentifier;
 	out vec3 gle_varying_spotLightDirection[GLE_NB_SPOT_LIGHTS];
 	out vec3 gle_varying_spotLightRealDirection[GLE_NB_SPOT_LIGHTS];
 	out float gle_varying_spotLightAttenuation[GLE_NB_SPOT_LIGHTS];
+	out vec4 gle_varying_spotLightShadowMapCoord[GLE_NB_SPOT_LIGHTS];
 #endif
 
 void main(void) {
@@ -123,7 +129,7 @@ void main(void) {
 	float hasNormalMap = gle_material.materials[int(gle_vMeshIdentifier.z)].hasNormalMap;
 	
 	gle_varying_vMeshIdentifier = gle_vMeshIdentifier;
-
+	
 	mat4 mwMatrix;
 	#if GLE_NB_STATIC_MESHES > 0
 		if (!bool(gle_vMeshIdentifier.x))
@@ -131,6 +137,8 @@ void main(void) {
 		else
 	#endif
 			mwMatrix = gle_MWMatrix;
+			
+	gle_varying_vPosition = gle_vPosition;
 	
 	mat4 mvMatrix = gle_ViewMatrix * mwMatrix;
 		
@@ -144,7 +152,7 @@ void main(void) {
 	#if GLE_NB_DIRECTIONAL_LIGHTS > 0 || GLE_NB_POINT_LIGHTS > 0 || GLE_NB_SPOT_LIGHTS > 0
 		vec3 transformedNormal = normalize(nMatrix * gle_vNormal);
 	#endif
-	gle_varying_vTextureCoord = gle_vTextureCoord; 
+	gle_varying_vTextureCoord = gle_vTextureCoord;
 
 	gle_varying_vLightWeighting = vec3(0.0, 0.0, 0.0);
 
@@ -173,6 +181,7 @@ void main(void) {
 		}	
 		else
 			gle_varying_eyeDirection = -gle_mvPosition.xyz;
+
 	#endif
 	#if GLE_NB_DIRECTIONAL_LIGHTS > 0
 	for (int i = 0; i < GLE_NB_DIRECTIONAL_LIGHTS; ++i)
@@ -216,6 +225,13 @@ void main(void) {
 	#if GLE_NB_SPOT_LIGHTS > 0
 		for (int i = 0; i < GLE_NB_SPOT_LIGHTS; ++i)
 		{
+			// Compute shadow map coords
+			if (gle_spotLightHasShadowMap[i])
+			{
+				gle_varying_spotLightShadowMapCoord[i] =
+					gle_spotLightShadowMapMatrix[i] * mwMatrix * vec4(gle_vPosition, 1.0);
+			}
+		
 			vec3 spotLightDirection = gle_spotLightPosition[i] - gle_mvPosition.xyz;
 			float d = length(spotLightDirection);
 			if (gle_spotLightAttenuation[i].x == 0.0 && gle_spotLightAttenuation[i].y == 0.0 && gle_spotLightAttenuation[i].z == 0.0)

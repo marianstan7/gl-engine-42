@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Mon Jun  4 14:52:23 2012 gael jochaud-du-plessix
-// Last update Thu Jun  7 14:14:21 2012 gael jochaud-du-plessix
+// Last update Tue Jun 26 14:55:54 2012 gael jochaud-du-plessix
 //
 
 #include "TextureFrameBuffer.hpp"
@@ -39,4 +39,3 @@ gle::RenderBuffer*       gle::TextureFrameBuffer::getDepthRenderBuffer() const
 {
   return (_depthRenderBuffer);
 }
-

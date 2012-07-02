@@ -24,7 +24,7 @@ struct gle_MaterialStruct
 	float hasNormalMap;
 };
 
-layout(std140) uniform materialBlock
+layout(std140) uniform gle_materialBlock
 {
 	gle_MaterialStruct materials[GLE_NB_MATERIALS];
 } gle_material;
@@ -49,8 +49,11 @@ uniform samplerCube gle_cubeMap;
 	uniform vec3 gle_spotLightSpecularColor[GLE_NB_SPOT_LIGHTS];
 	uniform vec3 gle_spotLightDirection[GLE_NB_SPOT_LIGHTS];
 	uniform float gle_spotLightCosCutOff[GLE_NB_SPOT_LIGHTS];
+	uniform bool gle_spotLightHasShadowMap[GLE_NB_SPOT_LIGHTS];
+	uniform sampler2D/*Shadow*/ gle_spotLightShadowMap[GLE_NB_SPOT_LIGHTS];
 #endif
 
+in vec3 gle_varying_vPosition;
 in float gle_varying_fogFactor; 
 in vec3 gle_varying_vLightWeighting;
 in float gle_varying_vLightAttenuation;
@@ -58,6 +61,7 @@ in vec2 gle_varying_vTextureCoord;
 in vec3 gle_varying_envMapVector;
 
 flat in vec3 gle_varying_vMeshIdentifier;
+
 #if GLE_NB_DIRECTIONAL_LIGHTS > 0 || GLE_NB_POINT_LIGHTS > 0 || GLE_NB_SPOT_LIGHTS > 0
 	in vec3 gle_varying_normal;
 	in vec3 gle_varying_eyeDirection;
@@ -73,6 +77,7 @@ flat in vec3 gle_varying_vMeshIdentifier;
 	in vec3 gle_varying_spotLightDirection[GLE_NB_SPOT_LIGHTS];
 	in vec3 gle_varying_spotLightRealDirection[GLE_NB_SPOT_LIGHTS];
 	in float gle_varying_spotLightAttenuation[GLE_NB_SPOT_LIGHTS];
+	in vec4 gle_varying_spotLightShadowMapCoord[GLE_NB_SPOT_LIGHTS];
 #endif
 
 void main(void) {
@@ -152,9 +157,20 @@ void main(void) {
 			}
 		}
 	#endif
+	
 	#if GLE_NB_SPOT_LIGHTS > 0
 		for (int i = 0; i < GLE_NB_SPOT_LIGHTS; ++i)
 		{
+			float shadowAttenuation = 0.0;
+			if (gle_spotLightHasShadowMap[i])
+			{
+				vec4 shadowCoord = gle_varying_spotLightShadowMapCoord[i];
+				if (texture2D(gle_spotLightShadowMap[i], (shadowCoord.xy/shadowCoord.w)).z < (shadowCoord.z/shadowCoord.w) - 0.005){
+					shadowAttenuation = 1.0;
+				}
+				//shadowAttenuation = 1.0 - textureProj(gle_spotLightShadowMap[i], shadowCoord);
+			}
+			
 			vec3 L = normalize(gle_varying_spotLightDirection[i]);
 			vec3 D = normalize(gle_spotLightDirection[i]);
 
@@ -169,6 +185,9 @@ void main(void) {
 
 			float spot = clamp((cos_cur_angle - cos_outer_cone_angle) / 
 					cos_inner_minus_outer_angle, 0.0, 1.0);
+
+			diffuseIntensity *= (1.0 - shadowAttenuation);
+			specularIntensity *= (1.0 - shadowAttenuation);
 
 			if (diffuseIntensity > 0)
 			{

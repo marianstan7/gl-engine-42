@@ -5,10 +5,12 @@
 // Login   <michar_l@epitech.net>
 // 
 // Started on  Thu Feb 23 17:55:31 2012 loick michard
-// Last update Wed Jun  6 20:39:35 2012 loick michard
+// Last update Mon Jul  2 16:36:14 2012 gael jochaud-du-plessix
 //
 
 #include <SpotLight.hpp>
+
+#include <PerspectiveCamera.hpp>
 
 gle::SpotLight::SpotLight(Vector3<GLfloat> const& position,
 			  Color<GLfloat> const& color,
@@ -49,7 +51,6 @@ gle::SpotLight::SpotLight(Vector3<GLfloat> const& position,
 
 gle::SpotLight::~SpotLight()
 {
-
 }
 
 void gle::SpotLight::setColor(Color<GLfloat> const& color)
@@ -76,6 +77,11 @@ void gle::SpotLight::setAttenuation(GLfloat constant, GLfloat linear, GLfloat qu
 void gle::SpotLight::setCosCutOff(GLfloat cosCutOff)
 {
   _cosCutOff = cosCutOff;
+  if (_shadowMapCamera)    
+    dynamic_cast<gle::PerspectiveCamera*>(_shadowMapCamera)
+      ->setFovy(_cosCutOff / M_PI * 180.0);
+  else
+    getShadowMapCamera();
 }
 
 GLfloat* gle::SpotLight::getColor()
@@ -98,7 +104,26 @@ GLfloat gle::SpotLight::getCosCutOff()
   return (_cosCutOff);
 }
 
+gle::Camera* gle::SpotLight::getShadowMapCamera()
+{
+  if (!_shadowMapCamera)
+    {
+      _shadowMapCamera = 
+	new gle::PerspectiveCamera(getPosition(),
+				   getTarget(),
+				   _cosCutOff / M_PI * 180.0,
+				   ((GLfloat)_shadowMapSize.width
+				    /_shadowMapSize.height),
+				   50, 1000);
+    }
+  return (_shadowMapCamera);
+}
+
 void gle::SpotLight::update()
 {
-
+  if (_shadowMapCamera)
+    {
+      _shadowMapCamera->setPosition(_position);
+      _shadowMapCamera->setTarget(_target);
+    }
 }

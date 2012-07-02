@@ -5,7 +5,7 @@
 // Login   <michar_l@epitech.net>
 // 
 // Started on  Thu Feb 23 17:36:20 2012 loick michard
-// Last update Wed Feb 29 17:09:16 2012 loick michard
+// Last update Tue Jun 26 11:20:12 2012 gael jochaud-du-plessix
 //
 
 #ifndef _DIRECTIONAL_LIGHT_HPP_
@@ -59,6 +59,7 @@ namespace gle {
     //! Get light color
 
     GLfloat* getColor();
+
   private:
     Vector3<GLfloat> _direction;
     GLfloat _color[3];

@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Fri Mar  2 17:27:21 2012 gael jochaud-du-plessix
-// Last update Mon Jun 25 20:29:21 2012 gael jochaud-du-plessix
+// Last update Mon Jul  2 18:22:07 2012 gael jochaud-du-plessix
 //
 
 #include <iostream>
@@ -41,8 +41,8 @@ public:
 					 gle::Vector3f(0, 0, 0),
 					 45, (GLfloat)_winWidth/_winHeight, 1, 10000);
     _renderer = new gle::Renderer();
-    //_renderer->setDebugMode(gle::Renderer::Octree | gle::Renderer::BoundingVolume);
-    _scene->setBackgroundColor(gle::Colorf(1, 1, 1));
+    _renderer->setDebugMode(gle::Renderer::Camera);
+    //_scene->setBackgroundColor(gle::Colorf(1, 1, 1));
     _scene->setFogColor(gle::Colorf(0, 0, 0));
     _scene->setFogDensity(0.005);
 
@@ -63,8 +63,8 @@ public:
     material2->setSpecularLightEnabled(true);
     material2->setDiffuseColor(gle::Colorf(0.0, 1.0, 0.0));
 
-    gle::Mesh* sphere = gle::Geometries::Sphere(material, 5, 30, 30);
-    sphere->setPosition(gle::Vector3f(8, 0, 8));
+    gle::Mesh* sphere = gle::Geometries::Sphere(material, 5, 30, 30, true);
+    sphere->setPosition(gle::Vector3f(8, 5, 8));
     
     _cube = gle::Geometries::Cube(material2, 10, true);
     _cube->setPosition(gle::Vector3f(8, 0, -8));
@@ -77,7 +77,7 @@ public:
     gle::Mesh* pointSphere = gle::Geometries::Sphere(material2, 5, 100, 100);
     pointSphere->setPosition(gle::Vector3f(-24, 0, 8));
     pointSphere->setPrimitiveType(gle::Mesh::Points);
-    pointSphere->setScale(3);
+
     _plane = gle::Geometries::Plane(materialLight, 80, 80, 1, 1);
     _plane->setPosition(gle::Vector3f(0, -5, 0));
     gle::Mesh* pointPlane =
@@ -86,11 +86,11 @@ public:
     pointPlane->setPrimitiveType(gle::Mesh::Points);
     pointPlane->setPointSize(2);
     
-    gle::Mesh* wiredSphere = new gle::Mesh(*sphere);
-    wiredSphere->setPosition(gle::Vector3f(-8, 0, 8));
-    wiredSphere->setRasterizationMode(gle::Mesh::Line);
-    wiredSphere->setMaterial(material2);
-    //wiredSphere->setDynamic(true);
+    _wiredSphere = new gle::Mesh(*sphere);
+    _wiredSphere->setPosition(gle::Vector3f(-8, 0, 8));
+    _wiredSphere->setRasterizationMode(gle::Mesh::Line);
+    _wiredSphere->setMaterial(material2);
+    _wiredSphere->setDynamic(true);
 
     gle::Mesh* wiredCube = new gle::Mesh(*_cube);
     wiredCube->setPosition(gle::Vector3f(-8, 0, -8));
@@ -102,36 +102,41 @@ public:
     wiredPlane->setRasterizationMode(gle::Mesh::Line);
     wiredPlane->setMaterial(material2);
 
-    *_scene << sphere << wiredSphere << pointSphere;
+    *_scene << sphere << _wiredSphere << pointSphere;
     *_scene << _cube << wiredCube << pointCube;
     *_scene << _plane << wiredPlane << pointPlane;
 
-    _light = new gle::SpotLight(gle::Vector3f(0, 0, 0),
-				gle::Colorf(1.0, 1.0, 1.0), 1.0);
-    // *_scene << new gle::SpotLight(gle::Vector3f(0, 10, 0),
-    // 				  gle::Colorf(1.0, 1.0, 1.0), 1.0);
+    gle::DirectionalLight* ambientLight = new gle::DirectionalLight(gle::Vector3f(0.2, 1, 0),
+    								    gle::Colorf(0.2, 0.2, 0.2));
+    *_scene << ambientLight;
 
-    _light->setCosCutOff(0);
-    //_light->setAttenuation(0, 0, 0.002);
+    _light = new gle::SpotLight(gle::Vector3f(-53.2, 59, -51),
+				gle::Colorf(1.0, 1.0, 1.0), 1.0);
+    _light->setTarget(gle::Vector3f(0, 0, 0));
+    _lightCamera = _light->getShadowMapCamera();
+
+    *_scene << _lightCamera;
+
     gle::Mesh* sp = gle::Geometries::Sphere(materialLight, 10, 50, 50);
     sp->setPosition(gle::Vector3f(0, 0, 0));
     
     gle::Material* screenMaterial = new gle::Material();
     screenMaterial->setSpecularLightEnabled(false);
+    screenMaterial->setDiffuseLightEnabled(false);
     gle::Mesh* screenPlane = gle::Geometries::Plane(screenMaterial, 16*2, 9*2);
 
     screenPlane->setPosition(gle::Vector3f(0, 20, -50));
     screenPlane->rotate(gle::Vector3f(1, 0, 0), 90);
 
     _framebuffer = new gle::TextureFrameBuffer(500, 500);
-    screenMaterial->setColorMap(_framebuffer->getRenderTexture());
+    //screenMaterial->setColorMap(_framebuffer->getRenderTexture());
+    screenMaterial->setColorMap(_light->getShadowMap());
     screenMaterial->setAmbientColor(gle::Color<GLfloat>(1.0, 1.0, 1.0));
 
     *_scene << screenPlane;
 
-    *_scene << _camera;//_light;// << _light2;// << sp;
+    *_scene << _camera << _light;// << _light2;// << sp;
     
-    _camera->addChild(_light);
     _scene->update();
 
     //printGPUMemInfo();
@@ -139,17 +144,19 @@ public:
 
   void animate()
   {
-    _light->setTarget(_camera->getTarget());
-    _cube->setTarget(_camera->getPosition());
+    _light->setPosition(gle::Vector3f(-53.2 * sin(_elapsedTime / 1000.0), 59.0, -51));
+    //_wiredSphere->setPosition(gle::Vector3f(-8, 5 + 5 * sin(_elapsedTime / 1000.0), 8));
+    _wiredSphere->setRotation(gle::Vector3f(0, 1, 0), _elapsedTime / 50.0);
     _scene->updateLights();
-    //_plane->setRotation(gle::Vector3<GLfloat>(1, 0, 0),
-    //			-sf::Joystick::getAxisPosition(accelerometerId,
-    //						       sf::Joystick::X));
   }
 
   void render()
   {
-    _renderer->render(_scene, _framebuffer->getRenderTexture()->getSize(), _framebuffer);
+    // _scene->setCurrentCamera(_lightCamera);
+    // _scene->updateLights();
+    // _renderer->render(_scene, _framebuffer->getRenderTexture()->getSize(), _framebuffer);
+    _scene->setCurrentCamera(_camera);
+    _scene->updateLights();
     _renderer->render(_scene, gle::Rectf(0, 0, _winWidth, _winHeight));
   }
 
@@ -167,7 +174,9 @@ private	:
   gle::SpotLight*		_light;
   gle::Mesh*			_plane;
   gle::Mesh*			_cube;
+  gle::Mesh*			_wiredSphere;
   gle::TextureFrameBuffer*	_framebuffer;
+  gle::Camera*			_lightCamera;
 };
 
 int main(int ac, char **av)

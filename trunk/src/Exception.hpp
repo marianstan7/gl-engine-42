@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Wed Feb 15 19:06:53 2012 gael jochaud-du-plessix
-// Last update Thu May 31 18:03:34 2012 gael jochaud-du-plessix
+// Last update Tue Jun 26 15:41:07 2012 gael jochaud-du-plessix
 //
 
 #ifndef _GLE_EXCEPTION_HPP_
@@ -22,8 +22,8 @@ namespace gle {
     class Exception : public std::exception {
     public:
       //! Construct an Exception with the specified message
-      Exception(std::string const message="Error") throw() :
-	_message(message) {}
+      Exception(std::string const message="") throw() :
+	_message(message + ": Error") {}
       virtual ~Exception() throw() {}
       //! Return the message of the Exception
       virtual const char* what() const throw()
@@ -39,8 +39,8 @@ namespace gle {
     class InvalidValue : public Exception {
     public:
       //! Construct an InvalidValue exception with the specified message
-      InvalidValue(std::string const message="Invalid Value") throw() :
-	Exception(message) {}
+      InvalidValue(std::string const message="") throw() :
+	Exception(message + ": Invalid Value") {}
       virtual ~InvalidValue() throw() {}
     };
 
@@ -48,8 +48,8 @@ namespace gle {
     class OutOfRange : public Exception {
     public:
       //! Construct an OutOfRange exception with the specified message
-      OutOfRange(std::string const message="Out of range") throw() :
-	Exception(message) {}
+      OutOfRange(std::string const message="") throw() :
+	Exception(message + ": Out of range") {}
       virtual ~OutOfRange() throw() {}
     };
 
@@ -57,9 +57,9 @@ namespace gle {
     class ParsingError : public Exception {
     public:
       //! Construct a ParsingError exception with the specified message
-      ParsingError(std::string const message="Parsing error",
+      ParsingError(std::string const message="",
 		   int line = 0, std::string const & filename="") throw() :
-	Exception(message), _line(line), _filename(filename) {}
+	Exception(message + ": Parsing error"), _line(line), _filename(filename) {}
       virtual ~ParsingError() throw() {}
 
       //! Return the line of the error (if specified)
@@ -77,8 +77,8 @@ namespace gle {
     class OpenGLError : public Exception {
     public:
     //! Construct an OpenGLError exception with the specified message
-      OpenGLError(std::string const message="OpenGL Error") throw() :
-	Exception(message) {}
+      OpenGLError(std::string const message="") throw() :
+	Exception(message + ": OpenGL Error") {}
       virtual ~OpenGLError() throw() {}
     };
 
@@ -86,8 +86,8 @@ namespace gle {
     class OutOfMemory : public OpenGLError {
     public:
       //! Construct an OutOfMemory exception with the specified message
-      OutOfMemory(std::string const message="Out of memory") throw() :
-	OpenGLError(message) {}
+      OutOfMemory(std::string const message="") throw() :
+	OpenGLError(message + ": Out of memory") {}
       virtual ~OutOfMemory() throw() {}
     };
 
@@ -95,8 +95,8 @@ namespace gle {
     class InvalidOperation : public OpenGLError {
     public:
       //! Construct an InvalidOperation exception with the specified message
-      InvalidOperation(std::string const message="Invalid Operation") throw() :
-	OpenGLError(message) {}
+      InvalidOperation(std::string const message="") throw() :
+	OpenGLError(message + ": Invalid Operation") {}
       virtual ~InvalidOperation() throw() {}
     };
     
@@ -104,8 +104,8 @@ namespace gle {
     class InvalidEnum : public OpenGLError {
     public:
       //! Construct an InvalidEnum exception with the specified message
-      InvalidEnum(std::string const message="Invalid Enum") throw() :
-	OpenGLError(message) {}
+      InvalidEnum(std::string const message="") throw() :
+	OpenGLError(message + ": Invalid Enum") {}
       virtual ~InvalidEnum() throw() {}
     };
 
@@ -113,9 +113,9 @@ namespace gle {
     class CompilationError : public OpenGLError {
     public:
       //! Construct a CompilationError exception with the specified message
-      CompilationError(std::string const message="Compilation Error",
+      CompilationError(std::string const message="",
 		       std::string const filename="") throw() :
-	OpenGLError(message), _filename(filename) {}
+	OpenGLError(message + ": Compilation Error"), _filename(filename) {}
       virtual ~CompilationError() throw() {}
 
       //! Return the filename where the error occured (if specified)
@@ -132,8 +132,8 @@ namespace gle {
     class LinkageError : public OpenGLError {
     public:
       //! Construct a LinkageError exception with the specified message
-      LinkageError(std::string const message="Linkage Error") throw() :
-	OpenGLError(message) {}
+      LinkageError(std::string const message="") throw() :
+	OpenGLError(message + ": Linkage Error") {}
       virtual ~LinkageError() throw() {}
     };
 
