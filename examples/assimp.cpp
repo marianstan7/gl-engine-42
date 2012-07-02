@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Fri Mar  2 17:27:21 2012 gael jochaud-du-plessix
-// Last update Wed Jun  6 19:54:35 2012 gael jochaud-du-plessix
+// Last update Mon Jul  2 20:58:33 2012 gael jochaud-du-plessix
 //
 
 #include <iostream>
@@ -31,7 +31,7 @@ public:
     Example(ac, av, W_WIDTH, W_HEIGHT, W_FRAMERATE, "glEngine : Geometries"),
     _materials()
   { 
-    flycam::camSpeed = 1000;
+    //flycam::camSpeed = 1000;
     //_cameraType = Trackball;
     //printGPUMemInfo();
 
@@ -60,7 +60,7 @@ public:
     _scene = new gle::Scene();
     _sceneNode = new gle::Scene::Node(gle::Scene::Node::Empty);
     loadAssimpNode(scene, scene->mRootNode);
-    _sceneNode->setRotation(gle::Vector3f(1, 0, 0), -90);
+    //_sceneNode->setRotation(gle::Vector3f(1, 0, 0), -90);
     *_scene << _sceneNode;
   }
 

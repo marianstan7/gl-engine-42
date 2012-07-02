@@ -5,7 +5,7 @@
 // Login   <michar_l@epitech.net>
 // 
 // Started on  Tue Jun 12 16:10:58 2012 loick michard
-// Last update Thu Jun 21 23:44:03 2012 loick michard
+// Last update Mon Jul  2 21:00:09 2012 gael jochaud-du-plessix
 //
 
 #include <UniversalLoader.hpp>
@@ -60,7 +60,7 @@ gle::Material* gle::UniversalLoader::_loadAssimpMaterial(const std::string& file
     gleMaterial->setDiffuseColor(gle::Colorf(color.r, color.g, color.b, color.a));
   if (material->Get<aiColor4D>(AI_MATKEY_COLOR_SPECULAR, color) == AI_SUCCESS)
     gleMaterial->setSpecularColor(gle::Colorf(color.r, color.g, color.b, color.a));
-		    
+
   float shininess, strength;
   if (material->Get<float>(AI_MATKEY_SHININESS, shininess) == AI_SUCCESS
       && material->Get<float>(AI_MATKEY_SHININESS_STRENGTH, strength) == AI_SUCCESS)
