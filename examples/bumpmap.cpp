@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Fri Mar  2 17:27:21 2012 gael jochaud-du-plessix
-// Last update Thu Jun 21 14:22:35 2012 loick michard
+// Last update Fri Jun 29 21:04:07 2012 gael jochaud-du-plessix
 //
 
 #include <iostream>

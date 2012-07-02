@@ -5,7 +5,7 @@
 // Login   <michar_l@epitech.net>
 // 
 // Started on  Sat Feb 18 10:43:04 2012 loick michard
-// Last update Thu Jun  7 09:31:38 2012 loick michard
+// Last update Tue Jun 26 09:47:27 2012 gael jochaud-du-plessix
 //
 
 #ifndef _GLE_CAMERA_HPP_

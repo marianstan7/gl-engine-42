@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Wed Feb 15 17:24:36 2012 gael jochaud-du-plessix
-// Last update Wed Jun  6 19:52:42 2012 gael jochaud-du-plessix
+// Last update Tue Jun 26 12:31:38 2012 gael jochaud-du-plessix
 //
 
 /*! 
@@ -109,7 +109,7 @@ int glEngine(char **av)
   sf::Clock		time;
   size_t		frameCounter = 0;
   
-  scene.setCamera(&camera);
+  scene.setCurrentCamera(&camera);
   scene.update();
   while (App.isOpen())
     {

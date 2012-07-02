@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Mon Feb 20 20:48:54 2012 gael jochaud-du-plessix
-// Last update Tue Jun 26 12:14:00 2012 loick michard
+// Last update Mon Jul  2 18:06:02 2012 gael jochaud-du-plessix
 //
 
 #include <Renderer.hpp>
@@ -17,6 +17,7 @@
 
 gle::Renderer::Renderer() :
   _currentProgram(NULL),
+  _shadowMapProgram(NULL),
   _indexesBuffer(gle::Bufferui::ElementArray,
 		 gle::Bufferui::StaticDraw),
   _debugMode(0), _debugProgram(NULL)
@@ -30,8 +31,8 @@ gle::Renderer::Renderer() :
   glDepthMask(GL_TRUE);
 
   // Backface culling
-  // glEnable(GL_CULL_FACE);
-  // glCullFace(GL_BACK);
+  //glEnable(GL_CULL_FACE);
+  //glCullFace(GL_BACK);
 
   // Enable antialiasing
   glEnable(GL_LINE_SMOOTH);
@@ -42,7 +43,10 @@ gle::Renderer::Renderer() :
 
 gle::Renderer::~Renderer()
 {
-
+  if (_debugProgram)
+    delete _debugProgram;
+  if (_shadowMapProgram)
+    delete _shadowMapProgram;
 }
 
 void gle::Renderer::clear()
@@ -55,7 +59,10 @@ void gle::Renderer::render(Scene* scene, const Rectf& size, FrameBuffer* customF
   gle::FrameBuffer& framebuffer = customFramebuffer 
     ? *customFramebuffer : gle::FrameBuffer::getDefaultFrameBuffer();
 
+  scene->updateShadowMaps(this);
+
   glViewport(size.x, size.y, size.width, size.height);
+  glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
 
   framebuffer.bind();
 
@@ -72,10 +79,11 @@ void gle::Renderer::render(Scene* scene, const Rectf& size, FrameBuffer* customF
   if (!camera)
     throw (new gle::Exception::Exception("No camera for the scene..."));
 
-  _setCurrentProgram(scene, camera);
+  _setCurrentProgram(scene);
+  _setSceneUniforms(scene, camera);
 
-  const std::vector<gle::Mesh*> & staticMeshes = scene->getStaticMeshes();
-  const std::vector<gle::Mesh*> & dynamicMeshes = scene->getDynamicMeshes();
+  const std::list<gle::Mesh*> & staticMeshes = scene->getStaticMeshes();
+  const std::list<gle::Mesh*> & dynamicMeshes = scene->getDynamicMeshes();
 
   // Enable vertex attributes commons to all draws
   glEnableVertexAttribArray(gle::ShaderSource::PositionLocation);
@@ -87,7 +95,7 @@ void gle::Renderer::render(Scene* scene, const Rectf& size, FrameBuffer* customF
   
   //Draw static meshes
   std::list<gle::Scene::MeshGroup> factorizedStaticMeshes =
-    gle::Mesh::factorizeForDrawing(std::list<gle::Mesh*>(staticMeshes.begin(), staticMeshes.end()));
+    gle::Mesh::factorizeForDrawing(staticMeshes);
 
   //std::cout << "nb draw calls: " << factorizedStaticMeshes.size() << " for " << staticMeshes.size() << " meshes\n";
 
@@ -99,7 +107,7 @@ void gle::Renderer::render(Scene* scene, const Rectf& size, FrameBuffer* customF
 
   // Draw dynamic meshes
   for (gle::Mesh* mesh : dynamicMeshes)
-    _renderMesh(scene, mesh);
+    _renderMesh(mesh);
 
   glDisableVertexAttribArray(gle::ShaderSource::PositionLocation);
   glDisableVertexAttribArray(gle::ShaderSource::NormalLocation);
@@ -110,6 +118,126 @@ void gle::Renderer::render(Scene* scene, const Rectf& size, FrameBuffer* customF
   if (_debugMode)
     _renderDebugMeshes(scene);
   framebuffer.update();
+}
+
+void gle::Renderer::renderShadowMap(gle::Scene* scene, const std::list<gle::Mesh*> & staticMeshes, const std::list<gle::Mesh*> & dynamicMeshes,
+				    gle::Light* light)
+{
+  gle::FrameBuffer*	framebuffer = light->getShadowMapFrameBuffer();
+  gle::Rectf		size = light->getShadowMap()->getSize();
+
+  if (!_shadowMapProgram)
+    {
+      _shadowMapProgram = new gle::Program();
+      gle::Shader* vertexShader;
+      gle::Shader* fragmentShader;
+      std::string shaderSource = gle::ShaderSource::ShadowMapVertexShader;
+      scene->setShaderSourceConstants(shaderSource);
+      vertexShader = new gle::Shader(gle::Shader::Vertex, shaderSource);
+      shaderSource = gle::ShaderSource::ShadowMapFragmentShader;
+      scene->setShaderSourceConstants(shaderSource);
+      fragmentShader = new gle::Shader(gle::Shader::Fragment, shaderSource);
+      _shadowMapProgram->attach(*vertexShader);
+      _shadowMapProgram->attach(*fragmentShader);
+      try {
+        _shadowMapProgram->link();
+      }
+      catch (std::exception *e)
+        {
+          delete vertexShader;
+          delete fragmentShader;
+          throw e;
+        }
+      _shadowMapProgram->getUniformLocation("gle_MWMatrix");
+      _shadowMapProgram->getUniformLocation("gle_ViewMatrix");
+      _shadowMapProgram->getUniformLocation("gle_PMatrix");
+      _shadowMapProgram->retreiveUniformBlockIndex("gle_staticMeshesBlock");
+    }
+
+  _shadowMapProgram->use();
+
+  glViewport(size.x, size.y, size.width, size.height);
+  framebuffer->bind();
+
+  glClear(GL_DEPTH_BUFFER_BIT);
+  glDrawBuffer(GL_NONE);
+  glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
+
+  glEnableVertexAttribArray(gle::ShaderSource::PositionLocation);
+  glEnableVertexAttribArray(gle::ShaderSource::MeshIdentifierLocation);
+  MeshBufferManager::getInstance().bind();
+
+  std::list<gle::Scene::MeshGroup> factorizedStaticMeshes =
+    gle::Mesh::factorizeForDrawing(staticMeshes, false, true);
+
+  glVertexAttribPointer(gle::ShaderSource::PositionLocation,
+			3, GL_FLOAT, GL_FALSE,
+			gle::Mesh::VertexAttributesSize * sizeof(GLfloat),
+			(GLvoid*)(0 * sizeof(GLfloat)));
+  glVertexAttribPointer(gle::ShaderSource::MeshIdentifierLocation,
+			3, GL_FLOAT, GL_FALSE, gle::Mesh::VertexAttributesSize * sizeof(GLfloat),
+			(GLvoid*)((0
+				   + gle::Mesh::VertexAttributeSizeCoords
+				   + gle::Mesh::VertexAttributeSizeNormal
+				   + gle::Mesh::VertexAttributeSizeTangent
+				   + gle::Mesh::VertexAttributeSizeTextureCoords
+				   + gle::Mesh::VertexAttributeSizeBone)
+				  * sizeof(GLfloat)));
+
+  const Matrix4<GLfloat>& viewMatrix =
+    light->getShadowMapCamera()->getTransformationMatrix();
+  const Matrix4<GLfloat>& pMatrix =
+    light->getShadowMapCamera()->getProjectionMatrix();
+  
+  _shadowMapProgram->setUniform("gle_ViewMatrix", viewMatrix);
+  _shadowMapProgram->setUniform("gle_PMatrix", pMatrix);
+
+  glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+
+  for (gle::Scene::MeshGroup &group : factorizedStaticMeshes)
+    {
+      _buildIndexesBuffer(group.meshes);
+      scene->getStaticMeshesUniformsBuffer(group.uniformBufferId)
+      	->bindBase(_shadowMapProgram->getUniformBlockBinding("gle_staticMeshesBlock"));
+      _indexesBuffer.bind();
+      glDrawElements(GL_TRIANGLES, _indexesBuffer.getSize(), GL_UNSIGNED_INT, 0);
+    }
+
+  for (gle::Mesh* mesh : dynamicMeshes)
+    {
+      GLsizeiptr nbIndexes = mesh->getNbIndexes();
+      GLsizeiptr nbVertexes = mesh->getNbVertexes();
+      gle::MeshBufferManager::Chunk* vertexAttributes = mesh->getAttributes();
+      gle::Buffer<GLuint>* indexesBuffer = mesh->getIndexesBuffer();
+      
+      if (nbIndexes < 1 || nbVertexes < 1 || !vertexAttributes || !indexesBuffer)
+	continue ;
+
+      glVertexAttribPointer(gle::ShaderSource::PositionLocation,
+			    3, GL_FLOAT, GL_FALSE,
+			    gle::Mesh::VertexAttributesSize * sizeof(GLfloat),
+			    (GLvoid*)(vertexAttributes->getOffset() * sizeof(GLfloat)));
+      glVertexAttribPointer(gle::ShaderSource::MeshIdentifierLocation,
+			    3, GL_FLOAT, GL_FALSE, gle::Mesh::VertexAttributesSize * sizeof(GLfloat),
+			    (GLvoid*)((vertexAttributes->getOffset()
+				       + gle::Mesh::VertexAttributeSizeCoords
+				       + gle::Mesh::VertexAttributeSizeNormal
+				       + gle::Mesh::VertexAttributeSizeTangent
+				       + gle::Mesh::VertexAttributeSizeTextureCoords
+				       + gle::Mesh::VertexAttributeSizeBone)
+				      * sizeof(GLfloat)));
+
+      _shadowMapProgram->setUniform("gle_MWMatrix", mesh->getTransformationMatrix());
+
+      indexesBuffer->bind();
+      glPolygonMode(GL_FRONT_AND_BACK, mesh->getRasterizationMode());
+      glDrawElements(mesh->getPrimitiveType(), nbIndexes, GL_UNSIGNED_INT, 0);
+    }
+
+  glDisableVertexAttribArray(gle::ShaderSource::PositionLocation);
+  glDisableVertexAttribArray(gle::ShaderSource::MeshIdentifierLocation);
+
+  framebuffer->update();
 }
 
 void gle::Renderer::_buildIndexesBuffer(const std::list<gle::Mesh*> & meshes)
@@ -165,8 +293,10 @@ void gle::Renderer::_renderEnvMap(gle::Scene* scene)
 
 void gle::Renderer::_renderMeshes(gle::Scene* scene, gle::Scene::MeshGroup& group)
 {
-  scene->getStaticMeshesUniformsBuffer(group.uniformBufferId)->bindBase(gle::Program::StaticMeshesBlock);
-  scene->getStaticMeshesMaterialsBuffer(group.materialBufferId)->bindBase(gle::Program::MaterialBlock);
+  scene->getStaticMeshesUniformsBuffer(group.uniformBufferId)
+    ->bindBase(_currentProgram->getUniformBlockBinding("gle_staticMeshesBlock"));
+  scene->getStaticMeshesMaterialsBuffer(group.materialBufferId)
+    ->bindBase(_currentProgram->getUniformBlockBinding("gle_materialBlock"));
 
   _setVertexAttributes(0);
   
@@ -214,7 +344,7 @@ void gle::Renderer::_renderMeshes(gle::Scene* scene, gle::Scene::MeshGroup& grou
   glDisableVertexAttribArray(gle::ShaderSource::TextureCoordLocation);  
 }
 
-void gle::Renderer::_renderMesh(gle::Scene* scene, gle::Mesh* mesh)
+void gle::Renderer::_renderMesh(gle::Mesh* mesh)
 {
   GLsizeiptr nbIndexes = mesh->getNbIndexes();
   GLsizeiptr nbVertexes = mesh->getNbVertexes();
@@ -230,7 +360,9 @@ void gle::Renderer::_renderMesh(gle::Scene* scene, gle::Mesh* mesh)
       !_currentProgram)
     return ;
   
-  material->getUniformsBuffer()->bindBase(gle::Program::MaterialBlock);
+  material->getUniformsBuffer()
+    ->bindBase(_currentProgram->getUniformBlockBinding("gle_materialBlock"));
+
   _currentProgram->setUniform("gle_MWMatrix", mesh->getTransformationMatrix());
 
   _setVertexAttributes(vertexAttributes->getOffset());
@@ -328,8 +460,7 @@ void gle::Renderer::_setVertexAttributes(GLuint offset)
 				  * sizeof(GLfloat)));
 }
 
-void gle::Renderer::_setCurrentProgram(gle::Scene* scene,
-				       gle::Camera* camera)
+void gle::Renderer::_setCurrentProgram(gle::Scene* scene)
 { 
   gle::Program* program = scene->getProgram();
 
@@ -338,7 +469,6 @@ void gle::Renderer::_setCurrentProgram(gle::Scene* scene,
   if (program && program != _currentProgram)
     program->use();
   _currentProgram = program;
-  _setSceneUniforms(scene, camera);
 }
 
 void gle::Renderer::_setSceneUniforms(gle::Scene* scene, gle::Camera* camera)
@@ -350,7 +480,11 @@ void gle::Renderer::_setSceneUniforms(gle::Scene* scene, gle::Camera* camera)
   _currentProgram->setUniform("gle_CameraPos", camera->getAbsolutePosition());
   _currentProgram->setUniform("gle_fogColor", scene->getFogColor());
   _currentProgram->setUniform("gle_fogDensity", scene->getFogDensity());
+
   // Send light infos to the shader
+  GLint currentTexture = gle::Program::ShadowMapsTextures;
+  GLint currentTextureIndex = gle::Program::ShadowMapsTexturesIndexes;
+
   if (scene->getDirectionalLightsSize())
     {
       _currentProgram->setUniform3("gle_directionalLightDirection",
@@ -395,6 +529,32 @@ void gle::Renderer::_setSceneUniforms(gle::Scene* scene, gle::Camera* camera)
       _currentProgram->setUniform1("gle_spotLightCosCutOff",
 				    scene->getSpotLightsCosCutOff(),
 				    scene->getSpotLightsSize());
+      _currentProgram->setUniform1("gle_spotLightHasShadowMap",
+				   scene->getSpotLightsHasShadowMap(),
+				   scene->getSpotLightsSize());
+      _currentProgram->setUniformMatrix4v("gle_spotLightShadowMapMatrix",
+					  scene->getSpotLightsShadowMapMatrix(),
+					  scene->getSpotLightsSize());
+      // Send shadow maps
+      gle::Array<GLint> spotLightsShadowMapIndexes;
+      spotLightsShadowMapIndexes.resize(scene->getSpotLightsSize());
+      const std::vector<gle::Texture*>& shadowMaps = scene->getSpotLightsShadowMap();
+      for (GLuint i = 0; i < scene->getSpotLightsSize(); ++i)
+	{
+	  if (shadowMaps[i])
+	    {
+	      glActiveTexture(currentTexture);
+	      shadowMaps[i]->bind();
+	      spotLightsShadowMapIndexes[i] = currentTextureIndex;
+	      currentTextureIndex++;
+	      currentTexture++;
+	    }
+	  else
+	    spotLightsShadowMapIndexes[i] = 0;
+	}
+      _currentProgram->setUniform1("gle_spotLightShadowMap",
+				   (GLint*)spotLightsShadowMapIndexes,
+				   scene->getSpotLightsSize());
     }
 }
 
@@ -405,7 +565,7 @@ void gle::Renderer::setDebugMode(int mode)
 
 void gle::Renderer::_renderDebugMeshes(gle::Scene* scene)
 {  
-  glClear(GL_DEPTH_BUFFER_BIT);
+  //glClear(GL_DEPTH_BUFFER_BIT);
   if (!_debugProgram)
     {
       _debugProgram = new gle::Program();
@@ -444,7 +604,7 @@ void gle::Renderer::_renderDebugMeshes(gle::Scene* scene)
 			      3, GL_FLOAT, GL_FALSE,
 			      Mesh::VertexAttributesSize * sizeof(GLfloat),
 			      (GLvoid*)(vertexAttributes->getOffset() * sizeof(GLfloat)));
-	const Matrix4<GLfloat>& mvMatrix =  
+	const Matrix4<GLfloat>& mvMatrix =
 	  scene->getCurrentCamera()->getTransformationMatrix() * debugMesh->getTransformationMatrix();
 	_currentProgram->setUniform("gle_MVMatrix", mvMatrix);
 	_currentProgram->setUniform("gle_PMatrix", scene->getCurrentCamera()->getProjectionMatrix());

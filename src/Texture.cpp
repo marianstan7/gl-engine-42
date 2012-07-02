@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Wed Feb 29 19:37:40 2012 gael jochaud-du-plessix
-// Last update Thu Jun 21 21:12:09 2012 gael jochaud-du-plessix
+// Last update Tue Jun 26 16:14:10 2012 gael jochaud-du-plessix
 //
 
 #include <Texture.hpp>
@@ -66,9 +66,10 @@ void gle::Texture::setData(const char* data, GLuint width, GLuint height, Target
 	       _width, // Width
 	       _height, // Height
 	       0, // This value must be 0
-	       GL_RGBA, // Format of the pixel datas
+	       _internalFormat == Depth ? GL_DEPTH_COMPONENT : GL_RGBA, // Format of the pixel datas
 	       GL_UNSIGNED_BYTE, // Data type of the pixel datas
 	       data);
+  gle::Exception::CheckOpenGLError("Texture::setData");
   generateMipmap();
   if (bindTexture)
     unbind();
@@ -109,4 +110,16 @@ void	gle::Texture::setUseMipmap(bool use)
 gle::Rectf	gle::Texture::getSize() const
 {
   return (Rectf(0, 0, _width, _height));
+}
+
+void	gle::Texture::setFilterType(FilterType filterType)
+{
+  glTexParameteri(_type, GL_TEXTURE_MIN_FILTER, filterType);
+  glTexParameteri(_type, GL_TEXTURE_MAG_FILTER, filterType);
+}
+
+void	gle::Texture::setWrapMode(WrapMode wrap)
+{
+  glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, wrap);
+  glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, wrap);
 }

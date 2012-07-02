@@ -5,7 +5,7 @@
 // Login   <michar_l@epitech.net>
 // 
 // Started on  Sat Feb 18 12:53:42 2012 loick michard
-// Last update Fri May 25 15:47:46 2012 loick michard
+// Last update Tue Jun 26 09:46:19 2012 gael jochaud-du-plessix
 //
 
 #include <OrthographicCamera.hpp>
@@ -34,7 +34,7 @@ gle::OrthographicCamera::OrthographicCamera(gle::Vector3<GLfloat> const& positio
   this->updateMatrix();
 }
 
-void gle::OrthographicCamera::update()
+void gle::OrthographicCamera::updateProjectionMatrix()
 {
   _projectionMatrix = gle::Matrix4<GLfloat>::orthographic(_near, _far, _left, _right, _bottom, _top);
 }

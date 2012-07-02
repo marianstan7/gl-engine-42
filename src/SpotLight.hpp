@@ -5,7 +5,7 @@
 // Login   <michar_l@epitech.net>
 // 
 // Started on  Thu Feb 23 17:36:20 2012 loick michard
-// Last update Wed Jun  6 19:05:46 2012 loick michard
+// Last update Thu Jun 28 21:30:58 2012 gael jochaud-du-plessix
 //
 
 #ifndef _SPOT_LIGHT_HPP_
@@ -81,16 +81,18 @@ namespace gle {
 
     GLfloat* getAttenuation();
 
-    GLfloat getCosCutOff();
+    GLfloat getCosCutOff();    
 
-    virtual void update();
+    gle::Camera* getShadowMapCamera();
+
+    void update();
 
   private:
-    GLfloat _color[3];
-    GLfloat _specularColor[3];
-    GLfloat _attenuation[3];
-    GLfloat _direction[3];
-    GLfloat _cosCutOff;
+    GLfloat	_color[3];
+    GLfloat	_specularColor[3];
+    GLfloat	_attenuation[3];
+    GLfloat	_direction[3];
+    GLfloat	_cosCutOff;
   };
 }
 

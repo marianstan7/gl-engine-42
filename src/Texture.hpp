@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Wed Feb 29 19:37:51 2012 gael jochaud-du-plessix
-// Last update Thu Jun 21 17:06:34 2012 loick michard
+// Last update Thu Jun 28 21:46:32 2012 gael jochaud-du-plessix
 //
 
 #ifndef _GLE_TEXTURE_HPP_
@@ -22,24 +22,34 @@ namespace gle {
   class Texture {
   public:
     enum Type {
-      Texture2D = GL_TEXTURE_2D,
-      CubeMap = GL_TEXTURE_CUBE_MAP
+      Texture2D	= GL_TEXTURE_2D,
+      CubeMap	= GL_TEXTURE_CUBE_MAP
     };
     
     enum Target {
-      Tex2D = GL_TEXTURE_2D,
-      PosX = GL_TEXTURE_CUBE_MAP_POSITIVE_X,
-      NegX = GL_TEXTURE_CUBE_MAP_NEGATIVE_X,
-      PosY = GL_TEXTURE_CUBE_MAP_POSITIVE_Y,
-      NegY = GL_TEXTURE_CUBE_MAP_NEGATIVE_Y,
-      PosZ = GL_TEXTURE_CUBE_MAP_POSITIVE_Z,
-      NegZ = GL_TEXTURE_CUBE_MAP_NEGATIVE_Z
+      Tex2D	= GL_TEXTURE_2D,
+      PosX	= GL_TEXTURE_CUBE_MAP_POSITIVE_X,
+      NegX	= GL_TEXTURE_CUBE_MAP_NEGATIVE_X,
+      PosY	= GL_TEXTURE_CUBE_MAP_POSITIVE_Y,
+      NegY	= GL_TEXTURE_CUBE_MAP_NEGATIVE_Y,
+      PosZ	= GL_TEXTURE_CUBE_MAP_POSITIVE_Z,
+      NegZ	= GL_TEXTURE_CUBE_MAP_NEGATIVE_Z
     };
 
     enum InternalFormat {
-      RGBA = GL_RGBA,
-      RGB = GL_RGB,
-      CompressedRGBA = GL_COMPRESSED_RGBA
+      RGBA		= GL_RGBA,
+      RGB		= GL_RGB,
+      Depth		= GL_DEPTH_COMPONENT,
+      CompressedRGBA	= GL_COMPRESSED_RGBA
+    };
+
+    enum FilterType {
+      Nearest	= GL_NEAREST,
+      Linear	= GL_LINEAR
+    };
+
+    enum WrapMode {
+      Clamp	= GL_CLAMP_TO_EDGE
     };
 
     Texture(const Image& image, Type type=Texture2D, InternalFormat internalFormat=CompressedRGBA);
@@ -59,6 +69,9 @@ namespace gle {
     Type	getType() const;
     void	setUseMipmap(bool use=true);
     Rectf	getSize() const;
+
+    void	setFilterType(FilterType filterType);
+    void	setWrapMode(WrapMode wrap);
 
   private:
     GLuint		_id;

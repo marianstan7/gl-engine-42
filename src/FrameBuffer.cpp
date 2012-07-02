@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Thu May 31 17:21:30 2012 gael jochaud-du-plessix
-// Last update Mon Jun  4 15:17:18 2012 gael jochaud-du-plessix
+// Last update Tue Jun 26 15:37:22 2012 gael jochaud-du-plessix
 //
 
 #include "FrameBuffer.hpp"
@@ -49,7 +49,7 @@ void gle::FrameBuffer::attach(gle::Texture const& texture, Attachment attachment
 			   GL_TEXTURE_2D,
 			   texture.getId(),
 			   0);
-  gle::Exception::CheckOpenGLError();
+  gle::Exception::CheckOpenGLError("Attach texture");
 }
 
 void gle::FrameBuffer::detach(gle::Texture const& texture, Attachment attachment)
@@ -60,7 +60,7 @@ void gle::FrameBuffer::detach(gle::Texture const& texture, Attachment attachment
 			   GL_TEXTURE_2D,
 			   0,
 			   0);
-  gle::Exception::CheckOpenGLError();
+  gle::Exception::CheckOpenGLError("Detach texture");
 }
 
 void gle::FrameBuffer::attach(gle::RenderBuffer const& renderBuffer, Attachment attachment)
@@ -69,7 +69,7 @@ void gle::FrameBuffer::attach(gle::RenderBuffer const& renderBuffer, Attachment 
   glFramebufferRenderbuffer(GL_FRAMEBUFFER, attachment,
 			    GL_RENDERBUFFER,
 			    renderBuffer.getId());
-  gle::Exception::CheckOpenGLError();
+  gle::Exception::CheckOpenGLError("Attach render buffer");
 }
 
 void gle::FrameBuffer::detach(gle::RenderBuffer const& renderBuffer, Attachment attachment)
@@ -79,7 +79,7 @@ void gle::FrameBuffer::detach(gle::RenderBuffer const& renderBuffer, Attachment 
   glFramebufferRenderbuffer(GL_FRAMEBUFFER, attachment,
 			    GL_RENDERBUFFER,
 			    0);
-  gle::Exception::CheckOpenGLError();
+  gle::Exception::CheckOpenGLError("Detach render buffer");
 }
 
 GLenum	gle::FrameBuffer::getStatus() const

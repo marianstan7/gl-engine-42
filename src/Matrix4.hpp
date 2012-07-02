@@ -5,7 +5,7 @@
 // Login   <michar_l@epitech.net>
 // 
 // Started on  Mon Feb 13 20:57:51 2012 loick michard
-// Last update Wed May 30 16:59:38 2012 gael jochaud-du-plessix
+// Last update Fri Jun 29 13:49:05 2012 gael jochaud-du-plessix
 //
 
 #ifndef _GLE_MATRIX4_HPP_
@@ -590,6 +590,9 @@ namespace gle {
     T _matrix[16];
   };
 
+  typedef Matrix4<GLfloat> Matrix4f;
+  typedef Matrix4<GLint> Matrix4i;
+  typedef Matrix4<GLuint> Matrix4ui;
 }
 
 template <typename T>

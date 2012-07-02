@@ -5,14 +5,15 @@
 // Login   <michar_l@epitech.net>
 // 
 // Started on  Tue May 15 19:32:41 2012 loick michard
-// Last update Tue Jun 26 15:21:21 2012 loick michard
+// Last update Thu Jun 28 16:46:18 2012 gael jochaud-du-plessix
 //
 
 #include <algorithm>
 #include <Scene.hpp>
 
 gle::Scene::Node::Node(gle::Scene::Node::Type type) :
-  _type(type), _parent(NULL), _isDynamic(false), _hasTarget(false)
+  _type(type), _parent(NULL), _isDynamic(false), _projectShadow(true),
+  _hasTarget(false)
 {
 
 }
@@ -20,7 +21,7 @@ gle::Scene::Node::Node(gle::Scene::Node::Type type) :
 gle::Scene::Node::Node(const gle::Scene::Node& other) :
   _type(other._type), _name(other._name), 
   _children(), _parent(NULL), _position(other._position),
-  _isDynamic(other._isDynamic),
+  _isDynamic(other._isDynamic), _projectShadow(other._projectShadow),
   _target(other._target), _hasTarget(other._hasTarget),
   _scaleMatrix(other._scaleMatrix), _rotationMatrix(other._rotationMatrix)
 {
@@ -223,6 +224,16 @@ void      gle::Scene::Node::setDynamic(bool dynamic, bool deep)
   if (deep)
     for (gle::Scene::Node* child : _children)
       child->setDynamic(dynamic, true);
+}
+
+bool		gle::Scene::Node::projectShadow() const
+{
+  return (_projectShadow);
+}
+
+void		gle::Scene::Node::setProjectShadow(bool projectShadow)
+{
+  _projectShadow = projectShadow;
 }
 
 const gle::Vector3<GLfloat>& gle::Scene::Node::getTarget() const

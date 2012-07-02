@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Fri May 25 12:25:22 2012 gael jochaud-du-plessix
-// Last update Mon Jun 18 22:52:44 2012 loick michard
+// Last update Thu Jun 28 21:27:17 2012 gael jochaud-du-plessix
 //
 
 #ifndef _EXAMPLE_HPP_
@@ -54,6 +54,7 @@ protected:
 
   sf::Window*	_window;
   sf::Clock	_time;
+  unsigned int	_elapsedTime;
 
   bool		_showFramerate;
   bool		_limitFramerate;

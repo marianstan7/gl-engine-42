@@ -5,7 +5,7 @@
 // Login   <michar_l@epitech.net>
 // 
 // Started on  Thu Feb 23 17:55:31 2012 loick michard
-// Last update Thu Feb 23 18:03:39 2012 loick michard
+// Last update Tue Jun 26 11:20:42 2012 gael jochaud-du-plessix
 //
 
 #include <DirectionalLight.hpp>

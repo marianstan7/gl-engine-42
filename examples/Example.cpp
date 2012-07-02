@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Fri May 25 00:33:16 2012 gael jochaud-du-plessix
-// Last update Thu Jun  7 13:59:21 2012 gael jochaud-du-plessix
+// Last update Thu Jun 28 21:28:00 2012 gael jochaud-du-plessix
 //
 
 #include <algorithm>
@@ -21,7 +21,7 @@ Example::Example(int ac, char**av, int winWidth, int winHeight, int framerate, s
   : _argv(),
     _winWidth(winWidth), _winHeight(winHeight), _framerate(framerate),
     _name(name),
-    _window(NULL), _time(),
+    _window(NULL), _time(), _elapsedTime(0),
     _showFramerate(true), _limitFramerate(true), _cameraType(Flycam),
     _recordVideo(false),
     _scene(), _camera(NULL), _renderer(NULL),
@@ -91,6 +91,8 @@ int Example::run()
 
   while (_window->isOpen())
     {
+      _elapsedTime = _time.getElapsedTime().asMilliseconds();
+
       sf::Event event;
       while (_window->pollEvent(event))
         {

@@ -5,14 +5,14 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Fri Feb 17 16:21:14 2012 gael jochaud-du-plessix
-// Last update Fri Jun 22 02:21:09 2012 loick michard
+// Last update Fri Jun 29 14:38:39 2012 gael jochaud-du-plessix
 //
 
 #include <Program.hpp>
 #include <Exception.hpp>
 
 gle::Program::Program() :
-  _id(0)
+  _id(0), _currentUniformBlockBinding(0)
 {
   _id = glCreateProgram();
   if (_id == 0)
@@ -118,6 +118,18 @@ void gle::Program::setUniform1(const GLchar* uniform, GLfloat* values,
   glUniform1fv(_uniformLocations[uniform], size, values);
 }
 
+void gle::Program::setUniform1(const GLchar* uniform, GLint* values,
+				GLsizeiptr size)
+{
+  glUniform1iv(_uniformLocations[uniform], size, values);
+}
+
+void gle::Program::setUniformMatrix4v(const GLchar* uniform, GLfloat* values,
+				      GLsizeiptr count)
+{
+  glUniformMatrix4fv(_uniformLocations[uniform], count, GL_FALSE, values);
+}
+
 void gle::Program::setUniform(const GLchar* uniform,
 			      gle::Color<GLfloat> const & color)
 {
@@ -144,15 +156,22 @@ void gle::Program::setUniform(const GLchar* uniform, const gle::Vector3f& value)
   glUniform3f(_uniformLocations[uniform], value.x, value.y, value.z);
 }
 
-void gle::Program::retreiveUniformBlockIndex(UniformBlock block, const std::string &name)
+void gle::Program::retreiveUniformBlockIndex(const std::string &name)
 {
-  _uniformBlockIndexes[block] = glGetUniformBlockIndex(_id, name.c_str());
+  _uniformBlockIndexes[name] = glGetUniformBlockIndex(_id, name.c_str());
+  _uniformBlockBindings[name] = _currentUniformBlockBinding;
   glUniformBlockBinding(_id,
-                        _uniformBlockIndexes[block],
-                        block);
+                        _uniformBlockIndexes[name],
+                        _uniformBlockBindings[name]);
+  _currentUniformBlockBinding += 1;
 }
 
-GLuint gle::Program::getUniformBlockIndex(UniformBlock block) const
+GLuint gle::Program::getUniformBlockIndex(const std::string &name)
 {
-  return (_uniformBlockIndexes[block]);
+  return (_uniformBlockIndexes[name]);
+}
+
+GLuint gle::Program::getUniformBlockBinding(const std::string &name)
+{
+  return (_uniformBlockBindings[name]);
 }

@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Tue Feb 14 17:12:21 2012 gael jochaud-du-plessix
-// Last update Tue Jun 26 12:10:47 2012 loick michard
+// Last update Mon Jul  2 17:35:43 2012 gael jochaud-du-plessix
 //
 
 #ifndef _GLE_RENDERER_HPP_
@@ -17,6 +17,7 @@
 # include <Camera.hpp>
 # include <FrameBuffer.hpp>
 # include <Rect.hpp>
+# include <Light.hpp>
 
 namespace gle {
 
@@ -31,10 +32,11 @@ namespace gle {
   class Renderer {
   public:
     enum DebugMode {
-      BoundingVolume = 1 << 0,
-      Octree = 1 << 1,
-      Bone = 1 << 2,
-      Camera = 1 << 3
+      BoundingVolume	= 1 << 0,
+      Octree		= 1 << 1,
+      Bone		= 1 << 2,
+      Light		= 1 << 3,
+      Camera		= 1 << 4
     };
     
     //! Construct a new renderer
@@ -49,22 +51,26 @@ namespace gle {
     //! Render a scene
     void render(Scene* scene, const Rectf& size, FrameBuffer* customFramebuffer=NULL);
 
+    void renderShadowMap(gle::Scene* scene, const std::list<gle::Mesh*> & staticMeshes,
+			 const std::list<gle::Mesh*> & dynamicMeshes, gle::Light* light);
+
     void setDebugMode(int mode);
 
   private:
     void _buildIndexesBuffer(const std::list<gle::Mesh*> & meshes);
     void _renderEnvMap(gle::Scene* scene);
+    void _renderShadowMapMeshes(gle::Scene::MeshGroup& group);
     void _renderMeshes(gle::Scene* scene, gle::Scene::MeshGroup& group);
-    void _renderMesh(gle::Scene* scene, gle::Mesh* mesh);
+    void _renderMesh(gle::Mesh* mesh);
     void _setVertexAttributes(GLuint offset);
-    void _setCurrentProgram(gle::Scene* scene,
-			    gle::Camera* camera);
+    void _setCurrentProgram(gle::Scene* scene);
     void _setMaterialUniforms(gle::Material* material);
     void _setSceneUniforms(gle::Scene* scene, gle::Camera* camera);
     void _setMeshUniforms(gle::Scene* scene, gle::Mesh* mesh);
     void _renderDebugMeshes(gle::Scene* scene);
 
     gle::Program*	_currentProgram;
+    gle::Program*	_shadowMapProgram;
     gle::Bufferui	_indexesBuffer;
     int			_debugMode;
     gle::Program*	_debugProgram;
