@@ -5,7 +5,7 @@
 // Login   <michar_l@epitech.net>
 // 
 // Started on  Thu Jun 21 20:39:52 2012 loick michard
-// Last update Mon Jul  2 17:24:01 2012 gael jochaud-du-plessix
+// Last update Mon Jul  2 22:11:56 2012 loick michard
 //
 
 #ifndef _MESH_HPP_
@@ -35,6 +35,7 @@ namespace gle {
   /*!
     This class creates, initializes and operates on meshes.
   */
+  class Skeleton;
 
   class Mesh : public Octree::Element, public Scene::Node {
   public:
@@ -164,6 +165,8 @@ namespace gle {
 
     void setTextureCoords(const GLfloat* textureCoords, GLsizeiptr size);
 
+    void setBones(const GLfloat* bones, GLsizeiptr size);
+
     //! Set the mesh indexes
 
     void setIndexes(const GLuint* indexes, GLsizeiptr size);
@@ -181,6 +184,8 @@ namespace gle {
     //! Set the mesh texture coords
 
     void setTextureCoords(gle::Array<GLfloat> const &textureCoords);
+
+    void setBones(gle::Array<GLfloat> const &bones);
 
     //! Set the mesh indexes
 
@@ -274,7 +279,10 @@ namespace gle {
     virtual void      updateMatrix();
 
     const GLfloat* getUniforms();
-    
+  
+    void		setSkeleton(gle::Skeleton* skeleton);
+    gle::Skeleton*	getSkeleton();
+
   private:
     PrimitiveType	_primitiveType;
     RasterizationMode	_rasterizationMode;
@@ -295,6 +303,9 @@ namespace gle {
 
     bool		_needUniformsUpdate;
     GLfloat*		_uniforms;
+
+    gle::Skeleton*	_skeleton;
+    GLint		_skeletonId;
   };
 }
 

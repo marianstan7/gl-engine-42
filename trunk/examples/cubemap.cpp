@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Fri Mar  2 17:27:21 2012 gael jochaud-du-plessix
-// Last update Fri Jun 29 13:27:49 2012 gael jochaud-du-plessix
+// Last update Wed Jun 27 09:54:50 2012 loick michard
 //
 
 #include <iostream>
@@ -32,6 +32,7 @@ public:
     _light(), _plane()
   {
     _cameraType = Trackball;
+    _recordVideo = true;
   }
 
   void _loadCamaro()
@@ -111,10 +112,10 @@ public:
 					 gle::Vector3f(0, 0, 0),
 					 45, (GLfloat)_winWidth/_winHeight, 1, 10000);
     _renderer = new gle::Renderer();
-    _cubeMap = new gle::CubeMap("./examples/cubemaps/opensea", ".png");
+    _cubeMap = new gle::CubeMap("./examples/cubemaps/bridge", ".jpg");
     //gle::Texture* tex = new gle::Texture("./models/companion_cube.jpg");
-    //_light = new gle::PointLight(gle::Vector3f(0, 0, 0),
-    //				 gle::Colorf(0.8, 0.8, 0.8));
+    _light = new gle::PointLight(gle::Vector3f(0, 0, 0),
+    				 gle::Colorf(0.8, 0.8, 0.8));
     gle::PointLight* light = new gle::PointLight(gle::Vector3f(0, 0, 0),
 						 gle::Colorf(0.8, 0.8, 0.8));
     *_scene << _camera;// << _light;
@@ -127,7 +128,7 @@ public:
     _loadCamaro();
     _loader = new gle::UniversalLoader();
     //_loader->setTexturesPath("./models/mustang/");
-    //gle::Scene::Node* model = _loader->load("./models/Camaro.obj", NULL);
+    gle::Scene::Node* model = _loader->load("./models/Camaro.obj", NULL);
     //gle::Scene::Node* model = _loader->load("./models/mustang/Ford Mustang GT Concept.lwo", NULL);
     //gle::Scene::Node* model = _loader->load("./models/textured_cube.obj", new gle::Material());
     //gle::Texture* tex2 = new gle::Texture("./examples/cubemaps/opensea/posy.png");
@@ -145,7 +146,7 @@ public:
 
     _scene->setEnvMap(_cubeMap);
     _camera->addChild(light);
-    //_camera->addChild(_light);
+    _camera->addChild(_light);
     _scene->update();
   }
 

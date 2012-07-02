@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Fri Mar  2 17:27:21 2012 gael jochaud-du-plessix
-// Last update Tue Jun 26 14:52:30 2012 loick michard
+// Last update Tue Jun 26 21:01:11 2012 loick michard
 //
 
 #include <iostream>
@@ -40,10 +40,7 @@ public:
 					 gle::Vector3f(0, 0, 0),
 					 45, (GLfloat)_winWidth/_winHeight, 1, 1000);
     _renderer = new gle::Renderer();
-    _renderer->setDebugMode(gle::Renderer::Octree |
-			    gle::Renderer::BoundingVolume |
-			    //gle::Renderer::Bone |
-			    gle::Renderer::Camera);
+        _renderer->setDebugMode(gle::Renderer::Bone);
 
     gle::Material* material = new gle::Material();
     material->setDiffuseColor(gle::Colorf(1.0, 0.0, 0.0));
@@ -57,18 +54,36 @@ public:
     _light = new gle::PointLight(gle::Vector3f(0, 0, 0),
 				 gle::Colorf(1.0, 1.0, 1.0));
 
-    _bone = new gle::Bone(gle::Vector3f(0.0, 10.0, 0.0));
-    _bone2 = new gle::Bone(gle::Vector3f(6.0, 6.0, 0.0));
+    _bone = new gle::Bone(10.0);
+    _bone2 = new gle::Bone(6.0);
     _bone2->setPosition(gle::Vector3f(0.0, 10.0, 0.0));
     _bone->addChild(_bone2);
     _skeleton = new gle::Skeleton();
     _skeleton->addChild(_bone);
 
-    *_scene << _skeleton;
+    gle::Mesh* bras = gle::Geometries::Cuboid(material, 2, 20, 2);
+    bras->setSkeleton(_skeleton);
+    //bras->translate(gle::Vector3f(0.0, 5.0, 0.0));
+    GLfloat bones[] = {0, 1, -1, -1, 0, 1, -1, -1, 0, 1, -1, -1, 0, 1, -1, -1,
+		       0, 1, -1, -1, 0, 1, -1, -1, 0, 1, -1, -1, 0, 1, -1, -1,
+		       0, 1, -1, -1, 0, 1, -1, -1, 0, 1, -1, -1, 0, 1, -1, -1,
+		       0, 1, -1, -1, 0, 1, -1, -1, 0, 1, -1, -1, 0, 1, -1, -1,
+		       0, 1, -1, -1, 0, 1, -1, -1, 0, 1, -1, -1, 0, 1, -1, -1,
+		       0, 1, -1, -1, 0, 1, -1, -1, 0, 1, -1, -1, 0, 1, -1, -1};
+    bras->setBones(bones, sizeof(bones) / sizeof(GLfloat));
 
-    *_scene << new gle::PerspectiveCamera(gle::Vector3f(0, 0, 0),
-					 gle::Vector3f(0, 10, 0),
-					 45, (GLfloat)_winWidth/_winHeight, 1, 4);
+    gle::Mesh* bras2 = gle::Geometries::Cuboid(material, 2, 12, 2);
+    bras2->setSkeleton(_skeleton);
+    GLfloat bones2[] = {1, 1, -1, -1, 1, 1, -1, -1, 1, 1, -1, -1, 1, 1, -1, -1,
+		       1, 1, -1, -1, 1, 1, -1, -1, 1, 1, -1, -1, 1, 1, -1, -1,
+		       1, 1, -1, -1, 1, 1, -1, -1, 1, 1, -1, -1, 1, 1, -1, -1,
+		       1, 1, -1, -1, 1, 1, -1, -1, 1, 1, -1, -1, 1, 1, -1, -1,
+		       1, 1, -1, -1, 1, 1, -1, -1, 1, 1, -1, -1, 1, 1, -1, -1,
+		       1, 1, -1, -1, 1, 1, -1, -1, 1, 1, -1, -1, 1, 1, -1, -1};
+    //bras->translate(gle::Vector3f(0.0, 5.0, 0.0));
+    bras2->setBones(bones2, sizeof(bones2) / sizeof(GLfloat));
+
+    *_scene << _skeleton << bras << bras2;
 
     _camera->addChild(_light);
     _scene->update();
@@ -79,6 +94,7 @@ public:
   void animate()
   {
     //_scene->updateLights();
+    _scene->updateSkeletons();
   }
 
   void render()

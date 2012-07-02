@@ -131,18 +131,39 @@ void main(void) {
 	gle_varying_vMeshIdentifier = gle_vMeshIdentifier;
 	
 	mat4 mwMatrix;
+	float skeletonIndex;
 	#if GLE_NB_STATIC_MESHES > 0
 		if (!bool(gle_vMeshIdentifier.x))
+		{
 			mwMatrix = gle_staticMeshes.meshes[int(gle_vMeshIdentifier.y)].MWMatrix;
+			skeletonIndex = gle_staticMeshes.meshes[int(gle_vMeshIdentifier.y)].skeletonIndex;
+		}
 		else
 	#endif
+	{
 			mwMatrix = gle_MWMatrix;
+			skeletonIndex = 0;
+	}
 			
 	gle_varying_vPosition = gle_vPosition;
 	
 	mat4 mvMatrix = gle_ViewMatrix * mwMatrix;
+	vec4 gle_BonevPosition = vec4(gle_vPosition, 1.0);
+	vec3 gle_BoneNormal = gle_vNormal;
+	#if GLE_NB_BONES > 0
+	if (skeletonIndex >= 0.0 && int(gle_vBones.x) >= 0)
+	{
+		gle_BonevPosition = gle_bonesMatrix[int(skeletonIndex) + int(gle_vBones.x)] * vec4(gle_vPosition, 1.0) * gle_vBones.y;
+		gle_BoneNormal = mat3(gle_bonesMatrix[int(skeletonIndex) + int(gle_vBones.x)]) * gle_vNormal * gle_vBones.y;
+		if (int(gle_vBones.z) >= 0)
+		{
+			gle_BonevPosition += gle_bonesMatrix[int(skeletonIndex) + int(gle_vBones.z)] * vec4(gle_vPosition, 1.0) * gle_vBones.w;
+			gle_BoneNormal += mat3(gle_bonesMatrix[int(skeletonIndex) + int(gle_vBones.z)]) * gle_vNormal * gle_vBones.w;
+		}
+	}
+	#endif
 		
-	vec4 gle_mvPosition = mvMatrix * vec4(gle_vPosition, 1);
+	vec4 gle_mvPosition = mvMatrix * gle_BonevPosition;
 	mat3 nMatrix = transpose(mat3(inverse(mvMatrix)));
 	gl_Position = gle_PMatrix * gle_mvPosition; 
 	float fogDistance = length(gle_mvPosition); 
@@ -150,7 +171,7 @@ void main(void) {
 	gle_varying_fogFactor = exp2(-gle_fogDensity * gle_fogDensity * fogDistance * fogDistance * LOG2); 
 	gle_varying_fogFactor = clamp(gle_varying_fogFactor, 0.0, 1.0); 
 	#if GLE_NB_DIRECTIONAL_LIGHTS > 0 || GLE_NB_POINT_LIGHTS > 0 || GLE_NB_SPOT_LIGHTS > 0
-		vec3 transformedNormal = normalize(nMatrix * gle_vNormal);
+		vec3 transformedNormal = normalize(nMatrix * gle_BoneNormal);
 	#endif
 	gle_varying_vTextureCoord = gle_vTextureCoord;
 
@@ -158,7 +179,7 @@ void main(void) {
 
 	vec3 n, t, b;
 	#if GLE_NB_DIRECTIONAL_LIGHTS > 0 || GLE_NB_POINT_LIGHTS > 0 || GLE_NB_SPOT_LIGHTS > 0
-		gle_varying_normal = nMatrix * gle_vNormal;
+		gle_varying_normal = nMatrix * gle_BoneNormal;
 		if (hasNormalMap > 0.0)
 		{
 			n = transformedNormal;
@@ -166,8 +187,8 @@ void main(void) {
 				t = normalize(nMatrix * gle_vTangent);
 			else
 				{
-					vec3 c1 = cross(gle_vNormal, vec3(0.0, 0.0, 1.0)); 
-					vec3 c2 = cross(gle_vNormal, vec3(0.0, 1.0, 0.0)); 
+					vec3 c1 = cross(gle_BoneNormal, vec3(0.0, 0.0, 1.0)); 
+					vec3 c2 = cross(gle_BoneNormal, vec3(0.0, 1.0, 0.0)); 
 					if(length(c1) > length(c2))
 						t = normalize(nMatrix * c1);
 					else
@@ -259,8 +280,8 @@ void main(void) {
 
 	if (reflectionIntensity > 0 && envMapType == GLE_CUBE_MAP)
 	{	
-		vec4 WorldPos = mwMatrix * vec4(gle_vPosition, 1.0);
-		vec3 N = normalize(mat3(mwMatrix) * gle_vNormal);
+		vec4 WorldPos = mwMatrix * gle_BonevPosition;
+		vec3 N = normalize(mat3(mwMatrix) * gle_BoneNormal);
 		vec3 E = normalize(WorldPos.xyz - gle_CameraPos.xyz);
 		gle_varying_envMapVector = reflect(E, N);
 	}

@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Fri Feb 17 16:21:24 2012 gael jochaud-du-plessix
-// Last update Fri Jun 29 14:32:50 2012 gael jochaud-du-plessix
+// Last update Mon Jul  2 22:11:20 2012 loick michard
 //
 
 #ifndef _GLE_PROGRAM_HPP_
@@ -107,6 +107,9 @@ namespace gle {
 
     void setUniform1(const GLchar* uniformLocation, GLfloat* values,
 		     GLsizeiptr size);
+
+    void setUniformMatrix4(const GLchar* uniform, GLfloat* values,
+			   GLsizeiptr size);
 
     void setUniform1(const GLchar* uniformLocation, GLint* values,
 		     GLsizeiptr size);

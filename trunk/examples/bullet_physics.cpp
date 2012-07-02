@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Fri Mar  2 17:27:21 2012 gael jochaud-du-plessix
-// Last update Thu Jun  7 14:58:35 2012 gael jochaud-du-plessix
+// Last update Wed Jun 27 10:21:09 2012 loick michard
 //
 
 #include <iostream>
@@ -198,7 +198,7 @@ int glEngine(int ac, char **av)
       {
 	for(double j = -6; j < 7.0; j+= 6.0)
 	{
-	  gle::Mesh* cuboid1 = gle::Geometries::Cuboid(&material, 3.0, 1.0, 15.0);
+	  gle::Mesh* cuboid1 = gle::Geometries::Cuboid(&material, 3.0, 1.0, 15.0, true);
 	  PhysicMesh* physicCube1 = new PhysicMesh(btTransform(quat, btVector3(x+j*cos(angle), i+z, y+j*sin(angle))),
 						   cuboid1, new btBoxShape(btVector3(1.5, 0.5, 7.5)), dynamicsWorld, 10.0);
 	  (void)physicCube1;
@@ -210,7 +210,7 @@ int glEngine(int ac, char **av)
     }
    
   btQuaternion quat(btVector3(0, 1, 0), 0);
-  gle::Mesh* cuboid1 = gle::Geometries::Cuboid(&material, 50.0, 1.0, 50.0);
+  gle::Mesh* cuboid1 = gle::Geometries::Cuboid(&material, 50.0, 1.0, 50.0, true);
   PhysicMesh* physicCube1 = new PhysicMesh(btTransform(quat, btVector3(0, z+22.7, 0)),
 					   cuboid1, new btBoxShape(btVector3(25.0, 0.5, 25.0)), dynamicsWorld, 100.0);
   (void)physicCube1;
@@ -230,7 +230,7 @@ int glEngine(int ac, char **av)
   PhysicMesh* physicPlan5 = new PhysicMesh(btTransform(btQuaternion(btVector3(1,0,0), 0 * plane_angle * M_PI / 180.0), btVector3((boxsize+1),0,0)),
 					   NULL, new btBoxShape(btVector3(0.99,boxsize,boxsize)), dynamicsWorld, 0);
 */
-  gle::Mesh* sphere = gle::Geometries::Sphere(&material, 2.5);
+  gle::Mesh* sphere = gle::Geometries::Sphere(&material, 2.5, true);
   PhysicMesh* physicSphere = new PhysicMesh(btTransform(btQuaternion(0, 0, 0, 1),
 							btVector3(0, 150, 0)),
 					    sphere, new btSphereShape(2.5), dynamicsWorld, 10000);
@@ -258,9 +258,15 @@ int glEngine(int ac, char **av)
 	  else if (Event.type == sf::Event::KeyPressed
 		   && Event.key.code == sf::Keyboard::Escape)
 	    App.close();
+	  else if (Event.type == sf::Event::KeyPressed
+                   && Event.key.code == sf::Keyboard::D)
+	    renderer.setDebugMode(gle::Renderer::BoundingVolume);
+	  else if (Event.type == sf::Event::KeyPressed
+                   && Event.key.code == sf::Keyboard::F)
+            renderer.setDebugMode(0);
 	  else if (Event.type == sf::Event::MouseButtonPressed && Event.mouseButton.button == 2)
 	    {
-	      gle::Mesh* sphere = gle::Geometries::Sphere(&material, 2.5);
+	      gle::Mesh* sphere = gle::Geometries::Sphere(&material, 2.5, true);
 	      PhysicMesh* physicSphere = new PhysicMesh(btTransform(btQuaternion(0, 0, 0, 1),
 								    btVector3(camera.getAbsolutePosition().x, camera.getAbsolutePosition().y, camera.getAbsolutePosition().z)),
 						      sphere, new btSphereShape(2.5), dynamicsWorld, 10000);
@@ -297,7 +303,7 @@ int glEngine(int ac, char **av)
       scene.updateLights();
       renderer.render(&scene, gle::Rectf(0, 0, W_WIDTH, W_HEIGHT));
       App.display();
-      //video::saveImage(App, W_FRAMERATE);
+      video::saveImage(App, W_FRAMERATE);
       GLfloat elapsed = time.getElapsedTime().asMicroseconds();
       time.restart();      
       dynamicsWorld->stepSimulation(elapsed / 100000.f);
@@ -305,7 +311,7 @@ int glEngine(int ac, char **av)
 	sf::sleep(sf::microseconds(1000000.0/W_FRAMERATE - elapsed));
     }
   
-  //video::save(av[0], W_FRAMERATE);
+  video::save(av[0], W_FRAMERATE);
 
   delete dynamicsWorld;
   delete solver;

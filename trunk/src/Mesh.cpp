@@ -5,12 +5,13 @@
 // Login   <michar_l@epitech.net>
 // 
 // Started on  Mon Feb 20 18:25:23 2012 loick michard
-// Last update Mon Jul  2 17:24:17 2012 gael jochaud-du-plessix
+// Last update Mon Jul  2 22:12:14 2012 loick michard
 //
 
 #include <Mesh.hpp>
 #include <BoundingBox.hpp>
 #include <Renderer.hpp>
+#include <Skeleton.hpp>
 
 std::list<gle::Scene::MeshGroup> gle::Mesh::factorizeForDrawing(std::list<gle::Mesh*> meshes,
 								bool ignoreBufferId,
@@ -74,7 +75,7 @@ gle::Mesh::Mesh(Material* material, bool isDynamic)
     _materialBufferId(-1),
     _absoluteIndexes(false),
     _needUniformsUpdate(true),
-    _uniforms(NULL)
+    _uniforms(NULL), _skeleton(NULL), _skeletonId(-1)
 {
   _isDynamic = isDynamic;
   _indexes = new gle::Buffer<GLuint>(gle::Buffer<GLuint>::ElementArray,
@@ -96,7 +97,7 @@ gle::Mesh::Mesh(gle::Mesh const & other)
     _materialBufferId(-1),
     _absoluteIndexes(other._absoluteIndexes),
     _needUniformsUpdate(true),
-    _uniforms(NULL)
+    _uniforms(NULL), _skeleton(other._skeleton), _skeletonId(other._skeletonId)
 {
   if (other._boundingVolume)
     _boundingVolume = other._boundingVolume->duplicate();
@@ -242,6 +243,23 @@ void gle::Mesh::setTextureCoords(const GLfloat* textureCoords, GLsizeiptr size)
   _attributes->unmap();
 }
 
+void gle::Mesh::setBones(const GLfloat* bones, GLsizeiptr size)
+{
+  GLsizeiptr nbVertexes = size / VertexAttributeSizeBone;
+
+  _nbVertexes = nbVertexes;
+  if (!_attributes)
+    _attributes = MeshBufferManager::getInstance()
+      .store(NULL, nbVertexes * VertexAttributesSize);
+  GLfloat* attributes = _attributes->map();
+  for (GLsizeiptr i = 0; i < nbVertexes; ++i)
+    for (GLuint j = 0; j < VertexAttributeSizeBone; ++j)
+      attributes[i * VertexAttributesSize + VertexAttributeSizeCoords + VertexAttributeSizeNormal + 
+		 VertexAttributeSizeTangent + VertexAttributeSizeTextureCoords + j] =
+	bones[i * VertexAttributeSizeBone + j];
+  _attributes->unmap();
+}
+
 void gle::Mesh::setIndexes(const GLuint* indexes, GLsizeiptr size)
 {
   _nbIndexes = size;
@@ -314,6 +332,24 @@ void gle::Mesh::setTextureCoords(gle::Array<GLfloat> const &textureCoords)
       attributes[i * VertexAttributesSize + VertexAttributeSizeCoords +
 		 VertexAttributeSizeNormal + VertexAttributeSizeTangent + j] =
 	textureCoords[(GLuint)(i * VertexAttributeSizeTextureCoords + j)];
+  _attributes->unmap();
+}
+
+void gle::Mesh::setBones(gle::Array<GLfloat> const &bones)
+{
+  GLsizeiptr nbVertexes = bones.size() / VertexAttributeSizeBone;
+
+  _nbVertexes = nbVertexes;
+  if (!_attributes)
+    _attributes = MeshBufferManager::getInstance()
+      .store(NULL, nbVertexes * VertexAttributesSize);
+  GLfloat* attributes = _attributes->map();
+  for (GLsizeiptr i = 0; i < nbVertexes; ++i)
+    for (GLuint j = 0; j < VertexAttributeSizeTextureCoords; ++j)
+      attributes[i * VertexAttributesSize + VertexAttributeSizeCoords +
+		 VertexAttributeSizeNormal + VertexAttributeSizeTangent + 
+		 VertexAttributeSizeBone + j] =
+	bones[(GLuint)(i * VertexAttributeSizeBone + j)];
   _attributes->unmap();
 }
 
@@ -515,7 +551,7 @@ void gle::Mesh::updateMatrix()
 
 const GLfloat* gle::Mesh::getUniforms()
 {
-  if (_needUniformsUpdate)
+  if (_needUniformsUpdate || !_skeleton || _skeletonId != _skeleton->getId())
     {
       if (!_uniforms)
 	_uniforms = new GLfloat[UniformSize];
@@ -525,7 +561,24 @@ const GLfloat* gle::Mesh::getUniforms()
       GLfloat* floatMatrix = (GLfloat*)matrix;
       for (int i = 0; i < 16; ++i)
 	_uniforms[i] = floatMatrix[i];
+      if (_skeleton)
+	{
+	  _uniforms[16] = _skeleton->getId();
+	  _skeletonId = _skeleton->getId();
+	}
+      else
+	_uniforms[16] = -1;
       _needUniformsUpdate = false;
     }
   return (_uniforms);
+}
+
+void        gle::Mesh::setSkeleton(gle::Skeleton* skeleton)
+{
+  _skeleton = skeleton;
+}
+
+gle::Skeleton*   gle::Mesh::getSkeleton()
+{
+  return (_skeleton);
 }
