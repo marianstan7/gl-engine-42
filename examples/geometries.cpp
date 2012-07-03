@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Fri Mar  2 17:27:21 2012 gael jochaud-du-plessix
-// Last update Mon Jul  2 18:22:07 2012 gael jochaud-du-plessix
+// Last update Tue Jul  3 02:10:02 2012 loick michard
 //
 
 #include <iostream>
@@ -35,8 +35,8 @@ public:
   void initScene()
   {
     _scene = new gle::Scene();
-    _scene->generateTree();
-    _scene->enableFrustumCulling();
+    //_scene->generateTree();
+    //_scene->enableFrustumCulling();
     _camera = new gle::PerspectiveCamera(gle::Vector3f(-20, 10, 0),
 					 gle::Vector3f(0, 0, 0),
 					 45, (GLfloat)_winWidth/_winHeight, 1, 10000);
