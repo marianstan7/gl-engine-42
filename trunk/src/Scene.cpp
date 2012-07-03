@@ -5,7 +5,7 @@
 // Login   <michar_l@epitech.net>
 // 
 // Started on  Thu Jun 21 20:42:49 2012 loick michard
-// Last update Mon Jul  2 23:02:52 2012 gael jochaud-du-plessix
+// Last update Tue Jul  3 02:14:01 2012 loick michard
 //
 
 #include <Scene.hpp>
@@ -153,13 +153,17 @@ void gle::Scene::updateShadowMap(gle::Renderer* renderer, gle::Light* light)
       || !(shadowMap = light->getShadowMap())
       || !(frameBuffer = light->getShadowMapFrameBuffer()))
     return ;
-  std::list<gle::Mesh*> meshesInFrustum = reinterpret_cast<const std::list<gle::Mesh*>&>
-    (_tree.getElementsInFrustum(lightCamera->getProjectionMatrix(),
-				lightCamera->getTransformationMatrix()));
-  for (auto it = meshesInFrustum.begin(); it != meshesInFrustum.end();)
+  std::list<gle::Mesh*> staticMeshes;
+  if (_frustumCulling)
+    staticMeshes = reinterpret_cast<const std::list<gle::Mesh*>&>
+      (_tree.getElementsInFrustum(lightCamera->getProjectionMatrix(),
+				  lightCamera->getTransformationMatrix()));
+  else
+    staticMeshes = _staticMeshes;
+  for (auto it = staticMeshes.begin(); it != staticMeshes.end();)
     {
       if (!(*it)->projectShadow())
-	it = meshesInFrustum.erase(it);
+	it = staticMeshes.erase(it);
       else
 	++it;
     }
@@ -171,7 +175,7 @@ void gle::Scene::updateShadowMap(gle::Renderer* renderer, gle::Light* light)
       else
 	++it;
     }
-  renderer->renderShadowMap(this, meshesInFrustum, dynamicMeshes, light);
+  renderer->renderShadowMap(this, staticMeshes, dynamicMeshes, light);
 }
 
 void gle::Scene::updateLights()
