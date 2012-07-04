@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Mon Feb 20 22:30:11 2012 gael jochaud-du-plessix
-// Last update Thu Jun 21 20:57:57 2012 gael jochaud-du-plessix
+// Last update Wed Jul  4 19:57:41 2012 loick michard
 //
 
 #ifndef _GLE_MATERIAL_HPP_
@@ -125,8 +125,10 @@ namespace gle {
 
     void setReflectionIntensity(GLfloat reflection);
 
+    //! Return reflection intensity
     GLfloat getReflectionIntensity() const;
 
+    //! Return whether or not color map is enabled
     bool isColorMapEnabled() const;
 
     //! Enable or disable the color map
@@ -141,14 +143,40 @@ namespace gle {
 
     void setColorMap(gle::Texture* colorMap);
 
+    //! Return whether or not normal map is enabled
     bool isNormalMapEnabled() const;
+
+    //! Set whether or not normal map is enabled
+    /*!
+      \param enabled If true normal map is enabled
+     */
     void setNormalMapEnabled(bool enabled);
+
+    //! Return normal map
     gle::Texture* getNormalMap() const;
+
+    //! Set normal map
+    /*!
+      \param normalMap Normal map texture
+    */
     void setNormalMap(gle::Texture* normalMap);
 
+    //! Return whether or not environment map is enabled
     bool isEnvMapEnabled() const;
+
+    //! Set whether or not environment map is enabled
+    /*!
+      \param enabled If true environment map is enabled
+     */
     void setEnvEnabled(bool enabled);
+
+    //! Set environment map
+    /*!
+      \param envMap Normal map texture
+    */
     void setEnvMap(gle::EnvironmentMap* envMap);
+
+    //! Return environment map
     gle::EnvironmentMap* getEnvMap() const;
 
     //! Returns the uniform buffer containing all datas for the material
@@ -165,6 +193,10 @@ namespace gle {
 
     const GLfloat* getUniforms() const;
 
+    //! Return whether or not two materials are compatible for rendering
+    /*!
+      /param group Group rendering parameters for check compatibility
+    */
     bool canBeRenderedWith(const gle::Scene::MeshGroup& group) const;
 
   private:

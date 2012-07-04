@@ -123,7 +123,7 @@ namespace gle {
 
     //! Generate the octree structure
     /*!
-      \param element Elements to add in octree
+      \param elements Elements to add in octree
      */
     void generateTree(std::list<Element*> &elements);
 

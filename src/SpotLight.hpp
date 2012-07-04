@@ -5,7 +5,7 @@
 // Login   <michar_l@epitech.net>
 // 
 // Started on  Thu Feb 23 17:36:20 2012 loick michard
-// Last update Thu Jun 28 21:30:58 2012 gael jochaud-du-plessix
+// Last update Wed Jul  4 20:26:43 2012 loick michard
 //
 
 #ifndef _SPOT_LIGHT_HPP_
@@ -31,6 +31,7 @@ namespace gle {
       \param position Position of the light
       \param color Color emits by the light
       \param specularColor Specular color emits by the light
+      \param cosCutOff Spot open angle
     */
 
     SpotLight(Vector3<GLfloat> const& position, Color<GLfloat> const& color,
@@ -42,6 +43,7 @@ namespace gle {
       This constructor set the specularColor to the same as color
       \param position Position of the light
       \param color Color emits by the light
+      \param cosCutOff Spot open angle
     */
 
     SpotLight(Vector3<GLfloat> const& position, Color<GLfloat> const& color,
@@ -66,9 +68,18 @@ namespace gle {
 
     void setSpecularColor(Color<GLfloat> const& specularColor);
 
+    //! Set light attenuation
+    /*!
+      \param constant Constant attenuation
+      \param linear Linear attenuation
+      \param quadratic Quadratic attenuation
+    */
     void setAttenuation(GLfloat constant, GLfloat linear, GLfloat quadratic);
 
-
+    //! Set spot open angle
+    /*
+      \param cosCutOff Spot open angle
+    */
     void setCosCutOff(GLfloat cosCutOff);
 
     //! Get the light color
@@ -79,12 +90,16 @@ namespace gle {
 
     GLfloat* getSpecularColor();
 
+    //! Return light attenuation
     GLfloat* getAttenuation();
 
+    //! Return spot open angle
     GLfloat getCosCutOff();    
 
+    //! Return shadow map camera
     gle::Camera* getShadowMapCamera();
 
+    //! Update transformation
     void update();
 
   private:

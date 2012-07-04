@@ -5,7 +5,7 @@
 // Login   <michar_l@epitech.net>
 // 
 // Started on  Thu Feb 23 16:56:43 2012 loick michard
-// Last update Tue Jun 26 18:23:03 2012 gael jochaud-du-plessix
+// Last update Wed Jul  4 19:15:21 2012 loick michard
 //
 
 #ifndef _LIGHT_HPP_
@@ -66,10 +66,19 @@ namespace gle {
     virtual gle::Camera*	getShadowMapCamera();    
 
   protected:
+    //! Type of light
     Type		_lightType;
+
+    //! Shadow map size
     gle::Rectui		_shadowMapSize;
+
+    //! Shadow map
     gle::Texture*	_shadowMap;
+
+    //! Shadow map frame buffer
     gle::FrameBuffer*	_shadowMapFrameBuffer;
+
+    //! Shadow map camera
     gle::Camera*	_shadowMapCamera;
   };
 }
