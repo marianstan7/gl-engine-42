@@ -5,7 +5,7 @@
 // Login   <michar_l@epitech.net>
 // 
 // Started on  Wed May  2 16:06:37 2012 loick michard
-// Last update Sat Jun 23 14:52:37 2012 loick michard
+// Last update Wed Jul  4 16:54:14 2012 loick michard
 //
 
 #ifndef _BOUNDING_BOX_HPP
@@ -17,20 +17,60 @@
 
 namespace gle
 {
+  //! Bounding Box for meshes and frustum culling
   class BoundingBox : public BoundingVolume {
   public:
+    //! Create a bounding box
     BoundingBox();
+
+    //! Destroy bounding box
     virtual ~BoundingBox();
     
+    //! Duplicate a bounding box
     virtual BoundingVolume* duplicate() const;
+
+    //! Compute the best fit bounding boxs for a mesh
+    /*!
+      \param vertexes Tab of all mesh vertexes
+      \param size Number of vertexes
+     */
     virtual void setBestFit(const GLfloat* vertexes, GLsizeiptr size);
+
+    //! Compute the best fit bounding boxs for a mesh
+    /*!
+      \param datas Tab of mesh datas
+      \param offset Start offset of vertexes in datas
+      \param attributeSize Size of vertex attribute in datas
+      \param nbVertexes Number of vertexes
+     */
     virtual void setBestFit(const GLfloat* datas, GLsizeiptr offset, GLsizeiptr attributeSize, GLsizeiptr nbVertexes);
+
+    //! Return the bounding box debug mesh
+    /*!
+      This is used only if renderer debug mode is activated and set to Renderer::BoundingBox
+      /param mesh Linked mesh
+    */
     virtual Mesh* getDebugMesh(Mesh* mesh);
+
+    //! Update bounding box after mesh transformation
+    /*!
+      \param mesh Linked mesh
+     */
     virtual void update(Mesh* mesh);
 
+    //! Get the highest extreme value in the 3 axis
     virtual const gle::Vector3<float>& getMaxPoint() const;
+
+    //! Get the lowest extreme value in the 3 axis
     virtual const gle::Vector3<float>& getMinPoint() const; 
+
+    //! Get center of bounding box
     virtual const gle::Vector3<float>& getCenter() const; 
+
+    //! Return wheter or not bounding box is in frustum
+    /*!
+      \param frustum Six planes of frustum
+     */
     virtual bool isInFrustum(const GLfloat frustum[6][4]) const;
     
   private:
