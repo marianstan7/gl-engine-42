@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Wed Feb 29 19:37:51 2012 gael jochaud-du-plessix
-// Last update Wed Jul  4 16:22:38 2012 loick michard
+// Last update Wed Jul  4 20:27:14 2012 loick michard
 //
 
 #ifndef _GLE_TEXTURE_HPP_
@@ -133,7 +133,7 @@ namespace gle {
 
     //! Set openGL texture wrap mode
     /*!
-      \param filterType wrap mode
+      \param wrap Wrap mode
      */
     void	setWrapMode(WrapMode wrap);
 

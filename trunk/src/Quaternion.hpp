@@ -5,7 +5,7 @@
 // Login   <michar_l@epitech.net>
 // 
 // Started on  Wed Feb 15 18:22:27 2012 loick michard
-// Last update Tue May 22 12:26:57 2012 loick michard
+// Last update Wed Jul  4 20:11:02 2012 loick michard
 //
 
 #ifndef _GLE_QUATERNION_HPP
@@ -53,6 +53,11 @@ namespace gle {
       
     }
 
+    //! Create a quaternion with axis and angle
+    /*!
+      \param axis Rotation axis
+      \param angle Rotation angle in degrees
+     */
     Quaternion(Vector3<T> axis, T const& angle) :
       w(1), x(0), y(0), z(0)
     {

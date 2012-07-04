@@ -5,7 +5,7 @@
 // Login   <michar_l@epitech.net>
 // 
 // Started on  Mon Feb 13 20:57:51 2012 loick michard
-// Last update Fri Jun 29 13:49:05 2012 gael jochaud-du-plessix
+// Last update Wed Jul  4 19:51:21 2012 loick michard
 //
 
 #ifndef _GLE_MATRIX4_HPP_
@@ -424,6 +424,16 @@ namespace gle {
                       0, 0, -1, 0));
     }
 
+    //! Return an initialised 4x4 Matrix for orthographic projection.
+    /*!
+      \param near Distance to the near plane
+      \param far Distance to the far plane
+      \param left Distance to the left plane
+      \param right Distance to the right plane
+      \param bottom Distance to the bottom plane
+      \param top Distance to the top plane
+      \return An initialised 4x4 Matrix for orthographic projection.
+    */
     static Matrix4 orthographic(T const & near, T const & far,
 				T const & left, T const & right,
 				T const & bottom, T const & top)
@@ -436,9 +446,9 @@ namespace gle {
 
     //! Return an initisialised 4x4 matrix for viewing transformation
     /*!
-      \param eye Position of eye.
+      \param eyePosition Position of eye.
       \param center Position of reference.
-      \param up Direction of up vector.
+      \param upVector Direction of up vector.
       \return An initisialised 4x4 matrix for viewing transformation
     */
 
