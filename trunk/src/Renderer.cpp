@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Mon Feb 20 20:48:54 2012 gael jochaud-du-plessix
-// Last update Wed Jul  4 18:04:19 2012 gael jochaud-du-plessix
+// Last update Wed Jul  4 19:26:12 2012 gael jochaud-du-plessix
 //
 
 #include <Renderer.hpp>
@@ -493,7 +493,7 @@ void gle::Renderer::_setSceneUniforms(gle::Scene* scene, gle::Camera* camera)
 
   std::vector<GLfloat>& bones = scene->getBones();
   if (bones.size())
-      _currentProgram->setUniformMatrix4("gle_bonesMatrix", (GLfloat*)&bones[0], bones.size());
+      _currentProgram->setUniformMatrix4v("gle_bonesMatrix", (GLfloat*)&bones[0], bones.size());
 
   // Send light infos to the shader
   GLint currentTexture = gle::Program::ShadowMapsTextures;

@@ -5,7 +5,7 @@
 // Login   <michar_l@epitech.net>
 // 
 // Started on  Tue May 15 19:32:41 2012 loick michard
-// Last update Tue Jul  3 18:29:41 2012 gael jochaud-du-plessix
+// Last update Wed Jul  4 19:52:37 2012 gael jochaud-du-plessix
 //
 
 #include <algorithm>
@@ -84,7 +84,7 @@ const std::vector<gle::Scene::Node*>& gle::Scene::Node::getChildren() const
 }
 
 int	gle::Scene::Node::getChildrenByName(std::string const & name,
-					    std::vector<gle::Scene::Node*> & vector)
+					    std::vector<Node*> & vector)
 {
   int     nb = 0;
 

@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Fri Feb 17 16:21:14 2012 gael jochaud-du-plessix
-// Last update Mon Jul  2 22:11:24 2012 loick michard
+// Last update Wed Jul  4 19:25:48 2012 gael jochaud-du-plessix
 //
 
 #include <Program.hpp>
@@ -116,15 +116,6 @@ void gle::Program::setUniform1(const GLchar* uniform, GLfloat* values,
 				GLsizeiptr size)
 {
   glUniform1fv(_uniformLocations[uniform], size, values);
-}
-
-void gle::Program::setUniformMatrix4(const GLchar* uniform, GLfloat* values,
-				     GLsizeiptr size)
-{
-  glUniformMatrix4fv(_uniformLocations[uniform],
-		     size,
-		     false,
-		     values);
 }
 
 void gle::Program::setUniform1(const GLchar* uniform, GLint* values,

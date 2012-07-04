@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Tue Feb 14 17:12:21 2012 gael jochaud-du-plessix
-// Last update Mon Jul  2 17:35:43 2012 gael jochaud-du-plessix
+// Last update Wed Jul  4 19:37:35 2012 gael jochaud-du-plessix
 //
 
 #ifndef _GLE_RENDERER_HPP_
@@ -31,6 +31,9 @@ namespace gle {
 
   class Renderer {
   public:
+
+    //! Elements that can be rendered for debuging
+
     enum DebugMode {
       BoundingVolume	= 1 << 0,
       Octree		= 1 << 1,
@@ -40,19 +43,30 @@ namespace gle {
     };
     
     //! Construct a new renderer
+
     Renderer();
 
     //! Destruct a renderer
+
     ~Renderer();
 
-    //! Clear the context
+    //! Clear the frame buffer
+
     void clear();
 
     //! Render a scene
+
     void render(Scene* scene, const Rectf& size, FrameBuffer* customFramebuffer=NULL);
 
+    //! Render a set of static and dynamic meshes to a shadow map
+    
     void renderShadowMap(gle::Scene* scene, const std::list<gle::Mesh*> & staticMeshes,
 			 const std::list<gle::Mesh*> & dynamicMeshes, gle::Light* light);
+
+    //! Set the debug mode of the renderer
+    /*!
+      \param mode Bitfield specifying the debug mode, using one or several DebugMode with OR operator
+     */
 
     void setDebugMode(int mode);
 

@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Fri Apr 13 12:43:29 2012 gael jochaud-du-plessix
-// Last update Mon Jun 25 22:06:21 2012 gael jochaud-du-plessix
+// Last update Wed Jul  4 19:53:28 2012 gael jochaud-du-plessix
 //
 
 #ifndef _GLE_BUFFER_MANAGER_HPP_
@@ -88,7 +88,7 @@ namespace gle {
 	of BufferManager.
 	\param size Size of the chunk
 	\param offset Offset in the BufferManager memory
-	\param Indicated wether the chunk represents a free or used memory
+	\param isFree Indicates wether the chunk represents a free or used memory
        */
 
       Chunk(GLsizeiptr size=0, GLintptr offset=0, bool isFree=true) :

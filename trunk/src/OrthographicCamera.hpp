@@ -5,7 +5,7 @@
 // Login   <michar_l@epitech.net>
 // 
 // Started on  Sat Feb 18 12:43:33 2012 loick michard
-// Last update Tue Jun 26 09:46:49 2012 gael jochaud-du-plessix
+// Last update Wed Jul  4 19:40:43 2012 gael jochaud-du-plessix
 //
 
 #ifndef _ORTHOGRAPHIC_CAMERA_HPP_
@@ -23,10 +23,12 @@ namespace gle {
     //! Constructor with position.
     /*!
       \param position Camera position
-      \param fovy Camera vertical Field of view in degrees
-      \param aspect Camera aspect ratio
       \param near Distance to the near clipping plane
       \param far Distance to the far clipping plane
+      \param left Distance to the left clipping plane
+      \param right Distance to the right clipping plane
+      \param bottom Distance to the bottom clipping plane
+      \param top Distance to the top clipping plane
      */
 
     OrthographicCamera(gle::Vector3<GLfloat> const& position,
@@ -38,10 +40,12 @@ namespace gle {
     /*!
       \param position Camera position
       \param target Camera target
-      \param fovy Camera vertical Field of view in degrees
-      \param aspect Camera aspect ratio
       \param near Distance to the near clipping plane
       \param far Distance to the far clipping plane
+      \param left Distance to the left clipping plane
+      \param right Distance to the right clipping plane
+      \param bottom Distance to the bottom clipping plane
+      \param top Distance to the top clipping plane
      */
 
     OrthographicCamera(gle::Vector3<GLfloat> const& position,
@@ -53,6 +57,8 @@ namespace gle {
     //! Default destructor
 
     ~OrthographicCamera(){}
+
+    //! Update the projection matrix associated with the camera
 
     virtual void updateProjectionMatrix();
 
