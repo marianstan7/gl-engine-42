@@ -5,7 +5,7 @@
 // Login   <michar_l@epitech.net>
 // 
 // Started on  Thu Jun 21 20:42:49 2012 loick michard
-// Last update Tue Jul  3 02:14:01 2012 loick michard
+// Last update Wed Jul  4 19:51:51 2012 gael jochaud-du-plessix
 //
 
 #include <Scene.hpp>
@@ -84,7 +84,7 @@ gle::Scene & gle::Scene::add(gle::Scene::Node* node)
   return (*this);
 }
 
-gle::Scene & gle::Scene::add(std::vector<gle::Scene::Node*> nodes)
+gle::Scene & gle::Scene::add(std::vector<Node*> nodes)
 {
   for (gle::Scene::Node* &node : nodes)
     _root.addChild(node);

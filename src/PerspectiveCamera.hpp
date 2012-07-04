@@ -5,7 +5,7 @@
 // Login   <michar_l@epitech.net>
 // 
 // Started on  Sat Feb 18 12:43:33 2012 loick michard
-// Last update Tue Jun 26 15:12:55 2012 gael jochaud-du-plessix
+// Last update Wed Jul  4 19:43:38 2012 gael jochaud-du-plessix
 //
 
 #ifndef _PERSPECTIVE_CAMERA_HPP_
@@ -53,13 +53,22 @@ namespace gle {
 
     ~PerspectiveCamera();
 
+    //! Set the vertical field of view of the camera
+
     void setFovy(GLfloat fovy);
+
+    //! Update the projection matrix of the camera
 
     virtual void updateProjectionMatrix();
 
+    //! Update the camera
+
     virtual void update();
 
+    //! Returns the nodes for rendering debug information about the camera
+
     virtual std::vector<Scene::Node*>& getDebugNodes(int mode);
+
   private:
     GLfloat	_fovy;
     GLfloat	_aspect;

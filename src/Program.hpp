@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Fri Feb 17 16:21:24 2012 gael jochaud-du-plessix
-// Last update Wed Jul  4 18:30:33 2012 gael jochaud-du-plessix
+// Last update Wed Jul  4 19:25:32 2012 gael jochaud-du-plessix
 //
 
 #ifndef _GLE_PROGRAM_HPP_
@@ -105,14 +105,17 @@ namespace gle {
     void setUniform3(const GLchar* uniformLocation, GLfloat* values,
 		     GLsizeiptr size);
 
+    //! Set the value of a uniform array of float
+
     void setUniform1(const GLchar* uniformLocation, GLfloat* values,
 		     GLsizeiptr size);
 
-    void setUniformMatrix4(const GLchar* uniform, GLfloat* values,
-			   GLsizeiptr size);
+    //! Set the value of a uniform array of int
 
     void setUniform1(const GLchar* uniformLocation, GLint* values,
 		     GLsizeiptr size);
+
+    //! Set the value of a uniform array of  matrix 4x4
 
     void setUniformMatrix4v(const GLchar* uniform, GLfloat* values,
 			    GLsizeiptr count);
@@ -132,6 +135,8 @@ namespace gle {
     //! Set a value of an uniform bool
 
     void setUniform(const GLchar* uniform, bool value);
+
+    //! Set the value of a uniform vector 3 of float
 
     void setUniform(const GLchar* uniform, const Vector3f& value);
 

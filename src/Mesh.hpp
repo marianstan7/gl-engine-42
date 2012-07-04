@@ -5,7 +5,7 @@
 // Login   <michar_l@epitech.net>
 // 
 // Started on  Thu Jun 21 20:39:52 2012 loick michard
-// Last update Wed Jul  4 16:33:17 2012 gael jochaud-du-plessix
+// Last update Wed Jul  4 20:11:13 2012 gael jochaud-du-plessix
 //
 
 #ifndef _MESH_HPP_
@@ -96,16 +96,6 @@ namespace gle {
     //! Size of the datas used by one mesh in the uniform buffer
     static const GLsizeiptr UniformSize = 20;
 
-
-    //! Symbolize a group of meshes for rendering
-
-    struct Group {
-      std::list<Mesh*>		meshes;
-      gle::Texture*		colorMap;
-      gle::Texture*		normalMap;
-      gle::EnvironmentMap*	envMap;
-    };
-
     //! Factorize a list of meshes using canBeRenderedWith comparator
 
     static std::list<gle::Scene::MeshGroup> factorizeForDrawing(std::list<gle::Mesh*> meshes,
@@ -160,11 +150,15 @@ namespace gle {
 
     void setNormals(const GLfloat* normals, GLsizeiptr size);
 
+    //! Set the mesh tangents
+
     void setTangents(const GLfloat* tangents, GLsizeiptr size);
 
     //! Set the mesh texture coords
 
     void setTextureCoords(const GLfloat* textureCoords, GLsizeiptr size);
+
+    //! Set the bones datas of the mesh
 
     void setBones(const GLfloat* bones, GLsizeiptr size);
 
@@ -180,11 +174,15 @@ namespace gle {
 
     void setNormals(gle::Array<GLfloat> const &vertexes);
 
+    //! Set the tangents of the mesh
+
     void setTangents(gle::Array<GLfloat> const &tangents);
 
     //! Set the mesh texture coords
 
     void setTextureCoords(gle::Array<GLfloat> const &textureCoords);
+
+    //! Set the bones data of the mesh
 
     void setBones(gle::Array<GLfloat> const &bones);
 
@@ -232,6 +230,8 @@ namespace gle {
 
     gle::MeshBufferManager::Chunk* getAttributes() const;
 
+    //! Generate the bounding volume of the mesh
+
     void createBoundingVolume(const GLfloat* datas, GLsizeiptr offset, GLsizeiptr attributeSize, GLsizeiptr nbVertexes);
 
     //! Get the bounding volume of the mesh
@@ -258,30 +258,72 @@ namespace gle {
 
     virtual Node* duplicate() const;
 
+    //! Update the mesh
+
     virtual void update();
+
+    //! Set the mesh dynamic
+    /*!
+      This function update the mesh indexes if necessary.
+     */
 
     virtual void setDynamic(bool dynamic, bool deep=true);
 
+    //! Update the mesh indexes so they are relative or not to the mesh attributes position in the buffer manager
+
     void makeAbsoluteIndexes(bool absolute=true);
+
+    //! Indicated whether the mesh can be rendered with an other mesh or not
+    /*!
+      Two meshes can be rendered together if they have the same rasterization mode,
+      the same buffer id (or ignoreBufferId is set to true) and compatible materials
+      (or ignoreMaterial is set to true)
+
+      \param other The other mesh to compare with
+      \param ignoreBufferId Set whether the test must take acount of the uniform buffer id of the mesh
+      \param ignoreMaterial Set whether the test must take acount of the material or not
+     */
 
     bool canBeRenderedWith(const gle::Scene::MeshGroup& other,
 			   bool ignoreBufferId=false, bool ignoreMaterial=false) const;
 
+    //! Set the id of the uniform buffer in which the mesh is in
+
     void setUniformBufferId(GLint index);
+
+    //! Set the id of the material buffer in which the mesh is in
 
     void setMaterialBufferId(GLint index);
 
+    //! Returns the id of the uniform buffer in which the mesh is in
+
     GLint getUniformBufferId() const;
+
+    //! Returns the id of the material buffer in which the mesh is in
 
     GLint getMaterialBufferId() const;
 
+    //! Returns the nodes for rendering debug informations about the mesh
+
     virtual std::vector<Scene::Node*>& getDebugNodes(int mode);
+
+    //! Update the mesh matrix
 
     virtual void      updateMatrix();
 
+    //! Returns an array of float containing the mesh uniform datas
+    /*!
+      Build the array if necessary
+     */
+
     const GLfloat* getUniforms();
+
+    //! Set a skeleton to be used by the mesh
   
     void		setSkeleton(gle::Skeleton* skeleton);
+
+    //! Returns the skeleton used by the mesh
+
     gle::Skeleton*	getSkeleton();
 
   private:
