@@ -5,15 +5,17 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Fri Mar  2 17:27:21 2012 gael jochaud-du-plessix
-// Last update Tue Jun 26 21:01:11 2012 loick michard
+// Last update Wed Jul  4 14:20:23 2012 gael jochaud-du-plessix
 //
 
 #include <iostream>
-#include <Bone.hpp>
-#include <Skeleton.hpp>
+#include "Bone.hpp"
+#include "Skeleton.hpp"
 #include "TextureFrameBuffer.hpp"
-#include "Example.hpp"
 #include "CubeMap.hpp"
+#include "UniversalLoader.hpp"
+
+#include "Example.hpp"
 
 #define W_WIDTH 1280
 #define W_HEIGHT 720
@@ -40,16 +42,24 @@ public:
 					 gle::Vector3f(0, 0, 0),
 					 45, (GLfloat)_winWidth/_winHeight, 1, 1000);
     _renderer = new gle::Renderer();
-        _renderer->setDebugMode(gle::Renderer::Bone);
+    _renderer->setDebugMode(gle::Renderer::Bone);
+	
+    *_scene << _camera;
 
     gle::Material* material = new gle::Material();
     material->setDiffuseColor(gle::Colorf(1.0, 0.0, 0.0));
 
-    gle::Mesh* sphere = gle::Geometries::Sphere(material, 5, 30, 30);
-    gle::Mesh* sphere2 = gle::Geometries::Sphere(material, 5, 30, 30);
-    sphere->setPosition(gle::Vector3f(-20, 0, 0));
-    sphere2->setPosition(gle::Vector3f(20, 0, 0));
-    *_scene << _camera << sphere << sphere2;
+    gle::UniversalLoader loader;
+    gle::Scene::Node* node = loader.load("/home/jochau_g/Downloads/bvh/09/09_02.bvh", material);
+    gle::Scene::Node* skeleton = node->getChildByName("_skeleton");
+    //skeleton->setRotation(gle::Vector3f(0, 0, 1), 180);
+    *_scene << skeleton;
+
+    // gle::Mesh* sphere = gle::Geometries::Sphere(material, 5, 30, 30);
+    // gle::Mesh* sphere2 = gle::Geometries::Sphere(material, 5, 30, 30);
+    // sphere->setPosition(gle::Vector3f(-20, 0, 0));
+    // sphere2->setPosition(gle::Vector3f(20, 0, 0));
+    // *_scene << sphere << sphere2;
     
     _light = new gle::PointLight(gle::Vector3f(0, 0, 0),
 				 gle::Colorf(1.0, 1.0, 1.0));
@@ -83,7 +93,7 @@ public:
     //bras->translate(gle::Vector3f(0.0, 5.0, 0.0));
     bras2->setBones(bones2, sizeof(bones2) / sizeof(GLfloat));
 
-    *_scene << _skeleton << bras << bras2;
+    //*_scene << _skeleton;// << bras << bras2;
 
     _camera->addChild(_light);
     _scene->update();

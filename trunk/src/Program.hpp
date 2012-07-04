@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Fri Feb 17 16:21:24 2012 gael jochaud-du-plessix
-// Last update Mon Jul  2 22:11:20 2012 loick michard
+// Last update Wed Jul  4 18:30:33 2012 gael jochaud-du-plessix
 //
 
 #ifndef _GLE_PROGRAM_HPP_
@@ -22,7 +22,7 @@
 
 namespace gle {
 
-  //! Class representing an OpenGL Program
+  //! Class representing an OpenGL %Program
   /*!
     Encapsulation for creating a OpenGL Program, attaching Shaders to it,
     linking it and use it.

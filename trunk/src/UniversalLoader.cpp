@@ -5,7 +5,7 @@
 // Login   <michar_l@epitech.net>
 // 
 // Started on  Tue Jun 12 16:10:58 2012 loick michard
-// Last update Mon Jul  2 21:00:09 2012 gael jochaud-du-plessix
+// Last update Wed Jul  4 14:18:09 2012 gael jochaud-du-plessix
 //
 
 #include <UniversalLoader.hpp>
@@ -33,6 +33,27 @@ gle::Scene::Node* gle::UniversalLoader::load(std::string const & file,
 					    );
   if (!scene)
     throw new gle::Exception::Exception("Cannot load the scene");
+
+  // for (GLuint i = 0; i < scene->mNumAnimations; ++i)
+  //   {
+  //     aiAnimation* anim = scene->mAnimations[i];
+  //     std::cout << anim->mName.data << ":\n";
+  //     for (GLuint j = 0; j < anim->mNumChannels; ++j)
+  // 	{
+  // 	  aiNodeAnim* channel = anim->mChannels[j];
+  // 	  std::cout << channel->mNodeName.data << ": "
+  // 		    << channel->mNumPositionKeys << ", "
+  // 		    << channel->mNumRotationKeys << ", "
+  // 		    << channel->mNumScalingKeys
+  // 		    << "\n";
+  // 	  for (GLuint k = 0; k < channel->mNumPositionKeys; ++k)
+  // 	    {
+  // 	      aiVectorKey &key = channel->mPositionKeys[k];
+  // 	      //std::cout << key.mTime << ": " << gle::Vector3f(key.mValue.x, key.mValue.y, key.mValue.z) << "\n";
+  // 	    }
+  // 	}
+  //   }
+
   _materials.resize(scene->mNumMaterials);
   for (GLuint i = 0; i < scene->mNumMaterials; ++i)
     _materials[i] = _loadAssimpMaterial(file, scene, scene->mMaterials[i]);
@@ -134,11 +155,22 @@ void gle::UniversalLoader::_loadAssimpNode(const aiScene* scene, aiNode* node)
     {
       aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
 
+      // First import the Skeleton assigned to this mesh
+      gle::Skeleton* skeleton = _loadAssimpSkeleton(scene, mesh);
+
       if (!(mesh->mPrimitiveTypes & aiPrimitiveType_TRIANGLE))
-	continue ;
+	{
+	  if (skeleton)
+	    gleNode->addChild(skeleton);
+	  continue ;
+	}
 
       gle::Mesh* gleMesh = new gle::Mesh(_materials[mesh->mMaterialIndex]);
       gleMesh->setName(mesh->mName.data);
+
+      if (skeleton)
+      	gleMesh->addChild(skeleton);
+
       if (mesh->mNumVertices > 0)
 	{
 	  GLfloat* vertexAttributes = new GLfloat[mesh->mNumVertices * gle::Mesh::VertexAttributesSize];
@@ -180,6 +212,80 @@ void gle::UniversalLoader::_loadAssimpNode(const aiScene* scene, aiNode* node)
 
   for (GLuint i = 0; i < node->mNumChildren; ++i)
     _loadAssimpNode(scene, node->mChildren[i]);
+}
+
+gle::Skeleton* gle::UniversalLoader::_loadAssimpSkeleton(const aiScene* scene, aiMesh* mesh)
+{
+  if (mesh->mNumBones > 0)
+    {
+      gle::Skeleton* skeleton = new gle::Skeleton();
+      skeleton->setName(std::string(mesh->mName.data) + "_skeleton");
+
+      std::map<std::string, gle::Bone*> bones;
+
+      for (GLuint i = 0; i < mesh->mNumBones; ++i)
+	{
+	  aiBone* bone = mesh->mBones[i];
+	  gle::Bone* gleBone = new gle::Bone(1);
+	  gleBone->setName(bone->mName.data);
+
+	  // aiMatrix4x4& m = bone->mOffsetMatrix;
+	  // gleBone
+	  //   ->setCustomTransformationMatrix(
+	  // 				    gle::Matrix4f(m.a1, m.a2, m.a3, m.a4,
+	  // 						  m.b1, m.b2, m.b3, m.b4,
+	  // 						  m.c1, m.c2, m.c3, m.c4,
+	  // 						  m.d1, m.d2, m.d3, m.d4)
+	  // 				    );
+
+	  bones[gleBone->getName()] = gleBone;
+	}
+      
+      for (std::pair<std::string, gle::Bone*> bone : bones)
+	{
+	  if (bone.second)
+	    {
+	      aiNode* node = scene->mRootNode->FindNode(bone.first.c_str());
+	      if (node)
+		{
+		  aiMatrix4x4& m = node->mTransformation;
+		  bone.second
+		    ->setCustomTransformationMatrix(
+		  				    gle::Matrix4f(m.a1, m.a2, m.a3, m.a4,
+		  						  m.b1, m.b2, m.b3, m.b4,
+		  						  m.c1, m.c2, m.c3, m.c4,
+		  						  m.d1, m.d2, m.d3, m.d4)
+		  				    );
+
+
+		  for (GLuint i = 0; i < node->mNumChildren; ++i)
+		    {
+		      aiNode* child = node->mChildren[i];
+		      gle::Bone* childBone = bones[child->mName.data];
+		      if (childBone)
+		        bone.second->addChild(childBone);
+		    }
+		  aiNode* parent = node->mParent;
+		  if (parent)
+		    {
+		      gle::Bone* parentBone = bones[parent->mName.data];
+		      if (parentBone)
+			parentBone->addChild(bone.second);
+		    }
+		}
+	    }
+	}
+
+      for (std::pair<std::string, gle::Bone*> bone : bones)
+	{
+	  if (bone.second)
+	    skeleton->addChild(bone.second);
+	}
+
+      return (skeleton);
+    }
+  else
+    return (NULL);
 }
 
 void gle::UniversalLoader::setTexturesPath(const std::string& texturesPath)

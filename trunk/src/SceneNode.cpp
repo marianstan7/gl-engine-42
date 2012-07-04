@@ -5,7 +5,7 @@
 // Login   <michar_l@epitech.net>
 // 
 // Started on  Tue May 15 19:32:41 2012 loick michard
-// Last update Thu Jun 28 16:46:18 2012 gael jochaud-du-plessix
+// Last update Tue Jul  3 18:29:41 2012 gael jochaud-du-plessix
 //
 
 #include <algorithm>
@@ -23,7 +23,8 @@ gle::Scene::Node::Node(const gle::Scene::Node& other) :
   _children(), _parent(NULL), _position(other._position),
   _isDynamic(other._isDynamic), _projectShadow(other._projectShadow),
   _target(other._target), _hasTarget(other._hasTarget),
-  _scaleMatrix(other._scaleMatrix), _rotationMatrix(other._rotationMatrix)
+  _scaleMatrix(other._scaleMatrix), _rotationMatrix(other._rotationMatrix),
+  _customTransformationMatrix(other._customTransformationMatrix)
 {
   for (gle::Scene::Node* const &child : other._children)
     {
@@ -70,6 +71,11 @@ void gle::Scene::Node::removeChild(gle::Scene::Node* child)
       }
   for (gle::Scene::Node* &_child : _children)
     _child->removeChild(child);
+}
+
+gle::Scene::Node*	gle::Scene::Node::getParent() const
+{
+  return (_parent);
 }
 
 const std::vector<gle::Scene::Node*>& gle::Scene::Node::getChildren() const
@@ -126,6 +132,7 @@ void gle::Scene::Node::updateMatrix()
 				 Vector3<GLfloat>(0, 1, 0));
   _transformationMatrix *= _rotationMatrix;
   _transformationMatrix *= _scaleMatrix;
+  _transformationMatrix *= _customTransformationMatrix;
 
   if (_type == Camera)
     {
@@ -251,6 +258,12 @@ void gle::Scene::Node::translate(const gle::Vector3<GLfloat>& vec)
 void gle::Scene::Node::rotate(const gle::Quaternion<GLfloat>& rotation)
 {
   _rotationMatrix *= rotation.getMatrix();
+  this->updateMatrix();
+}
+
+void	gle::Scene::Node::setCustomTransformationMatrix(const Matrix4f& matrix)
+{
+  _customTransformationMatrix = matrix;
   this->updateMatrix();
 }
 

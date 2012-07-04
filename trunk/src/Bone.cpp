@@ -5,7 +5,7 @@
 // Login   <michar_l@epitech.net>
 // 
 // Started on  Sun Jun 24 12:43:55 2012 loick michard
-// Last update Tue Jun 26 20:32:58 2012 loick michard
+// Last update Tue Jul  3 16:58:48 2012 gael jochaud-du-plessix
 //
 
 #include <Bone.hpp>
@@ -70,8 +70,8 @@ std::vector<gle::Scene::Node*>& gle::Bone::getDebugNodes(int mode)
 	{
 	  if (_size)
 	    {
-	      Scene::Node* mesh = Geometries::Sphere(_debugMaterial, _size / 40, 30, 30, true);
-	      Scene::Node* mesh2 = Geometries::Sphere(_debugMaterial, _size / 40, 30, 30, true);
+	      Scene::Node* mesh = Geometries::Sphere(_debugMaterial, _size / 10, 30, 30, true);
+	      Scene::Node* mesh2 = Geometries::Sphere(_debugMaterial, _size / 10, 30, 30, true);
 	      gle::Mesh* link = new gle::Mesh(_debugMaterial, true);
 	      link->setRasterizationMode(Mesh::Line);
 	      GLfloat vtx[] = {0, 0, 0, 0, _size, 0, 0, 0, 0};

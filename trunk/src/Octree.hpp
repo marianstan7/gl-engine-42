@@ -5,7 +5,6 @@
 // Login   <michar_l@epitech.net>
 // 
 // Started on  Sat May  5 10:50:13 2012 loick michard
-// Last update Wed Jul  4 18:21:35 2012 loick michard
 //
 
 #ifndef _OCTREE_HPP_
@@ -26,7 +25,7 @@ namespace gle {
   class Material;
   class Mesh;
 
-  //! Handler of Octree
+  //! Handler of %Octree
   class Octree {
   public:
     //! Octree element interface

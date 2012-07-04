@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Mon Feb 20 20:48:54 2012 gael jochaud-du-plessix
-// Last update Mon Jul  2 22:11:04 2012 loick michard
+// Last update Wed Jul  4 18:04:19 2012 gael jochaud-du-plessix
 //
 
 #include <Renderer.hpp>
@@ -195,14 +195,13 @@ void gle::Renderer::renderShadowMap(gle::Scene* scene, const std::list<gle::Mesh
   _shadowMapProgram->setUniform("gle_ViewMatrix", viewMatrix);
   _shadowMapProgram->setUniform("gle_PMatrix", pMatrix);
 
-  glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-
   for (gle::Scene::MeshGroup &group : factorizedStaticMeshes)
     {
       _buildIndexesBuffer(group.meshes);
       scene->getStaticMeshesUniformsBuffer(group.uniformBufferId)
       	->bindBase(_shadowMapProgram->getUniformBlockBinding("gle_staticMeshesBlock"));
       _indexesBuffer.bind();
+      glPolygonMode(GL_FRONT_AND_BACK, group.rasterizationMode);
       glDrawElements(GL_TRIANGLES, _indexesBuffer.getSize(), GL_UNSIGNED_INT, 0);
     }
 
@@ -339,10 +338,10 @@ void gle::Renderer::_renderMeshes(gle::Scene* scene, gle::Scene::MeshGroup& grou
   // Draw the mesh elements
   _indexesBuffer.bind();
 
-  glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-  gle::Exception::CheckOpenGLError("Before glDrawElements");
+  //! Set the rasterization mode
+  glPolygonMode(GL_FRONT_AND_BACK, group.rasterizationMode);
+
   glDrawElements(GL_TRIANGLES, _indexesBuffer.getSize(), GL_UNSIGNED_INT, 0);
-  gle::Exception::CheckOpenGLError("glDrawElements");
 
   glDisableVertexAttribArray(gle::ShaderSource::TextureCoordLocation);  
 }
@@ -580,7 +579,7 @@ void gle::Renderer::setDebugMode(int mode)
 
 void gle::Renderer::_renderDebugMeshes(gle::Scene* scene)
 {  
-  //glClear(GL_DEPTH_BUFFER_BIT);
+  glClear(GL_DEPTH_BUFFER_BIT);
   if (!_debugProgram)
     {
       _debugProgram = new gle::Program();
