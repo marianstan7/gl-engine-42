@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Mon Feb 20 18:18:01 2012 gael jochaud-du-plessix
-// Last update Mon Jul  2 22:11:14 2012 loick michard
+// Last update Wed Jul  4 18:00:26 2012 gael jochaud-du-plessix
 //
 
 #ifndef _GLE_SCENE_HPP_
@@ -108,6 +108,10 @@ namespace gle {
       //! Remove a child from the node
 
       void	removeChild(Node* child);
+
+      //! Return the parent of the node
+
+      Node*	getParent() const;
 
       //! Get the list of children of the node
 
@@ -245,6 +249,10 @@ namespace gle {
         this->rotate(Quaternion<GLfloat>(args...));
       }
 
+      //! Set a custom transformation matrix to be applied to the node
+
+      void	setCustomTransformationMatrix(const Matrix4f& matrix);
+
       //! Duplicate the node
 
       virtual Node* duplicate() const;
@@ -253,9 +261,15 @@ namespace gle {
 
       virtual void update();
 
+      //! Returns the nodes for rendering debuging informations
+
       virtual std::vector<Node*>& getDebugNodes(int mode);
 
+      //! Indicated whether the node projects a shadow or not
+
       bool projectShadow() const;
+
+      //! Set if the node must project a shadow or not
 
       void setProjectShadow(bool projectShadow);
 
@@ -302,6 +316,9 @@ namespace gle {
 
       //! Rotation matrix of the node
       Matrix4<GLfloat>		_rotationMatrix;
+
+      //! Custom transformation matrix of the node
+      Matrix4<GLfloat>		_customTransformationMatrix;
       
       //! Transformation matrix of the node
       Matrix4<GLfloat>		_transformationMatrix;
@@ -312,18 +329,33 @@ namespace gle {
       //! Normal matrix
       Matrix3<GLfloat>		_normalMatrix;
 
+      //! List of nodes for rendering debug informations
       std::vector<Node*>	_debugNodes;
     };
 
     //! Symbolize a group of meshes for rendering
 
     struct MeshGroup {
+
+      //! List of meshes to render
       std::list<Mesh*>          meshes;
+
+      //! Id of the uniform buffer of the group
       GLint			uniformBufferId;
+
+      //! Id of the material uniform buffer of the group
       GLint			materialBufferId;
+
+      //! Rasterization mode of the group
       GLint			rasterizationMode;
+
+      //! Color map of the group
       gle::Texture*             colorMap;
+
+      //! Normal map of the group
       gle::Texture*             normalMap;
+
+      //! Environment map of the group
       gle::EnvironmentMap*      envMap;
     };
 
@@ -398,6 +430,7 @@ namespace gle {
     }
 
     //! Add a list of nodes to the scene
+
     template <typename T>
     Scene & operator<<(std::vector<T*> elements)
     {
@@ -458,6 +491,8 @@ namespace gle {
 
     GLfloat* getPointLightsSpecularColor() const;
 
+    //! Get a GLfloat tab of all point lights attenuation
+
     GLfloat* getPointLightsAttenuation() const;
 
     //! Get number of point lights in the scene
@@ -476,22 +511,33 @@ namespace gle {
 
     GLfloat* getSpotLightsSpecularColor() const;
 
+    //! Get a GLfloat tab of all spot lights attenuation
+
     GLfloat* getSpotLightsAttenuation() const;
+
+    //! Get a GLfloat tab of all spot lights directions
 
     GLfloat* getSpotLightsDirection() const;
 
+    //! Get a GLfloat tab of all spot lights cos cut off
+
     GLfloat* getSpotLightsCosCutOff() const;
+
+    //! Get a GLint tab indicated for each point light whether or not it has a shadow map
 
     GLint* getSpotLightsHasShadowMap() const;
 
+    //! Get a GLfloat tab of all spot lights shadow map matrices
+
     GLfloat* getSpotLightsShadowMapMatrix() const;
+
+    //! Get a texture tab of all spot lights shadow maps
 
     const std::vector<gle::Texture*>& getSpotLightsShadowMap() const;
 
     //! Get number of spot lights in the scene
 
     GLsizeiptr getSpotLightsSize() const;
-
 
     //! Return true if there are lights in the scene (point or directional)
 
@@ -512,7 +558,12 @@ namespace gle {
 
     void updateLights();
 
+    //! Update the skeletons
+
     void updateSkeletons();
+
+    //! Update a specific skeleton
+
     void updateSkeleton(Node* node);
 
     //! Update dynamic meshes
@@ -535,6 +586,8 @@ namespace gle {
     //! Builds the shader program for the scene
 
     void buildProgram();
+
+    //! Replace strings in a shader source with scene constants
 
     void setShaderSourceConstants(std::string& shaderSource);
 
@@ -562,11 +615,28 @@ namespace gle {
     
     void update(Node* node=NULL, int depth = 0);
 
+    //! Set an environment map to the scene
+
     void setEnvMap(EnvironmentMap* envMap);
+    
+    //! Enable or disable the environment map
+
     void setEnvMapEnabled(bool enabled);
+
+    //! Returns the environment map of the scene
+
     EnvironmentMap* getEnvMap() const;
+
+    //! Indicates whether or not the environment map is enabled for the scene
+
     bool isEnvMapEnabled() const;
+
+    //! Returns the rendering program used to render the environment map
+
     Program* getEnvMapProgram() const;
+
+    //! Returns the mesh used to render the environment map
+
     Mesh* getEnvMapMesh() const;
 
     //! Returns the uniform buffer containing static meshes matrices
@@ -577,7 +647,11 @@ namespace gle {
 
     const gle::Bufferf*     getStaticMeshesMaterialsBuffer(GLuint bufferId) const;
 
+    //! Returns the nodes used to render debuging informations
+
     std::vector<Node*>& getDebugNodes(int mode);
+
+    //! Returns the Bones of the scene
 
     std::vector<GLfloat>& getBones();
 

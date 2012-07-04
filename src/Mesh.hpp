@@ -5,7 +5,7 @@
 // Login   <michar_l@epitech.net>
 // 
 // Started on  Thu Jun 21 20:39:52 2012 loick michard
-// Last update Mon Jul  2 22:11:56 2012 loick michard
+// Last update Wed Jul  4 16:33:17 2012 gael jochaud-du-plessix
 //
 
 #ifndef _MESH_HPP_
@@ -31,11 +31,12 @@
 
 namespace gle {
   
-  //! Meshes class
+  class Skeleton;
+
+  //! Representation of a 3D Mesh
   /*!
     This class creates, initializes and operates on meshes.
   */
-  class Skeleton;
 
   class Mesh : public Octree::Element, public Scene::Node {
   public:
@@ -92,7 +93,7 @@ namespace gle {
        + VertexAttributeMeshIdentifiers)
       ;
 
-    //! Size of the datas used by one mesh in the uniform buffer                                                                                             
+    //! Size of the datas used by one mesh in the uniform buffer
     static const GLsizeiptr UniformSize = 20;
 
 

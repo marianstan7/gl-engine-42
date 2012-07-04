@@ -5,7 +5,7 @@
 // Login   <michar_l@epitech.net>
 // 
 // Started on  Fri Feb 17 12:51:39 2012 loick michard
-// Last update Mon Jun 18 10:43:32 2012 loick michard
+// Last update Wed Jul  4 17:40:51 2012 gael jochaud-du-plessix
 //
 
 #ifndef _GLE_VECTOR3_HPP_
@@ -16,14 +16,14 @@
 
 namespace gle {
   
-  //! Class for manipulate 3D vectors.
-  /*
-    This class encapsulates all 3D vectors operations/
-    \tparam T Type of 3D vctors values.
-  */
-
   template <typename T>
   class Matrix4;
+
+  //! Representation a 3D vector
+  /*
+    This class encapsulates all 3D vectors operations
+    \tparam T Type of 3D vectors values.
+  */
   
   template <typename T>
   class Vector3

@@ -5,7 +5,6 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Fri Mar  2 17:27:21 2012 gael jochaud-du-plessix
-// Last update Tue Jul  3 02:10:02 2012 loick michard
 //
 
 #include <iostream>
@@ -63,7 +62,7 @@ public:
     material2->setSpecularLightEnabled(true);
     material2->setDiffuseColor(gle::Colorf(0.0, 1.0, 0.0));
 
-    gle::Mesh* sphere = gle::Geometries::Sphere(material, 5, 30, 30, true);
+    gle::Mesh* sphere = gle::Geometries::Sphere(material, 5, 30, 30);
     sphere->setPosition(gle::Vector3f(8, 5, 8));
     
     _cube = gle::Geometries::Cube(material2, 10, true);
@@ -90,7 +89,7 @@ public:
     _wiredSphere->setPosition(gle::Vector3f(-8, 0, 8));
     _wiredSphere->setRasterizationMode(gle::Mesh::Line);
     _wiredSphere->setMaterial(material2);
-    _wiredSphere->setDynamic(true);
+    //_wiredSphere->setDynamic(true);
 
     gle::Mesh* wiredCube = new gle::Mesh(*_cube);
     wiredCube->setPosition(gle::Vector3f(-8, 0, -8));
