@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Mon Feb 20 20:48:54 2012 gael jochaud-du-plessix
-// Last update Thu Jul  5 16:45:07 2012 loick michard
+// Last update Fri Jul  6 01:22:03 2012 loick michard
 //
 
 #include <Renderer.hpp>
@@ -544,6 +544,9 @@ void gle::Renderer::_setSceneUniforms(gle::Scene* scene, gle::Camera* camera)
       _currentProgram->setUniform1("gle_spotLightCosCutOff",
 				    scene->getSpotLightsCosCutOff(),
 				    scene->getSpotLightsSize());
+      _currentProgram->setUniform1("gle_spotLightInnerCosCutOff",
+				   scene->getSpotLightsInnerCosCutOff(),
+				   scene->getSpotLightsSize());
       _currentProgram->setUniform1("gle_spotLightHasShadowMap",
 				   scene->getSpotLightsHasShadowMap(),
 				   scene->getSpotLightsSize());
@@ -580,7 +583,7 @@ void gle::Renderer::setDebugMode(int mode)
 
 void gle::Renderer::_renderDebugMeshes(gle::Scene* scene)
 {  
-  glClear(GL_DEPTH_BUFFER_BIT);
+  //glClear(GL_DEPTH_BUFFER_BIT);
   if (!_debugProgram)
     {
       _debugProgram = new gle::Program();

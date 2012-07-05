@@ -193,6 +193,7 @@ void gle::Scene::updateLights()
   _spotLightsAttenuation.resize(0);
   _spotLightsDirection.resize(0);
   _spotLightsCosCutOff.resize(0);
+  _spotLightsInnerCosCutOff.resize(0);
   _spotLightsHasShadowMap.resize(0);
   _spotLightsShadowMapMatrix.resize(0);
   _spotLightsShadowMap.resize(0);
@@ -280,6 +281,7 @@ void gle::Scene::updateLights()
           _spotLightsDirection.push_back(direction.y);
           _spotLightsDirection.push_back(direction.z);
           _spotLightsCosCutOff.push_back(light->getCosCutOff());
+          _spotLightsInnerCosCutOff.push_back(light->getInnerCosCutOff());
 
 	  if (light->projectShadow()
 	      && light->getShadowMapCamera()
@@ -406,6 +408,11 @@ GLfloat* gle::Scene::getSpotLightsCosCutOff() const
   return ((GLfloat*)&_spotLightsCosCutOff[0]);
 }
 
+GLfloat* gle::Scene::getSpotLightsInnerCosCutOff() const
+{
+  return ((GLfloat*)&_spotLightsInnerCosCutOff[0]);
+}
+
 GLint*	gle::Scene::getSpotLightsHasShadowMap() const
 {
   return ((GLint*)&_spotLightsHasShadowMap[0]);
@@ -489,6 +496,7 @@ void		gle::Scene::buildProgram()
       _program->getUniformLocation("gle_spotLightAttenuation");
       _program->getUniformLocation("gle_spotLightDirection");
       _program->getUniformLocation("gle_spotLightCosCutOff");
+      _program->getUniformLocation("gle_spotLightInnerCosCutOff");
       _program->getUniformLocation("gle_spotLightHasShadowMap");
       _program->getUniformLocation("gle_spotLightShadowMapMatrix");
       _program->getUniformLocation("gle_spotLightShadowMap");

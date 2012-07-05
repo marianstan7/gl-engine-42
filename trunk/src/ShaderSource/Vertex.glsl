@@ -30,7 +30,6 @@ uniform float gle_fogDensity;
 #if GLE_NB_SPOT_LIGHTS > 0
 	uniform vec3 gle_spotLightPosition[GLE_NB_SPOT_LIGHTS];
 	uniform vec3 gle_spotLightAttenuation[GLE_NB_SPOT_LIGHTS];
-	
 	uniform bool gle_spotLightHasShadowMap[GLE_NB_SPOT_LIGHTS];
 	uniform mat4 gle_spotLightShadowMapMatrix[GLE_NB_SPOT_LIGHTS];
 #endif

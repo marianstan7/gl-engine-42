@@ -5,7 +5,7 @@
 // Login   <michar_l@epitech.net>
 // 
 // Started on  Tue Feb 28 09:59:20 2012 loick michard
-// Last update Tue Jul  3 02:22:36 2012 loick michard
+// Last update Thu Jul  5 23:52:13 2012 loick michard
 //
 
 #include <Light.hpp>

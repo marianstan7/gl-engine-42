@@ -5,7 +5,7 @@
 // Login   <michar_l@epitech.net>
 // 
 // Started on  Sat Feb 18 12:43:33 2012 loick michard
-// Last update Wed Jul  4 19:43:38 2012 gael jochaud-du-plessix
+// Last update Fri Jul  6 00:16:04 2012 loick michard
 //
 
 #ifndef _PERSPECTIVE_CAMERA_HPP_
@@ -75,6 +75,8 @@ namespace gle {
     GLfloat	_near;
     GLfloat	_far;
     gle::Mesh*	_debugMesh[2];
+
+    bool	_hasChanged;
   };
 }
 
