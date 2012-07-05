@@ -5,7 +5,7 @@
 // Login   <michar_l@epitech.net>
 // 
 // Started on  Mon Feb 13 20:57:51 2012 loick michard
-// Last update Wed Jul  4 19:51:21 2012 loick michard
+// Last update Thu Jul  5 22:30:54 2012 gael jochaud-du-plessix
 //
 
 #ifndef _GLE_MATRIX4_HPP_
@@ -600,10 +600,17 @@ namespace gle {
     T _matrix[16];
   };
 
+  //! Matrix with float values
   typedef Matrix4<GLfloat> Matrix4f;
+
+  //! Matrix with integer values
   typedef Matrix4<GLint> Matrix4i;
+
+  //! Matrix with unsigned integer values
   typedef Matrix4<GLuint> Matrix4ui;
 }
+
+//! Print a matrix on a standard output stream
 
 template <typename T>
 std::ostream& operator<<(std::ostream& os, gle::Matrix4<T> const &matrix)
@@ -620,6 +627,8 @@ std::ostream& operator<<(std::ostream& os, gle::Matrix4<T> const &matrix)
   return (os);
 }
 
+//! Addition of two matrices
+
 template <typename T>
 gle::Matrix4<T> operator+(gle::Matrix4<T> const &m1, gle::Matrix4<T> const &m2)
 {
@@ -630,6 +639,8 @@ gle::Matrix4<T> operator+(gle::Matrix4<T> const &m1, gle::Matrix4<T> const &m2)
 			  m1[3] + m2[3], m1[7] + m2[7], m1[11] + m2[11],
 			  m1[15] + m2[15]));
 }
+
+//! Multiplication of a matrix by a number
 
 template <typename T>
 gle::Matrix4<T> operator*(gle::Matrix4<T> const &m1, T const &value)
@@ -642,6 +653,8 @@ gle::Matrix4<T> operator*(gle::Matrix4<T> const &m1, T const &value)
 			  m1[15] * value));
 }
 
+//! Multiplication of a value by a matrix
+
 template <typename T>
 gle::Matrix4<T> operator*(T const &value, gle::Matrix4<T> const &m1)
 {
@@ -652,6 +665,8 @@ gle::Matrix4<T> operator*(T const &value, gle::Matrix4<T> const &m1)
 			  m1[3] * value, m1[7] * value, m1[11] * value,
 			  m1[15] * value));
 }
+
+//! Multiplication of two matrices
 
 template <typename T>
 gle::Matrix4<T> operator*(gle::Matrix4<T> const &m1, gle::Matrix4<T> const &m2)

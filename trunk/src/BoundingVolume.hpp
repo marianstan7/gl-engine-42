@@ -5,7 +5,7 @@
 // Login   <michar_l@epitech.net>
 // 
 // Started on  Wed May  2 13:48:38 2012 loick michard
-// Last update Thu Jul  5 20:57:32 2012 loick michard
+// Last update Thu Jul  5 22:52:42 2012 gael jochaud-du-plessix
 //
 
 #ifndef _BOUNDING_VOLUME_HPP_
@@ -50,7 +50,7 @@ namespace gle {
 
     //! Update bounding volume after mesh transformation
     /*!
-      \param mesh Linked mesh
+      \param mvMatrix Mesh transformation matrix
      */
     virtual void update(const Matrix4<GLfloat>& mvMatrix) = 0;
 
