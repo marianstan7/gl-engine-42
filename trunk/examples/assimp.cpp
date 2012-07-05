@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Fri Mar  2 17:27:21 2012 gael jochaud-du-plessix
-// Last update Mon Jul  2 20:58:33 2012 gael jochaud-du-plessix
+// Last update Wed Jul  4 22:17:18 2012 loick michard
 //
 
 #include <iostream>
@@ -217,12 +217,11 @@ public:
 
     *_scene << _camera;
 
-    _scene->update();
   }
 
   void animate()
   {
-    _scene->updateLights();
+
   }
 
 private:

@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Fri Mar  2 17:27:21 2012 gael jochaud-du-plessix
-// Last update Mon Jul  2 22:59:26 2012 gael jochaud-du-plessix
+// Last update Thu Jul  5 18:16:59 2012 loick michard
 //
 
 #include <iomanip>
@@ -81,20 +81,19 @@ public:
     
     for (GLfloat i = -70.0; i <= 70.0; i += 15.0)
       for (GLfloat j = -70.0; j <= 70.0; j += 15.0)
-	for (GLfloat k = -70.0; k <= 70.0; k += 15.0)
-	  {
-	    gle::Material* materialTriangle = new gle::Material();
-	    materialTriangle->setDiffuseLightEnabled(true);
-	    materialTriangle->setSpecularLightEnabled(true);
-	    materialTriangle->setDiffuseColor(gle::Color<GLfloat>((float)rand() / float(RAND_MAX),
-								  (float)rand() / float(RAND_MAX),
-								  (float)rand() / float(RAND_MAX)));
-	    gle::Mesh* triangle = gle::Geometries::Cuboid(materialTriangle, 3, 3, 11, true);
-	    triangle->setPosition(gle::Vector3f(i, j, k));
-	    *_scene << triangle;
-	    _triangles.push_back(triangle);
-	  }
-
+    	for (GLfloat k = -70.0; k <= 70.0; k += 15.0)
+    	  {
+    	    gle::Material* materialTriangle = new gle::Material();
+    	    materialTriangle->setDiffuseLightEnabled(true);
+    	    materialTriangle->setSpecularLightEnabled(true);
+    	    materialTriangle->setDiffuseColor(gle::Color<GLfloat>((float)rand() / float(RAND_MAX),
+    								  (float)rand() / float(RAND_MAX),
+    								  (float)rand() / float(RAND_MAX)));
+    	    gle::Mesh* triangle = gle::Geometries::Cuboid(materialTriangle, 3, 3, 11, true);
+    	    triangle->setPosition(gle::Vector3f(i, j, k));
+    	    *_scene << triangle;
+    	    _triangles.push_back(triangle);
+    	  }
     _scene->update();
   }
 
@@ -107,10 +106,15 @@ public:
     for (gle::Mesh* &triangle : _triangles)
       triangle->setTarget(_sp->getAbsolutePosition());
     _cameraLight->setPosition(_camera->getAbsolutePosition());
-    _scene->updateLights();
     _camera->setTarget(_sp->getAbsolutePosition());
     t += 0.01;
-    _scene->update();
+  }
+
+  void  catchEvent(sf::Event& event)
+  {
+    /*if (event.type == sf::Event::KeyPressed
+        && event.key.code == sf::Keyboard::O)
+	*_scene << gle::Geometries::Sphere(new gle::Material(), 5.0);*/
   }
 
 private:

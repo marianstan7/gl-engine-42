@@ -136,7 +136,6 @@ public:
 
     *_scene << _camera << _light;// << _light2;// << sp;
     
-    _scene->update();
 
     //printGPUMemInfo();
   }
@@ -146,7 +145,6 @@ public:
     _light->setPosition(gle::Vector3f(-53.2 * sin(_elapsedTime / 1000.0), 59.0, -51));
     //_wiredSphere->setPosition(gle::Vector3f(-8, 5 + 5 * sin(_elapsedTime / 1000.0), 8));
     _wiredSphere->setRotation(gle::Vector3f(0, 1, 0), _elapsedTime / 50.0);
-    _scene->updateLights();
   }
 
   void render()

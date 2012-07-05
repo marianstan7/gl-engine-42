@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Fri Mar  2 17:27:21 2012 gael jochaud-du-plessix
-// Last update Wed Jun 27 09:54:50 2012 loick michard
+// Last update Wed Jul  4 22:22:15 2012 loick michard
 //
 
 #include <iostream>
@@ -128,12 +128,12 @@ public:
     _loadCamaro();
     _loader = new gle::UniversalLoader();
     //_loader->setTexturesPath("./models/mustang/");
-    gle::Scene::Node* model = _loader->load("./models/Camaro.obj", NULL);
+    //gle::Scene::Node* model = _loader->load("./models/Camaro.obj", NULL);
     //gle::Scene::Node* model = _loader->load("./models/mustang/Ford Mustang GT Concept.lwo", NULL);
     //gle::Scene::Node* model = _loader->load("./models/textured_cube.obj", new gle::Material());
     //gle::Texture* tex2 = new gle::Texture("./examples/cubemaps/opensea/posy.png");
     //gle::Texture* tex3 = new gle::Texture("./examples/cubemaps/opensea/posz.png");
-    gle::Material* mat = new gle::Material();
+    //gle::Material* mat = new gle::Material();
     //mat->setReflectionIntensity(0.2);
     //mat->setSpecularIntensity(0.0);
     //mat->setDiffuseIntensity(0.0);
@@ -147,12 +147,11 @@ public:
     _scene->setEnvMap(_cubeMap);
     _camera->addChild(light);
     _camera->addChild(_light);
-    _scene->update();
   }
 
   void animate()
   {
-    _scene->updateLights();
+
   }
 
   void render()

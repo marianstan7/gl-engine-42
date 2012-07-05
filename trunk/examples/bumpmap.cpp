@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Fri Mar  2 17:27:21 2012 gael jochaud-du-plessix
-// Last update Fri Jun 29 21:04:07 2012 gael jochaud-du-plessix
+// Last update Wed Jul  4 22:19:03 2012 loick michard
 //
 
 #include <iostream>
@@ -69,14 +69,11 @@ public:
     gle::Material* ll = new gle::Material();
     ll->setAmbientColor(gle::Color<GLfloat>(1.0, 1.0, 1.0));
     _light->addChild(gle::Geometries::Sphere(ll, 0.2, 50, 50));
-    _scene->update();
-
   }
 
   void animate()
   {
     //_light->setTarget(_camera->getTarget());
-    _scene->updateLights();
   }
 
   void render()

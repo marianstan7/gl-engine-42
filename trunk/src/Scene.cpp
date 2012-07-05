@@ -602,58 +602,53 @@ void		gle::Scene::update(gle::Scene::Node* node, int depth)
   Light*	light;
   Camera*	camera;
   bool		generate = false;
-  GLsizeiptr	directionalLightsSize = _directionalLightsSize;
-  GLsizeiptr	pointLightsSize = _pointLightsSize;
-  GLsizeiptr	spotLightsSize = _spotLightsSize;
-  uint		bonesSize = _bonesMatrices.size() / 16;
 
   if (!node)
     {
-      _staticMeshes.clear();
-      _dynamicMeshes.clear();
-      _lights.clear();
-      _cameras.clear();
-      _skeletons.clear();
+      //std::cout << _root.getAddedNodes() << std::endl;
+      if (_root.getAddedNodes() & gle::Scene::Node::StaticMesh)
+	_staticMeshes.clear();
+      if (_root.getAddedNodes() & gle::Scene::Node::DynamicMesh)
+	_dynamicMeshes.clear();
+      if (_root.getAddedNodes() & gle::Scene::Node::Light)
+	_lights.clear();
+      if (_root.getAddedNodes() & gle::Scene::Node::Camera)
+	_cameras.clear();
+      if (_root.getAddedNodes() & gle::Scene::Node::Skeleton)
+	_skeletons.clear();
       node = &_root;
       generate = true;
-      _root.updateMatrix();
+      //_root.updateMatrix();
     }
-  if (node->getType() == Node::Skeleton)
+  if (node->getType() == Node::Skeleton && (_root.getAddedNodes() & gle::Scene::Node::Skeleton))
     _skeletons.push_back(dynamic_cast<gle::Skeleton*>(node));
-  else if (node->getType() == Node::Mesh && (mesh = dynamic_cast<Mesh*>(node)))
+  else if ((node->getType() == Node::StaticMesh || node->getType() == Node::DynamicMesh) && (mesh = dynamic_cast<Mesh*>(node)))
     {
-      if (mesh->getBoundingVolume() && !mesh->isDynamic())
+      if ((_root.getAddedNodes() & gle::Scene::Node::StaticMesh) && mesh->getBoundingVolume() && !mesh->isDynamic())
 	_staticMeshes.push_back(mesh);
-      else
+      else if (_root.getAddedNodes() & gle::Scene::Node::DynamicMesh)
 	_dynamicMeshes.push_back(mesh);
     }
-  else if (node->getType() == Node::Light && (light = dynamic_cast<Light*>(node)))
+  else if ((_root.getAddedNodes() & gle::Scene::Node::Light) && node->getType() == Node::Light && (light = dynamic_cast<Light*>(node)))
     _lights.push_back(light);
-  else if (! _currentCamera && node->getType() == Node::Camera && (camera = dynamic_cast<Camera*>(node)))
+  else if ((_root.getAddedNodes() & gle::Scene::Node::Camera) && ! _currentCamera 
+	   && node->getType() == Node::Camera && (camera = dynamic_cast<Camera*>(node)))
     _currentCamera = camera;
   const std::vector<Node*>& children = node->getChildren();
   for (Node* const &child : children)
     update(child, depth + 1);
-  if (generate && _frustumCulling)
+  if ((_root.getAddedNodes() & gle::Scene::Node::StaticMesh) && generate && _frustumCulling)
     generateTree();
   if (generate)
     {
       updateLights();
       updateSkeletons();
-      updateDynamicMeshes();
-      updateStaticMeshes();
-      if (directionalLightsSize != _directionalLightsSize ||
-      	  pointLightsSize != _pointLightsSize ||
-      	  spotLightsSize != _spotLightsSize ||
-      	  bonesSize != _bonesMatrices.size() / 16)
+      if (_root.getAddedNodes() & gle::Scene::Node::StaticMesh)
+	updateStaticMeshes();
+      if ((_root.getAddedNodes() & gle::Scene::Node::Light) && (_root.getAddedNodes() & gle::Scene::Node::Skeleton))
       	_needProgramCompilation = true;
+      _root.setAddedNodesRecursive(0);
     }
-}
-
-void gle::Scene::updateDynamicMeshes()
-{
-  for (gle::Mesh* mesh : _dynamicMeshes)
-    mesh->setIdentifiers(0, 0);
 }
 
 void gle::Scene::updateStaticMeshes()

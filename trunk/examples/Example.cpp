@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Fri May 25 00:33:16 2012 gael jochaud-du-plessix
-// Last update Thu Jun 28 21:28:00 2012 gael jochaud-du-plessix
+// Last update Wed Jul  4 22:27:41 2012 loick michard
 //
 
 #include <algorithm>
@@ -19,7 +19,7 @@
 
 Example::Example(int ac, char**av, int winWidth, int winHeight, int framerate, std::string const & name)
   : _argv(),
-    _winWidth(winWidth), _winHeight(winHeight), _framerate(framerate),
+    _winWidth(winWidth), _winHeight(winHeight), _framerate(1000),//framerate),
     _name(name),
     _window(NULL), _time(), _elapsedTime(0),
     _showFramerate(true), _limitFramerate(true), _cameraType(Flycam),
