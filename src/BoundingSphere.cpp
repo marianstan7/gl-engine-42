@@ -5,7 +5,7 @@
 // Login   <michar_l@epitech.net>
 // 
 // Started on  Wed May  2 16:41:28 2012 loick michard
-// Last update Thu Jul  5 21:02:15 2012 loick michard
+// Last update Thu Jul  5 22:47:26 2012 loick michard
 //
 
 #include <BoundingSphere.hpp>
@@ -168,7 +168,25 @@ const gle::Vector3<float>& gle::BoundingSphere::getCenter() const
 
 bool gle::BoundingSphere::isInFrustum(const GLfloat frustum[6][4]) const
 {
-  (void)frustum;
-#warning Todo: BoundingSphere::isInFrustum
-  return (false);
+  for(int i = 0; i < 6; i++)
+    {
+      if (frustum[i][0] * _min.x + frustum[i][1] * _min.y + frustum[i][2] * _min.z + frustum[i][3] > 0)
+        continue;
+      if (frustum[i][0] * _max.x + frustum[i][1] * _min.y + frustum[i][2] * _min.z + frustum[i][3] > 0)
+        continue;
+      if (frustum[i][0] * _min.x + frustum[i][1] * _max.y + frustum[i][2] * _min.z + frustum[i][3] > 0)
+        continue;
+      if (frustum[i][0] * _max.x + frustum[i][1] * _max.y + frustum[i][2] * _min.z + frustum[i][3] > 0)
+        continue;
+      if (frustum[i][0] * _min.x + frustum[i][1] * _min.y + frustum[i][2] * _max.z + frustum[i][3] > 0)
+        continue;
+      if (frustum[i][0] * _max.x + frustum[i][1] * _min.y + frustum[i][2] * _max.z + frustum[i][3] > 0)
+        continue;
+      if (frustum[i][0] * _min.x + frustum[i][1] * _max.y + frustum[i][2] * _max.z + frustum[i][3] > 0)
+        continue;
+      if (frustum[i][0] * _max.x + frustum[i][1] * _max.y + frustum[i][2] * _max.z + frustum[i][3] > 0)
+        continue;
+      return (false);
+    }
+  return (true);
 }
