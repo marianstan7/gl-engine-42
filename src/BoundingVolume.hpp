@@ -5,7 +5,7 @@
 // Login   <michar_l@epitech.net>
 // 
 // Started on  Wed May  2 13:48:38 2012 loick michard
-// Last update Wed Jul  4 16:54:19 2012 loick michard
+// Last update Thu Jul  5 20:57:32 2012 loick michard
 //
 
 #ifndef _BOUNDING_VOLUME_HPP_
@@ -52,7 +52,7 @@ namespace gle {
     /*!
       \param mesh Linked mesh
      */
-    virtual void update(class Mesh* mesh) = 0;
+    virtual void update(const Matrix4<GLfloat>& mvMatrix) = 0;
 
 
     //! Get the highest extreme value in the 3 axis

@@ -5,7 +5,7 @@
 // Login   <michar_l@epitech.net>
 // 
 // Started on  Wed May  2 16:41:28 2012 loick michard
-// Last update Sat Jun 23 15:12:47 2012 loick michard
+// Last update Thu Jul  5 21:01:03 2012 loick michard
 //
 
 #include <BoundingBox.hpp>
@@ -132,18 +132,18 @@ gle::Mesh* gle::BoundingBox::getDebugMesh(gle::Mesh* mesh)
   return (_debugMesh);
 }
 
-void	gle::BoundingBox::update(Mesh* mesh)
+void	gle::BoundingBox::update(const Matrix4<GLfloat>& mvMatrix)
 {
   for (unsigned int i = 0; i < 8; ++i)
     {
       _absolutePoints[i] = _points[i];
-      _absolutePoints[i] *= mesh->getTransformationMatrix();
+      _absolutePoints[i] *= mvMatrix;
       if (i == 0 || _absolutePoints[i].x < _min.x)
-	_min.x = _absolutePoints[i].x;
+  	_min.x = _absolutePoints[i].x;
       if (i == 0 || _absolutePoints[i].y < _min.y)
-	_min.y = _absolutePoints[i].y;
+  	_min.y = _absolutePoints[i].y;
       if (i == 0 || _absolutePoints[i].z < _min.z)
-	_min.z = _absolutePoints[i].z;
+  	_min.z = _absolutePoints[i].z;
       if (i == 0 || _absolutePoints[i].x > _max.x)
         _max.x = _absolutePoints[i].x;
       if (i == 0 || _absolutePoints[i].y > _max.y)
@@ -155,15 +155,15 @@ void	gle::BoundingBox::update(Mesh* mesh)
   _absoluteCenter /= 2.0;
   if (_debugMesh)
     {
-      Matrix4<GLfloat> mvMatrix = mesh->getTransformationMatrix();
+      Matrix4<GLfloat> moveMatrix = mvMatrix;
       Matrix3<GLfloat> normalMatrix;
 
-      mvMatrix.translate(_center);
-      Matrix4<GLfloat> inverse(mvMatrix);
+      moveMatrix.translate(_center);
+      Matrix4<GLfloat> inverse(moveMatrix);
       inverse.inverse();
       normalMatrix = inverse;
       normalMatrix.transpose();
-      _debugMesh->setMatrices(mvMatrix, normalMatrix);
+      _debugMesh->setMatrices(moveMatrix, normalMatrix);
       _debugMesh->setRasterizationMode(gle::Mesh::Line);
     }
 }

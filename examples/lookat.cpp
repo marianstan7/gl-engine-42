@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Fri Mar  2 17:27:21 2012 gael jochaud-du-plessix
-// Last update Thu Jul  5 18:16:59 2012 loick michard
+// Last update Thu Jul  5 22:38:28 2012 loick michard
 //
 
 #include <iomanip>
@@ -77,7 +77,7 @@ public:
 
     _camera->addChild(_cameraLight);
 
-    *_scene << _camera << _sp << _cameraLight;
+    *_scene << _camera << _sp;
     
     for (GLfloat i = -70.0; i <= 70.0; i += 15.0)
       for (GLfloat j = -70.0; j <= 70.0; j += 15.0)
@@ -105,7 +105,6 @@ public:
     				  cos(t * 0.3) * 70));
     for (gle::Mesh* &triangle : _triangles)
       triangle->setTarget(_sp->getAbsolutePosition());
-    _cameraLight->setPosition(_camera->getAbsolutePosition());
     _camera->setTarget(_sp->getAbsolutePosition());
     t += 0.01;
   }
