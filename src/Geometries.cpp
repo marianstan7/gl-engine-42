@@ -5,7 +5,7 @@
 // Login   <michar_l@epitech.net>
 // 
 // Started on  Mon Feb 20 22:34:18 2012 loick michard
-// Last update Mon Jun 25 18:35:55 2012 gael jochaud-du-plessix
+// Last update Thu Jul  5 22:49:02 2012 gael jochaud-du-plessix
 //
 
 #include <cmath>
@@ -27,37 +27,37 @@ gle::Mesh* gle::Geometries::Cuboid(gle::Material* material,
   GLfloat halfDepth = depth / 2;
   
   GLfloat vertexes[] = {
-    //! Top face
+    // Top face
    -halfWidth, halfHeight,  -halfDepth,
    halfWidth, halfHeight,  -halfDepth,
    halfWidth, halfHeight,  halfDepth,
    -halfWidth, halfHeight,  halfDepth,
    
-    //! bottom face
+    // bottom face
    -halfWidth, -halfHeight,  -halfDepth,
    halfWidth, -halfHeight,  -halfDepth,
    halfWidth, -halfHeight,  halfDepth,
    -halfWidth, -halfHeight,  halfDepth,
 
-    //! Front face
+    // Front face
    -halfWidth, halfHeight,  -halfDepth,
    -halfWidth, -halfHeight,  -halfDepth,
    halfWidth, -halfHeight,  -halfDepth,
    halfWidth, halfHeight,  -halfDepth,
 
-    //! Back face
+    // Back face
    -halfWidth, -halfHeight,  halfDepth,
    halfWidth, -halfHeight,  halfDepth,
    halfWidth, halfHeight,  halfDepth,
    -halfWidth, halfHeight,  halfDepth,
 
-    //! Right face
+    // Right face
    halfWidth, -halfHeight,  -halfDepth,
    halfWidth, -halfHeight,  halfDepth,
    halfWidth, halfHeight,  halfDepth,
    halfWidth, halfHeight,  -halfDepth,
 
-    //! Left face
+    // Left face
    -halfWidth, halfHeight,  -halfDepth,
    -halfWidth, -halfHeight,  -halfDepth,
    -halfWidth, -halfHeight,  halfDepth,
@@ -65,46 +65,46 @@ gle::Mesh* gle::Geometries::Cuboid(gle::Material* material,
   };
 
   GLuint indexes[] = {
-    0, 1, 2, 0, 2, 3, //! Front face
-    4, 5, 6, 4, 6, 7, //! Back face
-    8, 9, 10, 8, 10, 11, //! Top face
-    12, 13, 14, 12, 14, 15, //! Bottom face
-    16, 17, 18, 16, 18, 19, //! Right face
-    20, 21, 22, 20, 22, 23 //! Left face
+    0, 1, 2, 0, 2, 3, // Front face
+    4, 5, 6, 4, 6, 7, // Back face
+    8, 9, 10, 8, 10, 11, // Top face
+    12, 13, 14, 12, 14, 15, // Bottom face
+    16, 17, 18, 16, 18, 19, // Right face
+    20, 21, 22, 20, 22, 23 // Left face
   };
 
   GLfloat normals[] = {
-    //! Top face
+    // Top face
     0.0,  1.0,  0.0,
     0.0,  1.0,  0.0,
     0.0,  1.0,  0.0,
     0.0,  1.0,  0.0,
 
-    //! Bottom face
+    // Bottom face
     0.0, -1.0,  0.0,
     0.0, -1.0,  0.0,
     0.0, -1.0,  0.0,
     0.0, -1.0,  0.0,
 
-    //! Front face
+    // Front face
     0.0,  0.0,  -1.0,
     0.0,  0.0,  -1.0,
     0.0,  0.0,  -1.0,
     0.0,  0.0,  -1.0,
 
-    //! Back face
+    // Back face
     0.0,  0.0, 1.0,
     0.0,  0.0, 1.0,
     0.0,  0.0, 1.0,
     0.0,  0.0, 1.0,
 
-    //! Right face
+    // Right face
     1.0,  0.0,  0.0,
     1.0,  0.0,  0.0,
     1.0,  0.0,  0.0,
     1.0,  0.0,  0.0,
 
-    //! Left face
+    // Left face
     -1.0,  0.0,  0.0,
     -1.0,  0.0,  0.0,
     -1.0,  0.0,  0.0,
@@ -112,37 +112,37 @@ gle::Mesh* gle::Geometries::Cuboid(gle::Material* material,
   };
 
   GLfloat tangents[] = {
-    //! Top face
+    // Top face
     0.0,  0.0,  1.0,
     0.0,  0.0,  1.0,
     0.0,  0.0,  1.0,
     0.0,  0.0,  1.0,
 
-    //! Bottom face
+    // Bottom face
     0.0, 0.0,  -1.0,
     0.0, 0.0,  -1.0,
     0.0, 0.0,  -1.0,
     0.0, 0.0,  -1.0,
 
-    //! Front face
+    // Front face
     1.0,  0.0,  0.0,
     1.0,  0.0,  0.0,
     1.0,  0.0,  0.0,
     1.0,  0.0,  0.0,
 
-    //! Back face
+    // Back face
     -1.0,  0.0, 0.0,
     -1.0,  0.0, 0.0,
     -1.0,  0.0, 0.0,
     -1.0,  0.0, 0.0,
 
-    //! Right face
+    // Right face
     0.0,  1.0,  0.0,
     0.0,  1.0,  0.0,
     0.0,  1.0,  0.0,
     0.0,  1.0,  0.0,
 
-    //! Left face
+    // Left face
     0.0,  -1.0,  0.0,
     0.0,  -1.0,  0.0,
     0.0,  -1.0,  0.0,

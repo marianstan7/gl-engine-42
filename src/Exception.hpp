@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Wed Feb 15 19:06:53 2012 gael jochaud-du-plessix
-// Last update Tue Jun 26 15:41:07 2012 gael jochaud-du-plessix
+// Last update Thu Jul  5 22:34:21 2012 gael jochaud-du-plessix
 //
 
 #ifndef _GLE_EXCEPTION_HPP_
@@ -15,7 +15,8 @@
 # include <string>
 
 namespace gle {
-  
+
+  //! Exceptions classes of the engine
   namespace Exception {
 
     //! Describe an exception
@@ -136,6 +137,8 @@ namespace gle {
 	OpenGLError(message + ": Linkage Error") {}
       virtual ~LinkageError() throw() {}
     };
+
+    //! Check for OpenGL error and throw an exception if necessary
 
     void CheckOpenGLError(const std::string& message="");
   };

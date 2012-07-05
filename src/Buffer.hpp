@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Wed Feb 15 16:10:11 2012 gael jochaud-du-plessix
-// Last update Thu Jun 21 00:11:08 2012 loick michard
+// Last update Thu Jul  5 22:23:50 2012 gael jochaud-du-plessix
 //
 
 #ifndef _GLE_BUFFER_HPP_
@@ -395,7 +395,10 @@ namespace gle {
     GLuint	_id;
   };
 
+  //! OpenGL of floats
   typedef Buffer<GLfloat> Bufferf;
+  
+  //! OpenGL of unsigned int
   typedef Buffer<GLuint> Bufferui;
 };
 

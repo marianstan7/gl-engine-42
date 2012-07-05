@@ -5,7 +5,7 @@
 // Login   <michar_l@epitech.net>
 // 
 // Started on  Fri Feb 17 12:51:39 2012 loick michard
-// Last update Fri May 25 01:04:04 2012 gael jochaud-du-plessix
+// Last update Thu Jul  5 22:24:09 2012 gael jochaud-du-plessix
 //
 
 #ifndef _GLE_COLOR_HPP_
@@ -88,6 +88,7 @@ namespace gle {
     T a;
   };
 
+  //! Color with float components
   typedef Color<GLfloat> Colorf;
 }
 

@@ -5,7 +5,7 @@
 // Login   <michar_l@epitech.net>
 // 
 // Started on  Fri Feb 17 12:51:39 2012 loick michard
-// Last update Wed Jul  4 17:40:51 2012 gael jochaud-du-plessix
+// Last update Thu Jul  5 22:33:40 2012 gael jochaud-du-plessix
 //
 
 #ifndef _GLE_VECTOR3_HPP_
@@ -163,16 +163,25 @@ namespace gle {
     T z;
   };
 
+  //! Vector3 with float values
   typedef Vector3<GLfloat> Vector3f;
+
+  //! Vector3 with unsigned integer values
   typedef Vector3<GLuint> Vector3ui;
+
+  //! Vector3 with integer values
   typedef Vector3<GLint> Vector3i;
 }
+
+//! Multiplication of two vectors
 
 template <typename T>
 T operator*(gle::Vector3<T> const & v1, gle::Vector3<T> const & v2)
 {
   return (v1.x * v2.x + v1.y * v2.y + v1.z * v2.z);
 }
+
+//! Cross product of two vectors
 
 template <typename T>
 gle::Vector3<T> operator^(gle::Vector3<T> const & v1,
@@ -185,12 +194,16 @@ gle::Vector3<T> operator^(gle::Vector3<T> const & v1,
 			  ));
 }
 
+//! Substraction of two vectors
+
 template <typename T>
 gle::Vector3<T> operator-(gle::Vector3<T> const & v1,
 			  gle::Vector3<T> const & v2)
 {
   return (gle::Vector3<T>(v1.x - v2.x, v1.y - v2.y, v1.z - v2.z));
 }
+
+//! Addition of two vectors
 
 template <typename T>
 gle::Vector3<T> operator+(gle::Vector3<T> const & v1,
@@ -199,12 +212,16 @@ gle::Vector3<T> operator+(gle::Vector3<T> const & v1,
   return (gle::Vector3<T>(v1.x + v2.x, v1.y + v2.y, v1.z + v2.z));
 }
 
+//! Multiplication of a vector by a value
+
 template <typename T>
 gle::Vector3<T> operator*(gle::Vector3<T> const & v1,
 			  T const & value)
 {
   return (gle::Vector3<T>(v1.x * value, v1.y * value, v1.z * value));
 }
+
+//! Prints a vector on a standard output stream
 
 template <typename T>
 std::ostream& operator<<(std::ostream &s, gle::Vector3<T> const & v)
