@@ -5,7 +5,7 @@
 // Login   <michar_l@epitech.net>
 // 
 // Started on  Thu Feb 23 17:55:31 2012 loick michard
-// Last update Mon Jul  2 22:46:30 2012 gael jochaud-du-plessix
+// Last update Fri Jul  6 01:41:21 2012 loick michard
 //
 
 #include <SpotLight.hpp>
@@ -15,7 +15,7 @@
 gle::SpotLight::SpotLight(Vector3<GLfloat> const& position,
 			  Color<GLfloat> const& color,
 			  Color<GLfloat> const& specularColor,
-			  GLfloat cosCutOff)
+			  GLfloat cutOff)
   : gle::Light(gle::Light::SPOT)
 {
   _color[0] = color.r;
@@ -26,14 +26,15 @@ gle::SpotLight::SpotLight(Vector3<GLfloat> const& position,
   _specularColor[2] = specularColor.b;
   _position = position;
   _attenuation[0] = _attenuation[1] = _attenuation[2] = 0;
-  _cosCutOff = cosCutOff;
+  _cosCutOff = cos(cutOff * M_PI / 180);
+  _innerCosCutOff = _cosCutOff;
   _target = gle::Vector3f(0.0, -1.0, 0.0);
   _hasTarget = true;
 }
 
 gle::SpotLight::SpotLight(Vector3<GLfloat> const& position,
 			  Color<GLfloat> const& color,
-			  GLfloat cosCutOff)
+			  GLfloat cutOff)
   : gle::Light(gle::Light::SPOT)
 {
   _color[0] = color.r;
@@ -44,7 +45,8 @@ gle::SpotLight::SpotLight(Vector3<GLfloat> const& position,
   _specularColor[2] = color.b;
   _position = position;
   _attenuation[0] = _attenuation[1] = _attenuation[2] = 0;
-  _cosCutOff = cosCutOff;
+  _cosCutOff = cos(cutOff * M_PI / 180);
+  _innerCosCutOff = _cosCutOff;
   _target = gle::Vector3f(0.0, -1.0, 0.0);
   _hasTarget = true;
 }
@@ -74,14 +76,19 @@ void gle::SpotLight::setAttenuation(GLfloat constant, GLfloat linear, GLfloat qu
   _attenuation[2] = quadratic;
 }
 
-void gle::SpotLight::setCosCutOff(GLfloat cosCutOff)
+void gle::SpotLight::setCutOff(GLfloat cutOff)
 {
-  _cosCutOff = cosCutOff;
+  _cosCutOff = cos(cutOff * M_PI / 180);
   if (_shadowMapCamera)    
     dynamic_cast<gle::PerspectiveCamera*>(_shadowMapCamera)
-      ->setFovy(_cosCutOff / M_PI * 180.0);
+      ->setFovy(acos(_cosCutOff) / M_PI * 360.0);
   else
     getShadowMapCamera();
+}
+
+void gle::SpotLight::setInnerCutOff(GLfloat innerCutOff)
+{
+  _innerCosCutOff = cos(innerCutOff * M_PI / 180);
 }
 
 GLfloat* gle::SpotLight::getColor()
@@ -99,9 +106,24 @@ GLfloat* gle::SpotLight::getAttenuation()
   return (_attenuation);
 }
 
+GLfloat gle::SpotLight::getCutOff()
+{
+  return (acos(_cosCutOff) / M_PI * 180);
+}
+
+GLfloat gle::SpotLight::getInnerCutOff()
+{
+  return (acos(_innerCosCutOff) / M_PI * 180);
+}
+
 GLfloat gle::SpotLight::getCosCutOff()
 {
   return (_cosCutOff);
+}
+
+GLfloat gle::SpotLight::getInnerCosCutOff()
+{
+  return (_innerCosCutOff);
 }
 
 gle::Camera* gle::SpotLight::getShadowMapCamera()
@@ -111,7 +133,7 @@ gle::Camera* gle::SpotLight::getShadowMapCamera()
       _shadowMapCamera = 
 	new gle::PerspectiveCamera(getPosition(),
 				   getTarget(),
-				   _cosCutOff / M_PI * 180.0,
+				   acos(_cosCutOff) / M_PI * 360.0,
 				   ((GLfloat)_shadowMapSize.width
 				    /_shadowMapSize.height),
 				   50, 1000);

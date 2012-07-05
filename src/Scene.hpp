@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Mon Feb 20 18:18:01 2012 gael jochaud-du-plessix
-// Last update Thu Jul  5 21:40:33 2012 loick michard
+// Last update Fri Jul  6 01:31:02 2012 loick michard
 //
 
 #ifndef _GLE_SCENE_HPP_
@@ -552,6 +552,10 @@ namespace gle {
 
     GLfloat* getSpotLightsCosCutOff() const;
 
+    //! Get a GLfloat tab of all spot lights inner cos cut off
+
+    GLfloat* getSpotLightsInnerCosCutOff() const;
+
     //! Get a GLint tab indicated for each point light whether or not it has a shadow map
 
     GLint* getSpotLightsHasShadowMap() const;
@@ -714,6 +718,7 @@ namespace gle {
     std::vector<GLfloat>	_spotLightsAttenuation;
     std::vector<GLfloat>	_spotLightsDirection;
     std::vector<GLfloat>	_spotLightsCosCutOff;
+    std::vector<GLfloat>	_spotLightsInnerCosCutOff;
     std::vector<GLint>		_spotLightsHasShadowMap;
     std::vector<GLfloat>	_spotLightsShadowMapMatrix;
     std::vector<gle::Texture*>	_spotLightsShadowMap;

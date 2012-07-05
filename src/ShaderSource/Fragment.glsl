@@ -49,6 +49,7 @@ uniform samplerCube gle_cubeMap;
 	uniform vec3 gle_spotLightSpecularColor[GLE_NB_SPOT_LIGHTS];
 	uniform vec3 gle_spotLightDirection[GLE_NB_SPOT_LIGHTS];
 	uniform float gle_spotLightCosCutOff[GLE_NB_SPOT_LIGHTS];
+	uniform float gle_spotLightInnerCosCutOff[GLE_NB_SPOT_LIGHTS];
 	uniform bool gle_spotLightHasShadowMap[GLE_NB_SPOT_LIGHTS];
 	uniform sampler2D/*Shadow*/ gle_spotLightShadowMap[GLE_NB_SPOT_LIGHTS];
 #endif
@@ -175,16 +176,8 @@ void main(void) {
 			vec3 D = normalize(gle_spotLightDirection[i]);
 
 			// COMPUTE SPOT ANGLE
-			float cos_cur_angle = dot(-normalize(gle_varying_spotLightRealDirection[i]), D);
-
-			float cos_inner_cone_angle = gle_spotLightCosCutOff[i];
-			float cos_outer_cone_angle = cos_inner_cone_angle * 0.95;
-
-			float cos_inner_minus_outer_angle = 
-				cos_inner_cone_angle - cos_outer_cone_angle;
-
-			float spot = clamp((cos_cur_angle - cos_outer_cone_angle) / 
-					cos_inner_minus_outer_angle, 0.0, 1.0);
+			float cos_cur_angle = dot(D, normalize(-gle_varying_spotLightRealDirection[i]));
+			float spot = clamp((cos_cur_angle - gle_spotLightCosCutOff[i]) / (gle_spotLightInnerCosCutOff[i] - gle_spotLightCosCutOff[i]), 0.0, 1.0);
 
 			diffuseIntensity *= (1.0 - shadowAttenuation);
 			specularIntensity *= (1.0 - shadowAttenuation);

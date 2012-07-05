@@ -5,7 +5,7 @@
 // Login   <michar_l@epitech.net>
 // 
 // Started on  Thu Feb 23 17:36:20 2012 loick michard
-// Last update Wed Jul  4 20:26:43 2012 loick michard
+// Last update Fri Jul  6 01:41:41 2012 loick michard
 //
 
 #ifndef _SPOT_LIGHT_HPP_
@@ -31,23 +31,23 @@ namespace gle {
       \param position Position of the light
       \param color Color emits by the light
       \param specularColor Specular color emits by the light
-      \param cosCutOff Spot open angle
+      \param cutOff Spot open angle in degree
     */
 
     SpotLight(Vector3<GLfloat> const& position, Color<GLfloat> const& color,
 	      Color<GLfloat> const& specularColor,
-	      GLfloat cosCutOff);
+	      GLfloat cutOff);
 
     //! Construct a spot light
     /*!
       This constructor set the specularColor to the same as color
       \param position Position of the light
       \param color Color emits by the light
-      \param cosCutOff Spot open angle
+      \param cutOff Spot open angle in degree
     */
 
     SpotLight(Vector3<GLfloat> const& position, Color<GLfloat> const& color,
-	      GLfloat cosCutOff);
+	      GLfloat cutOff);
 
     //! Default destructor
 
@@ -78,9 +78,15 @@ namespace gle {
 
     //! Set spot open angle
     /*
-      \param cosCutOff Spot open angle
+      \param cosCutOff Spot open angle in degree
     */
-    void setCosCutOff(GLfloat cosCutOff);
+    void setCutOff(GLfloat cutOff);
+
+    //! Set spot inner open angle
+    /*
+      \param cosCutOff Spot inner open angle in degree
+    */
+    void setInnerCutOff(GLfloat innerCutOff);
 
     //! Get the light color
 
@@ -93,8 +99,17 @@ namespace gle {
     //! Return light attenuation
     GLfloat* getAttenuation();
 
-    //! Return spot open angle
-    GLfloat getCosCutOff();    
+    //! Return spot open angle in degree
+    GLfloat getCutOff();
+
+    //! Return spot inner open angle in degree
+    GLfloat getInnerCutOff();
+
+    //! Return spot cos cut off
+    GLfloat getCosCutOff();
+
+    //! Return spot inner cos cut off
+    GLfloat getInnerCosCutOff();
 
     //! Return shadow map camera
     gle::Camera* getShadowMapCamera();
@@ -108,6 +123,7 @@ namespace gle {
     GLfloat	_attenuation[3];
     GLfloat	_direction[3];
     GLfloat	_cosCutOff;
+    GLfloat	_innerCosCutOff;
   };
 }
 

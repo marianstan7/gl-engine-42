@@ -101,7 +101,7 @@ public:
     wiredPlane->setRasterizationMode(gle::Mesh::Line);
     wiredPlane->setMaterial(material2);
 
-    *_scene << sphere << _wiredSphere << pointSphere;
+    *_scene << sphere << _wiredSphere;// << pointSphere;
     *_scene << _cube << wiredCube << pointCube;
     *_scene << _plane << wiredPlane << pointPlane;
 
@@ -110,7 +110,7 @@ public:
     *_scene << ambientLight;
 
     _light = new gle::SpotLight(gle::Vector3f(-53.2, 59, -51),
-				gle::Colorf(1.0, 1.0, 1.0), 1.0);
+				gle::Colorf(1.0, 1.0, 1.0), 20);
     _light->setTarget(gle::Vector3f(0, 0, 0));
     _lightCamera = _light->getShadowMapCamera();
 
@@ -128,7 +128,7 @@ public:
     screenPlane->rotate(gle::Vector3f(1, 0, 0), 90);
 
     _framebuffer = new gle::TextureFrameBuffer(500, 500);
-    //screenMaterial->setColorMap(_framebuffer->getRenderTexture());
+    screenMaterial->setColorMap(_framebuffer->getRenderTexture());
     screenMaterial->setColorMap(_light->getShadowMap());
     screenMaterial->setAmbientColor(gle::Color<GLfloat>(1.0, 1.0, 1.0));
 
@@ -142,18 +142,16 @@ public:
 
   void animate()
   {
-    _light->setPosition(gle::Vector3f(-53.2 * sin(_elapsedTime / 1000.0), 59.0, -51));
+    //_light->setPosition(gle::Vector3f(-53.2 * sin(_elapsedTime / 1000.0), 59.0, -51));
     //_wiredSphere->setPosition(gle::Vector3f(-8, 5 + 5 * sin(_elapsedTime / 1000.0), 8));
     _wiredSphere->setRotation(gle::Vector3f(0, 1, 0), _elapsedTime / 50.0);
   }
 
   void render()
   {
-    // _scene->setCurrentCamera(_lightCamera);
-    // _scene->updateLights();
-    // _renderer->render(_scene, _framebuffer->getRenderTexture()->getSize(), _framebuffer);
+    //_scene->setCurrentCamera(_lightCamera);
+     //_renderer->render(_scene, _framebuffer->getRenderTexture()->getSize(), _framebuffer);
     _scene->setCurrentCamera(_camera);
-    _scene->updateLights();
     _renderer->render(_scene, gle::Rectf(0, 0, _winWidth, _winHeight));
   }
 
@@ -161,10 +159,16 @@ public:
   {
     if (event.type == sf::Event::KeyPressed
 	&& event.key.code == sf::Keyboard::O)
-      _light->setCosCutOff(_light->getCosCutOff() + 0.02);
+      _light->setCutOff(_light->getCutOff() + 1);
     if (event.type == sf::Event::KeyPressed
         && event.key.code == sf::Keyboard::P)
-      _light->setCosCutOff(_light->getCosCutOff() - 0.02);
+      _light->setCutOff(_light->getCutOff() - 1);
+    if (event.type == sf::Event::KeyPressed
+        && event.key.code == sf::Keyboard::Q)
+      _light->setInnerCutOff(_light->getInnerCutOff() + 1);
+    if (event.type == sf::Event::KeyPressed
+        && event.key.code == sf::Keyboard::W)
+      _light->setInnerCutOff(_light->getInnerCutOff() - 1);
   }
 
 private	:
