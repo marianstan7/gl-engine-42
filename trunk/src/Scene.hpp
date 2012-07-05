@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Mon Feb 20 18:18:01 2012 gael jochaud-du-plessix
-// Last update Thu Jul  5 17:17:53 2012 loick michard
+// Last update Thu Jul  5 21:40:33 2012 loick michard
 //
 
 #ifndef _GLE_SCENE_HPP_
@@ -182,6 +182,10 @@ namespace gle {
 
       virtual void	updateMatrix();
 
+      //! Set need matrix update true recursively to all children
+
+      void setRecursiveNeedMatrixUpdate();
+
       //! Set the position of the node, relative to its parent
 
       void	setPosition(const Vector3<GLfloat>& pos);
@@ -209,7 +213,7 @@ namespace gle {
 	in the 3D world
        */
 
-      const Vector3<GLfloat>& getAbsolutePosition() const;
+      const Vector3<GLfloat>& getAbsolutePosition();
 
       //! Return true if the node is dynamic
 
@@ -353,6 +357,9 @@ namespace gle {
 
       //! Say whether or not a node was add to the node
       int			_addedNodes;
+
+      //! Say whether or not node need update matrix
+      bool			_needUpdateMatrix;
     };
 
     //! Symbolize a group of meshes for rendering

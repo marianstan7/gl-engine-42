@@ -5,7 +5,7 @@
 // Login   <michar_l@epitech.net>
 // 
 // Started on  Sat Feb 18 12:53:42 2012 loick michard
-// Last update Tue Jun 26 15:12:57 2012 gael jochaud-du-plessix
+// Last update Thu Jul  5 22:17:22 2012 loick michard
 //
 
 #include <PerspectiveCamera.hpp>
@@ -24,7 +24,6 @@ gle::PerspectiveCamera::PerspectiveCamera(gle::Vector3<GLfloat>
 {
   _debugMesh[0] = NULL;
   _target += gle::Vector3<GLfloat>(0, 0, 1);
-  this->updateMatrix();
 }
 
 gle::PerspectiveCamera::PerspectiveCamera(gle::Vector3<GLfloat>
@@ -39,7 +38,6 @@ gle::PerspectiveCamera::PerspectiveCamera(gle::Vector3<GLfloat>
     _near(near), _far(far)
 {
   _debugMesh[0] = NULL;
-  this->updateMatrix();
 }
 
 gle::PerspectiveCamera::~PerspectiveCamera()
@@ -72,7 +70,7 @@ void gle::PerspectiveCamera::update()
   if (_debugMesh[0])
     {
       Matrix4<GLfloat> tm = _transformationMatrix;
-      Matrix3<GLfloat> nm = getNormalMatrix();
+      Matrix3<GLfloat> nm = _normalMatrix;
       _debugMesh[0]->setMatrices(tm, nm);
       _debugMesh[1]->setMatrices(tm, nm);
     }

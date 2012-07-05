@@ -5,7 +5,7 @@
 // Login   <michar_l@epitech.net>
 // 
 // Started on  Wed May  2 16:06:37 2012 loick michard
-// Last update Wed Jul  4 16:54:14 2012 loick michard
+// Last update Thu Jul  5 20:59:01 2012 loick michard
 //
 
 #ifndef _BOUNDING_BOX_HPP
@@ -56,7 +56,7 @@ namespace gle
     /*!
       \param mesh Linked mesh
      */
-    virtual void update(Mesh* mesh);
+    virtual void update(const Matrix4<GLfloat>& mvMatrix);
 
     //! Get the highest extreme value in the 3 axis
     virtual const gle::Vector3<float>& getMaxPoint() const;

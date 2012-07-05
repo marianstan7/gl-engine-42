@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Wed Feb 15 17:24:36 2012 gael jochaud-du-plessix
-// Last update Thu Jul  5 18:15:34 2012 loick michard
+// Last update Thu Jul  5 22:42:27 2012 loick michard
 //
 
 /*! 
@@ -168,6 +168,7 @@ int glEngine(int ac, char **av)
 	    glViewport(0, 0, Event.size.width, Event.size.height);
 	  flycam::event(event, App);
 	}
+
       camera.setPosition(gle::Vector3<GLfloat>(cos(angle/3) * -(dist/2),
 					       30,
 					       sin(angle/3) * -dist/0.8));

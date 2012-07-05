@@ -5,7 +5,7 @@
 // Login   <michar_l@epitech.net>
 // 
 // Started on  Wed May  2 16:41:28 2012 loick michard
-// Last update Sat Jun 23 15:05:40 2012 loick michard
+// Last update Thu Jul  5 21:02:15 2012 loick michard
 //
 
 #include <BoundingSphere.hpp>
@@ -122,27 +122,27 @@ gle::Mesh* gle::BoundingSphere::getDebugMesh(gle::Mesh* mesh)
   return (_debugMesh);
 }
 
-void	gle::BoundingSphere::update(Mesh* mesh)
+void	gle::BoundingSphere::update(const Matrix4<GLfloat>& mvMatrix)
 {
   Vector3<GLfloat> point = _center;
   point.x += _radius;
   _absoluteCenter = _center;
-  _absoluteCenter *= mesh->getTransformationMatrix();
-  point *= mesh->getTransformationMatrix();
+  _absoluteCenter *= mvMatrix;
+  point *= mvMatrix;
   _absoluteRadius = sqrt((point.x - _absoluteCenter.x) * (point.x - _absoluteCenter.x) +
 		 (point.y - _absoluteCenter.y) * (point.y - _absoluteCenter.y) +
 		 (point.z - _absoluteCenter.z) * (point.z - _absoluteCenter.z));
   if (_debugMesh)
     {
-      Matrix4<GLfloat> mvMatrix = mesh->getTransformationMatrix();
+      Matrix4<GLfloat> moveMatrix = mvMatrix;
       Matrix3<GLfloat> normalMatrix;
 
-      mvMatrix.translate(_center);
-      Matrix4<GLfloat> inverse(mvMatrix);
+      moveMatrix.translate(_center);
+      Matrix4<GLfloat> inverse(moveMatrix);
       inverse.inverse();
       normalMatrix = inverse;
       normalMatrix.transpose();
-      _debugMesh->setMatrices(mvMatrix, normalMatrix);
+      _debugMesh->setMatrices(moveMatrix, normalMatrix);
       _debugMesh->setRasterizationMode(gle::Mesh::Line);
     }
   _min = _absoluteCenter;

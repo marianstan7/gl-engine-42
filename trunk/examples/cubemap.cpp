@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Fri Mar  2 17:27:21 2012 gael jochaud-du-plessix
-// Last update Wed Jul  4 22:22:15 2012 loick michard
+// Last update Thu Jul  5 18:27:43 2012 loick michard
 //
 
 #include <iostream>
@@ -32,7 +32,7 @@ public:
     _light(), _plane()
   {
     _cameraType = Trackball;
-    _recordVideo = true;
+    //_recordVideo = true;
   }
 
   void _loadCamaro()

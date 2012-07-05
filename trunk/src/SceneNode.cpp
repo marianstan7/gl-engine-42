@@ -5,7 +5,7 @@
 // Login   <michar_l@epitech.net>
 // 
 // Started on  Tue May 15 19:32:41 2012 loick michard
-// Last update Thu Jul  5 13:50:51 2012 loick michard
+// Last update Thu Jul  5 22:43:44 2012 loick michard
 //
 
 #include <algorithm>
@@ -13,7 +13,7 @@
 
 gle::Scene::Node::Node(gle::Scene::Node::Type type) :
   _type(type), _parent(NULL), _isDynamic(false), _projectShadow(true),
-  _hasTarget(false), _addedNodes(0)
+  _hasTarget(false), _addedNodes(0), _needUpdateMatrix(true)
 {
 
 }
@@ -25,7 +25,7 @@ gle::Scene::Node::Node(const gle::Scene::Node& other) :
   _target(other._target), _hasTarget(other._hasTarget),
   _scaleMatrix(other._scaleMatrix), _rotationMatrix(other._rotationMatrix),
   _customTransformationMatrix(other._customTransformationMatrix),
-  _addedNodes(other._addedNodes)
+  _addedNodes(other._addedNodes), _needUpdateMatrix(other._needUpdateMatrix)
 {
   for (gle::Scene::Node* const &child : other._children)
     {
@@ -64,7 +64,6 @@ void gle::Scene::Node::addChild(gle::Scene::Node* child)
       this->setAddedNodes(_addedNodes | child->getRecursiveType());
     }
   child->setParent(this);
-  child->updateMatrix();
 }
 
 void gle::Scene::Node::removeChild(gle::Scene::Node* child)
@@ -122,15 +121,20 @@ gle::Scene::Node* gle::Scene::Node::getChildByName(std::string const& name)
 void gle::Scene::Node::setParent(gle::Scene::Node* parent)
 {
   _parent = parent;
+  setRecursiveNeedMatrixUpdate();
 }
 
 void gle::Scene::Node::updateMatrix()
 {
   if (_parent)
-    _transformationMatrix = _parent->_transformationMatrix;
+    {
+      if (_parent->_needUpdateMatrix)
+	_parent->updateMatrix();
+      _transformationMatrix = _parent->_transformationMatrix;
+    }
   else
     _transformationMatrix.identity();
-
+  
   _cameraTransformationMatrix = _transformationMatrix;
   _transformationMatrix.translate(_position);
   if (_hasTarget)
@@ -140,31 +144,38 @@ void gle::Scene::Node::updateMatrix()
   _transformationMatrix *= _rotationMatrix;
   _transformationMatrix *= _scaleMatrix;
   _transformationMatrix *= _customTransformationMatrix;
-
+  
   if (_type == Camera)
     {
       if (_hasTarget)
 	{
 	  _cameraTransformationMatrix *= gle::Matrix4<GLfloat>::cameraLookAt(_position,
-	  								     _target,
-	  								     Vector3<GLfloat>(0, 1, 0));
+									     _target,
+									     Vector3<GLfloat>(0, 1, 0));
 	  _cameraTransformationMatrix.translate(-_position.x, -_position.y, -_position.z);
 	}
       _cameraTransformationMatrix *= _rotationMatrix;
       _cameraTransformationMatrix *= _scaleMatrix;
     }
-
+  
   _absolutePosition.x = _absolutePosition.y = _absolutePosition.z = 0;
   _absolutePosition *= _transformationMatrix;
-
+  
   Matrix4<GLfloat> inverse(_transformationMatrix);
   inverse.inverse();
   _normalMatrix = inverse;
   _normalMatrix.transpose();
-
-  for (gle::Scene::Node* &child : _children)
-    child->updateMatrix();
+  
+  setRecursiveNeedMatrixUpdate();
+  _needUpdateMatrix = false;
   this->update();
+}
+
+void gle::Scene::Node::setRecursiveNeedMatrixUpdate()
+{
+  _needUpdateMatrix = true;
+  for (gle::Scene::Node* &child : _children)
+    child->setRecursiveNeedMatrixUpdate();
 }
 
 void gle::Scene::Node::setMatrices(gle::Matrix4<GLfloat> &transformationMatrix,
@@ -172,10 +183,16 @@ void gle::Scene::Node::setMatrices(gle::Matrix4<GLfloat> &transformationMatrix,
 {
   _transformationMatrix = transformationMatrix;
   _normalMatrix = normalMatrix;
+  _needUpdateMatrix = false;
 }
 
 const gle::Matrix4<GLfloat>& gle::Scene::Node::getTransformationMatrix()
 {
+  if (_needUpdateMatrix)
+    {
+      this->updateMatrix();
+      _needUpdateMatrix = false;
+    }
   if (_type == Camera)
     return (_cameraTransformationMatrix);
   return (_transformationMatrix);
@@ -183,38 +200,43 @@ const gle::Matrix4<GLfloat>& gle::Scene::Node::getTransformationMatrix()
 
 const gle::Matrix3<GLfloat>& gle::Scene::Node::getNormalMatrix()
 {
+  if (_needUpdateMatrix)
+    {
+      this->updateMatrix();
+      _needUpdateMatrix = false;
+    }
   return (_normalMatrix);
 }
 
 void gle::Scene::Node::setPosition(const gle::Vector3<GLfloat>& pos)
 {
   _position = pos;
-  this->updateMatrix();
+  _needUpdateMatrix = true;
 }
 
 void gle::Scene::Node::setRotation(const gle::Quaternion<GLfloat>& rotation)
 {
   _rotationMatrix = rotation.getMatrix();
-  this->updateMatrix();
+  _needUpdateMatrix = true;
 }
 
 void gle::Scene::Node::setTarget(const gle::Vector3<GLfloat>& target)
 {
   _target = target;
   _hasTarget = true;
-  this->updateMatrix();
+  _needUpdateMatrix = true;
 }
 
 void gle::Scene::Node::setScale(GLfloat scale)
 {
   this->setScale(scale, scale, scale);
-  this->updateMatrix();
+  _needUpdateMatrix = true;
 }
 
 void gle::Scene::Node::setScale(GLfloat scaleX, GLfloat scaleY, GLfloat scaleZ)
 {
   _scaleMatrix = gle::Matrix4<GLfloat>::scale(scaleX, scaleY, scaleZ);
-  this->updateMatrix();
+  _needUpdateMatrix = true;
 }
 
 const gle::Vector3<GLfloat>& gle::Scene::Node::getPosition() const
@@ -222,8 +244,13 @@ const gle::Vector3<GLfloat>& gle::Scene::Node::getPosition() const
   return (_position);
 }
 
-const gle::Vector3<GLfloat>& gle::Scene::Node::getAbsolutePosition() const
+const gle::Vector3<GLfloat>& gle::Scene::Node::getAbsolutePosition()
 {
+  if (_needUpdateMatrix)
+    {
+      this->updateMatrix();
+      _needUpdateMatrix = false;
+    }  
   return (_absolutePosition);
 }
 
@@ -259,19 +286,19 @@ void gle::Scene::Node::translate(const gle::Vector3<GLfloat>& vec)
 {
   _position += vec;
   _target += vec;
-  this->updateMatrix();
+  _needUpdateMatrix = true;
 }
 
 void gle::Scene::Node::rotate(const gle::Quaternion<GLfloat>& rotation)
 {
   _rotationMatrix *= rotation.getMatrix();
-  this->updateMatrix();
+  _needUpdateMatrix = true;
 }
 
 void	gle::Scene::Node::setCustomTransformationMatrix(const Matrix4f& matrix)
 {
   _customTransformationMatrix = matrix;
-  this->updateMatrix();
+  _needUpdateMatrix = true;
 }
 
 gle::Scene::Node* gle::Scene::Node::duplicate() const

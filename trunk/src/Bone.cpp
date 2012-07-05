@@ -5,7 +5,7 @@
 // Login   <michar_l@epitech.net>
 // 
 // Started on  Sun Jun 24 12:43:55 2012 loick michard
-// Last update Tue Jul  3 16:58:48 2012 gael jochaud-du-plessix
+// Last update Thu Jul  5 19:38:50 2012 loick michard
 //
 
 #include <Bone.hpp>
@@ -34,7 +34,7 @@ void gle::Bone::update()
 {
   if (_debugMeshes.size())
     {
-      Matrix4<GLfloat> mvMatrix = getTransformationMatrix();
+      Matrix4<GLfloat> mvMatrix = _transformationMatrix;
       Matrix3<GLfloat> normalMatrix;
       {
 	mvMatrix.translate(Vector3f(0, 0, 0));
@@ -45,7 +45,7 @@ void gle::Bone::update()
 	_debugMeshes[0]->setMatrices(mvMatrix, normalMatrix);
 	_debugMeshes[2]->setMatrices(mvMatrix, normalMatrix);
       }
-      mvMatrix = getTransformationMatrix();
+      mvMatrix = _transformationMatrix;
       {
 	mvMatrix.translate(Vector3f(0, _size, 0));
 	Matrix4<GLfloat> inverse(mvMatrix);

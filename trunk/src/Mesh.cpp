@@ -5,7 +5,7 @@
 // Login   <michar_l@epitech.net>
 // 
 // Started on  Mon Feb 20 18:25:23 2012 loick michard
-// Last update Thu Jul  5 17:28:39 2012 loick michard
+// Last update Thu Jul  5 20:55:55 2012 loick michard
 //
 
 #include <Mesh.hpp>
@@ -498,7 +498,7 @@ gle::Scene::Node* gle::Mesh::duplicate() const
 void gle::Mesh::update()
 {
   if (_boundingVolume)
-    _boundingVolume->update(this);
+    _boundingVolume->update(_transformationMatrix);
 }
 
 void gle::Mesh::setDynamic(bool dynamic, bool deep)
