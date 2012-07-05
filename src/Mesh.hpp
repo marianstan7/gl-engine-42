@@ -5,7 +5,7 @@
 // Login   <michar_l@epitech.net>
 // 
 // Started on  Thu Jun 21 20:39:52 2012 loick michard
-// Last update Wed Jul  4 20:11:13 2012 gael jochaud-du-plessix
+// Last update Thu Jul  5 01:48:36 2012 loick michard
 //
 
 #ifndef _MESH_HPP_
@@ -228,7 +228,7 @@ namespace gle {
 
     //! Get the attributes chunk in the mesh buffer manager
 
-    gle::MeshBufferManager::Chunk* getAttributes() const;
+    gle::MeshBufferManager::Chunk* getAttributes();
 
     //! Generate the bounding volume of the mesh
 
@@ -349,6 +349,8 @@ namespace gle {
 
     gle::Skeleton*	_skeleton;
     GLint		_skeletonId;
+
+    bool		_needSetIdentifiers;
   };
 }
 

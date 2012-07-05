@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Wed Feb 15 17:24:36 2012 gael jochaud-du-plessix
-// Last update Fri Jun 22 00:46:22 2012 gael jochaud-du-plessix
+// Last update Thu Jul  5 18:15:34 2012 loick michard
 //
 
 /*! 
@@ -29,7 +29,7 @@
 #define W_WIDTH 1280
 #define W_HEIGHT 720
 
-#define W_FRAMERATE 30
+#define W_FRAMERATE 3000
 
 int glEngine(int, char**);
 
@@ -94,7 +94,7 @@ int glEngine(int ac, char **av)
 
   gle::PointLight		l(gle::Vector3<GLfloat>(0, 0, 0), gle::Color<GLfloat>(1, 0, 0.25));
   gle::Mesh*			sp = gle::Geometries::Sphere(&materialLight,
-							     1);
+							     1, 30, 30, true);
   gle::PointLight		l2(gle::Vector3<GLfloat>(0, 0, 0),
 				   gle::Color<GLfloat>(0, 0.25, 1));
   gle::Material			materialLight2;
@@ -102,7 +102,7 @@ int glEngine(int ac, char **av)
   materialLight2.setSpecularLightEnabled(false);
   materialLight2.setAmbientColor(gle::Color<GLfloat>(0, 0.25, 1));
   gle::Mesh*			sp2 = gle::Geometries::Sphere(&materialLight2,
-							      1);
+							      1, 30, 30, true);
   gle::Material			materialLight3;
   materialLight3.setDiffuseLightEnabled(false);
   materialLight3.setSpecularLightEnabled(false);
@@ -110,7 +110,7 @@ int glEngine(int ac, char **av)
   gle::PointLight		l3(gle::Vector3<GLfloat>(0, 0, 0),
 				   gle::Color<GLfloat>(0.5, 1, 0.5));
   gle::Mesh*			sp3 = gle::Geometries::Sphere(&materialLight3,
-							      1);
+							      1, 30, 30, true);
 
   gle::Material			materialLight4;
   materialLight4.setDiffuseLightEnabled(false);
@@ -119,7 +119,7 @@ int glEngine(int ac, char **av)
   gle::PointLight		l4(gle::Vector3<GLfloat>(0, 0, 0),
 				   gle::Color<GLfloat>(1, 0.66, 0));
   gle::Mesh*			sp4 = gle::Geometries::Sphere(&materialLight4,
-							      1);
+							      1, 30, 30, true);
   gle::PointLight		l5(gle::Vector3<GLfloat>(0, 0, 0),
 				   gle::Color<GLfloat>(0.1, 0.1, 0.1));
   sp->setPosition(gle::Vector3<GLfloat>(0, 100, 0));
@@ -142,13 +142,13 @@ int glEngine(int ac, char **av)
   size_t		frameCounter = 0;
   float			dist = 170;
  
-  scene.update();
+  //scene.update();
   while (App.isOpen())
     {
       sf::Event event;
-      if (time.getElapsedTime().asMilliseconds() >= 100)
+      if (time.getElapsedTime().asMilliseconds() >= 1000)
 	{
-	  std::cout << "fps:" << (frameCounter * 10) << std::endl;
+	  std::cout << "fps:" << frameCounter << std::endl;
 	  frameCounter = 0;
 	  time.restart();
 	}
@@ -186,7 +186,7 @@ int glEngine(int ac, char **av)
       sp4->setPosition(gle::Vector3<GLfloat>(0, cos(angle/2) * dist2+30, sin(angle/2) * dist2));
       //l4.setPosition(gle::Vector3<GLfloat>(0, cos(angle/2) * dist2+30, sin(angle/2) * dist2));
 
-      scene.updateLights();
+      //scene.updateLights();
 
       renderer.render(&scene, gle::Rectf(0, 0, W_WIDTH, W_HEIGHT));
       App.display();

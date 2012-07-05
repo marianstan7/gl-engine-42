@@ -5,7 +5,7 @@
 // Login   <michar_l@epitech.net>
 // 
 // Started on  Tue May 15 19:32:41 2012 loick michard
-// Last update Wed Jul  4 19:52:37 2012 gael jochaud-du-plessix
+// Last update Thu Jul  5 13:50:51 2012 loick michard
 //
 
 #include <algorithm>
@@ -13,7 +13,7 @@
 
 gle::Scene::Node::Node(gle::Scene::Node::Type type) :
   _type(type), _parent(NULL), _isDynamic(false), _projectShadow(true),
-  _hasTarget(false)
+  _hasTarget(false), _addedNodes(0)
 {
 
 }
@@ -24,14 +24,17 @@ gle::Scene::Node::Node(const gle::Scene::Node& other) :
   _isDynamic(other._isDynamic), _projectShadow(other._projectShadow),
   _target(other._target), _hasTarget(other._hasTarget),
   _scaleMatrix(other._scaleMatrix), _rotationMatrix(other._rotationMatrix),
-  _customTransformationMatrix(other._customTransformationMatrix)
+  _customTransformationMatrix(other._customTransformationMatrix),
+  _addedNodes(other._addedNodes)
 {
   for (gle::Scene::Node* const &child : other._children)
     {
       Node* newChild = child->duplicate();
       _children.push_back(newChild);
       newChild->setParent(this);
+      _addedNodes |= newChild->getRecursiveType();
     }
+  this->setAddedNodes(_addedNodes);
 }
 
 gle::Scene::Node::~Node()
@@ -56,7 +59,10 @@ void gle::Scene::Node::setName(const std::string& name)
 void gle::Scene::Node::addChild(gle::Scene::Node* child)
 {
   if (find(_children.begin(), _children.end(), child) == _children.end())
-    _children.push_back(child);
+    {
+      _children.push_back(child);
+      this->setAddedNodes(_addedNodes | child->getRecursiveType());
+    }
   child->setParent(this);
   child->updateMatrix();
 }
@@ -66,6 +72,7 @@ void gle::Scene::Node::removeChild(gle::Scene::Node* child)
   for (auto _child = _children.begin(); _child != _children.end(); ++_child)
     if (*_child == child)
       {
+	this->setAddedNodes(_addedNodes | child->getRecursiveType());
 	_children.erase(_child);
 	return;
       }
@@ -281,4 +288,32 @@ std::vector<gle::Scene::Node*>& gle::Scene::Node::getDebugNodes(int mode)
 {
   (void)mode;
   return (_debugNodes);
+}
+
+int gle::Scene::Node::getAddedNodes() const
+{
+  return (_addedNodes);
+}
+
+void gle::Scene::Node::setAddedNodes(int addedNodes)
+{
+  _addedNodes = addedNodes;
+  if (_parent)
+    _parent->setAddedNodes(_parent->_addedNodes | _addedNodes);
+}
+
+void gle::Scene::Node::setAddedNodesRecursive(int addedNodes)
+{
+  _addedNodes = addedNodes;
+  for (Node* const& child : _children)
+    child->setAddedNodesRecursive(_addedNodes);
+}
+
+int gle::Scene::Node::getRecursiveType() const
+{
+  int type = _type;
+
+  for (Node* const &child : _children)
+    type |= child->getRecursiveType();
+  return (type);
 }

@@ -5,7 +5,7 @@
 // Login   <michar_l@epitech.net>
 // 
 // Started on  Mon Feb 20 18:25:23 2012 loick michard
-// Last update Mon Jul  2 22:12:14 2012 loick michard
+// Last update Thu Jul  5 17:28:39 2012 loick michard
 //
 
 #include <Mesh.hpp>
@@ -61,7 +61,7 @@ std::list<gle::Scene::MeshGroup> gle::Mesh::factorizeForDrawing(std::list<gle::M
 }
 
 gle::Mesh::Mesh(Material* material, bool isDynamic)
-  : gle::Scene::Node(gle::Scene::Node::Mesh),
+  : gle::Scene::Node((isDynamic) ? gle::Scene::Node::DynamicMesh : gle::Scene::Node::StaticMesh),
     _primitiveType(Triangles),
     _rasterizationMode(Fill),
     _pointSize(1.0),
@@ -75,7 +75,8 @@ gle::Mesh::Mesh(Material* material, bool isDynamic)
     _materialBufferId(-1),
     _absoluteIndexes(false),
     _needUniformsUpdate(true),
-    _uniforms(NULL), _skeleton(NULL), _skeletonId(-1)
+    _uniforms(NULL), _skeleton(NULL), _skeletonId(-1),
+    _needSetIdentifiers(true)
 {
   _isDynamic = isDynamic;
   _indexes = new gle::Buffer<GLuint>(gle::Buffer<GLuint>::ElementArray,
@@ -97,7 +98,8 @@ gle::Mesh::Mesh(gle::Mesh const & other)
     _materialBufferId(-1),
     _absoluteIndexes(other._absoluteIndexes),
     _needUniformsUpdate(true),
-    _uniforms(NULL), _skeleton(other._skeleton), _skeletonId(other._skeletonId)
+    _uniforms(NULL), _skeleton(other._skeleton), _skeletonId(other._skeletonId),
+    _needSetIdentifiers(true)
 {
   if (other._boundingVolume)
     _boundingVolume = other._boundingVolume->duplicate();
@@ -173,6 +175,7 @@ void gle::Mesh::setVertexAttributes(const GLfloat* attributes, GLsizeiptr nbVert
       .resize(_attributes, nbVertexes * VertexAttributesSize, attributes);
   _nbVertexes = nbVertexes;
   createBoundingVolume(attributes, 0, VertexAttributesSize, nbVertexes);
+  _needSetIdentifiers = true;
 }
 
 void gle::Mesh::setVertexes(const GLfloat* vertexes, GLsizeiptr size, bool boundingVolume)
@@ -192,6 +195,7 @@ void gle::Mesh::setVertexes(const GLfloat* vertexes, GLsizeiptr size, bool bound
   _attributes->unmap();
   if (boundingVolume)
     createBoundingVolume(vertexes, 0, VertexAttributeSizeCoords, nbVertexes);
+  _needSetIdentifiers = true;
 }
 
 void gle::Mesh::setNormals(const GLfloat* normals, GLsizeiptr size)
@@ -208,6 +212,7 @@ void gle::Mesh::setNormals(const GLfloat* normals, GLsizeiptr size)
       attributes[i * VertexAttributesSize + VertexAttributeSizeCoords + j] =
 	normals[i * VertexAttributeSizeNormal + j];
   _attributes->unmap();
+  _needSetIdentifiers = true;
 }
 
 void gle::Mesh::setTangents(const GLfloat* tangents, GLsizeiptr size)
@@ -224,6 +229,7 @@ void gle::Mesh::setTangents(const GLfloat* tangents, GLsizeiptr size)
       attributes[i * VertexAttributesSize + VertexAttributeSizeCoords + VertexAttributeSizeNormal + j] =
 	tangents[i * VertexAttributeSizeTangent + j];
   _attributes->unmap();
+  _needSetIdentifiers = true;
 }
 
 void gle::Mesh::setTextureCoords(const GLfloat* textureCoords, GLsizeiptr size)
@@ -241,6 +247,7 @@ void gle::Mesh::setTextureCoords(const GLfloat* textureCoords, GLsizeiptr size)
 		 VertexAttributeSizeNormal + VertexAttributeSizeTangent + j] =
 	textureCoords[i * VertexAttributeSizeTextureCoords + j];
   _attributes->unmap();
+  _needSetIdentifiers = true;
 }
 
 void gle::Mesh::setBones(const GLfloat* bones, GLsizeiptr size)
@@ -258,6 +265,7 @@ void gle::Mesh::setBones(const GLfloat* bones, GLsizeiptr size)
 		 VertexAttributeSizeTangent + VertexAttributeSizeTextureCoords + j] =
 	bones[i * VertexAttributeSizeBone + j];
   _attributes->unmap();
+  _needSetIdentifiers = true;
 }
 
 void gle::Mesh::setIndexes(const GLuint* indexes, GLsizeiptr size)
@@ -266,6 +274,7 @@ void gle::Mesh::setIndexes(const GLuint* indexes, GLsizeiptr size)
   _indexes->resize(size, indexes);
   if (!_isDynamic)
     makeAbsoluteIndexes();
+  _needSetIdentifiers = true;
 }
 
 void gle::Mesh::setVertexes(gle::Array<GLfloat> const &vertexes, bool boundingVolume)
@@ -284,6 +293,7 @@ void gle::Mesh::setVertexes(gle::Array<GLfloat> const &vertexes, bool boundingVo
   _attributes->unmap();
   if (boundingVolume)
     createBoundingVolume((const GLfloat*)vertexes, 0, VertexAttributeSizeCoords, nbVertexes);
+  _needSetIdentifiers = true;
 }
 
 void gle::Mesh::setNormals(gle::Array<GLfloat> const &normals)
@@ -300,6 +310,7 @@ void gle::Mesh::setNormals(gle::Array<GLfloat> const &normals)
       attributes[i * VertexAttributesSize + VertexAttributeSizeCoords + j] =
 	normals[(GLuint)(i * VertexAttributeSizeNormal + j)];
   _attributes->unmap();
+  _needSetIdentifiers = true;
 }
 
 void gle::Mesh::setTangents(gle::Array<GLfloat> const &tangents)
@@ -316,6 +327,7 @@ void gle::Mesh::setTangents(gle::Array<GLfloat> const &tangents)
       attributes[i * VertexAttributesSize + VertexAttributeSizeCoords + VertexAttributeSizeNormal + j] =
 	tangents[(GLuint)(i * VertexAttributeSizeTangent + j)];
   _attributes->unmap();
+  _needSetIdentifiers = true;
 }
 
 void gle::Mesh::setTextureCoords(gle::Array<GLfloat> const &textureCoords)
@@ -333,6 +345,7 @@ void gle::Mesh::setTextureCoords(gle::Array<GLfloat> const &textureCoords)
 		 VertexAttributeSizeNormal + VertexAttributeSizeTangent + j] =
 	textureCoords[(GLuint)(i * VertexAttributeSizeTextureCoords + j)];
   _attributes->unmap();
+  _needSetIdentifiers = true;
 }
 
 void gle::Mesh::setBones(gle::Array<GLfloat> const &bones)
@@ -351,6 +364,7 @@ void gle::Mesh::setBones(gle::Array<GLfloat> const &bones)
 		 VertexAttributeSizeBone + j] =
 	bones[(GLuint)(i * VertexAttributeSizeBone + j)];
   _attributes->unmap();
+  _needSetIdentifiers = true;
 }
 
 void gle::Mesh::setIndexes(gle::Array<GLuint> const &indexes)
@@ -359,6 +373,7 @@ void gle::Mesh::setIndexes(gle::Array<GLuint> const &indexes)
   _indexes->resize(indexes.size(), (GLuint const *)indexes);
   if (!_isDynamic)
     makeAbsoluteIndexes();
+  _needSetIdentifiers = true;
 }
 
 void gle::Mesh::setIdentifiers(GLuint meshId, GLuint materialId)
@@ -396,6 +411,7 @@ void gle::Mesh::setIdentifiers(GLuint meshId, GLuint materialId)
       
     }
   _attributes->unmap();  
+  _needSetIdentifiers = true;
 }
 
 void gle::Mesh::setMaterial(gle::Material* material)
@@ -413,8 +429,13 @@ gle::Buffer<GLuint> * gle::Mesh::getIndexesBuffer() const
   return (_indexes);
 }
 
-gle::MeshBufferManager::Chunk* gle::Mesh::getAttributes() const
+gle::MeshBufferManager::Chunk* gle::Mesh::getAttributes()
 {
+  if (_isDynamic && _needSetIdentifiers)
+    {
+      setIdentifiers(0, 0);
+      _needSetIdentifiers = false;
+    }
   return (_attributes);
 }
 
@@ -483,9 +504,16 @@ void gle::Mesh::update()
 void gle::Mesh::setDynamic(bool dynamic, bool deep)
 {
   if (dynamic && !_isDynamic)
-    makeAbsoluteIndexes(false);
+    {
+      _type = gle::Scene::Node::DynamicMesh;
+      makeAbsoluteIndexes(false);
+      setIdentifiers(0, 0);
+    }
   else if (!dynamic && _isDynamic)
-    makeAbsoluteIndexes(true);
+    {
+      _type = gle::Scene::Node::StaticMesh;
+      makeAbsoluteIndexes(true);
+    }
   gle::Scene::Node::setDynamic(dynamic, deep);
 }
 

@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Fri Mar  2 17:27:21 2012 gael jochaud-du-plessix
-// Last update Mon Jul  2 18:27:39 2012 gael jochaud-du-plessix
+// Last update Wed Jul  4 22:19:23 2012 loick michard
 //
 
 #include <iostream>
@@ -109,13 +109,11 @@ public:
 
     std::cout << "Scene generated\n";
     
-    _scene->update();
   }
 
   void animate()
   {
     _light->setTarget(_camera->getTarget());
-    _scene->updateLights();
   }
 
 private:

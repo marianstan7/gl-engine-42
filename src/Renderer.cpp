@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Mon Feb 20 20:48:54 2012 gael jochaud-du-plessix
-// Last update Wed Jul  4 19:26:12 2012 gael jochaud-du-plessix
+// Last update Thu Jul  5 16:45:07 2012 loick michard
 //
 
 #include <Renderer.hpp>
@@ -59,6 +59,7 @@ void gle::Renderer::render(Scene* scene, const Rectf& size, FrameBuffer* customF
   gle::FrameBuffer& framebuffer = customFramebuffer 
     ? *customFramebuffer : gle::FrameBuffer::getDefaultFrameBuffer();
 
+  scene->update();
   scene->updateShadowMaps(this);
 
   glViewport(size.x, size.y, size.width, size.height);
@@ -82,6 +83,7 @@ void gle::Renderer::render(Scene* scene, const Rectf& size, FrameBuffer* customF
   _setCurrentProgram(scene);
   _setSceneUniforms(scene, camera);
 
+
   const std::list<gle::Mesh*> & staticMeshes = scene->getStaticMeshes();
   const std::list<gle::Mesh*> & dynamicMeshes = scene->getDynamicMeshes();
 
@@ -94,11 +96,9 @@ void gle::Renderer::render(Scene* scene, const Rectf& size, FrameBuffer* customF
     glEnableVertexAttribArray(gle::ShaderSource::BonesLocation);
 
   MeshBufferManager::getInstance().bind();
-  
   //Draw static meshes
   std::list<gle::Scene::MeshGroup> factorizedStaticMeshes =
     gle::Mesh::factorizeForDrawing(staticMeshes);
-
   //std::cout << "nb draw calls: " << factorizedStaticMeshes.size() << " for " << staticMeshes.size() << " meshes\n";
 
   for (gle::Scene::MeshGroup &group : factorizedStaticMeshes)
@@ -108,6 +108,7 @@ void gle::Renderer::render(Scene* scene, const Rectf& size, FrameBuffer* customF
     }
 
   // Draw dynamic meshes
+
   for (gle::Mesh* mesh : dynamicMeshes)
     _renderMesh(mesh);
 
@@ -342,7 +343,7 @@ void gle::Renderer::_renderMeshes(gle::Scene* scene, gle::Scene::MeshGroup& grou
   glPolygonMode(GL_FRONT_AND_BACK, group.rasterizationMode);
 
   glDrawElements(GL_TRIANGLES, _indexesBuffer.getSize(), GL_UNSIGNED_INT, 0);
-
+  
   glDisableVertexAttribArray(gle::ShaderSource::TextureCoordLocation);  
 }
 

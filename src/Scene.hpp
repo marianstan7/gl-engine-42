@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Mon Feb 20 18:18:01 2012 gael jochaud-du-plessix
-// Last update Wed Jul  4 18:00:26 2012 gael jochaud-du-plessix
+// Last update Thu Jul  5 17:17:53 2012 loick michard
 //
 
 #ifndef _GLE_SCENE_HPP_
@@ -57,17 +57,19 @@ namespace gle {
       //! Different types of scene nodes
       enum Type {
 	//! An empty node, used as a container for other nodes
-	Empty,
-	//! Node representing a mesh object
-	Mesh,
+	Empty = 1 << 0,
+	//! Node representing a static mesh object
+	StaticMesh = 1 << 1,
+	//! Node representing a static mesh object
+	DynamicMesh = 1 << 2,
 	//! Node representing a camera
-	Camera,
+	Camera = 1 << 3,
 	//! Node representing a light
-	Light,
+	Light = 1 << 4,
 	//! Node representing a bone
-	Bone,
+	Bone = 1 << 5,
 	//! Node representing a skeleton
-        Skeleton
+        Skeleton = 1 << 6
       };
 
       //! Constructs a node with its type
@@ -273,11 +275,28 @@ namespace gle {
 
       void setProjectShadow(bool projectShadow);
 
+      //! Get all nodes added to the current node
+      int getAddedNodes() const;
+
+      //! Set all nodes added to the current node
+      /*!
+	\param addedNodes List of added nodes
+      */
+      void setAddedNodes(int addedNodes);
+
+      //! Set all nodes added to the current node and it children
+      /*!
+	\param addedNodes List of added nodes
+      */
+      void setAddedNodesRecursive(int addedNodes);
+
+      //! Get type of current node and it children
+      int getRecursiveType() const;
 
     protected:
 
       //! Type of the node
-      const Type		_type;
+      Type			_type;
 
       //! Name of the node
       std::string		_name;
@@ -331,6 +350,9 @@ namespace gle {
 
       //! List of nodes for rendering debug informations
       std::vector<Node*>	_debugNodes;
+
+      //! Say whether or not a node was add to the node
+      int			_addedNodes;
     };
 
     //! Symbolize a group of meshes for rendering
@@ -565,13 +587,6 @@ namespace gle {
     //! Update a specific skeleton
 
     void updateSkeleton(Node* node);
-
-    //! Update dynamic meshes
-    /*!
-      This function has to be called when dynamic meshes are aded or removed form the scene.
-     */
-
-    void updateDynamicMeshes();
 
     //! Update static meshes
     /*!
