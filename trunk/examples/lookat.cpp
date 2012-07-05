@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Fri Mar  2 17:27:21 2012 gael jochaud-du-plessix
-// Last update Thu Jul  5 22:38:28 2012 loick michard
+// Last update Thu Jul  5 22:45:38 2012 loick michard
 //
 
 #include <iomanip>
@@ -111,9 +111,7 @@ public:
 
   void  catchEvent(sf::Event& event)
   {
-    /*if (event.type == sf::Event::KeyPressed
-        && event.key.code == sf::Keyboard::O)
-	*_scene << gle::Geometries::Sphere(new gle::Material(), 5.0);*/
+    (void)event;
   }
 
 private:

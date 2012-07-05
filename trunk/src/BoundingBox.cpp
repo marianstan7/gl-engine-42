@@ -5,7 +5,7 @@
 // Login   <michar_l@epitech.net>
 // 
 // Started on  Wed May  2 16:41:28 2012 loick michard
-// Last update Thu Jul  5 21:01:03 2012 loick michard
+// Last update Thu Jul  5 22:47:35 2012 loick michard
 //
 
 #include <BoundingBox.hpp>
@@ -203,7 +203,7 @@ bool gle::BoundingBox::isInFrustum(const GLfloat frustum[6][4]) const
         continue;
       if (frustum[i][0] * _max.x + frustum[i][1] * _max.y + frustum[i][2] * _max.z + frustum[i][3] > 0)
         continue;
-      return false;
+      return (false);
     }
-  return true;
+  return (true);
 }
