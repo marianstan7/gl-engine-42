@@ -307,8 +307,10 @@ The documentation also contains examples and tips on how to use the classes in o
  glEngine is capable of much more, such as loading models from files, rendering texture, normal maps or environment maps. To use these features, just go through the API documentation. Classes are documented and contains example codes, so you should be ready to do whatever you want !\n
  Here are some classes that should be interesting:
  - gle::Scene
- - gle::Texture
  - gle::Mesh
+ - gle::Material
+ - gle::Texture
  - gle::UniversalLoader
  - gle::CubeMap
+ - etc...
  */

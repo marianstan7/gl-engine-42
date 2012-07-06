@@ -5,7 +5,6 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Mon Feb 20 18:18:01 2012 gael jochaud-du-plessix
-// Last update Fri Jul  6 01:31:02 2012 loick michard
 //
 
 #ifndef _GLE_SCENE_HPP_
@@ -33,10 +32,40 @@ namespace gle {
   class Skeleton;
   class Renderer;
 
-  //! Describe a 3D scene
+  //! Describes a 3D scene
   /*!
-    Container for all the elements and caracteristics of a 3D scene.
-    (Cameras, meshes, env map, etc...)
+    A scene is a container for all the elements and caracteristics of a 3D scene.\n
+    It contains a root node wich is the root of the elements hierarchy.
+
+    Example:
+    \code
+    // Create an empty scene
+    gle::Scene scene;
+
+    // Add it all kind of nodes, with the << operator
+    scene << &model << &light << &camera;
+
+    // Or by directly adding a child to the root node
+    scene.getRootNode().addChild(model2);
+
+    // Add a node to the scene, directly into the graph
+    model.addChild(camera2);
+
+    // Set the added camera current for rendering
+    scene.setCurrentCamera(&camera2);
+
+    // Set the scene background color
+    scene.setBackgroundColor(gle::Colorf(1.0, 1.0, 1.0));
+
+    // Set the fog color
+    scene.setFogColor(gle::Colorf(1.0, 1.0, 1.0));
+
+    // Set the fog density
+    scene.setFogDensity(0.01);
+
+    // Add an envmap
+    scene.setEnvMap(new gle::CubeMap("/path/to/cubemap"));
+    \endcode
    */
 
   class Scene {
@@ -642,6 +671,9 @@ namespace gle {
     void update(Node* node=NULL, int depth = 0);
 
     //! Set an environment map to the scene
+    /*!
+      \sa gle::CubeMap
+     */
 
     void setEnvMap(EnvironmentMap* envMap);
     

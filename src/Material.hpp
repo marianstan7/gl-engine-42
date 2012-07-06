@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Mon Feb 20 22:30:11 2012 gael jochaud-du-plessix
-// Last update Wed Jul  4 19:57:41 2012 loick michard
+// Last update Fri Jul  6 03:18:12 2012 gael jochaud-du-plessix
 //
 
 #ifndef _GLE_MATERIAL_HPP_
@@ -23,9 +23,33 @@ namespace gle {
 
   //! Description of a material
   /*!
-    Description and management of a material.
-    This class encapsulate the creation and management of the
-    OpenGL rendering program associated with the material.
+    Materials describe how objects must appear on screen and react to lights.
+
+    Example:
+    \code
+    // Create a material
+    gle::Material material("metal");
+
+    // Set some of its properties
+    material.setDiffuseColor(gle::Colorf(1, 0, 0));
+    material.setSpecularColor(gle::Colorf(1, 1, 0));
+    material.setShininess(42);
+    material.setSpecularIntensity(0.8);
+
+    // Set an envmap for reflecton
+    material.setEnvMap(environmentMap);
+    material.setReflectionIntensity(0.8);
+
+    // Add a texture to the material
+    material.setColorMap(new gle::Texture("aluminum.png"));
+
+    // And a normal map
+    material.setNormalMap(new gle::Texture("aluminum_normalmap.png"));
+
+    // Finally, use it with meshes
+    mesh.setMaterial(&material);
+    gle::Mesh mesh2(&material);
+    \endcode
    */
 
   class Material {
@@ -90,6 +114,8 @@ namespace gle {
 
     //! Set shininess of material
     /*!
+      Defines the aspect of the specular light on the material.\n
+      Usually, you may use values between 1 and 50.
       \param shininess Shininess value
     */
 

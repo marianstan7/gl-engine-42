@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Fri Mar  2 17:27:21 2012 gael jochaud-du-plessix
-// Last update Wed Jul  4 22:17:44 2012 loick michard
+// Last update Fri Jul  6 03:26:43 2012 gael jochaud-du-plessix
 //
 
 #include <iostream>
@@ -50,7 +50,7 @@ public:
     material->setDiffuseColor(gle::Colorf(1.0, 0.0, 0.0));
 
     gle::UniversalLoader loader;
-    gle::Scene::Node* node = loader.load("/home/jochau_g/Downloads/bvh/09/09_02.bvh", material);
+    gle::Scene::Node* node = loader.load("./models/09_02.bvh", material);
     gle::Scene::Node* skeleton = node->getChildByName("_skeleton");
     //skeleton->setRotation(gle::Vector3f(0, 0, 1), 180);
     *_scene << skeleton;
