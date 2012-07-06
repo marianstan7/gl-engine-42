@@ -5,7 +5,7 @@
 // Login   <michar_l@epitech.net>
 // 
 // Started on  Thu Jun  7 23:10:14 2012 loick michard
-// Last update Wed Jul  4 17:16:52 2012 loick michard
+// Last update Fri Jul  6 02:39:48 2012 loick michard
 //
 
 #ifndef _CUBE_MAP_HPP
@@ -19,7 +19,35 @@
 
 namespace gle
 {
-  //! Cube map environemnt
+  //! Cube map environment
+  /*!
+    Example:
+    \code
+    // Create a cube from a directory
+    // Load 6 different images:
+    // 	- ./cubemap/posx.png
+    // 	- ./cubemap/negx.png
+    // 	- ./cubemap/posy.png
+    // 	- ./cubemap/negy.png
+    // 	- ./cubemap/posz.png
+    // 	- ./cubemap/negz.png
+    gle::CubeMap cubeMap("./cubemap/", ".png"); 
+
+    scene->setEnvMap(&cubeMap); // Set Cube map to an existing gle::Scene object
+
+    // Create a new gle::Material that will reflect into the cube map
+    gle::Material material("reflectMaterial");
+    
+    // Configure the material to reflect into cubeMap
+    material.setEnvMap(&cubeMap);
+
+    // Set up reflection intensity of material into the cube map from 0 (no reflection) to 1 (total reflection)
+    material.setReflectionIntensity(0.8);
+
+    mesh.setMaterial(&material); // Set the material to an existing gle::Mesh
+    
+    \endcode
+   */
   class CubeMap : public EnvironmentMap
   {
   public:
