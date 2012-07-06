@@ -5,7 +5,7 @@
 // Login   <michar_l@epitech.net>
 // 
 // Started on  Tue Jun 12 16:02:46 2012 loick michard
-// Last update Wed Jul  4 17:39:31 2012 gael jochaud-du-plessix
+// Last update Fri Jul  6 03:01:30 2012 loick michard
 //
 
 #ifndef _UNIVERSAL_LOADER_HPP_
@@ -22,7 +22,25 @@
 namespace gle {
 
   //! Loader of scene nodes that uses the ASSIMP importer
+  /*!
+    Example:
+    \code
+    // Creating a gle::UniversalLoader instance
+    gle::UniversalLoader loader();
 
+    // Load a model from his filename and set a default material for model importation
+    gle::Scene:::Node* model = loader.load("models/camaro.obj", new Material()); // Yes, this is an awesome camaro
+
+    // Retreive a special node into the model by its name
+    gle::Scene::Node* steeringWheel = model->getChildByName("steeringWheel");
+
+    // Rotate the retreive node of 45 degrees around the (1.0, 1.0, 0.0) axis
+    steeringWheel->setRotation(gle::Vector3f(1.0, 1.0, 0.0), 45);
+
+    // Add the model to an existing gle::Scene
+    scene << model;
+    \endcode
+   */
   class UniversalLoader : public FileLoader {
   public:
 

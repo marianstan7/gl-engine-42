@@ -5,7 +5,7 @@
 // Login   <michar_l@epitech.net>
 // 
 // Started on  Thu Jun 21 20:39:52 2012 loick michard
-// Last update Thu Jul  5 01:48:36 2012 loick michard
+// Last update Fri Jul  6 03:26:49 2012 loick michard
 //
 
 #ifndef _MESH_HPP_
@@ -36,8 +36,64 @@ namespace gle {
   //! Representation of a 3D Mesh
   /*!
     This class creates, initializes and operates on meshes.
-  */
 
+    Example:
+    \code
+    // This example shows how to make a basic triangle using gle::Mesh
+
+    // First create an empty mesh with a default gle::Material
+    gle::Mesh* mesh = new gle::Mesh(new gle::Material());
+
+    // Initialize a GLfloat tab of vertexes coordinates
+    GLfloat vertexes[] = {
+			  -1.0, 0.0, 0.0 // First vertex coordinates
+			  0.5,  1.0, 0.0 // Second vertex coordinates
+			  1.0,  0.0, 0.0 // Third vertex coordinates
+			  };
+
+    // Set vertexes tab to the mesh
+    mesh->setVertexes(vertexes, sizeof(vertexes) / sizeof(GLfloat));
+
+    // Initialize a GLfloat tab of normal vectors
+    GLfloat normals[] = {
+			  0.0, 0.0, 1.0 // First normal vector
+			  0.0, 0.0, 1.0 // Second normal vector
+			  0.0, 0.0, 1.0 // Third normal vector
+			  };
+
+    // Set normals tab to the mesh
+    mesh->setNormals(normals, sizeof(normals) / sizeof(GLfloat));
+
+    // Initialize a GLfloat tab of tangent vectors
+    GLfloat tangents[] = {
+			  0.0, 1.0, 0.0 // First tangent vector
+			  0.0, 1.0, 0.0 // Second tangent vector
+			  0.0, 1.0, 0.0 // Third tangent vector
+			  };
+
+    // Set tangents tab to the mesh
+    mesh->setTangents(tangents, sizeof(tangents) / sizeof(GLfloat));
+
+    // Initialize a GLfloat tab of texture coordinates (u, v)
+    GLfloat textureCoords[] = {
+				0.0, 1.0 // First texture coordinate
+				0.0, 1.0 // Second texture coordinate
+				0.0, 1.0 // Third texture coordinate
+			      };
+    
+    // Set texture coords to the mesh
+    mesh->setTextureCoords(textureCoords, sizeof(textureCoords) / sizeof(GLfloat));
+
+    // Initialize a GLuint tab of vertexes indexes (order for triangulate)
+    GLuint indexes[] = { 0, 1, 2 }
+
+    // Set vertexes indexes to the mesh
+    mesh->setIndexes(indexes, sizeof(indexes) / sizeof(GLuint));
+
+    // Add the mesh to an existing gle::Scene
+    scene << mesh;
+    \endcode
+  */
   class Mesh : public Octree::Element, public Scene::Node {
   public:
 
