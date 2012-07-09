@@ -55,6 +55,12 @@ namespace gle {
     void clear();
 
     //! Render a scene
+	/*!
+		Render a scene in a specific Framebuffer, or in the default one by default.
+		\param scene Pointer to the scene to render
+		\param size Size of the viewport to render
+		\param customFramebuffer Pointer to the framebuffer in which to render. NULL to render to the default framebuffer
+	*/
 
     void render(Scene* scene, const Rectf& size, FrameBuffer* customFramebuffer=NULL);
 
