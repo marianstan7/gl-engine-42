@@ -1,4 +1,4 @@
-\documentclass [a4 paper,11pt]{article}
+\documentclass [a4 paper,11pt]{report}
 \usepackage [english]{babel}
 \usepackage [utf8]{inputenc}
 \usepackage [T1]{fontenc}
@@ -22,120 +22,157 @@ Loick Michard}
 \newpage
 
 \part{Introduction}
-This document describes the technical specifications for the glEngine project. It comes with the Specifications document that explain the functional specifications. The technical specifications document describes the retained solutions for the glEngine project. These specifications are divided in two parts: the description of the scene management and how the 3D rendering work.
+This document describes the technical specifications for the glEngine project. It comes with the Specifications document that explains the functional specifications. The technical specifications document describes the retained solutions for the glEngine project. These specifications are divided in two parts: the description of the scene management and how the 3D rendering works.
 
 \part{Scene management}
 In order to render a virtual world in 3D, the engine must manage a lot of data describing a scene. This part of the specifications describes the different elements that can be part of a scene and how they are arranged hierarchically by the engine.
 
 \section{Scene elements}
 A scene is composed of various kinds of elements that describe all the aspects of the virtual world to render.
+All these elements inherit the class gle::Scene::Node that describe the properties of a scene element:
+\begin{itemize}
+\item A position (gle::Vector3f)
+\item A rotation matrix (gle::Matrix4f)
+\item A scale matrix (gle::Matrix4f)
+\item A name (std::string)
+\item A parend node (gle::Scene::Node*)
+\item A list of child nodes (sd::vector<gle::Scene::Node*>)
+\end{itemize}
+Scene elements are hierarchically linked with each other with their parent and children properties. The children are stored in an std::vector, because the scene graph is not supposed to change often but must be accessed efficiently.\\
+In addition, nodes have a isDynamic property that indicates wether or not they are supposed to change after being added to the scene. (Cf. section 2.2)
 
 \subsection{Materials}
 Materials allow to specify how an object visually appear when rendered. It contains the following information:
 \begin{itemize}
-\item Ambient color
-\item Diffuse color
-\item Diffuse intensity
-\item Specular color
-\item Specular intensity
-\item Shininess
-\item Color map (texture)
+\item Ambient color (gle::Colorf)
+\item Diffuse color (gle::Colorf)
+\item Diffuse intensity (GLfloat)
+\item Specular color (gle::Colorf)
+\item Specular intensity (GLfloat)
+\item Shininess (GLfloat)
+\item Color map (gle::Texture)
+\item Normal map (gle::Texture)
+\item Environment map (gle::EnvironmentMap)
+\item Reflection intensity (GLfloat)
 \end{itemize}
 A material also have a name, in order to identify it.\\
-All these information are stored in a uniform buffer, in order to be efficiently used by the GPU.
+All these informations are stored in a uniform buffer, in order to be efficiently used by the GPU.
 
 \subsubsection{Creation}
 The engine allows the creation of materials programmatically via the gle::Material class. All the properties of a material can be accessed and set via accessors.
 \subsubsection{Import}
-Materials can be imported from .mtl files through the .obj importer (Cf. section 1.2.2).
+Materials can be imported from .mtl files through the .obj importer (Cf. section 1.2.2). The universal loader (gle::UniversalLoader) can also import materials.
 
 \subsection{Models}
-Models are the virtual representation of 3D objects. They are characterized by:
+Models are the virtual representation of 3D objects. They inherit all the properties of a scene element and are characterized by:
 \begin{itemize}
-\item A geometry
-\item A position
-\item A rotation matrix
-\item A scale matrix
+\item A geometry (vertex coords, normals, tangents, etc...)
+\item A rasterization mode (Fill, Line, Point)
+\item A material (gle::Material)
 \end{itemize}
-Models must also have a material (Cf. Section 1.1) that describes how they appear.\\
 
 \subsubsection{Creation}
 The user can create a model programmatically. Thus, glEngine provides the gle::Mesh class.\\
-Position, rotation and scale can be accessed via simple functions.\\
-To specify the mesh geometry, there are several accessors that store their data directly on the hardware through the OpenGL APIs:
+To specify the mesh geometry, there are several accessors that store their data directly on the hardware thanks to the Buffer Manager:
 \begin{itemize}
 \item gle::Mesh::setVertexes
 \item gle::Mesh::setNormals
+\item gle::Mesh::setTangents
 \item gle::Mesh::setTextureCoords
 \item gle::Mesh::setIndexes
 \end{itemize}
-All these data can be provided in two ways: simple (GLfloat|GLuint)* buffers or gle::Array<(GLfloat|GLuint)> arrays.
+All these data can be provided in two ways: simple (GLfloat|GLuint)* arrays or gle::Array<(GLfloat|GLuint)> arrays.
 
 \subsubsection{Import}
 The engine allows the import of a mesh from a Wavefront OBJ file, thanks to the gle::ObjLoader class. Its function gle::ObjLoader::load returns a mesh imported from a .obj file. If the file includes .mtl files describing the model materials, they will also be imported (Cf. Section 1.1).
+In addition, glEngine provides an other way to load assets, the gle::UniversalLoader class which is more usefull because it uses the ASSIMP loader to import scene elements from a lot of file formats. These two classes inherit the gle::FileLoader interface, so they can be used the same way.
 \subsubsection{Update}
-Models can be updated at any time. To set new values on a gle::Mesh, the user can use the corresponding accessors functions.
+Models can be updated at any time, while their isDynamic property is set to true. To set new values on a gle::Mesh, the user can simply use the corresponding accessors functions.
 
 \subsection{Lights}
-Lights describe how a scene is illuminated. There are two types of lights: Directional an Point lights.\\
-Point lights are characterized by a position, a diffuse color and a specular color. Directional lights have a direction vector and a diffuse color.
+Lights describe how a scene is illuminated. There are three types of lights:
+\begin{itemize}
+\item Point light: omnidirectional light characterized by a position 
+\item Directional light: directional light characterized by a direction vector
+\item Spot light: directional light characterized by a position, a direction vector and a cut off angle
+\end{itemize}
+All light classes inherit the gle::Light class.
 \subsubsection{Creation}
-Lights can be created programmatically by the user through the classes gle::DirectionalLight and gle::PointLight, specifying all their properties manually.
+Lights can be created programmatically by the user through the classes gle::PointLight, gle::DirectionalLight and gle::SpotLight, specifying all their properties manually.
 \subsubsection{Update}
-It is possible to update the properties of the lights at any time. Once the properties of a light has changed, the user must call gle::Scene::updateLights on the scene to update the lights meta-data.
+It is possible to update the properties of dynamic lights at any time.
 
 \subsection{Cameras}
-Cameras permit to specify the point of view of the observer in a scene. They have several properties common to other scene elements such as a position and an orientation (specified by a target). A camera also have specific information: a field o view, an aspect and the distances to near and far plane.
+Cameras permit to specify the point of view of the observer in a scene. They have several properties common to other scene elements such as a position and an orientation (specified by a target). A camera also have specific informations: a field o view, an aspect and the distances to near and far plane.\\
+glEngine provides two kinds of camera:
+\begin{itemize}
+\item Perspective Camera: A camera that draw far objects smaller than near objects, as the eye see the world
+\item Orthographic Camera: A camera that applies a parallel projection, where all objects have the same size.
+\end{itemize}
 \subsubsection{Creation}
-Cameras are created programmatically by the user via the class gle::PerspectiveCamera, specifying all properties at object construction.
+Cameras are created programmatically by the user via the classes gle::PerspectiveCamera and gle::OrthographicCamera that inherit gle::Camera, specifying all properties at object construction.
 \subsubsection{Update}
-It is possible to update the properties of a camera at any time, through accessors methods provided by gle::Camera.
+It is possible to update the properties of a dynamic camera at any time, through accessors methods provided by gle::Camera and it child classes.
 
 \section{Structural information}
 Scene elements are structured hierarchically and have particular meta-data in order to improve the rendering process.\\
 These data include information about whether the element is static or dynamic, its position in the scene graph and a representation of the world based on spatial partitioning.
 
 \subsection{Elements hierarchy}
-Each element of the scene must is represented as the node of a graph, in order to hierarchy them. Thus, each element have a parent and a list of child elements.\\
+Each element of the scene is represented as the node of a graph, in order to hierarchy them. Thus, each element have a parent and a list of child elements.\\
 In addition, it is possible to name the elements and retrieve them easily within the scene graph, thanks to the functions gle::Mesh::getChildren and gle::Mesh::getChildrenByName.
 
 \subsection{Static vs Dynamic}
 In the scene, there are two main types of elements: static ones and dynamic ones.\\
 As their name suggest, static elements are not subject to change with time. Thereby, the renderer can improve its performance when processing these elements.\\
-Dynamic elements may rather be updated very often, so the engine provides ability to efficiently update the data of these elements, through the mesh accessors functions.
+Dynamic elements may rather be updated very often, so the engine provides ability to efficiently update the data of these elements, through the gle::Scene::Node accessors functions.
 
 \subsection{Spatial partitioning}
 In order to improve the rendering performance, the scene have a representation of its elements based on spatial partitioning. Thanks to that representation, the engine is able to efficiently treat a lot of elements.\\
 This partitioning is made with an Octree. Each mesh has an associated bounding volume computed from its shape. Thanks to that, the partitioning tree can be made efficiently. 
 
 \part{3D Rendering}
-This part of the technical specifications describes the how the different features for 3D rendering work.\\
-It lists the basic and advanced features of the renderer and describes the techniques retained for performance improvements.
+This part of the technical specifications describes how the 3D rendering work.\\
+It lists the features of the renderer and describes the techniques retained for performance improvements.
 
-\section{Basic features}
-This section describes the main features that are supported by the glEngine renderer.
+\section{Features}
+This section describes the rendering features that are supported by the glEngine renderer.
 
-\subsection{Rasterisation}
-The renderer is able to rasterize triangles processed from the scene graph, using the OpenGL 4.2 API.
-\subsection{Textures}
-Triangles rasterized by the renderer can be textured. It is possible to configure the quality of the textures and how they are rendered.
-
-\section{Advanced features}
-Some visual effects are added to the renderer in order to improve the realism of the rendered image.\\
-These advanced features are be:
 \begin{itemize}
+\item Rasterization of triangles, lines and points using the OpenGL API's
+\item Texturing
 \item Diffuse shading
 \item Phong shading
+\item Reflection in an environment map
+\item Drawing of an environment map
+\item Bump mapping
+\item Fog
+\item Shadow mapping
+\item Rendering to texture
 \end{itemize}
 
 \section{Performance}
-In order to provide an efficient rendering process, some techniques are used by the glEngine to improve its performance capabilities.
+In order to provide an efficient rendering process, several techniques are used by the glEngine to improve its performance capabilities.
 
-\subsection{Metadatas processing}
-The engine is able to process the scene meta-data in order to improve the rendering performance. Furthermore, it is able to perform a frustum culling.
+\subsection{Frustum culling}
+Frustum culling is a technique that allows to draw only visible objects.
 
-\subsection{OpenGL 4.2}
-Since this is the main purpose of this project, the glEngine takes advantage of the features of OpenGL 4.2 APIs to improve the rendering performance.\\
-Thus, it uses Uniform Block Arrays to pack together all the mesh uniforms and reduce the number of draw calls.
+\subsection{Reduction of draw calls}
+When rendering a 3D scene, the engine must take the most advantage of the GPU as posssible. Thus, it may reduce the number of draw calls to limit data transfers between the CPU and the GPU.\\
+To do that, glEngine use several techniques and process scene data in order to draw the maximum meshes in one draw call.
+
+\subsubsection{Buffer manager}
+The first step to draw multiple meshes at once is to put their vertex attributes in the same OpenGL buffer. Thus, glEngine uses a buffer manager to manage the data of all the meshes.\\
+This buffer manager is a simple implementation of a memory pool, with a list of nodes and a list of free nodes. It can be used in the engine through the gle::BufferManager class.
+
+\subsubsection{Meshes factorization}
+Next step is to know which meshes can be drawn with each others. This operation is performed by the function gle::Mesh::factorizeForDrawing(). This one uses gle::Mesh::canBeRenderedWith() to compare the meshes.\\
+Two meshes can be rendered together if they have the same "rasterization mode" and if their materials are compatible (if they use the same textures). Thanks to that, a scene that use a texture atlas can be rendered with a minimum number of draw calls.
+
+\subsubsection{Uniform buffers}
+Once meshes are factorized in groups, the engine must build uniform buffer in order to store the per-mesh datas (transformation matrix, skeleton id, etc...).
+
+
+\subsubsection{Rendering algorithm}
 
 \end{document}
