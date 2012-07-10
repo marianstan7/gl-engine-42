@@ -170,9 +170,10 @@ Next step is to know which meshes can be drawn with each others. This operation 
 Two meshes can be rendered together if they have the same "rasterization mode" and if their materials are compatible (if they use the same textures). Thanks to that, a scene that use a texture atlas can be rendered with a minimum number of draw calls.
 
 \subsubsection{Uniform buffers}
-Once meshes are factorized in groups, the engine must build uniform buffer in order to store the per-mesh datas (transformation matrix, skeleton id, etc...).
-
+Once meshes are factorized in groups, the engine must build uniform buffers in order to store the per-mesh datas (transformation matrix, skeleton id, etc...). This is done by the gle::Scene::updateStaticMeshes() function, which creates as many uniform buffers as necessary. If a mesh group doesn't fit into a single buffer (according to GL MAX UNIFORM BLOCK SIZE), several buffers are created and each mesh is assigned to a buffer.
 
 \subsubsection{Rendering algorithm}
+When everything is ready to be rendered (vertex attributes are in the BufferManager, uniforms are divided into several buffers, meshes are factorized), the renderer build, for each mesh group, the buffer of indexes to render. This is done by copying directly from the GPU to the GPU the indexes previously stored in OpenGL buffer objects.\\
+Then, the uniform buffers and textures corresponding to the mesh group are binded and the draw call is performed, through the glDrawElements function.
 
 \end{document}
