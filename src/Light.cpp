@@ -5,14 +5,14 @@
 // Login   <michar_l@epitech.net>
 // 
 // Started on  Tue Feb 28 09:59:20 2012 loick michard
-// Last update Thu Jul  5 23:52:13 2012 loick michard
+// Last update Tue Jul 10 14:24:06 2012 loick michard
 //
 
 #include <Light.hpp>
 
 gle::Light::Light(Type type) :
   Scene::Node(Scene::Node::Light), _lightType(type),
-  _shadowMapSize(0, 0, 4096, 4096),
+  _shadowMapSize(0, 0, 1024, 1024),
   _shadowMap(), _shadowMapFrameBuffer(), _shadowMapCamera()
 {
 }

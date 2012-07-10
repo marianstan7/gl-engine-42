@@ -79,6 +79,16 @@ add_executable (
 )
 
 add_executable (
+    examples/minecraft
+    examples/minecraft.cpp
+)
+
+add_executable (
+    examples/camaro
+    examples/camaro.cpp
+)
+
+add_executable (
     examples/bumpmap
     examples/bumpmap.cpp
 )
@@ -168,6 +178,22 @@ target_link_libraries (
 
 target_link_libraries (
     examples/cubemap
+    ${SFML_LIBRARIES}
+    ${OPENGL_LIBRARIES}
+    glEngine
+    Examples
+)
+
+target_link_libraries (
+    examples/minecraft
+    ${SFML_LIBRARIES}
+    ${OPENGL_LIBRARIES}
+    glEngine
+    Examples
+)
+
+target_link_libraries (
+    examples/camaro
     ${SFML_LIBRARIES}
     ${OPENGL_LIBRARIES}
     glEngine

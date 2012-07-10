@@ -37,13 +37,13 @@ namespace gle {
       virtual ~Element() {};
 
       //! Get the highest extreme value in the 3 axis
-      virtual const Vector3<GLfloat>& getMaxPoint() const = 0;
+      virtual const Vector3<GLfloat>& getMaxPoint() = 0;
 
       //! Get the lowest extreme value in the 3 axis
-      virtual const Vector3<GLfloat>& getMinPoint() const = 0;
+      virtual const Vector3<GLfloat>& getMinPoint() = 0;
 
       //! Get center of octree element
-      virtual const Vector3<GLfloat>& getCenter() const = 0;
+      virtual const Vector3<GLfloat>& getCenter() = 0;
 
       //! Return wheter or not octree element is in frustum
       /*!

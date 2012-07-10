@@ -5,7 +5,7 @@
 // Login   <michar_l@epitech.net>
 // 
 // Started on  Wed May  2 16:41:28 2012 loick michard
-// Last update Thu Jul  5 22:47:35 2012 loick michard
+// Last update Tue Jul 10 15:37:14 2012 loick michard
 //
 
 #include <BoundingBox.hpp>
@@ -168,17 +168,17 @@ void	gle::BoundingBox::update(const Matrix4<GLfloat>& mvMatrix)
     }
 }
 
-const gle::Vector3<float>& gle::BoundingBox::getMaxPoint() const
+const gle::Vector3<float>& gle::BoundingBox::getMaxPoint()
 {
   return (_max);
 }
 
-const gle::Vector3<float>& gle::BoundingBox::getMinPoint() const
+const gle::Vector3<float>& gle::BoundingBox::getMinPoint()
 {
   return (_min);
 }
 
-const gle::Vector3<float>& gle::BoundingBox::getCenter() const
+const gle::Vector3<float>& gle::BoundingBox::getCenter()
 {
   return (_absoluteCenter);
 }
