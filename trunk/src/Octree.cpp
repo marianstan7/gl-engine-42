@@ -5,7 +5,7 @@
 // Login   <michar_l@epitech.net>
 // 
 // Started on  Sat May  5 10:59:21 2012 loick michard
-// Last update Tue Jun 26 18:58:16 2012 gael jochaud-du-plessix
+// Last update Tue Jul 10 15:42:06 2012 loick michard
 //
 
 #include <Octree.hpp>
@@ -179,7 +179,7 @@ void gle::Octree::Node::splitNode(bool thread, std::atomic<int> *nbThreads, int 
   for (int i = 0; i < 8; ++i)
     {
       bool doThread = false;
-      if (subdivisions[i].elements.size() > 0)
+      if (subdivisions[i].elements.size() > 0 && depth < 15)
 	_children[i] = new gle::Octree::Node(subdivisions[i].min, subdivisions[i].max, subdivisions[i].elements,
 					     subdivisions[i].partialsElements);
       if (_children[i])

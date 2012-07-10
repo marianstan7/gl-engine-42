@@ -5,7 +5,7 @@
 // Login   <michar_l@epitech.net>
 // 
 // Started on  Wed May  2 13:48:38 2012 loick michard
-// Last update Thu Jul  5 22:52:42 2012 gael jochaud-du-plessix
+// Last update Tue Jul 10 15:36:48 2012 loick michard
 //
 
 #ifndef _BOUNDING_VOLUME_HPP_
@@ -56,13 +56,13 @@ namespace gle {
 
 
     //! Get the highest extreme value in the 3 axis
-    virtual const gle::Vector3<float>& getMaxPoint() const = 0;
+    virtual const gle::Vector3<float>& getMaxPoint() = 0;
 
     //! Get the lowest extreme value in the 3 axis
-    virtual const gle::Vector3<float>& getMinPoint() const = 0;
+    virtual const gle::Vector3<float>& getMinPoint() = 0;
 
     //! Get center of bounding volume
-    virtual const gle::Vector3<float>& getCenter() const = 0;
+    virtual const gle::Vector3<float>& getCenter() = 0;
 
     //! Return wheter or not bounding volume is in frustum
     /*!

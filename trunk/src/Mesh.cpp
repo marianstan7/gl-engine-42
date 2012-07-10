@@ -5,7 +5,7 @@
 // Login   <michar_l@epitech.net>
 // 
 // Started on  Mon Feb 20 18:25:23 2012 loick michard
-// Last update Thu Jul  5 20:55:55 2012 loick michard
+// Last update Tue Jul 10 15:36:17 2012 loick michard
 //
 
 #include <Mesh.hpp>
@@ -462,22 +462,37 @@ gle::BoundingVolume* gle::Mesh::getBoundingVolume() const
   return (_boundingVolume);
 }
 
-const gle::Vector3<GLfloat>& gle::Mesh::getMaxPoint() const
+const gle::Vector3<GLfloat>& gle::Mesh::getMaxPoint()
 {
+  if (_needUpdateMatrix)
+    {
+      this->updateMatrix();
+      _needUpdateMatrix = false;
+    }
   if (_boundingVolume)
     return (_boundingVolume->getMaxPoint());
   return (_position);
 }
 
-const gle::Vector3<GLfloat>& gle::Mesh::getMinPoint() const
+const gle::Vector3<GLfloat>& gle::Mesh::getMinPoint()
 {
+  if (_needUpdateMatrix)
+    {
+      this->updateMatrix();
+      _needUpdateMatrix = false;
+    }
   if (_boundingVolume)
     return (_boundingVolume->getMinPoint());
   return (_position);
 }
 
-const gle::Vector3<GLfloat>& gle::Mesh::getCenter() const
+const gle::Vector3<GLfloat>& gle::Mesh::getCenter()
 {
+  if (_needUpdateMatrix)
+    {
+      this->updateMatrix();
+      _needUpdateMatrix = false;
+    }
   if (_boundingVolume)
     return (_boundingVolume->getCenter());
   return (_position);

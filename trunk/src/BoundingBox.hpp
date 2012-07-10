@@ -5,7 +5,7 @@
 // Login   <michar_l@epitech.net>
 // 
 // Started on  Wed May  2 16:06:37 2012 loick michard
-// Last update Thu Jul  5 22:52:57 2012 gael jochaud-du-plessix
+// Last update Tue Jul 10 15:37:03 2012 loick michard
 //
 
 #ifndef _BOUNDING_BOX_HPP
@@ -55,13 +55,13 @@ namespace gle
     virtual void update(const Matrix4<GLfloat>& mvMatrix);
 
     //! Get the highest extreme value in the 3 axis
-    virtual const gle::Vector3<float>& getMaxPoint() const;
+    virtual const gle::Vector3<float>& getMaxPoint();
 
     //! Get the lowest extreme value in the 3 axis
-    virtual const gle::Vector3<float>& getMinPoint() const; 
+    virtual const gle::Vector3<float>& getMinPoint(); 
 
     //! Get center of bounding box
-    virtual const gle::Vector3<float>& getCenter() const; 
+    virtual const gle::Vector3<float>& getCenter(); 
 
     //! Return wheter or not bounding box is in frustum
     /*!

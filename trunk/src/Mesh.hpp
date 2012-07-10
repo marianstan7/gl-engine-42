@@ -5,7 +5,7 @@
 // Login   <michar_l@epitech.net>
 // 
 // Started on  Thu Jun 21 20:39:52 2012 loick michard
-// Last update Fri Jul  6 03:26:49 2012 loick michard
+// Last update Tue Jul 10 15:36:32 2012 loick michard
 //
 
 #ifndef _MESH_HPP_
@@ -296,15 +296,15 @@ namespace gle {
 
     //! Get the coords of the highest values of the mesh vertices
 
-    virtual const Vector3<GLfloat>& getMaxPoint() const;
+    virtual const Vector3<GLfloat>& getMaxPoint();
 
     //! Get the coords of the lowest values of the mesh vertices
 
-    virtual const Vector3<GLfloat>& getMinPoint() const;
+    virtual const Vector3<GLfloat>& getMinPoint();
 
     //! Get the coords of the point representing the center of the mesh
 
-    virtual const Vector3<GLfloat>& getCenter() const;
+    virtual const Vector3<GLfloat>& getCenter();
 
     //! Return wether the mesh is in a frutum or not
 

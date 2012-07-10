@@ -5,7 +5,7 @@
 // Login   <michar_l@epitech.net>
 // 
 // Started on  Wed May  2 16:41:28 2012 loick michard
-// Last update Thu Jul  5 22:47:26 2012 loick michard
+// Last update Tue Jul 10 15:37:39 2012 loick michard
 //
 
 #include <BoundingSphere.hpp>
@@ -151,17 +151,17 @@ void	gle::BoundingSphere::update(const Matrix4<GLfloat>& mvMatrix)
   _max += _absoluteRadius;
 }
 
-const gle::Vector3<float>& gle::BoundingSphere::getMaxPoint() const
+const gle::Vector3<float>& gle::BoundingSphere::getMaxPoint()
 {
   return (_max);
 }
 
-const gle::Vector3<float>& gle::BoundingSphere::getMinPoint() const
+const gle::Vector3<float>& gle::BoundingSphere::getMinPoint()
 {
   return (_min);
 }
 
-const gle::Vector3<float>& gle::BoundingSphere::getCenter() const
+const gle::Vector3<float>& gle::BoundingSphere::getCenter()
 {
   return (_absoluteCenter);
 }
