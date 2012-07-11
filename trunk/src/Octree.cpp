@@ -5,7 +5,7 @@
 // Login   <michar_l@epitech.net>
 // 
 // Started on  Sat May  5 10:59:21 2012 loick michard
-// Last update Tue Jul 10 15:42:06 2012 loick michard
+// Last update Thu Jul 12 00:05:13 2012 loick michard
 //
 
 #include <Octree.hpp>
@@ -55,12 +55,83 @@ gle::Mesh* gle::Octree::Node::getDebugMesh()
 
 gle::Octree::Octree() : _root(NULL)
 {
-
+  for (unsigned int i = 0; i < maximumNumberOfThreads; ++i)
+    _threadPool[i] = NULL;
 }
 
 gle::Octree::~Octree()
 {
 
+}
+
+void gle::Octree::threadNodeGeneration()
+{
+  int	depth = -1;
+  Node*	node = NULL;
+
+  while (1)
+    {
+      _tasksQueueAccess.lock();
+
+      depth = 0;
+      node = NULL;
+      if (_tasksQueue.size() > 0)
+	{
+	  _threadIsComputing += 1;
+	  node = _tasksQueue.front().first;
+	  depth = _tasksQueue.front().second;
+	  _tasksQueue.pop();
+	  if (_tasksQueue.size() > 0)
+	    _listEmptyAccess.unlock();
+	  _tasksQueueAccess.unlock();
+	}
+      else
+	{
+	  _tasksQueueAccess.unlock();
+	  if (_hasFinished)
+	    {
+	      _listEmptyAccess.unlock();
+	      return;
+	    }
+	  _listEmptyAccess.lock();
+	  depth = -1;
+	}
+
+      if (depth >= 0 && depth < maximumDepth)
+	{
+	  node->splitNode();
+	  int	nbChild = 0;
+
+	  _tasksQueueAccess.lock();
+	  for (int i = 0; i < 8; ++i)
+	    {
+	      if (node->_children[i])
+		{	
+		  ++nbChild;
+		  _tasksQueue.push({node->_children[i], depth + 1});
+		  _listEmptyAccess.unlock();
+		}
+	    }
+	  _tasksQueueAccess.unlock();
+	  if (nbChild == 0)
+	    {
+	      if (_threadIsComputing == 1)
+		{
+		  if (_listEmptyAccess.try_lock())
+		    _listEmptyAccess.unlock();
+		  else
+		    {
+		      _generateDone.unlock();
+		      _hasFinished = true;
+		      _listEmptyAccess.unlock();
+		      return;
+		    }
+		}
+	    }
+	}
+      if (depth >= 0)
+	_threadIsComputing -= 1;
+    }
 }
 
 void gle::Octree::generateTree(std::list<Element*> &elements)
@@ -88,16 +159,27 @@ void gle::Octree::generateTree(std::list<Element*> &elements)
       ++i;
     }
   _root = new Node(_min, _max, elements, {});
-  _nbThreads = 0;
-  _root->splitNode(false, &_nbThreads, 8);
+  _tasksQueue.push({_root, 0});
+  _threadIsComputing = 0;
+  _tasksQueueAccess.unlock();
+  _listEmptyAccess.unlock();
+  _generateDone.lock();
+  _hasFinished = false;
+
+  for (i = 0; i < maximumNumberOfThreads; ++i)
+    _threadPool[i] = new std::thread(&gle::Octree::threadNodeGeneration, this);
+
+  _generateDone.lock();
+  _generateDone.unlock();
+
+  for (i = 0; i < maximumNumberOfThreads; ++i)
+    {
+      _threadPool[i]->join();
+      _threadPool[i] = NULL;
+    }
 }
 
-static void split(gle::Octree::Node *node, bool thread, std::atomic<int> *nbThreads, int maxThreads, int depth)
-{
-  node->splitNode(thread, nbThreads, maxThreads, depth);
-}
-
-void gle::Octree::Node::splitNode(bool thread, std::atomic<int> *nbThreads, int maxThreads, int depth)
+void gle::Octree::Node::splitNode()
 {
   struct subdivision {
     gle::Vector3<GLfloat> min;
@@ -107,11 +189,7 @@ void gle::Octree::Node::splitNode(bool thread, std::atomic<int> *nbThreads, int 
   };
 
   if (_elements.size() <= 8)
-    {
-      if (thread)
-	(*nbThreads)--;
-      return ;
-    }
+    return ;
 
   subdivision subdivisions[8] = 
     {
@@ -174,38 +252,12 @@ void gle::Octree::Node::splitNode(bool thread, std::atomic<int> *nbThreads, int 
 	    subdivisions[i].partialsElements.push_back(element);
 	}
     }
-  std::vector<std::thread*> _threads;
-  _leaf = true;
   for (int i = 0; i < 8; ++i)
     {
-      bool doThread = false;
-      if (subdivisions[i].elements.size() > 0 && depth < 15)
+      if (subdivisions[i].elements.size() > 0)
 	_children[i] = new gle::Octree::Node(subdivisions[i].min, subdivisions[i].max, subdivisions[i].elements,
 					     subdivisions[i].partialsElements);
-      if (_children[i])
-	{
-	  _leaf = false;
-	  if (nbThreads && maxThreads)
-	    {
-	      if (*nbThreads < maxThreads)
-		{
-		  (*nbThreads)++;
-		  doThread = true;
-		}
-	    }
-	  if (!doThread)
-	    _children[i]->splitNode(false, nbThreads, maxThreads, depth + 1);
-	  else
-	    _threads.push_back(new std::thread(split, this, true, nbThreads, maxThreads, depth + 1));
-	}
     }
-  for (std::thread* &_thread : _threads)
-    {
-      _thread->join();
-      delete _thread;
-    }
-  if (thread)
-    (*nbThreads)--;
 }
 
 void gle::Octree::_addDebugNode(gle::Octree::Node* node)

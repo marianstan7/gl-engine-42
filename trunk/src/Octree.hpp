@@ -10,6 +10,8 @@
 #ifndef _OCTREE_HPP_
 # define _OCTREE_HPP_
 
+# include <utility>
+# include <queue>
 # include <vector>
 # include <list>
 # include <thread>
@@ -28,6 +30,13 @@ namespace gle {
   //! Handler of %Octree
   class Octree {
   public:
+
+    //! Number maximum of threads
+    static const unsigned int maximumNumberOfThreads = 8;
+
+    //! Maximum tree depth
+    static const int maximumDepth = 15;
+    
     //! Octree element interface
     class Element
     {
@@ -77,16 +86,12 @@ namespace gle {
       */
       Mesh* getDebugMesh();
 
-      //! Recursively split node
+      //! Split node
       /*!
-	It recursively split node in 8 children.
+	It split node in 8 children.
 	All node elements are divide in each child.
-	\param thread Set whether or not threading is activated
-	\param nbThreads Number of threads currently run
-	\param maxThreads Maximum number of threads
-	\param depth Current depht of recursion
        */
-      void splitNode(bool thread = false, std::atomic<int> *nbThreads = NULL, int maxThreads=0, int depth=0);
+      void splitNode();
 
       //! Add element to child frustum
       /*!
@@ -142,6 +147,8 @@ namespace gle {
 					      const gle::Matrix4<GLfloat>& modelview);
 
     private:
+    void threadNodeGeneration();
+
     void			_addDebugNode(Node* node);
     Node*			_root;
     std::atomic<int>		_nbThreads;
@@ -149,6 +156,15 @@ namespace gle {
     std::list<Element*>		_elementsInFrustum;
     std::map<Element*, bool>	_alreadyDone;
     std::vector<Mesh*>		_debugNodes;
+
+    std::thread*			_threadPool[maximumNumberOfThreads];
+    std::queue<std::pair<Node*, int>>	_tasksQueue;
+    std::mutex				_tasksQueueAccess;
+    std::mutex				_listEmptyAccess;
+
+    std::atomic<int>			_threadIsComputing;
+    std::atomic<bool>			_hasFinished;
+    std::mutex				_generateDone;
   };
 }
 
