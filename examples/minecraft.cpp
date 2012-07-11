@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Fri Mar  2 17:27:21 2012 gael jochaud-du-plessix
-// Last update Tue Jul 10 18:54:41 2012 loick michard
+// Last update Thu Jul 12 00:06:03 2012 loick michard
 //
 
 #include <iostream>
@@ -100,7 +100,7 @@ public:
 					 gle::Vector3f(0, 0, 0),
 					 45, (GLfloat)_winWidth/_winHeight, 1, 400);
     _renderer = new gle::Renderer();
-    //_renderer->setDebugMode(gle::Renderer::BoundingVolume);
+    //_renderer->setDebugMode(gle::Renderer::Octree);
     _light = new gle::PointLight(gle::Vector3f(0, 0, 0),
     				 gle::Colorf(0.3, 0.3, 0.3));
     gle::PointLight* light = new gle::PointLight(gle::Vector3f(1000, 1000, 0),
@@ -110,8 +110,8 @@ public:
     gle::Material* cubeMaterial = new gle::Material();
     cubeMaterial->setColorMap(new gle::Texture("./examples/textures/floor.png"));
     cubeMaterial->setNormalMap(new gle::Texture("./examples/textures/floor_normalmap.png"));
-    int width = 200;
-    int height = 200;
+    int width = 100;
+    int height = 100;
     float size = 4.0;
     int imgX = heightmap->getSize().x - 1;
     int imgY = heightmap->getSize().y - 1;
