@@ -21,13 +21,13 @@ Loick Michard}
 
 \newpage
 
-\part{Introduction}
+\chapter{Introduction}
 This document describes the technical specifications for the glEngine project. It comes with the Specifications document that explains the functional specifications. The technical specifications document describes the retained solutions for the glEngine project. These specifications are divided in two parts: the description of the scene management and how the 3D rendering works.
 
-\part{Scene management}
+\chapter{Scene management}
 In order to render a virtual world in 3D, the engine must manage a lot of data describing a scene. This part of the specifications describes the different elements that can be part of a scene and how they are arranged hierarchically by the engine.
 
-\section{Scene elements}
+\chapter{Scene elements}
 A scene is composed of various kinds of elements that describe all the aspects of the virtual world to render.
 All these elements inherit the class gle::Scene::Node that describe the properties of a scene element:
 \begin{itemize}
@@ -129,9 +129,21 @@ Dynamic elements may rather be updated very often, so the engine provides abilit
 
 \subsection{Spatial partitioning}
 In order to improve the rendering performance, the scene have a representation of its elements based on spatial partitioning. Thanks to that representation, the engine is able to efficiently treat a lot of elements.\\
-This partitioning is made with an Octree. Each mesh has an associated bounding volume computed from its shape. Thanks to that, the partitioning tree can be made efficiently. 
+\subsubsection{Octree}
+The most effective spacial scene representation for a 3D environment is octree. When static meshes are added or removed from the scene, a spacial octree representation is generated.
+This generation uses maximum number of threads for increase performance. For this, each node division in 3D are performed using a pool of threads.
+\subsubsection{Bounding Volume}
+In order to check the intersection between a mesh and an octree node, all meshes have a corresponding bounding volume. This bounding volume is a simplify space representation of the mesh.
+It enables to build a complete tree really faster.
+There are two kind of bounding volume available:
+\begin{itemize}
+\item Bounding box
+\item Bounding sphere
+\end{itemize}
 
-\part{3D Rendering}
+
+
+\chapter{3D Rendering}
 This part of the technical specifications describes how the 3D rendering work.\\
 It lists the features of the renderer and describes the techniques retained for performance improvements.
 
